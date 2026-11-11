@@ -1,0 +1,47 @@
+# secrets
+.env
+.env.*
+!.env.example
+*.pem
+kaggle.json
+access_token
+
+# Claude Code personal settings
+.claude/settings.local.json
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+*.egg-info/
+dist/
+build/
+
+# data, models, media (never commit)
+data/*
+!data/README.md
+models/*
+!models/MANIFEST.json
+*.wav
+*.mp3
+*.mp4
+*.webm
+*.enc
+*.sqlite
+*.duckdb
+*.gguf
+*.task
+llm_cache/
+
+# notebooks / OS / editors
+.ipynb_checkpoints/
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
