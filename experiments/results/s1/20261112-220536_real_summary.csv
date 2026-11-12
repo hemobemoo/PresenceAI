@@ -1,0 +1,2 @@
+transport,seconds_total,seconds_used,fps_p50,fps_min,share_fps_ok,audio_chunk_rate_p50,audio_realtime_ratio,meter_n,meter_ms_p50,meter_ms_p95,meter_ms_max,lag_slope_ms_per_min,cpu_p50,cpu_max,min_fps,budget_ms,passed,reason,landmarks,pose_success_rate,face_success_rate,frames_dropped_share,frame_w_min,frame_h_min,settings
+fastrtc,58,53,10.0,9.0,1.0,50.0,1.0,534,50.767,84.204,85.401,0.46,42.2,59.4,8.0,300.0,True,PASS,pose-lite+face,1.0,1.0,0.0,640,360,run=20261112-220536_real_pose-lite+face process_every=3 rtp=browser-default
