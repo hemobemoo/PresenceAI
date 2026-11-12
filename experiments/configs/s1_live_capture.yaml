@@ -1,0 +1,15 @@
+# Spike S1 (live capture) measurement settings. Pass thresholds are NOT here: they are read
+# from configs/live.yaml (video.min_fps, latency_budget_ms). Rule recorded in docs/adr/0002.
+
+warmup_s: 5                # first seconds of each transport run, excluded from statistics
+min_share_fps_ok: 0.95     # PASS needs processed fps >= min_fps in this share of post-warm-up seconds
+meter_interval_ms: 100     # how often the server publishes a meter value
+process_every: 1           # process every Nth received video frame (stand-in for landmarks)
+process_size: [640, 360]   # frames are downscaled to this before processing (FINAL_02 §3.1)
+echo_size: [160, 90]       # FastRTC send-receive return frame, kept small to limit load
+fallback_stream_every_s: 0.1
+time_limit_s: 600
+track_constraints:
+  width: 640
+  height: 360
+  frameRate: 30
