@@ -410,5 +410,5 @@ def test_old_csv_without_landmark_columns_still_reads():
 
 def test_spike_config_landmark_settings():
     cfg = m.load_spike_config(REPO / "experiments" / "configs" / "s1_live_capture.yaml")
-    assert cfg.landmark_process_every == {"fastrtc": 3, "fallback": 1}
+    assert cfg.landmark_process_every == {"fastrtc": 2, "fallback": 1}  # ADR 0002, owner 2026-11-13
     assert cfg.rtp_params == {"degradationPreference": "maintain-resolution"}
