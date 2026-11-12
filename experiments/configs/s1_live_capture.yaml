@@ -14,13 +14,14 @@ track_constraints:
   height: 360
   frameRate: 30
 
-# Landmark follow-up (ADR 0002). With --landmarks other than none, each transport submits
-# every Nth received frame to the landmark worker (FINAL_02 §3.1: "process every 2nd-3rd
-# frame"). FastRTC delivers ~30 fps; 2 gives ~15 fps, chosen by the owner on 2026-11-13 for
-# fps margin (ADR 0002). The fallback delivers ~10 fps, so 1.
-landmark_process_every:
-  fastrtc: 2
-  fallback: 1
+# Landmark follow-up (ADR 0002). With --landmarks other than none, frames go to the landmark
+# worker by time, not by count: a frame is taken when 1/target_fps has passed since the last one.
+# A 30 fps camera gives about every 2nd frame (~15 fps, the owner's choice of 2026-11-13); a
+# camera at or below the target, e.g. 15 fps in low light or the 10 fps fallback, gives every
+# frame. tolerance: fraction of the interval a frame may arrive early and still be taken, so
+# arrival jitter does not turn "every 2nd" into "every 3rd". --process-every N overrides this.
+landmark_target_fps: 15
+landmark_sampling_tolerance: 0.25
 # FastRTC sender parameters. maintain-resolution addresses the pixelation seen in the first
 # real run: the browser drops frame rate instead of resolution when bandwidth is short.
 rtp_params:

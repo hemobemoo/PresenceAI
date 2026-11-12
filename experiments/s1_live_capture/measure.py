@@ -51,6 +51,7 @@ from metrics import (
     write_csv,
 )
 from playwright.sync_api import Page, sync_playwright
+from sampling import choose_sampling
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
@@ -237,12 +238,13 @@ def run_mode(
     transports = TRANSPORTS if args.transport == "both" else (args.transport,)
     cfg = load_spike_config(SPIKE_YAML)
     min_fps, budget_ms = load_thresholds(LIVE_YAML)
-    if args.process_every is not None:
-        every = {t: args.process_every for t in TRANSPORTS}
-    elif mode == "none":
-        every = {t: cfg.process_every for t in TRANSPORTS}
-    else:
-        every = cfg.landmark_process_every
+    sampling = choose_sampling(
+        mode=mode,
+        process_every_override=args.process_every,
+        stand_in_every=cfg.process_every,
+        target_fps=cfg.landmark_target_fps,
+        tolerance=cfg.landmark_sampling_tolerance,
+    )
     rtp = "browser-default" if args.degradation == "browser-default" else cfg.rtp_params
 
     port = free_port()
@@ -308,7 +310,7 @@ def run_mode(
                     warmup_s=cfg.warmup_s,
                     min_share=cfg.min_share_fps_ok,
                     settings=(
-                        f"run={run_id} process_every={every[transport]} "
+                        f"run={run_id} {sampling.describe()} "
                         f"rtp={rtp if transport == 'fastrtc' else 'n/a'}"
                     ),
                 )

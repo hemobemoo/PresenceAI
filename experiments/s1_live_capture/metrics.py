@@ -478,7 +478,8 @@ class SpikeConfig:
     fallback_stream_every_s: float
     time_limit_s: float
     track_constraints: dict[str, Any]
-    landmark_process_every: dict[str, int]  # per transport, used when --landmarks is not none
+    landmark_target_fps: float  # time-based sampling, used when --landmarks is not none
+    landmark_sampling_tolerance: float  # fraction of the interval a frame may be early
     rtp_params: dict[str, Any]  # FastRTC sender parameters (degradationPreference)
 
 
@@ -507,6 +508,7 @@ def load_spike_config(path: Path) -> SpikeConfig:
         fallback_stream_every_s=float(d["fallback_stream_every_s"]),
         time_limit_s=float(d["time_limit_s"]),
         track_constraints=dict(d["track_constraints"]),
-        landmark_process_every={str(k): int(v) for k, v in d["landmark_process_every"].items()},
+        landmark_target_fps=float(d["landmark_target_fps"]),
+        landmark_sampling_tolerance=float(d["landmark_sampling_tolerance"]),
         rtp_params=dict(d.get("rtp_params") or {}),
     )

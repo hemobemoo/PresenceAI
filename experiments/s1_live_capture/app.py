@@ -44,6 +44,7 @@ from metrics import (
     now_ms,
     write_csv,
 )
+from sampling import SamplingSpec, choose_sampling
 
 REPO = Path(__file__).resolve().parents[2]
 DEFAULT_CONFIG = REPO / "experiments" / "configs" / "s1_live_capture.yaml"
@@ -95,20 +96,8 @@ class Shared:
     cfg: SpikeConfig
     recorders: dict[str, RunRecorder]
     workers: dict[str, LandmarkWorker]
-    process_every: dict[str, int]
+    sampling: SamplingSpec
     rtp_params: dict[str, Any] | None
-
-
-class FrameSampler:
-    """Counts received frames; every Nth one goes to the landmark worker."""
-
-    def __init__(self, every: int) -> None:
-        self.every = max(1, every)
-        self.count = 0
-
-    def take(self) -> bool:
-        self.count += 1
-        return (self.count - 1) % self.every == 0
 
 
 class S1Handler(AudioVideoStreamHandler):
@@ -119,7 +108,7 @@ class S1Handler(AudioVideoStreamHandler):
         self.shared = shared
         self.rec = shared.recorders["fastrtc"]
         self.worker = shared.workers["fastrtc"]
-        self.frames = FrameSampler(shared.process_every["fastrtc"])
+        self.frames = shared.sampling.make()
         w, h = shared.cfg.echo_size
         self.echo: npt.NDArray[np.uint8] = np.zeros((h, w, 3), dtype=np.uint8)
         self.level = 0.0
@@ -146,7 +135,7 @@ class S1Handler(AudioVideoStreamHandler):
     # FastRTC annotates VideoFrame but passes frame.to_ndarray(format="bgr24") (fastrtc/tracks.py).
     def video_receive(self, frame: npt.NDArray[np.uint8]) -> None:  # pyright: ignore[reportIncompatibleMethodOverride]
         self.rec.video_frame(processed=False, width=frame.shape[1], height=frame.shape[0])
-        if self.frames.take():
+        if self.frames.take(time.monotonic()):
             self.worker.submit(frame)  # never blocks: the worker keeps only the latest frame
         self.echo = resize_nearest(frame, self.shared.cfg.echo_size)
 
@@ -199,7 +188,7 @@ def build_demo(shared: Shared, transports: tuple[str, ...]) -> gr.Blocks:
                 with gr.Tab("Fallback", id="fallback", elem_id="s1-tab-fallback"):
                     rec = shared.recorders["fallback"]
                     fb_worker = shared.workers["fallback"]
-                    sampler = FrameSampler(shared.process_every["fallback"])
+                    sampler = shared.sampling.make()
                     seq = {"n": 0}
                     mic = gr.Audio(
                         sources=["microphone"],
@@ -237,7 +226,7 @@ def build_demo(shared: Shared, transports: tuple[str, ...]) -> gr.Blocks:
                         rec.video_frame(
                             processed=False, width=frame.shape[1], height=frame.shape[0]
                         )
-                        if sampler.take():
+                        if sampler.take(time.monotonic()):
                             fb_worker.submit(frame)
                         return f"frames={sampler.count}"
 
@@ -314,7 +303,7 @@ def main() -> None:
         "--process-every",
         type=int,
         default=None,
-        help="send every Nth frame to the landmark step (default: from the spike config)",
+        help="send every Nth frame to the landmark step (default: time-based, spike config)",
     )
     parser.add_argument(
         "--degradation",
@@ -330,13 +319,13 @@ def main() -> None:
     if missing:
         names = ", ".join(p.name for p in missing)
         raise SystemExit(f"missing {names}: run `uv run python scripts/download_models.py --pin`")
-    every: dict[str, int]
-    if args.process_every is not None:
-        every = {t: int(args.process_every) for t in TRANSPORTS}
-    elif args.landmarks == "none":
-        every = {t: cfg.process_every for t in TRANSPORTS}
-    else:
-        every = {t: cfg.landmark_process_every[t] for t in TRANSPORTS}
+    sampling = choose_sampling(
+        mode=args.landmarks,
+        process_every_override=args.process_every,
+        stand_in_every=cfg.process_every,
+        target_fps=cfg.landmark_target_fps,
+        tolerance=cfg.landmark_sampling_tolerance,
+    )
     rtp = cfg.rtp_params if args.degradation == "config" and cfg.rtp_params else None
 
     recorders = make_recorders(args.run_id, args.out, transports, cfg.warmup_s, args.landmarks)
@@ -354,11 +343,11 @@ def main() -> None:
         w.start()
     start_flusher(recorders, workers)
     print(
-        f"S1 run {args.run_id}: landmarks={mode} process_every={every} rtp_params={rtp}; "
+        f"S1 run {args.run_id}: landmarks={mode} {sampling.describe()} rtp_params={rtp}; "
         f"writing per-second rows to {args.out}",
         flush=True,
     )
-    demo = build_demo(Shared(cfg, recorders, workers, every, rtp), transports)
+    demo = build_demo(Shared(cfg, recorders, workers, sampling, rtp), transports)
     demo.queue().launch(server_name="127.0.0.1", server_port=args.port, share=False, show_api=False)
 
 
