@@ -46,3 +46,7 @@ Thumbs.db
 .vscode/*
 !.vscode/extensions.json
 .idea/
+
+# Serena: only the shared project config is versioned (cache, local overrides, memories are machine-local)
+.serena/*
+!.serena/project.yml
