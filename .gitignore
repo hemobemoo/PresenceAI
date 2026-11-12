@@ -50,3 +50,7 @@ Thumbs.db
 # Serena: only the shared project config is versioned (cache, local overrides, memories are machine-local)
 .serena/*
 !.serena/project.yml
+
+# owner's Word report and Office lock files (kept outside git)
+Main_Project_Report.docx
+~$*.docx
