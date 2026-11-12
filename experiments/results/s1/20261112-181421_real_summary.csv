@@ -1,0 +1,3 @@
+transport,seconds_total,seconds_used,fps_p50,fps_min,share_fps_ok,audio_chunk_rate_p50,audio_realtime_ratio,meter_n,meter_ms_p50,meter_ms_p95,meter_ms_max,lag_slope_ms_per_min,cpu_p50,cpu_max,min_fps,budget_ms,passed,reason
+fastrtc,58,53,30.0,29.0,1.0,50.0,1.0,529,52.419,69.541,85.801,0.62,31.3,43.8,8.0,300.0,True,PASS
+fallback,60,55,10.0,10.0,1.0,10.0,0.955,521,67.437,90.701,110.108,-8.403,23.4,34.4,8.0,300.0,True,PASS
