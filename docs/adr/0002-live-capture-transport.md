@@ -1,11 +1,11 @@
 # 0002 — Live capture transport (spike S1)
 
-- Status: **proposed**. The landmark run below passed (2026-11-12); waiting for the owner's acceptance.
-- Date: 2026-11-12
+- Status: **accepted** (owner, 2026-11-13), after the dim-light confirmation run passed with time-based sampling.
+- Date: 2026-11-12 (proposed); 2026-11-13 (accepted)
 - Decider: project owner
 - Plan reference: docs/plan/FINAL_12_ROADMAP_AND_THESIS.md §1 (S1); FINAL_02 §3.1; FINAL_10 E8
 - Config keys affected: none yet; `configs/live.yaml` stays as is (`video.min_fps` 8, `latency_budget_ms` 300)
-- Evidence: `experiments/results/s1/20261112-181421_real_*` (60 s) and `20261112-181657_real_*` (180 s), stand-in processing; `20261112-215239_real_*`, `20261112-220536_real_*`, `20261112-221317_real_*` (60 s) and `20261112-221704_real_*` (180 s), MediaPipe landmarks. All produced by `experiments/s1_live_capture/measure.py`
+- Evidence: `experiments/results/s1/20261112-181421_real_*` (60 s) and `20261112-181657_real_*` (180 s), stand-in processing; `20261112-215239_real_*`, `20261112-220536_real_*`, `20261112-221317_real_*` (60 s) and `20261112-221704_real_*` (180 s), MediaPipe landmarks; `20261113-011905_real_*` (180 s), `20261113-013737_real_*` and `20261113-021333_real_*` (60 s), confirmation runs. All produced by `experiments/s1_live_capture/measure.py`
 
 ## Context
 
@@ -110,10 +110,10 @@ one person, models fetched and SHA-256-pinned by `scripts/download_models.py` (d
 - Landmarks run on a worker thread that keeps only the latest frame. FastRTC's `video_receive`
   is never blocked, and frames that arrive while the worker is busy are counted as
   `frames_dropped`.
-- Frames sent to the worker: every Nth FastRTC frame (FINAL_02 §3.1 "every 2nd–3rd frame") and
-  every fallback frame (`landmark_process_every` in the spike config). The runs below used every
-  3rd frame (≈ 10 fps from 30 fps) unless marked; the default is now every 2nd (owner's choice,
-  see below). `--process-every N` overrides this.
+- Frames sent to the worker: the runs of 2026-11-12 and the first two confirmation runs used
+  every Nth FastRTC frame (FINAL_02 §3.1 "every 2nd–3rd frame"), every 3rd unless marked, and
+  every fallback frame. The final setting is time-based sampling at 15 fps (see "Confirmation
+  runs" below). `--process-every N` forces every Nth frame.
 - **Same PASS rule as above, now on landmark-processed fps.** Also reported, but not part of PASS:
   pose and face success rate (share of processed frames where a pose or face was found), share
   of frames dropped, and the smallest received frame size per second.
@@ -175,18 +175,50 @@ drops; blockiness from a low encoder bitrate at full resolution would not show i
 `maintain-resolution` stays in the config: it costs nothing measurable and protects landmark
 input under load.
 
-**Chosen by the owner (2026-11-13): process every 2nd FastRTC frame** (≈ 15 landmark fps). It
-is inside the plan's own range (FINAL_02 §3.1, "every 2nd–3rd frame"), so it is not a plan
-change. It is the only setting measured with a real fps margin, and the CPU and latency it costs
-are small next to the budget. Every 3rd frame also passed, but with the low-light risk noted
-above. `landmark_process_every.fastrtc` in `experiments/configs/s1_live_capture.yaml` is now 2;
-the fallback stays at every frame.
+**Chosen by the owner (2026-11-13): about 15 landmark fps**, i.e. every 2nd frame of a 30 fps
+camera. It is inside the plan's own range (FINAL_02 §3.1, "every 2nd–3rd frame"), so it is not
+a plan change. It is the only setting measured with a real fps margin, and the CPU and latency
+it costs are small next to the budget. Every 3rd frame also passed, but with the low-light risk
+noted above. The confirmation runs below then showed that risk.
 
-Confirmation run at the chosen setting (pending, owner): 180 s in normal room light and, if
-possible, a short run in dimmer light. The ADR moves to accepted only if these pass.
+### Confirmation runs (2026-11-13)
 
-For P6: processing by elapsed time (e.g. at most one frame per 1/12 s) instead of every Nth
-frame would keep the landmark rate steady when the camera rate changes. This was not measured.
+Owner's runs, pose-lite + face, `maintain-resolution`, FastRTC. "camera fps" is frames received
+per second (p50 / min), from `*_server.csv`.
+
+| Run | Light | Power | Sampling | Seconds used / total | camera fps | landmark fps p50 / min | share fps ≥ 8 | meter_ms p50 / p95 / max | slope (ms/min) | landmark ms p50 / max | face found | frames dropped | CPU% p50 / max | PASS |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| `011905` (180 s) | normal room light | not recorded | every 2nd frame | 173 / 178 | 30 / 29 | 15 / 14 | 100 % | 56.5 / 84.3 / 92.4 | +0.32 | 27.0 / 69.1 | 99.8 % | 0 % | 55.4 / 78.1 | ✓ |
+| `013737` | dim (hallway, no lights) | battery | every 2nd frame | 53 / 58 | 15 / 14 | 7 / 7 | 49 % | 58.7 / 84.6 / 89.8 | +0.55 | 42.3 / 145.0 | 99.5 % | 0 % | 60.9 / 152.3 | ✗ |
+| `021333` | dim (same as `013737`) | charger | **time-based, 15 fps** | 53 / 58 | 15 / 14 | 14 / 12 | 100 % | 49.1 / 74.1 / 79.0 | −4.01 | 26.2 / 53.9 | 98.4 % | 0 % | 51.6 / 67.2 | ✓ |
+
+Pose was found in 100 % of processed frames in all three runs. Face was found in at least 98.4 %,
+above the 95 % the owner set as the flag level. The smallest received frame was 640×360
+throughout. Run ids are `20261113-<id>_real`.
+
+- **Cause of the dim-light failure:** in `013737` the camera itself delivered only 15 fps (30 in
+  room light), so every 2nd frame gave 7–8 landmark fps. The landmark worker was not the
+  bottleneck: no frame was dropped.
+- **Fix: time-based sampling.** Frames go to the landmark worker when 1/15 s has passed since the
+  last one.
+  - Settings: `landmark_target_fps: 15` and `landmark_sampling_tolerance: 0.25` in
+    `experiments/configs/s1_live_capture.yaml`.
+  - Code: `experiments/s1_live_capture/sampling.py`, unit tests in `tests/unit/test_s1_sampling.py`.
+  - A 30 fps camera still gives about every 2nd frame, and a 15 fps camera gives every frame.
+  - In `021333`, at the same light and camera rate as `013737`, 96 % of received frames were
+    processed and the run passed.
+- **Cost of processing every frame in the dark:** CPU p50 51.6 % and 26.2 ms per landmark frame,
+  against 55.4 % and 27.0 ms for every 2nd frame in room light (`011905`). Both process about 15
+  frames per second, so the cost is about the same.
+- **Power state is a measured factor.** In short fake-camera checks, pose-lite + face took
+  ≈ 22 ms per frame on charger (2026-11-12) and ≈ 100 ms on battery (2026-11-13, CPU at 1.7 GHz).
+  These used Chromium's synthetic camera for 15–20 s, written to a temporary folder and not kept.
+  On battery the time was the same with every-Nth sampling, so the slowdown came from the
+  machine, not the sampler.
+- **The 27 → 42 ms rise in `013737`**: `013737` ran on battery (owner's note). `021333`, in the
+  same light on charger, took 26.2 ms. This points to power state, not darkness, as the cause.
+  The size of the battery effect differs between the real run (42 ms) and the fake-camera check
+  (≈ 100 ms), so this is likely but not proven.
 
 ## Other findings from the spike
 
@@ -204,23 +236,36 @@ frame would keep the landmark rate steady when the camera rate changes. This was
 - Gradio analytics are off (`GRADIO_ANALYTICS_ENABLED=False`, `analytics_enabled=False`). There
   is no share link and no TURN/STUN (`rtc_configuration=None`); the server binds to 127.0.0.1.
 
-## Decision (proposed)
+## Decision (accepted, 2026-11-13)
 
 **Use FastRTC** (`WebRTC`, `modality="audio-video"`, `mode="send-receive"`, small echo frame) as
 the live capture transport. It passes S1 with a wide margin on both criteria (30 fps,
 meter_ms p95 ≈ 70 ms), shows no backlog over 3 minutes and receives all audio. With real
 MediaPipe pose-lite + face landmarks it still passes, with meter_ms p95 ≤ 85 ms in every run:
 10 landmark fps at every 3rd frame (60 s and 180 s) and 15 at every 2nd (60 s). **Landmarks are
-processed on every 2nd FastRTC frame** (owner's choice, 2026-11-13). The fallback also passes
+sampled by time at about 15 fps** (owner's choice, 2026-11-13). That is every 2nd frame of a
+30 fps camera and every frame of a camera at 15 fps or slower. This passed for 180 s in room
+light, and for 60 s in dim light where the camera fell to 15 fps. The fallback also passes
 (stand-in only) and stays the documented plan B. Runs: `20261112-181421_real`,
 `20261112-181657_real`, `20261112-215239_real`, `20261112-220536_real`, `20261112-221317_real`,
-`20261112-221704_real`; the confirmation run at every 2nd frame is pending.
+`20261112-221704_real`, `20261113-011905_real`, `20261113-013737_real` (fail, fixed),
+`20261113-021333_real`.
 
 ## Consequences
 
 - P6 builds `live/stream.py` on `AudioVideoStreamHandler` in send-receive mode with a small echo
   frame. FINAL_02 §3.1 should say "send-receive" instead of "send" (plan edit, owner's call).
-- P6 moves the chosen frame interval (every 2nd FastRTC frame) and `degradationPreference: maintain-resolution` from the
-  spike config into `configs/live.yaml`, recorded in an ADR.
+- P6 moves time-based sampling (`landmark_target_fps` 15, tolerance 0.25) and
+  `degradationPreference: maintain-resolution` from the spike config into `configs/live.yaml`,
+  recorded in an ADR.
+- P6 follow-up, low light: the camera can be too slow for 8 landmark fps even with every frame
+  processed. When that happens, show a low-light / low-camera-fps notice in the live UI and lower
+  the vision confidence rating for those segments.
+- P6 follow-up, power: measure one run on battery with time-based sampling. If landmarks cannot
+  keep up (landmark fps below 8, or frames dropped), lower the vision confidence rating for
+  those segments and show the same low-performance notice as for low light.
+- Open observations, not explained by these logs:
+  - the 80.5 % face-found rate in run `20261112-215239` (pose-lite + face);
+  - the 27 → 42 ms rise per landmark frame in `013737`, most likely power state (see above).
 - The fallback was not re-measured with real landmarks; do that only if FastRTC is dropped.
 - Issue #3 must be closed before P3 so the app works offline.
