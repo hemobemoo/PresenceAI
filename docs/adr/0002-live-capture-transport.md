@@ -1,6 +1,6 @@
 # 0002 — Live capture transport (spike S1)
 
-- Status: **proposed** (waiting for the owner's approval)
+- Status: **proposed**. It stays proposed until the landmark run below passes; then it goes to the owner for approval.
 - Date: 2026-11-12
 - Decider: project owner
 - Plan reference: docs/plan/FINAL_12_ROADMAP_AND_THESIS.md §1 (S1); FINAL_02 §3.1; FINAL_10 E8
@@ -98,6 +98,39 @@ numbers, but it would affect landmark quality. Check it in the MediaPipe follow-
 
 Limits of this evidence: one run of each length on one machine; meter_ms excludes capture →
 server; the landmark step is a stand-in.
+
+## Landmark run (follow-up, pending)
+
+The first runs used a stand-in for landmarks. This run replaces it with MediaPipe in VIDEO mode,
+one person, models fetched and SHA-256-pinned by `scripts/download_models.py` (digests in
+`models/MANIFEST.json`):
+
+- `--landmarks none | pose-lite | pose-full | pose-lite+face`, one app start per mode, to see
+  the load step by step. Face Landmarker runs with `output_face_blendshapes=False` (geometry only).
+- Landmarks run on a worker thread that keeps only the latest frame. FastRTC's `video_receive`
+  is never blocked, and frames that arrive while the worker is busy are counted as
+  `frames_dropped`.
+- Frames sent to the worker: every 3rd FastRTC frame (≈ 10 fps from 30 fps; FINAL_02 §3.1
+  "every 2nd–3rd frame") and every fallback frame (`landmark_process_every` in the spike config).
+  `--process-every N` overrides this.
+- **Same PASS rule as above, now on landmark-processed fps.** Also reported, but not part of PASS:
+  pose and face success rate (share of processed frames where a pose or face was found), share
+  of frames dropped, and the smallest received frame size per second.
+- **Pixelation fix:** FastRTC now sends with `rtp_params={"degradationPreference":
+  "maintain-resolution"}` (spike config `rtp_params`), so under load the browser lowers frame
+  rate instead of resolution. Before/after: run once with `--degradation browser-default` and
+  once with the default `config`, then compare `frame_w_min` / `frame_h_min` and what you see.
+  The first runs did not record frame size, so "before" here means the new browser-default run.
+
+| Run | Landmarks | Degradation | fps p50 / min | share fps ≥ 8 | meter_ms p50 / p95 / max | pose found | face found | frames dropped | smallest frame | CPU% p50 / max | PASS |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| | none | maintain-resolution | | | | n/a | n/a | | | | |
+| | pose-lite | maintain-resolution | | | | | n/a | | | | |
+| | pose-full | maintain-resolution | | | | | n/a | | | | |
+| | pose-lite+face | maintain-resolution | | | | | | | | | |
+| | pose-lite+face | browser-default | | | | | | | | | |
+
+Pixelation before/after (owner's observation): ____
 
 ## Other findings from the spike
 
