@@ -1,11 +1,11 @@
 # 0002 — Live capture transport (spike S1)
 
-- Status: **proposed**. It stays proposed until the landmark run below passes; then it goes to the owner for approval.
+- Status: **proposed**. The landmark run below passed (2026-11-12); waiting for the owner's acceptance.
 - Date: 2026-11-12
 - Decider: project owner
 - Plan reference: docs/plan/FINAL_12_ROADMAP_AND_THESIS.md §1 (S1); FINAL_02 §3.1; FINAL_10 E8
 - Config keys affected: none yet; `configs/live.yaml` stays as is (`video.min_fps` 8, `latency_budget_ms` 300)
-- Evidence: `experiments/results/s1/20261112-181421_real_*` (60 s) and `20261112-181657_real_*` (180 s), produced by `experiments/s1_live_capture/measure.py`
+- Evidence: `experiments/results/s1/20261112-181421_real_*` (60 s) and `20261112-181657_real_*` (180 s), stand-in processing; `20261112-215239_real_*`, `20261112-220536_real_*`, `20261112-221317_real_*` (60 s) and `20261112-221704_real_*` (180 s), MediaPipe landmarks. All produced by `experiments/s1_live_capture/measure.py`
 
 ## Context
 
@@ -97,9 +97,9 @@ for this. The stand-in downscales every frame to 640×360, so this did not affec
 numbers, but it would affect landmark quality. Check it in the MediaPipe follow-up.
 
 Limits of this evidence: one run of each length on one machine; meter_ms excludes capture →
-server; the landmark step is a stand-in.
+server; the landmark step in these first runs is a stand-in (real landmarks: next section).
 
-## Landmark run (follow-up, pending)
+## Landmark run (follow-up)
 
 The first runs used a stand-in for landmarks. This run replaces it with MediaPipe in VIDEO mode,
 one person, models fetched and SHA-256-pinned by `scripts/download_models.py` (digests in
@@ -122,15 +122,65 @@ one person, models fetched and SHA-256-pinned by `scripts/download_models.py` (d
   once with the default `config`, then compare `frame_w_min` / `frame_h_min` and what you see.
   The first runs did not record frame size, so "before" here means the new browser-default run.
 
-| Run | Landmarks | Degradation | fps p50 / min | share fps ≥ 8 | meter_ms p50 / p95 / max | pose found | face found | frames dropped | smallest frame | CPU% p50 / max | PASS |
-|---|---|---|---|---|---|---|---|---|---|---|---|
-| | none | maintain-resolution | | | | n/a | n/a | | | | |
-| | pose-lite | maintain-resolution | | | | | n/a | | | | |
-| | pose-full | maintain-resolution | | | | | n/a | | | | |
-| | pose-lite+face | maintain-resolution | | | | | | | | | |
-| | pose-lite+face | browser-default | | | | | | | | | |
+Same machine and browser as above, on charger, FastRTC only. Every run received 30 fps from the
+camera, and the audio real-time ratio was 1.00 in every run.
 
-Pixelation before/after (owner's observation): ____
+**Primary result: the plan's setting, every 3rd frame (≈ 10 fps landmarks).**
+
+| Run | Landmarks | Degradation | Seconds used / total | fps p50 / min | share fps ≥ 8 | meter_ms p50 / p95 / max | slope (ms/min) | landmark ms p50 / max | pose found | face found | frames dropped | smallest frame | CPU% p50 / max | PASS |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| `215239` | none (stand-in, every frame) | maintain-resolution | 53 / 58 | 30 / 29 | 100 % | 50.9 / 68.0 / 84.0 | −2.84 | 4.3 / 15.2 | n/a | n/a | 0 % | 640×360 | 29.7 / 67.7 | ✓ |
+| `215239` | pose-lite | maintain-resolution | 54 / 59 | 10 / 9 | 100 % | 54.1 / 71.0 / 72.2 | +1.99 | 16.1 / 50.7 | 100 % | n/a | 0 % | 640×360 | 35.7 / 64.1 | ✓ |
+| `215239` | pose-full | maintain-resolution | 53 / 58 | 10 / 9 | 100 % | 61.3 / 78.5 / 79.7 | −0.45 | 24.2 / 50.7 | 100 % | n/a | 0 % | 640×360 | 42.2 / 59.4 | ✓ |
+| `215239` | pose-lite+face | maintain-resolution | 53 / 58 | 10 / 9 | 100 % | 55.6 / 72.8 / 74.5 | +0.40 | 29.0 / 51.8 | 100 % | 80.5 % | 0 % | 640×360 | 48.4 / 65.6 | ✓ |
+| `220536` | pose-lite+face | browser-default | 53 / 58 | 10 / 9 | 100 % | 50.8 / 84.2 / 85.4 | +0.46 | 27.1 / 55.7 | 100 % | 100 % | 0 % | 640×360 | 42.2 / 59.4 | ✓ |
+| `221704` (180 s) | pose-lite+face | maintain-resolution | 173 / 178 | 10 / 9 | 100 % | 60.7 / 77.9 / 79.9 | −0.07 | 27.1 / 55.6 | 100 % | 97.7 % | 0 % | 640×360 | 43.8 / 70.3 | ✓ |
+
+**Margin option: every 2nd frame (≈ 15 fps landmarks), `--process-every 2`.**
+
+| Run | Landmarks | Degradation | Seconds used / total | fps p50 / min | share fps ≥ 8 | meter_ms p50 / p95 / max | slope (ms/min) | landmark ms p50 / max | pose found | face found | frames dropped | smallest frame | CPU% p50 / max | PASS |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| `221317` | pose-lite+face | maintain-resolution | 53 / 58 | 15 / 14 | 100 % | 60.4 / 77.6 / 80.4 | +0.89 | 27.5 / 52.3 | 100 % | 100 % | 0 % | 640×360 | 54.7 / 79.7 | ✓ |
+
+Run ids are `20261112-<id>_real`; the mode is in the file name. "landmark ms" is the median of the
+per-second p50 and the largest per-second max of `process_ms`, post-warm-up, from `*_server.csv`.
+
+Reading the numbers:
+
+- **S1 passes with real MediaPipe landmarks.** Every run passes, including pose-lite + face for
+  180 s: landmark fps ≥ 8 in 100 % of seconds, meter_ms p95 ≤ 85 ms (budget 300), no backlog
+  (slopes within ±2 ms/min) and no audio lost.
+- **The every-3rd-frame setting passes with little margin on fps.** The camera's 30 fps gives
+  10 landmark fps, and the minimum second was 9, one frame above `min_fps`. The camera would only
+  need to drop below 24 fps (for example in low light, where webcams often slow down) for seconds
+  to fail. That was not tested here.
+- **Every 2nd frame gives 15 / 14 fps**, 6 fps above the threshold, and would tolerate a camera
+  down to 16 fps. It costs about +6 CPU points at p50 (+14 at max; 100 % = one logical core of
+  12) and ≈ +5 ms on meter_ms p95. It is one 60 s run.
+- **Landmarks are not the bottleneck.** Pose-lite + face takes ≈ 27–29 ms per frame (p50), so the
+  worker could keep up with ≈ 35 fps; no frame was dropped in any run.
+- **Detection:** pose was found in 100 % of processed frames in every run. Face was found in
+  80.5 % of frames in the first pose-lite + face run and 97.7–100 % in the others. The 80.5 % is
+  not explained by these logs; head position or turning away are possible causes (not verified).
+  These are found/not-found rates only, not landmark accuracy.
+
+**Pixelation before/after.** Smallest received frame was **640×360 in every second of every
+run**, with `maintain-resolution` and with the browser default. Owner's observation, the same for
+both the browser-default run and the 180 s maintain-resolution run: *"good in terms of not having
+too much pixelation, and it is good clarity"*. So the start-up pixelation from the first runs did
+not reproduce, and `maintain-resolution` made no measurable difference here. The cause of the
+first observation is not confirmed. Note that `frame_w_min`/`frame_h_min` only catch resolution
+drops; blockiness from a low encoder bitrate at full resolution would not show in them.
+`maintain-resolution` stays in the config: it costs nothing measurable and protects landmark
+input under load.
+
+**Recommendation (owner decides): process every 2nd frame.** It is inside the plan's own range
+(FINAL_02 §3.1, "every 2nd–3rd frame"), so it is not a plan change. It is the only setting with a
+real fps margin, and the CPU and latency it costs are small next to the budget. Before P6 relies
+on it, repeat it for 180 s, preferably in normal room light. If the owner prefers the plan's
+"≈ 10 fps" as written, every 3rd frame also passes, with the low-light risk noted above.
+For P6: processing by elapsed time (e.g. at most one frame per 1/12 s) instead of every Nth
+frame would keep the landmark rate steady when the camera rate changes. This was not measured.
 
 ## Other findings from the spike
 
@@ -152,13 +202,18 @@ Pixelation before/after (owner's observation): ____
 
 **Use FastRTC** (`WebRTC`, `modality="audio-video"`, `mode="send-receive"`, small echo frame) as
 the live capture transport. It passes S1 with a wide margin on both criteria (30 fps,
-meter_ms p95 ≈ 70 ms), shows no backlog over 3 minutes and receives all audio. The fallback also
-passes and stays the documented plan B. Runs: `20261112-181421_real`, `20261112-181657_real`.
+meter_ms p95 ≈ 70 ms), shows no backlog over 3 minutes and receives all audio. With real
+MediaPipe pose-lite + face landmarks it still passes: 10 landmark fps at every 3rd frame and 15
+at every 2nd, meter_ms p95 ≤ 85 ms, over 3 minutes. The fallback also passes (stand-in only)
+and stays the documented plan B. Runs: `20261112-181421_real`, `20261112-181657_real`,
+`20261112-215239_real`, `20261112-220536_real`, `20261112-221317_real`, `20261112-221704_real`.
+Open for the owner: every 2nd or every 3rd frame (see the recommendation above).
 
 ## Consequences
 
 - P6 builds `live/stream.py` on `AudioVideoStreamHandler` in send-receive mode with a small echo
   frame. FINAL_02 §3.1 should say "send-receive" instead of "send" (plan edit, owner's call).
-- Before P6 relies on these numbers: re-measure with real MediaPipe landmarks in place of the
-  stand-in, which changes CPU load and the effective fps, and check the start-up pixelation.
+- P6 moves the chosen frame interval and `degradationPreference: maintain-resolution` from the
+  spike config into `configs/live.yaml`, recorded in an ADR.
+- The fallback was not re-measured with real landmarks; do that only if FastRTC is dropped.
 - Issue #3 must be closed before P3 so the app works offline.
