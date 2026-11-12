@@ -100,6 +100,15 @@ class SecondRow:
     process_ms_p50: float | None
     process_ms_max: float | None
     cpu_percent: float
+    # Landmark follow-up columns (defaults keep the first S1 CSVs readable).
+    landmarks: str = "none"
+    frames_dropped: int = 0  # received frames the landmark worker skipped because it was busy
+    pose_checked: int = 0
+    pose_found: int = 0
+    face_checked: int = 0
+    face_found: int = 0
+    frame_w_min: int | None = None  # smallest received frame size in the second
+    frame_h_min: int | None = None
 
 
 SECOND_FIELDS: tuple[str, ...] = tuple(f.name for f in dataclasses.fields(SecondRow))
@@ -113,6 +122,13 @@ class _Bucket:
     audio_seconds: float = 0.0
     meter_updates: int = 0
     process_ms: list[float] = field(default_factory=list[float])
+    frames_dropped: int = 0
+    pose_checked: int = 0
+    pose_found: int = 0
+    face_checked: int = 0
+    face_found: int = 0
+    w_min: int | None = None
+    h_min: int | None = None
 
 
 class RunRecorder:
@@ -132,9 +148,11 @@ class RunRecorder:
         clock: Callable[[], float] = time.monotonic,
         cpu: Callable[[], float],
         sink: Callable[[SecondRow], None] | None = None,
+        landmarks: str = "none",
     ) -> None:
         self.run_id = run_id
         self.transport = transport
+        self.landmarks = landmarks
         self.warmup_s = warmup_s
         self._clock = clock
         self._cpu = cpu
@@ -154,14 +172,48 @@ class RunRecorder:
         index = int(now - self._start)
         return self._buckets.setdefault(index, _Bucket())
 
-    def video_frame(self, *, processed: bool, process_ms: float | None = None) -> None:
+    def video_frame(
+        self,
+        *,
+        processed: bool,
+        process_ms: float | None = None,
+        width: int | None = None,
+        height: int | None = None,
+    ) -> None:
         with self._lock:
             b = self._bucket()
             b.video_received += 1
+            if width is not None:
+                b.w_min = width if b.w_min is None else min(b.w_min, width)
+            if height is not None:
+                b.h_min = height if b.h_min is None else min(b.h_min, height)
             if processed:
                 b.video_processed += 1
                 if process_ms is not None:
                     b.process_ms.append(process_ms)
+
+    def frame_processed(
+        self,
+        *,
+        process_ms: float,
+        pose_found: bool | None = None,
+        face_found: bool | None = None,
+    ) -> None:
+        """A frame finished landmark processing; None = that model is not running."""
+        with self._lock:
+            b = self._bucket()
+            b.video_processed += 1
+            b.process_ms.append(process_ms)
+            if pose_found is not None:
+                b.pose_checked += 1
+                b.pose_found += int(pose_found)
+            if face_found is not None:
+                b.face_checked += 1
+                b.face_found += int(face_found)
+
+    def frame_dropped(self) -> None:
+        with self._lock:
+            self._bucket().frames_dropped += 1
 
     def audio_chunk(self, seconds: float) -> None:
         with self._lock:
@@ -201,6 +253,14 @@ class RunRecorder:
                         process_ms_p50=percentile(b.process_ms, 0.5),
                         process_ms_max=max(b.process_ms) if b.process_ms else None,
                         cpu_percent=cpu,
+                        landmarks=self.landmarks,
+                        frames_dropped=b.frames_dropped,
+                        pose_checked=b.pose_checked,
+                        pose_found=b.pose_found,
+                        face_checked=b.face_checked,
+                        face_found=b.face_found,
+                        frame_w_min=b.w_min,
+                        frame_h_min=b.h_min,
                     )
                 )
             self._next_second = complete
@@ -320,6 +380,23 @@ class Summary:
     budget_ms: float
     passed: bool
     reason: str
+    # Landmark follow-up: reported, not part of PASS.
+    landmarks: str = "none"
+    pose_success_rate: float | None = None  # share of processed frames with a pose found
+    face_success_rate: float | None = None
+    frames_dropped_share: float | None = None  # dropped / received frames
+    frame_w_min: int | None = None
+    frame_h_min: int | None = None
+    settings: str = ""
+
+
+def _rate(found: int, checked: int) -> float | None:
+    return found / checked if checked else None
+
+
+def _min_or_none(values: Iterable[int | None]) -> int | None:
+    present = [v for v in values if v is not None]
+    return min(present) if present else None
 
 
 def summarise(
@@ -331,8 +408,10 @@ def summarise(
     budget_ms: float,
     warmup_s: float,
     min_share: float,
+    settings: str = "",
 ) -> Summary:
     used = [r for r in rows if not r.warmup]
+    received = sum(r.video_frames_received for r in used)
     fps = [float(r.video_frames_processed) for r in used]
     share = sum(f >= min_fps for f in fps) / len(fps) if fps else None
     audio_secs = sum(r.audio_seconds for r in used)
@@ -375,6 +454,13 @@ def summarise(
         budget_ms=budget_ms,
         passed=not problems,
         reason="; ".join(problems) if problems else "PASS",
+        landmarks=rows[0].landmarks if rows else "none",
+        pose_success_rate=_rate(sum(r.pose_found for r in used), sum(r.pose_checked for r in used)),
+        face_success_rate=_rate(sum(r.face_found for r in used), sum(r.face_checked for r in used)),
+        frames_dropped_share=sum(r.frames_dropped for r in used) / received if received else None,
+        frame_w_min=_min_or_none(r.frame_w_min for r in used),
+        frame_h_min=_min_or_none(r.frame_h_min for r in used),
+        settings=settings,
     )
 
 
@@ -392,6 +478,8 @@ class SpikeConfig:
     fallback_stream_every_s: float
     time_limit_s: float
     track_constraints: dict[str, Any]
+    landmark_process_every: dict[str, int]  # per transport, used when --landmarks is not none
+    rtp_params: dict[str, Any]  # FastRTC sender parameters (degradationPreference)
 
 
 def _yaml(path: Path) -> dict[str, Any]:
@@ -419,4 +507,6 @@ def load_spike_config(path: Path) -> SpikeConfig:
         fallback_stream_every_s=float(d["fallback_stream_every_s"]),
         time_limit_s=float(d["time_limit_s"]),
         track_constraints=dict(d["track_constraints"]),
+        landmark_process_every={str(k): int(v) for k, v in d["landmark_process_every"].items()},
+        rtp_params=dict(d.get("rtp_params") or {}),
     )

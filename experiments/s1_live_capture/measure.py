@@ -3,6 +3,10 @@
     # your laptop, real camera + microphone, both transports, 60 s each (window must stay in front)
     uv run python experiments/s1_live_capture/measure.py --devices real --headed --seconds 60
 
+    # landmark load step by step, FastRTC only, one app start per mode
+    uv run python experiments/s1_live_capture/measure.py --devices real --headed --seconds 60 \
+        --transport fastrtc --landmarks none,pose-lite,pose-full,pose-lite+face
+
     # no hardware: Chromium fake camera + a generated tone as the microphone
     uv run python experiments/s1_live_capture/measure.py --devices fake --seconds 20
 
@@ -35,6 +39,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+from landmarks import MODES, missing_models
 from metrics import (
     LatencySample,
     Summary,
@@ -99,9 +104,11 @@ def write_tone(path: Path, seconds: float = 4.0, rate: int = 48000) -> Path:
     return path
 
 
-def wait_for(url: str, timeout_s: float = 90.0) -> None:
+def wait_for(url: str, timeout_s: float = 120.0, proc: subprocess.Popen[Any] | None = None) -> None:
     deadline = time.monotonic() + timeout_s
     while time.monotonic() < deadline:
+        if proc is not None and proc.poll() is not None:
+            raise RuntimeError(f"app.py exited early (code {proc.returncode}); see its log")
         try:
             urllib.request.urlopen(url, timeout=1).close()  # noqa: S310  (local http only)
             return
@@ -156,8 +163,20 @@ def print_summary(s: Summary) -> None:
         f"  meter_ms p50 {f(s.meter_ms_p50)} p95 {f(s.meter_ms_p95)} max {f(s.meter_ms_max)}"
         f" (n={s.meter_n})  lag trend {f(s.lag_slope_ms_per_min)} ms/min\n"
         f"  audio chunks/s p50 {f(s.audio_chunk_rate_p50)}  audio real-time ratio"
-        f" {f(s.audio_realtime_ratio, '.2f')}  CPU% p50 {f(s.cpu_p50)} max {f(s.cpu_max)}"
+        f" {f(s.audio_realtime_ratio, '.2f')}  CPU% p50 {f(s.cpu_p50)} max {f(s.cpu_max)}\n"
+        f"  landmarks {s.landmarks}: pose found {f(s.pose_success_rate, '.0%')}"
+        f"  face found {f(s.face_success_rate, '.0%')}"
+        f"  frames dropped {f(s.frames_dropped_share, '.0%')}"
+        f"  smallest frame {s.frame_w_min}x{s.frame_h_min}  ({s.settings})"
     )
+
+
+def parse_modes(text: str) -> list[str]:
+    modes = [m.strip() for m in text.split(",") if m.strip()]
+    bad = [m for m in modes if m not in MODES]
+    if bad or not modes:
+        raise argparse.ArgumentTypeError(f"--landmarks takes a comma list of {', '.join(MODES)}")
+    return modes
 
 
 def main() -> int:
@@ -168,26 +187,77 @@ def main() -> int:
     p.add_argument("--headed", action="store_true", help="show the browser window")
     p.add_argument("--out", type=Path, default=None)
     p.add_argument("--run-id", default=None)
+    p.add_argument(
+        "--landmarks",
+        type=parse_modes,
+        default=["none"],
+        help=f"comma list, run one after another: {','.join(MODES)}",
+    )
+    p.add_argument("--process-every", type=int, default=None, help="override the spike config")
+    p.add_argument("--degradation", choices=["config", "browser-default"], default="config")
     args = p.parse_args()
 
-    transports = TRANSPORTS if args.transport == "both" else (args.transport,)
+    missing = sorted({p.name for m in args.landmarks for p in missing_models(m, REPO / "models")})
+    if missing:
+        print(f"missing model files: {', '.join(missing)}")
+        print("run `uv run python scripts/download_models.py --pin` first")
+        return 2
+
     run_id = args.run_id or f"{datetime.now():%Y%m%d-%H%M%S}_{args.devices}"
     tmp = Path(tempfile.mkdtemp(prefix="s1_"))
     out: Path = args.out or (DEFAULT_OUT if args.devices == "real" else tmp)
     out.mkdir(parents=True, exist_ok=True)
+    external: list[tuple[str, str]] = []
+    summaries: list[Summary] = []
+    for mode in args.landmarks:
+        mode_id = run_id if args.landmarks == ["none"] else f"{run_id}_{mode}"
+        summaries += run_mode(args, mode, mode_id, out, tmp, external)
+
+    write_csv(out / f"{run_id}_summary.csv", summaries)
+    with (out / f"{run_id}_network.csv").open("w", newline="", encoding="utf-8") as fh:
+        writer = csv.writer(fh)
+        writer.writerow(["resource_type", "url"])
+        writer.writerows(sorted(set(external)))
+    if external:
+        hosts = sorted({u.split("/")[2] for _, u in external if "//" in u})
+        print(f"external requests from the page: {', '.join(hosts)} (see {run_id}_network.csv)")
+    print(f"results in {out}  (app logs: {tmp})")
+    return 0
+
+
+def run_mode(
+    args: argparse.Namespace,
+    mode: str,
+    run_id: str,
+    out: Path,
+    tmp: Path,
+    external: list[tuple[str, str]],
+) -> list[Summary]:
+    """Start app.py with one landmark mode, measure each transport, return the summaries."""
+    transports = TRANSPORTS if args.transport == "both" else (args.transport,)
     cfg = load_spike_config(SPIKE_YAML)
     min_fps, budget_ms = load_thresholds(LIVE_YAML)
+    if args.process_every is not None:
+        every = {t: args.process_every for t in TRANSPORTS}
+    elif mode == "none":
+        every = {t: cfg.process_every for t in TRANSPORTS}
+    else:
+        every = cfg.landmark_process_every
+    rtp = "browser-default" if args.degradation == "browser-default" else cfg.rtp_params
 
     port = free_port()
     url = f"http://127.0.0.1:{port}"
     app_cmd = [sys.executable, str(APP), "--port", str(port), "--out", str(out), "--run-id", run_id]
-    app_cmd += ["--transport", args.transport]
-    app_log = (tmp / "app.log").open("w", encoding="utf-8")
+    app_cmd += ["--transport", args.transport, "--landmarks", mode]
+    app_cmd += ["--degradation", args.degradation]
+    if args.process_every is not None:
+        app_cmd += ["--process-every", str(args.process_every)]
+    app_log = (tmp / f"app_{mode}.log").open("w", encoding="utf-8")
     app = subprocess.Popen(app_cmd, cwd=REPO, stdout=app_log, stderr=subprocess.STDOUT)  # noqa: S603
-    external: list[tuple[str, str]] = []
     summaries: list[Summary] = []
+    print(f"== landmarks={mode}", flush=True)
     try:
-        wait_for(url)
+        wait_for(url, proc=app)
         chrome_args: list[str] = []
         if args.devices == "fake":
             tone = write_tone(tmp / "tone.wav")
@@ -237,6 +307,10 @@ def main() -> int:
                     budget_ms=budget_ms,
                     warmup_s=cfg.warmup_s,
                     min_share=cfg.min_share_fps_ok,
+                    settings=(
+                        f"run={run_id} process_every={every[transport]} "
+                        f"rtp={rtp if transport == 'fastrtc' else 'n/a'}"
+                    ),
                 )
                 summaries.append(summary)
                 print_summary(summary)
@@ -248,17 +322,7 @@ def main() -> int:
         except subprocess.TimeoutExpired:
             app.kill()
         app_log.close()
-
-    write_csv(out / f"{run_id}_summary.csv", summaries)
-    with (out / f"{run_id}_network.csv").open("w", newline="", encoding="utf-8") as fh:
-        writer = csv.writer(fh)
-        writer.writerow(["resource_type", "url"])
-        writer.writerows(sorted(set(external)))
-    if external:
-        hosts = sorted({u.split("/")[2] for _, u in external if "//" in u})
-        print(f"external requests from the page: {', '.join(hosts)} (see {run_id}_network.csv)")
-    print(f"results in {out}  (app log: {tmp / 'app.log'})")
-    return 0
+    return summaries
 
 
 if __name__ == "__main__":

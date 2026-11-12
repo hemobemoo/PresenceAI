@@ -13,3 +13,14 @@ track_constraints:
   width: 640
   height: 360
   frameRate: 30
+
+# Landmark follow-up (ADR 0002). With --landmarks other than none, each transport submits
+# every Nth received frame to the landmark worker. FastRTC delivers ~30 fps, so 3 gives
+# ~10 fps (FINAL_02 §3.1: "process every 2nd-3rd frame"). The fallback delivers ~10 fps, so 1.
+landmark_process_every:
+  fastrtc: 3
+  fallback: 1
+# FastRTC sender parameters. maintain-resolution addresses the pixelation seen in the first
+# real run: the browser drops frame rate instead of resolution when bandwidth is short.
+rtp_params:
+  degradationPreference: maintain-resolution

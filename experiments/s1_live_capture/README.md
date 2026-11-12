@@ -7,6 +7,7 @@ Question, pass rule and results: `docs/adr/0002-live-capture-transport.md`.
 | `app.py` | Gradio page with two tabs: FastRTC (audio-video WebRTC) and the fallback (`gr.Audio` + `gr.Image` streaming). It shows a level meter and a frame counter, and writes one counter row per second |
 | `measure.py` | Starts `app.py`, drives it in Playwright's Chromium (fake or real devices), records when each meter value appears, and writes the browser CSV, summary and network log |
 | `metrics.py` | Per-second recorder, CSV I/O and the PASS rule (unit-tested in `tests/unit/test_s1_metrics.py`) |
+| `landmarks.py` | MediaPipe Pose/Face in VIDEO mode on a latest-frame worker thread (unit-tested in `tests/unit/test_s1_landmarks.py`); models come from `scripts/download_models.py` |
 | `../configs/s1_live_capture.yaml` | Warm-up, 95 % share, echo size, meter interval. Thresholds come from `configs/live.yaml` |
 
 Only counters and timestamps are written. No audio, video or frames are stored, and nothing is

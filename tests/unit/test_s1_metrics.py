@@ -299,3 +299,116 @@ def test_spike_config_loads():
     assert cfg.warmup_s == 5
     assert cfg.min_share_fps_ok == pytest.approx(0.95)
     assert cfg.echo_size == (160, 90)
+
+
+# ---------------------------------------------------------------- landmarks (S1 follow-up)
+
+
+def test_recorder_landmark_counts_resolution_and_drops():
+    clock = FakeClock()
+    rec = m.RunRecorder(
+        "r", "fastrtc", warmup_s=0, clock=clock, cpu=lambda: 1.0, landmarks="pose-lite+face"
+    )
+    rec.video_frame(processed=False, width=640, height=360)
+    rec.video_frame(processed=False, width=320, height=180)
+    rec.frame_processed(process_ms=20.0, pose_found=True, face_found=False)
+    rec.frame_processed(process_ms=30.0, pose_found=True, face_found=True)
+    rec.frame_dropped()
+    clock.t = 1001.2
+    rec.video_frame(processed=False, width=640, height=360)
+    clock.t = 1001.5
+    (row,) = rec.flush()
+    assert row.landmarks == "pose-lite+face"
+    assert row.video_frames_received == 2
+    assert row.video_frames_processed == 2
+    assert row.frames_dropped == 1
+    assert (row.pose_checked, row.pose_found, row.face_checked, row.face_found) == (2, 2, 2, 1)
+    assert (row.frame_w_min, row.frame_h_min) == (320, 180)
+    assert row.process_ms_p50 == pytest.approx(25.0)
+
+
+def test_pose_only_mode_does_not_count_face():
+    clock = FakeClock()
+    rec = m.RunRecorder(
+        "r", "fastrtc", warmup_s=0, clock=clock, cpu=lambda: 1.0, landmarks="pose-full"
+    )
+    rec.frame_processed(process_ms=10.0, pose_found=False, face_found=None)
+    clock.t = 1001.1
+    rec.video_frame(processed=False)
+    clock.t = 1001.5
+    (row,) = rec.flush()
+    assert (row.pose_checked, row.pose_found, row.face_checked) == (1, 0, 0)
+
+
+def _lm_rows(pose: list[tuple[int, int]], face: list[tuple[int, int]] | None) -> list[Any]:
+    rows = []
+    for i, (pc, pf) in enumerate(pose):
+        fc, ff = face[i] if face else (0, 0)
+        rows.append(
+            m.SecondRow(
+                "r",
+                "fastrtc",
+                i,
+                False,
+                30,
+                10,
+                50,
+                1.0,
+                10,
+                20.0,
+                30.0,
+                40.0,
+                landmarks="pose-lite+face" if face else "pose-lite",
+                frames_dropped=2,
+                pose_checked=pc,
+                pose_found=pf,
+                face_checked=fc,
+                face_found=ff,
+                frame_w_min=640,
+                frame_h_min=360,
+            )
+        )
+    return rows
+
+
+def test_summary_landmark_success_rates():
+    rows = _lm_rows([(10, 9), (10, 10)], [(10, 5), (10, 5)])
+    s = m.summarise(
+        "fastrtc", rows, _lat([50.0] * 10), min_fps=8, budget_ms=300, warmup_s=0, min_share=0.95
+    )
+    assert s.landmarks == "pose-lite+face"
+    assert s.pose_success_rate == pytest.approx(0.95)
+    assert s.face_success_rate == pytest.approx(0.5)
+    assert s.frames_dropped_share == pytest.approx(4 / 60)
+    assert s.frame_w_min == 640
+    assert s.passed is True  # success rate is reported, not part of PASS
+
+
+def test_summary_rates_are_none_when_not_measured():
+    s = m.summarise(
+        "fastrtc",
+        _lm_rows([(0, 0)], None),
+        [],
+        min_fps=8,
+        budget_ms=300,
+        warmup_s=0,
+        min_share=0.95,
+    )
+    assert s.pose_success_rate is None
+    assert s.face_success_rate is None
+
+
+def test_old_csv_without_landmark_columns_still_reads():
+    path = REPO / "experiments" / "results" / "s1" / "20261112-181421_real_fastrtc_server.csv"
+    if not path.exists():
+        pytest.skip("first S1 results not present")
+    rows = m.read_second_rows(path)
+    assert rows
+    assert rows[0].landmarks == "none"
+    assert rows[0].pose_checked == 0
+
+
+def test_spike_config_landmark_settings():
+    cfg = m.load_spike_config(REPO / "experiments" / "configs" / "s1_live_capture.yaml")
+    assert cfg.landmark_process_every == {"fastrtc": 3, "fallback": 1}
+    assert cfg.rtp_params == {"degradationPreference": "maintain-resolution"}
