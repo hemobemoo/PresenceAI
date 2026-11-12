@@ -86,6 +86,34 @@ def test_closure_skips_extras_and_missing_and_flags_gpl():
     assert results == {"typer": "OK", "click": "FAIL"}
 
 
+def _check_one(name: str, meta: metadata.PackageMetadata) -> Any:
+    fake = {"presenceai": _meta(requires=(name,)), name: meta}
+    (result,) = cl.check("presenceai", lambda n: fake[n])
+    return result
+
+
+def test_allowed_lgpl_package_is_ok_with_reason():
+    assert "soxr" in cl.LGPL_ALLOWED
+    result = _check_one("soxr", _meta(expression="LGPL-2.1-or-later"))
+    assert result.status == "OK"
+    assert "allowed" in result.licence
+    assert cl.LGPL_ALLOWED["soxr"] in result.licence
+
+
+def test_allow_list_never_covers_gpl():
+    result = _check_one("soxr", _meta(expression="GPL-3.0-only"))
+    assert result.status == "FAIL"
+
+
+def test_unlisted_lgpl_still_warns():
+    result = _check_one("otherlib", _meta(expression="LGPL-3.0-only"))
+    assert result.status == "WARN"
+
+
+def test_allow_list_reasons_are_written():
+    assert all(len(reason) > 40 for reason in cl.LGPL_ALLOWED.values())
+
+
 def test_installed_environment_has_no_gpl():
     results = cl.check()
     assert results, "presenceai runtime dependencies should be installed"
