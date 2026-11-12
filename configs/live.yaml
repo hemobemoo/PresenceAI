@@ -1,0 +1,25 @@
+# Live loop (FINAL_02 §3.1, FINAL_05 §6). Values from the plan — ADR pending; confirmed in spike S1 / E8.
+
+video:
+  width: 640
+  height: 360
+  target_fps: 10
+  min_fps: 8
+audio:
+  frame_ms: 20
+  pace_window_s: 5
+latency_budget_ms: 300
+
+prompts:
+  min_interval_s: 20      # at most one prompt every 20 s
+  display_s: 3
+  gaze_away_s: 6          # audience_gaze: away/down for > 6 s
+  head_turn_deg: 30       # posture_gesture: head turned > 30°
+  time_remaining_s: [30, 10]
+  categories_by_skill:
+    pacing: [pace_band]
+    fluency: [pause_instead_of_filler]
+    audience_gaze: [gaze_away]
+    posture_gesture: [out_of_frame, head_turned]
+    concision_timing: [time_remaining]
+    default: [time_remaining]

@@ -1,0 +1,6 @@
+# Runtime "offline", FINAL_02 §6
+db: sqlite
+media_store: local_encrypted
+asr_device: cpu_int8
+llm_chain: [coach_slm, templates]
+turn: none

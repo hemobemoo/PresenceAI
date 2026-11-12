@@ -1,0 +1,36 @@
+# Adaptive engine parameters (FINAL_05 §2–§3). null = TODO(ADR): initial values set by the human.
+
+kalman:
+  q: null            # TODO(ADR): drift added to σ² at each new session
+  r0: null           # TODO(ADR): base observation noise; re-estimated from E5/E6
+  beta: null         # TODO(ADR): difficulty adjustment β
+  d_ref: null        # TODO(ADR): reference difficulty level
+  sigma_max: null    # TODO(ADR): reliability threshold on σ
+  mu0: null          # TODO(ADR): prior mean
+  sigma0_sq: null    # TODO(ADR): prior variance
+
+reliability:
+  min_obs: 2                  # source: FINAL_05 §3 — ADR pending
+
+difficulty:
+  levels: [1, 2, 3, 4, 5, 6, 7]   # source: FINAL_05 §2, §4
+  promote: {consecutive: 2, y_adj_at_least: 0.75}   # source: FINAL_05 §3 — ADR pending
+  demote: {consecutive: 2, y_adj_at_most: 0.40}     # source: FINAL_05 §3 — ADR pending
+
+selection:
+  exclude_recent: 3           # source: FINAL_05 §3 — ADR pending
+  sampler: thompson_beta      # source: FINAL_05 §3
+
+targets:                      # TODO(ADR): target μ per skill (FINAL_05 §1)
+  central_message: null
+  organization: null
+  opening_conclusion: null
+  supporting_material: null
+  language_clarity: null
+  concision_timing: null
+  fluency: null
+  pacing: null
+  vocal_variety: null
+  audience_gaze: null
+  posture_gesture: null
+  followup_handling: null

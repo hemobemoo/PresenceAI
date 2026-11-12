@@ -1,0 +1,4 @@
+# Hardware profile "lite": 8 GB RAM, CPU (FINAL_03 §9) — ADR pending
+asr: {model: small, compute_type: int8, device: cpu}
+vision: {pose_model: lite, face: true, target_fps: 8}
+llm_chain: [openrouter, templates]

@@ -1,0 +1,6 @@
+# Runtime "space" (Stage B invited pilot), FINAL_02 §6
+db: supabase_postgres
+media_store: supabase_storage_encrypted   # encrypted before upload
+asr_device: zerogpu
+llm_chain: [openrouter, templates]
+turn: cloudflare_hf_token
