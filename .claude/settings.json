@@ -1,5 +1,13 @@
 {
   "permissions": {
+    "allow": [
+      "Bash(git push:*)",
+      "Bash(gh pr create:*)",
+      "Bash(gh pr edit:*)",
+      "Bash(gh pr view:*)",
+      "Bash(gh pr checks:*)",
+      "Bash(gh pr merge:*)"
+    ],
     "deny": [
       "Read(./.env)",
       "Read(./.env.local)",
@@ -9,7 +17,6 @@
       "Read(~/.cache/huggingface/token)"
     ],
     "ask": [
-      "Bash(git push:*)",
       "Bash(uv run python scripts/download_models.py:*)"
     ]
   }
