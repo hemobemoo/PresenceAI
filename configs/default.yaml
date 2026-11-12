@@ -1,0 +1,22 @@
+# PresenceAI defaults, read by src/presenceai/settings.py.
+# Values marked "ADR pending" come from the plan and still need an ADR in docs/adr/.
+# null = a human decision is pending (AGENTS.md rule 7). Secrets never go in this file.
+
+runtime: local        # local | space | offline (configs/runtime/, FINAL_02 §6)
+profile: standard     # lite | standard | space (configs/profiles/, FINAL_03 §9) — ADR pending
+language: en          # en | ar (FINAL_04 §5)
+
+features:
+  camera_enabled: true          # vision is optional; camera-off is fully supported (FINAL_04 §4)
+  live_prompts_enabled: true    # users can turn prompts off (FINAL_05 §6)
+  ai_wording_enabled: false     # OpenRouter used only when the user enables it (AGENTS.md rule 2)
+  keep_raw_media: false         # consent switch (c), FINAL_11 §3
+
+retention:
+  raw_media_days: 30            # source: FINAL_11 §3 — ADR pending
+  study_media_max_days: 60      # source: FINAL_11 §3 — ADR pending
+
+expressions:                    # FINAL_04 §4.3 — thresholds set from calibration data
+  baseline_delta: null          # TODO(ADR): δ above the user's neutral baseline
+  min_duration_s: null          # TODO(ADR): plan suggests ≥ 0.5 s
+  eyes_closed_min_s: null       # TODO(ADR): plan suggests ≥ 0.4 s

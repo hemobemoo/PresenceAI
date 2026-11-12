@@ -27,6 +27,7 @@ data/*
 !data/README.md
 models/*
 !models/MANIFEST.json
+!models/README.md
 *.wav
 *.mp3
 *.mp4

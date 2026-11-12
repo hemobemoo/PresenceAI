@@ -1,0 +1,73 @@
+[project]
+name = "presenceai"
+version = "0.1.0"
+description = "Adaptive, privacy-preserving presentation and communication coach."
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
+authors = [
+    { name = "Ibrahim Melhem", email = "ibrahimmelhem2005@gmail.com" }
+]
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "pydantic>=2.14.3",
+    "pydantic-settings>=2.16.2",
+    "pyyaml>=6.0.3",
+    "typer>=0.29.1",
+]
+
+[project.scripts]
+presenceai = "presenceai.cli:app"
+
+[build-system]
+requires = ["uv_build>=0.13.7,<0.14.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "hypothesis>=6.170.15",
+    "pre-commit>=4.7.0",
+    "pyright>=1.1.414",
+    "pytest>=9.2.0",
+    "pytest-cov>=7.1.0",
+    "ruff>=0.17.4",
+    "types-pyyaml>=6.0.12.20261111",
+]
+
+[tool.uv.build-backend]
+module-name = "presenceai"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+extend-exclude = [
+    "notebooks",
+    ".specify",
+    ".serena",
+    "scripts/check_setup.py",  # starter-kit file, kept unchanged
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF", "S"]
+# Arabic letters in strings and comments are intentional (bilingual app), not confusables.
+ignore = ["RUF001", "RUF002", "RUF003"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101"]
+"src/presenceai/**/__init__.py" = ["E501"]  # one-line package docstrings from the plan
+
+[tool.pyright]
+pythonVersion = "3.12"
+typeCheckingMode = "standard"
+include = ["src", "tests", "scripts"]
+venvPath = "."
+venv = ".venv"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--strict-markers --import-mode=importlib"
+markers = [
+    "slow: long-running tests, skipped in the fast suite",
+    "needs_models: needs downloaded model weights",
+    "needs_network: needs network access",
+]

@@ -1,0 +1,13 @@
+app:
+  title: "PresenceAI"
+  tagline: "Practise presentations and see observable, evidence-based feedback."
+consent:
+  heading: "Consent"
+  subheading: "Choose what PresenceAI may do. You can change these at any time."
+  switches:
+    use_app: "Use the app"
+    camera: "Use the camera"
+    keep_recordings: "Keep encrypted recordings temporarily"
+    hosted_ai: "Send transcript text to a hosted AI model for wording"
+    study_rating: "Study only: blind rating of my recordings"
+    study_release: "Study only: release of de-identified derived metrics"

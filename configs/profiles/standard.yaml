@@ -1,0 +1,4 @@
+# Hardware profile "standard": 16 GB RAM, CPU (FINAL_03 §9) — ADR pending
+asr: {model: turbo, compute_type: int8, device: cpu}
+vision: {pose_model: full, face: true, target_fps: 10}
+llm_chain: [openrouter, coach_slm, templates]

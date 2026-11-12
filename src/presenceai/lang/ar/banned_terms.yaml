@@ -1,0 +1,50 @@
+# Banned inference terms (Arabic). Seed list from docs/plan/FINAL_11_ETHICS_PRIVACY.md §2;
+# needs review by a native speaker and grows in P7. Matching normalises diacritics, alef/ya/
+# ta-marbuta forms and strips common clitics (و ف ب ل ك ال) and suffixes, so list base forms.
+# Not banned on purpose: "ذكاء" (appears in "ذكاء اصطناعي"), "ثقة" alone (measurement confidence).
+terms:
+  emotion:
+    - عاطفة
+    - عاطفي
+    - مشاعر
+    - سعيد
+    - سعادة
+    - حزين
+    - حزن
+    - غاضب
+    - غضب
+    - متفاجئ
+    - مندهش
+    - متوتر
+    - توتر
+    - قلق
+    - ملل
+    - مرتبك
+    - ارتباك
+    - محرج
+    - خجل
+    - خجول
+    - متحمس
+    - حماس
+    - خائف
+    - خوف
+    - منزعج
+    - هادئ
+  mood_attitude:
+    - مزاج
+    - موقف سلبي
+    - عدم اهتمام
+  traits:
+    - شخصيتك
+    - صادق
+    - كاذب
+    - كذب
+    - ذكي
+    - غبي
+    - واثق
+    - الثقة بالنفس
+    - كاريزما
+    - قابل للتوظيف
+    - انطوائي
+  voice_inference:
+    - غير متأكد

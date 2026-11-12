@@ -1,0 +1,4 @@
+# Hardware profile "space": ZeroGPU Space (FINAL_03 §9) — ADR pending
+asr: {model: turbo, compute_type: null, device: zerogpu}   # TODO(ADR): compute type confirmed in spike S2
+vision: {pose_model: lite, face: true, target_fps: 8}
+llm_chain: [openrouter, templates]

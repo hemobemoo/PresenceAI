@@ -1,0 +1,6 @@
+# Runtime "local" (default), FINAL_02 §6
+db: sqlite
+media_store: local_encrypted
+asr_device: cpu_int8
+llm_chain: [openrouter, coach_slm, templates]
+turn: none
