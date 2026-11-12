@@ -1,0 +1,84 @@
+# Banned inference terms (English). Seed list from docs/plan/FINAL_11_ETHICS_PRIVACY.md §2;
+# grows to ~150 terms in P7 (coach/guardrails.py). Matching is whole-word, case-insensitive;
+# list inflections explicitly. Bare "confidence" is NOT banned: every Measurement carries a
+# confidence level. The trait forms ("confident", "self-confidence", ...) are banned.
+terms:
+  emotion:
+    - emotion
+    - emotions
+    - emotional
+    - emotionally
+    - happy
+    - happiness
+    - unhappy
+    - sad
+    - sadness
+    - angry
+    - anger
+    - surprised
+    - nervous
+    - nervously
+    - nervousness
+    - anxious
+    - anxiety
+    - bored
+    - boredom
+    - excited
+    - excitement
+    - embarrassed
+    - embarrassment
+    - ashamed
+    - afraid
+    - scared
+    - fearful
+    - frustrated
+    - upset
+    - calm
+    - tense
+    - stressed
+    - enthusiastic
+    - passionate
+  mood_attitude:
+    - mood
+    - attitude
+    - engagement level
+    - lack of interest
+    - disinterested
+    - uninterested
+  traits:
+    - personality
+    - honest
+    - honesty
+    - dishonest
+    - dishonesty
+    - lying
+    - liar
+    - sincere
+    - insincere
+    - trustworthy
+    - intelligent
+    - intelligence
+    - unintelligent
+    - stupid
+    - confident
+    - unconfident
+    - self-confidence
+    - self-confident
+    - lack of confidence
+    - lacks confidence
+    - insecure
+    - charisma
+    - charismatic
+    - hireable
+    - hirable
+    - hireability
+    - employable
+    - shy
+    - introverted
+    - extroverted
+  voice_inference:
+    - sounds nervous
+    - sounded nervous
+    - sounds unsure
+    - sounded unsure
+    - unsure

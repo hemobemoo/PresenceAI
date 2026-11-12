@@ -1,0 +1,14 @@
+# Draft translation — needs review by a native speaker.
+app:
+  title: "PresenceAI"
+  tagline: "تدرّب على العروض التقديمية واحصل على ملاحظات قابلة للملاحظة ومدعومة بالأدلة."
+consent:
+  heading: "الموافقة"
+  subheading: "اختر ما يُسمح لـ PresenceAI بفعله. يمكنك تغيير ذلك في أي وقت."
+  switches:
+    use_app: "استخدام التطبيق"
+    camera: "استخدام الكاميرا"
+    keep_recordings: "الاحتفاظ بالتسجيلات المشفّرة مؤقتًا"
+    hosted_ai: "إرسال نص التفريغ إلى نموذج ذكاء اصطناعي مستضاف لصياغة الملاحظات"
+    study_rating: "للدراسة فقط: تقييم أعمى لتسجيلاتي"
+    study_release: "للدراسة فقط: نشر مقاييس مشتقة مجهولة الهوية"
