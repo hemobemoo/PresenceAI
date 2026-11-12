@@ -30,7 +30,7 @@ jobs:
         run: uv run pyright
 
       - name: Tests (fast)
-        run: uv run pytest -m "not slow and not needs_models and not needs_network"
+        run: uv run pytest -m "not slow and not needs_models and not needs_network and not needs_browser"
 
       - name: Licence check
         run: uv run python scripts/check_licenses.py

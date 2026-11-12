@@ -9,7 +9,7 @@ metadata: `License-Expression`, `License` and `License ::` classifiers.
 
     FAIL  GPL / AGPL (exit code 1)
     WARN  LGPL, dual licences that include GPL, or no licence metadata (review by hand)
-    OK    everything else
+    OK    everything else, and LGPL packages in LGPL_ALLOWED (reviewed, with a reason)
 
 Uses only the standard library.
 """
@@ -24,6 +24,16 @@ from importlib import metadata
 
 ROOT_DIST = "presenceai"
 OK, WARN, FAIL = "OK", "WARN", "FAIL"
+
+# LGPL dependencies the project owner has reviewed and accepted (listed in NOTICE).
+# LGPL is allowed; GPL and AGPL stay blocked whatever this list says.
+LGPL_ALLOWED: dict[str, str] = {
+    "soxr": (
+        "LGPL-2.1-or-later, used unmodified as a separately installed library "
+        "(via fastrtc -> librosa), which is compatible with Apache-2.0; accepted by the "
+        "owner on 2026-11-12, see NOTICE"
+    ),
+}
 
 _REQ_NAME = re.compile(r"^\s*([A-Za-z0-9][A-Za-z0-9._-]*)")
 _EXTRA_MARKER = re.compile(r"""\bextra\s*==""")
@@ -112,13 +122,16 @@ def check(
     results: list[Result] = []
     for name, meta in sorted(runtime_closure(root, lookup).items()):
         texts = licence_texts(meta)
+        licence = "; ".join(texts) or "(no licence metadata)"
+        status = classify(texts)
+        # The allow-list only turns a pure-LGPL WARN into OK. GPL/AGPL (classified FAIL),
+        # dual licences with GPL and missing metadata are never covered by it.
+        lgpl_only = status == WARN and any(_LGPL.search(t.upper()) for t in texts)
+        if lgpl_only and name in LGPL_ALLOWED:
+            status = OK
+            licence = f"{licence} [allowed: {LGPL_ALLOWED[name]}]"
         results.append(
-            Result(
-                name=name,
-                version=meta.get("Version") or "?",
-                licence="; ".join(texts) or "(no licence metadata)",
-                status=classify(texts),
-            )
+            Result(name=name, version=meta.get("Version") or "?", licence=licence, status=status)
         )
     return results
 

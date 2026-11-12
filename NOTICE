@@ -6,3 +6,13 @@ This product is licensed under the Apache License, Version 2.0 (see LICENSE).
 Rubric and knowledge-base material in resources/ that derives from
 CC BY-NC-SA sources is licensed separately under CC BY-NC-SA 4.0, with
 attribution recorded next to each file (docs/plan/FINAL_03_TECH_STACK.md section 10).
+
+Third-party components under the GNU Lesser General Public License
+-------------------------------------------------------------------
+soxr (python-soxr, https://github.com/dofuuz/python-soxr), version 1.1.0,
+licensed under LGPL-2.1-or-later. It is a runtime dependency of librosa,
+which FastRTC depends on. PresenceAI does not modify it and does not bundle
+it: it is installed as a separate Python package and can be replaced by the
+user. Its source code is available at the address above. The project's
+licence checker (scripts/check_licenses.py) allows it by name; GPL and AGPL
+dependencies remain blocked.

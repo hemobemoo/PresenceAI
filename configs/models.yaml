@@ -11,11 +11,15 @@ vision:
   face_landmarker:
     url: https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/latest/face_landmarker.task
     licence: Apache-2.0
-    digest: null
+    digest: 64184e229b263107bc2b804c6625db1341ff2bb731874b0bcc2fe6544e0bc9ff   # SHA-256, pinned 2026-11-12
   pose_landmarker_full:
     url: https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/latest/pose_landmarker_full.task
     licence: Apache-2.0
-    digest: null
+    digest: 4eaa5eb7a98365221087693fcc286334cf0858e2eb6e15b506aa4a7ecdcec4ad   # SHA-256, pinned 2026-11-12
+  pose_landmarker_lite:   # FINAL_03 §9 lite profile; URL follows Google's documented "latest" pattern
+    url: https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/latest/pose_landmarker_lite.task
+    licence: Apache-2.0
+    digest: 59929e1d1ee95287735ddd833b19cf4ac46d29bc7afddbbf6753c459690d574a   # SHA-256, pinned 2026-11-12
   gaze_zone_t3: {id: null, licence: null, digest: null}   # TODO: after T3
 embeddings:
   default: {id: unsloth/embeddinggemma-300m-GGUF, licence: Gemma Terms of Use, digest: null}

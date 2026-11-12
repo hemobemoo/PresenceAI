@@ -10,6 +10,11 @@ authors = [
 ]
 requires-python = ">=3.12,<3.13"
 dependencies = [
+    "fastrtc>=0.0.34",
+    "gradio>=5.23.1",
+    "mediapipe>=1.2.3",
+    "numpy>=2.5.4",
+    "psutil>=7.2.2",
     "pydantic>=2.14.3",
     "pydantic-settings>=2.16.2",
     "pyyaml>=6.0.3",
@@ -26,6 +31,7 @@ build-backend = "uv_build"
 [dependency-groups]
 dev = [
     "hypothesis>=6.170.15",
+    "playwright>=1.65.1",
     "pre-commit>=4.7.0",
     "pyright>=1.1.414",
     "pytest>=9.2.0",
@@ -59,7 +65,7 @@ ignore = ["RUF001", "RUF002", "RUF003"]
 [tool.pyright]
 pythonVersion = "3.12"
 typeCheckingMode = "standard"
-include = ["src", "tests", "scripts"]
+include = ["src", "tests", "scripts", "experiments"]
 venvPath = "."
 venv = ".venv"
 
@@ -70,4 +76,5 @@ markers = [
     "slow: long-running tests, skipped in the fast suite",
     "needs_models: needs downloaded model weights",
     "needs_network: needs network access",
+    "needs_browser: needs Playwright Chromium (uv run playwright install chromium)",
 ]

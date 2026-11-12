@@ -1,0 +1,28 @@
+# Spike S1 (live capture) measurement settings. Pass thresholds are NOT here: they are read
+# from configs/live.yaml (video.min_fps, latency_budget_ms). Rule recorded in docs/adr/0002.
+
+warmup_s: 5                # first seconds of each transport run, excluded from statistics
+min_share_fps_ok: 0.95     # PASS needs processed fps >= min_fps in this share of post-warm-up seconds
+meter_interval_ms: 100     # how often the server publishes a meter value
+process_every: 1           # process every Nth received video frame (stand-in for landmarks)
+process_size: [640, 360]   # frames are downscaled to this before processing (FINAL_02 §3.1)
+echo_size: [160, 90]       # FastRTC send-receive return frame, kept small to limit load
+fallback_stream_every_s: 0.1
+time_limit_s: 600
+track_constraints:
+  width: 640
+  height: 360
+  frameRate: 30
+
+# Landmark follow-up (ADR 0002). With --landmarks other than none, frames go to the landmark
+# worker by time, not by count: a frame is taken when 1/target_fps has passed since the last one.
+# A 30 fps camera gives about every 2nd frame (~15 fps, the owner's choice of 2026-11-13); a
+# camera at or below the target, e.g. 15 fps in low light or the 10 fps fallback, gives every
+# frame. tolerance: fraction of the interval a frame may arrive early and still be taken, so
+# arrival jitter does not turn "every 2nd" into "every 3rd". --process-every N overrides this.
+landmark_target_fps: 15
+landmark_sampling_tolerance: 0.25
+# FastRTC sender parameters. maintain-resolution addresses the pixelation seen in the first
+# real run: the browser drops frame rate instead of resolution when bandwidth is short.
+rtp_params:
+  degradationPreference: maintain-resolution
