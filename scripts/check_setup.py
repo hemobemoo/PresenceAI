@@ -24,6 +24,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 OK, WARN, FAIL = "OK  ", "WARN", "FAIL"
 results: list[tuple[str, str, str]] = []
+OPENROUTER_OPTIONAL = ["OPENROUTER_MODEL", "OPENROUTER_FALLBACK_MODELS"]
+OPENROUTER_KNOWN = {"OPENROUTER_API_KEY", *OPENROUTER_OPTIONAL}
 
 
 def record(status: str, item: str, detail: str = "") -> None:
@@ -97,9 +99,19 @@ def check_files_and_env() -> dict[str, str]:
     record(OK if (ROOT / ".env").exists() else FAIL, "file: .env", "" if env else "missing or empty")
     for key in ["OPENROUTER_API_KEY", "MEDIA_KEY", "HF_TOKEN"]:
         record(OK if env.get(key) else FAIL, f".env: {key}", "set" if env.get(key) else "empty")
-    for key in ["OPENROUTER_MODEL"]:
-        record(OK if env.get(key) else WARN, f".env: {key}",
-               "set" if env.get(key) else "empty (chosen in spike S4)")
+    # Model ids live in configs/models.yaml (llm.openrouter); these two are optional overrides
+    # (ADR 0003). Only names and set/empty are reported, never values.
+    for key in OPENROUTER_OPTIONAL:
+        record(OK, f".env: {key}",
+               "set (overrides configs/models.yaml)" if env.get(key)
+               else "empty (configs/models.yaml is used)")
+    unknown = sorted(k for k in env
+                     if k.upper().startswith("OPENROUTER") and k not in OPENROUTER_KNOWN)
+    for key in unknown:
+        hint = next((k for k in OPENROUTER_KNOWN if k == key.upper()), None)
+        record(WARN, f".env: {key}",
+               f"unknown name; did you mean {hint}?" if hint
+               else f"unknown name; expected one of {', '.join(sorted(OPENROUTER_KNOWN))}")
 
     mk = env.get("MEDIA_KEY", "")
     if mk:
