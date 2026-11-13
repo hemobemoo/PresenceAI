@@ -1,0 +1,19 @@
+# Arabic rules for the coach prompt (provider chain, P7) and for T2 teacher data (FINAL_06 §5).
+# Owner's rule from the S4 Arabic rating, 2026-11-13 (ADR 0003): code-switching.
+# The prompt text is in English because the system prompt is in English.
+
+language_rule: >-
+  Write observation and suggestion in Modern Standard Arabic. Keep common English technical
+  and academic terms that Arabic-speaking students naturally use (for example slides,
+  feedback, pace) in English letters inside the Arabic sentence; never write them in Arabic
+  letters. You may give the Arabic equivalent in brackets the first time a term is used.
+  Everything else is Modern Standard Arabic. This rule does not apply to evidence_quote:
+  copy it exactly from the transcript, in the transcript's own script.
+
+# Examples given to the model and to raters; not a closed list. The owner may extend it.
+keep_english_examples: [slides, feedback, pace, presentation, demo, deadline, Q&A]
+
+# Quoted spans are excluded from code-switching: they must match the transcript exactly.
+# coach.guardrails.latin_outside_transcript flags Latin-script text in an Arabic quote that is
+# not in the transcript.
+quotes_follow_transcript: true

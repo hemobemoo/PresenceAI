@@ -1,0 +1,8 @@
+# English rules for the coach prompt (provider chain, P7) and for T2 teacher data (FINAL_06 §5).
+
+language_rule: >-
+  Write observation and suggestion in plain English. Copy evidence_quote exactly from the
+  transcript.
+
+keep_english_examples: []
+quotes_follow_transcript: true

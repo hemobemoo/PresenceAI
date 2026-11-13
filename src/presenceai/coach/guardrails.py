@@ -1,5 +1,9 @@
 """Guardrails on generated text: block emotion, mood and trait inference (FINAL_11 §2).
 
+Also checks Arabic evidence quotes for Latin-script text that is not in the transcript
+(`latin_outside_transcript`, ADR 0003). Code-switching to English terms is allowed in the
+coach's own Arabic wording, never inside a quote.
+
 P0 provides the banned-term lists (``lang/<lang>/banned_terms.yaml``) and
 `contains_banned_term`. Regeneration and template fallback come in P7.
 
@@ -15,6 +19,7 @@ from functools import cache
 
 from presenceai.lang import LANGUAGES, Language, load_pack_file
 
+_LATIN_TOKEN = re.compile(r"[A-Za-z]+")
 _EN_TOKEN = re.compile(r"[a-z]+(?:['-][a-z]+)*")
 _AR_TOKEN = re.compile(r"[ء-ي]+")
 _AR_DIACRITICS = re.compile(r"[ً-ْٰـ]")  # harakat, superscript alef, tatweel
@@ -88,3 +93,13 @@ def contains_banned_term(text: str, lang: Language) -> bool:
             if all(seq[j] in cands[i + j] for j in range(n)):
                 return True
     return False
+
+
+def latin_outside_transcript(quote: str, transcript: str) -> tuple[str, ...]:
+    """Latin-script words in an Arabic `quote` that do not occur in `transcript` (ignoring case).
+
+    A non-empty result means the quote was not copied from the transcript, for example a
+    model mixing English fragments into an Arabic quote. Empty means no such text.
+    """
+    present = {t.casefold() for t in _LATIN_TOKEN.findall(transcript)}
+    return tuple(t for t in _LATIN_TOKEN.findall(quote) if t.casefold() not in present)
