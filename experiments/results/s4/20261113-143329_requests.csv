@@ -1,0 +1,246 @@
+run_id,model,lang,prompt_id,attempts,http_status,error,provider,finish_reason,latency_ms,prompt_tokens,completion_tokens,strict_json,json_valid,schema_error,n_items,n_quotes,n_quotes_found,numbers_ok,banned_term
+20261113-143329,nvidia/nemotron-3.5-super-vl:free,en,en01,1,200,,Nvidia,stop,18627.9,336,2786,True,True,,3,3,3,False,False
+20261113-143329,google/gemma-4-31b-it:free,en,en01,2,429,Provider returned error,,,818.5,,,False,False,,,0,0,,False
+20261113-143329,thinkingmachines/inkling-2-small:free,en,en01,1,403,thinkingmachines/inkling-2-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps,,,246.0,,,False,False,,,0,0,,False
+20261113-143329,recursive/flint-v1.0:free,en,en01,1,200,,Recursive,stop,21679.1,310,2462,True,True,,3,3,3,False,False
+20261113-143329,dots-studio/dots-3-note-preview:free,en,en01,1,200,,AtlasCloud,length,50725.8,323,4096,False,False,empty content,0,0,0,,False
+20261113-143329,liquid/lfm-3-1.7b:free,en,en01,1,200,,Liquid,length,21835.0,335,4096,False,False,empty content,0,0,0,,False
+20261113-143329,nvidia/nemotron-3-ultra-550b-a55b:free,en,en01,1,200,,Nvidia,stop,27225.5,336,1114,True,True,,3,3,3,False,False
+20261113-143329,nvidia/nemotron-3.5-super-vl:free,en,en02,1,200,,Nvidia,stop,10540.8,314,1929,True,True,,3,3,3,False,False
+20261113-143329,google/gemma-4-31b-it:free,en,en02,2,429,Provider returned error,,,543.5,,,False,False,,,0,0,,False
+20261113-143329,thinkingmachines/inkling-2-small:free,en,en02,1,403,thinkingmachines/inkling-2-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps,,,264.4,,,False,False,,,0,0,,False
+20261113-143329,recursive/flint-v1.0:free,en,en02,1,200,,Recursive,stop,24672.9,287,3470,True,True,,3,3,3,False,False
+20261113-143329,dots-studio/dots-3-note-preview:free,en,en02,1,200,,AtlasCloud,length,50718.4,300,4096,False,False,empty content,0,0,0,,False
+20261113-143329,liquid/lfm-3-1.7b:free,en,en02,1,200,,Liquid,length,17623.3,312,4096,False,False,empty content,0,0,0,,False
+20261113-143329,nvidia/nemotron-3-ultra-550b-a55b:free,en,en02,1,200,,Nvidia,stop,22944.7,314,1177,True,True,,3,3,3,False,False
+20261113-143329,nvidia/nemotron-3.5-super-vl:free,en,en03,1,200,,Nvidia,stop,20557.5,345,3068,True,True,,3,3,3,False,False
+20261113-143329,google/gemma-4-31b-it:free,en,en03,2,429,Provider returned error,,,558.7,,,False,False,,,0,0,,False
+20261113-143329,thinkingmachines/inkling-2-small:free,en,en03,1,403,thinkingmachines/inkling-2-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps,,,281.0,,,False,False,,,0,0,,False
+20261113-143329,recursive/flint-v1.0:free,en,en03,1,200,,Recursive,length,24423.3,318,4096,False,False,empty content,0,0,0,,False
+20261113-143329,dots-studio/dots-3-note-preview:free,en,en03,1,200,,AtlasCloud,length,51282.2,331,4096,False,False,empty content,0,0,0,,False
+20261113-143329,liquid/lfm-3-1.7b:free,en,en03,1,200,,Liquid,length,18230.9,345,4096,False,False,empty content,0,0,0,,False
+20261113-143329,nvidia/nemotron-3-ultra-550b-a55b:free,en,en03,1,200,,Nvidia,stop,25942.8,345,1591,True,True,,3,3,3,False,False
+20261113-143329,nvidia/nemotron-3.5-super-vl:free,en,en04,1,200,,Nvidia,stop,16139.4,297,2642,True,True,,3,3,3,False,False
+20261113-143329,google/gemma-4-31b-it:free,en,en04,2,429,Provider returned error,,,786.1,,,False,False,,,0,0,,False
+20261113-143329,thinkingmachines/inkling-2-small:free,en,en04,1,403,thinkingmachines/inkling-2-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps,,,333.2,,,False,False,,,0,0,,False
+20261113-143329,recursive/flint-v1.0:free,en,en04,1,200,,Recursive,stop,13469.0,270,1966,True,True,,3,3,3,True,False
+20261113-143329,dots-studio/dots-3-note-preview:free,en,en04,1,200,,AtlasCloud,length,50443.9,283,4096,False,False,empty content,0,0,0,,False
+20261113-143329,liquid/lfm-3-1.7b:free,en,en04,1,200,,Liquid,length,18853.7,295,4096,False,False,empty content,0,0,0,,False
+20261113-143329,nvidia/nemotron-3-ultra-550b-a55b:free,en,en04,1,200,,Nvidia,stop,24136.0,297,1464,True,True,,3,3,3,False,False
+20261113-143329,nvidia/nemotron-3.5-super-vl:free,en,en05,1,200,,Nvidia,stop,11297.3,320,1807,True,True,,3,3,3,False,False
+20261113-143329,google/gemma-4-31b-it:free,en,en05,2,429,Provider returned error,,,773.1,,,False,False,,,0,0,,False
+20261113-143329,thinkingmachines/inkling-2-small:free,en,en05,1,403,thinkingmachines/inkling-2-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps,,,414.0,,,False,False,,,0,0,,False
+20261113-143329,recursive/flint-v1.0:free,en,en05,1,200,,Recursive,stop,14623.5,294,2456,True,True,,3,3,3,False,False
+20261113-143329,dots-studio/dots-3-note-preview:free,en,en05,1,200,,AtlasCloud,length,54421.9,307,4096,False,False,empty content,0,0,0,,False
+20261113-143329,liquid/lfm-3-1.7b:free,en,en05,1,200,,Liquid,length,21664.7,320,4096,False,False,empty content,0,0,0,,False
+20261113-143329,nvidia/nemotron-3-ultra-550b-a55b:free,en,en05,1,200,,Nvidia,stop,66922.2,320,1385,True,True,,3,3,3,False,False
+20261113-143329,nvidia/nemotron-3.5-super-vl:free,en,en06,1,200,,Nvidia,stop,22702.4,326,2938,True,True,,3,3,3,False,False
+20261113-143329,google/gemma-4-31b-it:free,en,en06,2,429,Provider returned error,,,950.3,,,False,False,,,0,0,,False
+20261113-143329,thinkingmachines/inkling-2-small:free,en,en06,1,403,thinkingmachines/inkling-2-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps,,,343.3,,,False,False,,,0,0,,False
+20261113-143329,recursive/flint-v1.0:free,en,en06,1,200,,Recursive,stop,20826.4,299,2741,True,True,,3,3,3,False,False
+20261113-143329,dots-studio/dots-3-note-preview:free,en,en06,1,200,,AtlasCloud,length,47175.5,312,4096,False,False,empty content,0,0,0,,False
+20261113-143329,liquid/lfm-3-1.7b:free,en,en06,1,200,,Liquid,length,21181.5,326,4096,False,False,empty content,0,0,0,,False
+20261113-143329,nvidia/nemotron-3-ultra-550b-a55b:free,en,en06,1,200,,Nvidia,stop,56022.1,326,1208,True,True,,3,3,3,False,False
+20261113-143329,nvidia/nemotron-3.5-super-vl:free,en,en07,1,200,,Nvidia,stop,46082.3,326,2864,True,True,,3,3,3,True,False
+20261113-143329,google/gemma-4-31b-it:free,en,en07,2,429,Provider returned error,,,650.6,,,False,False,,,0,0,,False
+20261113-143329,thinkingmachines/inkling-2-small:free,en,en07,1,403,thinkingmachines/inkling-2-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps,,,278.0,,,False,False,,,0,0,,False
+20261113-143329,recursive/flint-v1.0:free,en,en07,1,200,,Recursive,stop,23082.1,296,3903,True,True,,3,3,3,False,False
+20261113-143329,dots-studio/dots-3-note-preview:free,en,en07,1,200,,AtlasCloud,length,51608.0,311,4096,False,False,empty content,0,0,0,,False
+20261113-143329,liquid/lfm-3-1.7b:free,en,en07,1,200,,Liquid,length,19368.4,324,4096,False,False,empty content,0,0,0,,False
+20261113-143329,nvidia/nemotron-3-ultra-550b-a55b:free,en,en07,1,200,,Nvidia,stop,27193.4,326,1307,True,True,,3,3,3,False,False
+20261113-143329,nvidia/nemotron-3.5-super-vl:free,en,en08,1,200,,Nvidia,stop,19845.4,331,2615,True,True,,3,3,3,True,False
+20261113-143329,google/gemma-4-31b-it:free,en,en08,2,429,Provider returned error,,,611.5,,,False,False,,,0,0,,False
+20261113-143329,thinkingmachines/inkling-2-small:free,en,en08,1,403,thinkingmachines/inkling-2-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps,,,242.0,,,False,False,,,0,0,,False
+20261113-143329,recursive/flint-v1.0:free,en,en08,1,200,,Recursive,stop,14778.6,302,2356,True,True,,3,3,3,False,False
+20261113-143329,dots-studio/dots-3-note-preview:free,en,en08,1,200,,AtlasCloud,length,53179.1,317,4096,False,False,empty content,0,0,0,,False
+20261113-143329,liquid/lfm-3-1.7b:free,en,en08,1,200,,Liquid,length,18519.5,328,4096,False,False,empty content,0,0,0,,False
+20261113-143329,nvidia/nemotron-3-ultra-550b-a55b:free,en,en08,1,200,,Nvidia,stop,20305.1,331,1333,True,True,,3,3,3,False,False
+20261113-143329,nvidia/nemotron-3.5-super-vl:free,en,en09,1,200,,Nvidia,stop,17953.5,337,2880,True,True,,3,3,3,False,False
+20261113-143329,google/gemma-4-31b-it:free,en,en09,2,429,Provider returned error,,,585.5,,,False,False,,,0,0,,False
+20261113-143329,thinkingmachines/inkling-2-small:free,en,en09,1,403,thinkingmachines/inkling-2-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps,,,331.0,,,False,False,,,0,0,,False
+20261113-143329,recursive/flint-v1.0:free,en,en09,1,200,,Recursive,length,34748.7,308,4096,False,False,empty content,0,0,0,,False
+20261113-143329,dots-studio/dots-3-note-preview:free,en,en09,1,200,,AtlasCloud,stop,34410.3,323,3038,True,True,,3,3,3,False,False
+20261113-143329,liquid/lfm-3-1.7b:free,en,en09,1,200,,Liquid,length,21143.4,337,4096,False,False,empty content,0,0,0,,False
+20261113-143329,nvidia/nemotron-3-ultra-550b-a55b:free,en,en09,1,200,,Nvidia,stop,43471.6,337,2858,True,True,,3,3,3,False,False
+20261113-143329,nvidia/nemotron-3.5-super-vl:free,en,en10,1,200,,Nvidia,stop,19863.9,315,3096,True,True,,3,3,3,False,False
+20261113-143329,google/gemma-4-31b-it:free,en,en10,2,429,Provider returned error,,,621.4,,,False,False,,,0,0,,False
+20261113-143329,thinkingmachines/inkling-2-small:free,en,en10,1,403,thinkingmachines/inkling-2-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps,,,437.1,,,False,False,,,0,0,,False
+20261113-143329,recursive/flint-v1.0:free,en,en10,1,200,,Recursive,stop,26220.8,288,3716,True,True,,3,3,3,False,False
+20261113-143329,dots-studio/dots-3-note-preview:free,en,en10,1,200,,AtlasCloud,length,52157.4,301,4096,False,False,empty content,0,0,0,,False
+20261113-143329,liquid/lfm-3-1.7b:free,en,en10,1,200,,Liquid,length,16133.1,315,4096,False,False,empty content,0,0,0,,False
+20261113-143329,nvidia/nemotron-3-ultra-550b-a55b:free,en,en10,1,200,,Nvidia,stop,36769.5,315,1009,True,True,,3,3,3,False,False
+20261113-143329,nvidia/nemotron-3.5-super-vl:free,en,en11,1,200,,Nvidia,stop,19298.1,341,2608,True,True,,3,3,3,True,False
+20261113-143329,google/gemma-4-31b-it:free,en,en11,2,429,Provider returned error,,,465.2,,,False,False,,,0,0,,False
+20261113-143329,thinkingmachines/inkling-2-small:free,en,en11,1,403,thinkingmachines/inkling-2-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps,,,326.5,,,False,False,,,0,0,,False
+20261113-143329,recursive/flint-v1.0:free,en,en11,1,200,,Recursive,stop,16053.5,314,2627,True,True,,3,3,3,False,False
+20261113-143329,dots-studio/dots-3-note-preview:free,en,en11,1,200,,AtlasCloud,stop,40184.0,328,3548,True,True,,3,3,3,False,False
+20261113-143329,liquid/lfm-3-1.7b:free,en,en11,1,200,,Liquid,length,19266.2,342,4096,False,False,empty content,0,0,0,,False
+20261113-143329,nvidia/nemotron-3-ultra-550b-a55b:free,en,en11,1,200,,Nvidia,stop,29191.0,341,1651,True,True,,3,3,3,False,False
+20261113-143329,nvidia/nemotron-3.5-super-vl:free,en,en12,2,200,,Nvidia,stop,13855.3,311,2128,True,True,,3,3,3,False,False
+20261113-143329,google/gemma-4-31b-it:free,en,en12,2,429,Provider returned error,,,580.7,,,False,False,,,0,0,,False
+20261113-143329,thinkingmachines/inkling-2-small:free,en,en12,1,403,thinkingmachines/inkling-2-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps,,,256.6,,,False,False,,,0,0,,False
+20261113-143329,recursive/flint-v1.0:free,en,en12,1,200,,Recursive,stop,19091.4,283,2999,True,True,,3,3,3,False,False
+20261113-143329,dots-studio/dots-3-note-preview:free,en,en12,1,200,,AtlasCloud,length,51670.4,296,4096,False,False,empty content,0,0,0,,False
+20261113-143329,liquid/lfm-3-1.7b:free,en,en12,1,200,,Liquid,length,19132.8,309,4096,False,False,empty content,0,0,0,,False
+20261113-143329,nvidia/nemotron-3-ultra-550b-a55b:free,en,en12,1,200,,Nvidia,stop,31726.4,311,1319,True,True,,3,3,3,False,False
+20261113-143329,nvidia/nemotron-3.5-super-vl:free,en,en13,1,200,,Nvidia,stop,16029.1,326,2025,True,True,,3,3,3,False,False
+20261113-143329,google/gemma-4-31b-it:free,en,en13,2,429,Provider returned error,,,487.7,,,False,False,,,0,0,,False
+20261113-143329,thinkingmachines/inkling-2-small:free,en,en13,1,403,thinkingmachines/inkling-2-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps,,,263.4,,,False,False,,,0,0,,False
+20261113-143329,recursive/flint-v1.0:free,en,en13,1,200,,Recursive,stop,16956.3,300,1959,True,True,,3,3,3,False,False
+20261113-143329,dots-studio/dots-3-note-preview:free,en,en13,1,200,,AtlasCloud,stop,33404.2,313,3086,True,True,,3,3,3,True,False
+20261113-143329,liquid/lfm-3-1.7b:free,en,en13,1,200,,Liquid,length,19426.7,325,4096,False,False,empty content,0,0,0,,False
+20261113-143329,nvidia/nemotron-3-ultra-550b-a55b:free,en,en13,1,200,,Nvidia,stop,36473.4,326,1251,True,True,,3,3,3,False,False
+20261113-143329,nvidia/nemotron-3.5-super-vl:free,en,en14,1,200,,Nvidia,stop,19045.5,324,3211,True,True,,3,3,3,True,False
+20261113-143329,google/gemma-4-31b-it:free,en,en14,2,429,Provider returned error,,,427.6,,,False,False,,,0,0,,False
+20261113-143329,thinkingmachines/inkling-2-small:free,en,en14,1,403,thinkingmachines/inkling-2-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps,,,246.5,,,False,False,,,0,0,,False
+20261113-143329,recursive/flint-v1.0:free,en,en14,1,200,,Recursive,stop,28550.3,293,3126,True,True,,3,3,3,False,False
+20261113-143329,dots-studio/dots-3-note-preview:free,en,en14,1,200,,AtlasCloud,length,48102.8,307,4096,False,False,empty content,0,0,0,,False
+20261113-143329,liquid/lfm-3-1.7b:free,en,en14,1,200,,Liquid,length,20304.2,324,4096,False,False,empty content,0,0,0,,False
+20261113-143329,nvidia/nemotron-3-ultra-550b-a55b:free,en,en14,1,200,,Nvidia,stop,25098.6,324,1437,True,True,,3,3,3,False,False
+20261113-143329,nvidia/nemotron-3.5-super-vl:free,en,en15,1,200,,Nvidia,stop,20825.2,323,2239,True,True,,3,3,3,False,False
+20261113-143329,google/gemma-4-31b-it:free,en,en15,2,429,Provider returned error,,,743.4,,,False,False,,,0,0,,False
+20261113-143329,thinkingmachines/inkling-2-small:free,en,en15,1,403,thinkingmachines/inkling-2-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps,,,329.1,,,False,False,,,0,0,,False
+20261113-143329,recursive/flint-v1.0:free,en,en15,1,200,,Recursive,stop,21155.5,297,2616,True,True,,3,3,3,False,False
+20261113-143329,dots-studio/dots-3-note-preview:free,en,en15,1,200,,AtlasCloud,stop,32839.6,311,3052,True,True,,3,3,3,False,False
+20261113-143329,liquid/lfm-3-1.7b:free,en,en15,1,200,,Liquid,length,16071.8,324,4096,False,False,empty content,0,0,0,,False
+20261113-143329,nvidia/nemotron-3-ultra-550b-a55b:free,en,en15,1,200,,Nvidia,stop,20817.7,323,1226,True,True,,3,3,3,False,False
+20261113-143329,nvidia/nemotron-3.5-super-vl:free,en,en16,1,200,,Nvidia,stop,35512.2,318,2380,True,True,,3,3,3,False,False
+20261113-143329,google/gemma-4-31b-it:free,en,en16,2,429,Provider returned error,,,725.5,,,False,False,,,0,0,,False
+20261113-143329,thinkingmachines/inkling-2-small:free,en,en16,1,403,thinkingmachines/inkling-2-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps,,,248.2,,,False,False,,,0,0,,False
+20261113-143329,recursive/flint-v1.0:free,en,en16,1,200,,Recursive,stop,26147.9,292,3740,True,True,,3,3,3,False,False
+20261113-143329,dots-studio/dots-3-note-preview:free,en,en16,1,200,,AtlasCloud,stop,45671.6,305,3904,True,True,,3,3,3,False,False
+20261113-143329,liquid/lfm-3-1.7b:free,en,en16,1,200,,Liquid,length,20669.1,317,4096,False,False,empty content,0,0,0,,False
+20261113-143329,nvidia/nemotron-3-ultra-550b-a55b:free,en,en16,1,200,,Nvidia,stop,52802.4,318,1207,True,True,,3,3,3,False,False
+20261113-143329,nvidia/nemotron-3.5-super-vl:free,en,en17,1,200,,Nvidia,stop,18685.8,344,2591,True,True,,3,3,3,False,False
+20261113-143329,google/gemma-4-31b-it:free,en,en17,2,200,,Google AI Studio,stop,45335.9,330,1556,True,True,,3,3,3,False,False
+20261113-143329,thinkingmachines/inkling-2-small:free,en,en17,1,403,thinkingmachines/inkling-2-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps,,,307.8,,,False,False,,,0,0,,False
+20261113-143329,recursive/flint-v1.0:free,en,en17,1,200,,Recursive,length,24417.6,315,4096,False,False,empty content,0,0,0,,False
+20261113-143329,dots-studio/dots-3-note-preview:free,en,en17,1,200,,AtlasCloud,stop,27475.0,331,2437,True,True,,3,3,3,False,False
+20261113-143329,liquid/lfm-3-1.7b:free,en,en17,1,200,,Liquid,length,21470.3,344,4096,False,False,empty content,0,0,0,,False
+20261113-143329,nvidia/nemotron-3-ultra-550b-a55b:free,en,en17,1,200,,Nvidia,stop,18739.1,344,1161,True,True,,3,3,3,False,False
+20261113-143329,nvidia/nemotron-3.5-super-vl:free,en,en18,1,200,,Nvidia,stop,19730.3,316,2173,True,True,,3,3,3,False,False
+20261113-143329,google/gemma-4-31b-it:free,en,en18,2,429,Provider returned error,,,607.7,,,False,False,,,0,0,,False
+20261113-143329,thinkingmachines/inkling-2-small:free,en,en18,1,403,thinkingmachines/inkling-2-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps,,,299.6,,,False,False,,,0,0,,False
+20261113-143329,recursive/flint-v1.0:free,en,en18,1,200,,Recursive,stop,14544.8,289,2388,True,True,,3,3,3,False,False
+20261113-143329,dots-studio/dots-3-note-preview:free,en,en18,1,200,,AtlasCloud,stop,34459.3,302,3239,True,True,,3,3,3,False,False
+20261113-143329,liquid/lfm-3-1.7b:free,en,en18,1,200,,Liquid,length,19679.9,315,4096,False,False,empty content,0,0,0,,False
+20261113-143329,nvidia/nemotron-3-ultra-550b-a55b:free,en,en18,1,200,,Nvidia,stop,18248.2,316,920,True,True,,3,3,3,False,False
+20261113-143329,nvidia/nemotron-3.5-super-vl:free,en,en19,1,200,,Nvidia,stop,17538.4,310,2792,True,True,,3,3,3,False,False
+20261113-143329,google/gemma-4-31b-it:free,en,en19,2,429,Provider returned error,,,695.7,,,False,False,,,0,0,,False
+20261113-143329,thinkingmachines/inkling-2-small:free,en,en19,1,403,thinkingmachines/inkling-2-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps,,,422.2,,,False,False,,,0,0,,False
+20261113-143329,recursive/flint-v1.0:free,en,en19,1,200,,Recursive,length,27017.7,284,4096,False,False,empty content,0,0,0,,False
+20261113-143329,dots-studio/dots-3-note-preview:free,en,en19,1,200,,AtlasCloud,length,50019.8,297,4096,False,False,empty content,0,0,0,,False
+20261113-143329,liquid/lfm-3-1.7b:free,en,en19,1,200,,Liquid,length,26278.2,309,4096,False,False,empty content,0,0,0,,False
+20261113-143329,nvidia/nemotron-3-ultra-550b-a55b:free,en,en19,1,200,,Nvidia,stop,18415.4,310,882,True,True,,3,3,3,False,False
+20261113-143329,nvidia/nemotron-3.5-super-vl:free,en,en20,1,200,,Nvidia,stop,38282.5,322,2792,True,True,,3,3,3,True,False
+20261113-143329,google/gemma-4-31b-it:free,en,en20,2,429,Provider returned error,,,608.0,,,False,False,,,0,0,,False
+20261113-143329,thinkingmachines/inkling-2-small:free,en,en20,1,403,thinkingmachines/inkling-2-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps,,,350.5,,,False,False,,,0,0,,False
+20261113-143329,recursive/flint-v1.0:free,en,en20,1,200,,Recursive,stop,22576.2,295,2635,True,True,,3,3,3,False,False
+20261113-143329,dots-studio/dots-3-note-preview:free,en,en20,1,200,,AtlasCloud,stop,40952.8,308,3707,True,True,,3,3,3,False,False
+20261113-143329,liquid/lfm-3-1.7b:free,en,en20,1,200,,Liquid,length,22283.2,321,4096,False,False,empty content,0,0,0,,False
+20261113-143329,nvidia/nemotron-3-ultra-550b-a55b:free,en,en20,1,200,,Nvidia,stop,45274.2,322,1697,True,True,,3,3,3,False,False
+20261113-143329,nvidia/nemotron-3.5-super-vl:free,en,en21,1,200,,Nvidia,stop,30234.3,308,1875,True,True,,3,3,3,False,False
+20261113-143329,google/gemma-4-31b-it:free,en,en21,2,429,Provider returned error,,,557.1,,,False,False,,,0,0,,False
+20261113-143329,thinkingmachines/inkling-2-small:free,en,en21,1,403,thinkingmachines/inkling-2-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps,,,552.2,,,False,False,,,0,0,,False
+20261113-143329,recursive/flint-v1.0:free,en,en21,1,200,,Recursive,stop,18474.6,281,2508,True,True,,3,3,3,False,False
+20261113-143329,dots-studio/dots-3-note-preview:free,en,en21,1,200,,AtlasCloud,stop,40946.9,294,3733,True,True,,3,3,3,False,False
+20261113-143329,liquid/lfm-3-1.7b:free,en,en21,1,200,,Liquid,length,26934.3,307,4096,False,False,empty content,0,0,0,,False
+20261113-143329,nvidia/nemotron-3-ultra-550b-a55b:free,en,en21,1,200,,Nvidia,stop,30259.3,308,1294,True,True,,3,3,3,False,False
+20261113-143329,nvidia/nemotron-3.5-super-vl:free,en,en22,1,200,,Nvidia,stop,15645.2,324,2098,True,True,,3,3,3,False,False
+20261113-143329,google/gemma-4-31b-it:free,en,en22,2,200,,Google AI Studio,stop,103036.4,312,3584,True,True,,3,3,3,False,False
+20261113-143329,thinkingmachines/inkling-2-small:free,en,en22,1,403,thinkingmachines/inkling-2-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps,,,487.1,,,False,False,,,0,0,,False
+20261113-143329,recursive/flint-v1.0:free,en,en22,1,200,,Recursive,stop,23834.8,298,3818,True,True,,3,3,3,False,False
+20261113-143329,dots-studio/dots-3-note-preview:free,en,en22,1,200,,AtlasCloud,length,47597.0,311,4096,False,False,not JSON,0,0,0,,False
+20261113-143329,liquid/lfm-3-1.7b:free,en,en22,1,200,,Liquid,length,17364.0,324,4096,False,False,empty content,0,0,0,,False
+20261113-143329,nvidia/nemotron-3-ultra-550b-a55b:free,en,en22,1,200,,Nvidia,stop,26600.6,324,1692,True,True,,3,3,3,False,False
+20261113-143329,nvidia/nemotron-3.5-super-vl:free,en,en23,1,200,,Nvidia,stop,21338.5,308,2559,True,True,,3,3,3,False,False
+20261113-143329,google/gemma-4-31b-it:free,en,en23,2,429,Provider returned error,,,723.1,,,False,False,,,0,0,,False
+20261113-143329,thinkingmachines/inkling-2-small:free,en,en23,1,403,thinkingmachines/inkling-2-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps,,,302.3,,,False,False,,,0,0,,False
+20261113-143329,recursive/flint-v1.0:free,en,en23,1,200,,Recursive,stop,23447.5,281,3951,True,True,,3,3,3,False,False
+20261113-143329,dots-studio/dots-3-note-preview:free,en,en23,1,200,,AtlasCloud,stop,32117.4,294,2678,True,True,,3,3,3,False,False
+20261113-143329,liquid/lfm-3-1.7b:free,en,en23,1,200,,Liquid,length,19234.0,307,4096,False,False,empty content,0,0,0,,False
+20261113-143329,nvidia/nemotron-3-ultra-550b-a55b:free,en,en23,1,200,,Nvidia,stop,19806.6,308,963,True,True,,3,3,3,False,False
+20261113-143329,nvidia/nemotron-3.5-super-vl:free,en,en24,1,200,,Nvidia,stop,35951.6,329,3513,True,True,,3,3,3,False,False
+20261113-143329,google/gemma-4-31b-it:free,en,en24,2,429,Provider returned error,,,597.6,,,False,False,,,0,0,,False
+20261113-143329,thinkingmachines/inkling-2-small:free,en,en24,1,403,thinkingmachines/inkling-2-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps,,,309.0,,,False,False,,,0,0,,False
+20261113-143329,recursive/flint-v1.0:free,en,en24,1,200,,Recursive,stop,13305.0,299,2150,True,True,,3,3,3,False,False
+20261113-143329,dots-studio/dots-3-note-preview:free,en,en24,1,200,,AtlasCloud,stop,40318.7,314,3706,True,True,,3,3,3,False,False
+20261113-143329,liquid/lfm-3-1.7b:free,en,en24,1,200,,Liquid,length,20351.4,326,4096,False,False,empty content,0,0,0,,False
+20261113-143329,nvidia/nemotron-3-ultra-550b-a55b:free,en,en24,1,200,,Nvidia,stop,34957.3,329,1595,True,True,,3,3,3,False,False
+20261113-143329,nvidia/nemotron-3.5-super-vl:free,en,en25,1,200,,Nvidia,stop,17416.0,304,2279,True,True,,3,3,3,False,False
+20261113-143329,google/gemma-4-31b-it:free,en,en25,2,429,Provider returned error,,,767.1,,,False,False,,,0,0,,False
+20261113-143329,thinkingmachines/inkling-2-small:free,en,en25,1,403,thinkingmachines/inkling-2-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps,,,271.7,,,False,False,,,0,0,,False
+20261113-143329,recursive/flint-v1.0:free,en,en25,1,200,,Recursive,stop,23089.7,278,3089,True,True,,3,3,3,False,False
+20261113-143329,dots-studio/dots-3-note-preview:free,en,en25,1,200,,AtlasCloud,stop,42927.9,291,3627,True,True,,3,3,3,False,False
+20261113-143329,liquid/lfm-3-1.7b:free,en,en25,1,200,,Liquid,stop,16359.1,303,3725,True,True,,3,3,3,False,False
+20261113-143329,nvidia/nemotron-3-ultra-550b-a55b:free,en,en25,1,200,,Nvidia,stop,28576.4,304,929,True,True,,3,3,3,False,False
+20261113-143329,nvidia/nemotron-3.5-super-vl:free,en,en26,1,200,,Nvidia,stop,15014.6,323,2226,True,True,,3,3,3,False,False
+20261113-143329,google/gemma-4-31b-it:free,en,en26,2,429,Provider returned error,,,493.3,,,False,False,,,0,0,,False
+20261113-143329,thinkingmachines/inkling-2-small:free,en,en26,1,403,thinkingmachines/inkling-2-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps,,,302.0,,,False,False,,,0,0,,False
+20261113-143329,recursive/flint-v1.0:free,en,en26,1,200,,Recursive,stop,19687.0,297,2483,True,True,,3,3,3,False,False
+20261113-143329,dots-studio/dots-3-note-preview:free,en,en26,1,200,,AtlasCloud,length,52791.5,310,4096,False,False,empty content,0,0,0,,False
+20261113-143329,liquid/lfm-3-1.7b:free,en,en26,1,200,,Liquid,length,19697.7,324,4096,False,False,empty content,0,0,0,,False
+20261113-143329,nvidia/nemotron-3-ultra-550b-a55b:free,en,en26,1,200,,Nvidia,stop,16000.6,323,1189,True,True,,3,3,3,False,False
+20261113-143329,nvidia/nemotron-3.5-super-vl:free,en,en27,1,200,,Nvidia,length,38096.4,320,4096,False,False,empty content,0,0,0,,False
+20261113-143329,google/gemma-4-31b-it:free,en,en27,2,429,Provider returned error,,,722.6,,,False,False,,,0,0,,False
+20261113-143329,thinkingmachines/inkling-2-small:free,en,en27,1,403,thinkingmachines/inkling-2-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps,,,344.1,,,False,False,,,0,0,,False
+20261113-143329,recursive/flint-v1.0:free,en,en27,1,200,,Recursive,stop,13921.1,291,2177,True,True,,3,3,3,False,False
+20261113-143329,dots-studio/dots-3-note-preview:free,en,en27,1,200,,AtlasCloud,length,50990.9,305,4096,False,False,empty content,0,0,0,,False
+20261113-143329,liquid/lfm-3-1.7b:free,en,en27,1,200,,Liquid,length,20127.2,318,4096,False,False,empty content,0,0,0,,False
+20261113-143329,nvidia/nemotron-3-ultra-550b-a55b:free,en,en27,1,200,,Nvidia,stop,16342.7,320,1145,True,True,,3,3,3,False,False
+20261113-143329,nvidia/nemotron-3.5-super-vl:free,en,en28,1,200,,Nvidia,stop,23865.5,307,3393,True,True,,3,3,3,False,False
+20261113-143329,google/gemma-4-31b-it:free,en,en28,2,429,Provider returned error,,,498.4,,,False,False,,,0,0,,False
+20261113-143329,thinkingmachines/inkling-2-small:free,en,en28,1,403,thinkingmachines/inkling-2-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps,,,288.4,,,False,False,,,0,0,,False
+20261113-143329,recursive/flint-v1.0:free,en,en28,1,200,,Recursive,length,22744.5,279,4096,False,False,empty content,0,0,0,,False
+20261113-143329,dots-studio/dots-3-note-preview:free,en,en28,1,200,,AtlasCloud,length,43914.1,293,4096,False,False,empty content,0,0,0,,False
+20261113-143329,liquid/lfm-3-1.7b:free,en,en28,1,200,,Liquid,length,16454.1,306,4096,False,False,empty content,0,0,0,,False
+20261113-143329,nvidia/nemotron-3-ultra-550b-a55b:free,en,en28,1,200,,Nvidia,stop,20211.3,307,1669,True,True,,3,3,3,False,False
+20261113-143329,nvidia/nemotron-3.5-super-vl:free,en,en29,1,200,,Nvidia,stop,8885.6,324,1564,True,True,,3,3,3,False,False
+20261113-143329,google/gemma-4-31b-it:free,en,en29,2,429,Provider returned error,,,710.2,,,False,False,,,0,0,,False
+20261113-143329,thinkingmachines/inkling-2-small:free,en,en29,1,403,thinkingmachines/inkling-2-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps,,,318.7,,,False,False,,,0,0,,False
+20261113-143329,recursive/flint-v1.0:free,en,en29,1,200,,Recursive,stop,19417.7,294,3277,True,True,,3,3,3,False,False
+20261113-143329,dots-studio/dots-3-note-preview:free,en,en29,1,200,,AtlasCloud,length,46480.1,310,4096,False,False,not JSON,0,0,0,,False
+20261113-143329,liquid/lfm-3-1.7b:free,en,en29,1,200,,Liquid,length,28920.9,322,4096,False,False,empty content,0,0,0,,False
+20261113-143329,nvidia/nemotron-3-ultra-550b-a55b:free,en,en29,1,200,,Nvidia,stop,35200.5,324,1419,True,True,,3,3,3,False,False
+20261113-143329,nvidia/nemotron-3.5-super-vl:free,en,en30,1,200,,Nvidia,stop,21514.8,315,3616,True,True,,3,3,3,False,False
+20261113-143329,google/gemma-4-31b-it:free,en,en30,2,429,Provider returned error,,,447.8,,,False,False,,,0,0,,False
+20261113-143329,thinkingmachines/inkling-2-small:free,en,en30,1,403,thinkingmachines/inkling-2-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps,,,268.2,,,False,False,,,0,0,,False
+20261113-143329,recursive/flint-v1.0:free,en,en30,1,200,,Recursive,stop,19929.1,289,3528,True,True,,3,3,3,False,False
+20261113-143329,dots-studio/dots-3-note-preview:free,en,en30,1,200,,AtlasCloud,length,61284.2,302,4096,False,False,empty content,0,0,0,,False
+20261113-143329,liquid/lfm-3-1.7b:free,en,en30,1,200,,Liquid,length,18274.4,314,4096,False,False,empty content,0,0,0,,False
+20261113-143329,nvidia/nemotron-3-ultra-550b-a55b:free,en,en30,1,200,,Nvidia,stop,31597.5,315,1147,True,True,,3,3,3,False,False
+20261113-143329,nvidia/nemotron-3.5-super-vl:free,ar,ar01,1,200,,Nvidia,length,34763.5,360,4096,False,False,not JSON,0,0,0,,False
+20261113-143329,google/gemma-4-31b-it:free,ar,ar01,2,429,Provider returned error,,,828.3,,,False,False,,,0,0,,False
+20261113-143329,thinkingmachines/inkling-2-small:free,ar,ar01,1,403,thinkingmachines/inkling-2-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps,,,278.6,,,False,False,,,0,0,,False
+20261113-143329,recursive/flint-v1.0:free,ar,ar01,1,200,,Recursive,length,25504.6,391,4096,False,False,not JSON,0,0,0,,False
+20261113-143329,dots-studio/dots-3-note-preview:free,ar,ar01,1,200,,AtlasCloud,length,51390.2,380,4096,False,False,empty content,0,0,0,,False
+20261113-143329,liquid/lfm-3-1.7b:free,ar,ar01,1,200,,Liquid,length,20696.2,365,4096,False,False,empty content,0,0,0,,False
+20261113-143329,nvidia/nemotron-3-ultra-550b-a55b:free,ar,ar01,1,200,,Nvidia,stop,32618.6,360,1282,True,True,,3,3,3,False,False
+20261113-143329,nvidia/nemotron-3.5-super-vl:free,ar,ar02,1,200,,Nvidia,stop,27378.0,352,2713,True,True,,3,3,3,False,False
+20261113-143329,google/gemma-4-31b-it:free,ar,ar02,2,429,Provider returned error,,,440.8,,,False,False,,,0,0,,False
+20261113-143329,thinkingmachines/inkling-2-small:free,ar,ar02,1,403,thinkingmachines/inkling-2-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps,,,344.5,,,False,False,,,0,0,,False
+20261113-143329,recursive/flint-v1.0:free,ar,ar02,1,200,,Recursive,stop,22097.1,370,3380,True,True,,3,3,3,False,False
+20261113-143329,dots-studio/dots-3-note-preview:free,ar,ar02,1,200,,AtlasCloud,length,52361.6,364,4096,False,False,empty content,0,0,0,,False
+20261113-143329,liquid/lfm-3-1.7b:free,ar,ar02,1,200,,Liquid,length,12949.8,357,4096,False,False,empty content,0,0,0,,False
+20261113-143329,nvidia/nemotron-3-ultra-550b-a55b:free,ar,ar02,1,200,,Nvidia,stop,45480.7,352,1937,True,True,,3,3,3,False,False
+20261113-143329,nvidia/nemotron-3.5-super-vl:free,ar,ar03,1,200,,Nvidia,stop,30330.5,362,1973,True,True,,3,3,3,False,False
+20261113-143329,google/gemma-4-31b-it:free,ar,ar03,2,429,Provider returned error,,,490.9,,,False,False,,,0,0,,False
+20261113-143329,thinkingmachines/inkling-2-small:free,ar,ar03,1,403,thinkingmachines/inkling-2-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps,,,293.1,,,False,False,,,0,0,,False
+20261113-143329,recursive/flint-v1.0:free,ar,ar03,1,200,,Recursive,stop,19315.1,381,2712,True,True,,3,3,3,False,False
+20261113-143329,dots-studio/dots-3-note-preview:free,ar,ar03,1,200,,AtlasCloud,length,54446.2,376,4096,False,False,empty content,0,0,0,,False
+20261113-143329,liquid/lfm-3-1.7b:free,ar,ar03,1,200,,Liquid,length,22657.6,364,4096,False,False,empty content,0,0,0,,False
+20261113-143329,nvidia/nemotron-3-ultra-550b-a55b:free,ar,ar03,1,200,,Nvidia,stop,50571.0,362,2187,True,True,,3,3,3,False,False
+20261113-143329,nvidia/nemotron-3.5-super-vl:free,ar,ar04,1,200,,Nvidia,stop,24056.3,353,3583,True,True,,3,3,3,False,False
+20261113-143329,google/gemma-4-31b-it:free,ar,ar04,2,429,Provider returned error,,,482.2,,,False,False,,,0,0,,False
+20261113-143329,thinkingmachines/inkling-2-small:free,ar,ar04,1,403,thinkingmachines/inkling-2-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps,,,266.3,,,False,False,,,0,0,,False
+20261113-143329,recursive/flint-v1.0:free,ar,ar04,1,200,,Recursive,stop,16101.5,373,2370,True,True,,3,3,3,False,False
+20261113-143329,dots-studio/dots-3-note-preview:free,ar,ar04,1,200,,AtlasCloud,length,56639.5,364,4096,False,False,empty content,0,0,0,,False
+20261113-143329,liquid/lfm-3-1.7b:free,ar,ar04,1,200,,Liquid,length,19039.7,355,4096,False,False,empty content,0,0,0,,False
+20261113-143329,nvidia/nemotron-3-ultra-550b-a55b:free,ar,ar04,1,200,,Nvidia,stop,88775.1,353,1886,True,True,,3,3,3,False,False
+20261113-143329,nvidia/nemotron-3.5-super-vl:free,ar,ar05,1,200,,Nvidia,stop,141136.5,360,3415,True,True,,3,3,3,False,False
+20261113-143329,google/gemma-4-31b-it:free,ar,ar05,2,429,Provider returned error,,,575.1,,,False,False,,,0,0,,False
+20261113-143329,thinkingmachines/inkling-2-small:free,ar,ar05,1,403,thinkingmachines/inkling-2-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps,,,2442.9,,,False,False,,,0,0,,False
+20261113-143329,recursive/flint-v1.0:free,ar,ar05,1,200,,Recursive,length,31458.1,375,4096,False,False,empty content,0,0,0,,False
+20261113-143329,dots-studio/dots-3-note-preview:free,ar,ar05,1,200,,AtlasCloud,length,51948.8,372,4096,False,False,empty content,0,0,0,,False
+20261113-143329,liquid/lfm-3-1.7b:free,ar,ar05,1,200,,Liquid,length,18610.4,362,4096,False,False,empty content,0,0,0,,False
+20261113-143329,nvidia/nemotron-3-ultra-550b-a55b:free,ar,ar05,1,200,,Nvidia,stop,46681.4,360,2360,True,True,,3,3,3,True,False

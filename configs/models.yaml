@@ -28,6 +28,8 @@ nlp:
   spacy_en: {id: en_core_web_sm, licence: MIT}
 llm:
   openrouter:
-    pinned: null              # TODO(ADR): chosen by spike S4
-    fallbacks: [null, null]   # TODO(ADR): chosen by spike S4
+    # ADR 0003 (proposed): pinned passed S4 run 20261113-143329; both fallbacks did NOT pass
+    # (flint: 0.833 JSON validity, gemma: HTTP 429 on 33/35) and are provisional until a re-run.
+    pinned: nvidia/nemotron-3-ultra-550b-a55b:free
+    fallbacks: [recursive/flint-v1.0:free, google/gemma-4-31b-it:free]
   coach_slm: {id: null, licence: null, digest: null}      # TODO: after T2
