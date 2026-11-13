@@ -1,0 +1,46 @@
+# Spike S5 (gaze zones) settings. Question and pass condition from
+# docs/plan/FINAL_12_ROADMAP_AND_THESIS.md §1; pass rule and every value marked "proposed" are
+# recorded in docs/adr/0004-gaze-zone-spike.md (the owner decides).
+
+zones: [at_camera, at_screen, down_notes, away]   # FINAL_04 §4.2; `unknown` is set by rule
+merge_for_fallback: {at_screen: at_camera}         # 3-zone fallback (FINAL_12 §1)
+
+# Owner's protocol (2026-11-14). The notes position is fixed for every session.
+notes_position: "A4 sheet flat on the desk, immediately to the right of the laptop, same taped spot every session"
+away_targets: {left: "fixed wall point about 60-90 degrees to the left",
+               right: "fixed wall point about 60-90 degrees to the right"}
+sessions:
+  A: {condition: normal, glasses: false, use: main}
+  B: {condition: normal, glasses: false, use: main}      # different time or day from A
+  C: {condition: dim, glasses: false, use: robustness}    # room light off, screen only
+  D: {condition: normal, glasses: true, use: robustness}  # owner wears glasses
+
+# Timing per session (seconds). Calibration first, then 16 blocks (4 per zone).
+timing:
+  calibration: [[calibration_camera, 3], [calibration_notes, 3], [calibration_neutral, 4]]
+  cue_s: 2        # target name shown; transition, not used
+  hold_s: 8       # gaze held on the target, between two beeps
+  settle_s: 1     # first part of each hold, discarded (eye movement to the target)
+  reps: 4
+# Balanced 4x4 Latin square (Williams design): every zone once per position and every ordered
+# pair of zones once as neighbours. Zone indices refer to `zones`. Session S uses rows
+# start_row[S], start_row[S]+1, ... (cyclic) for its 4 repetitions, so no two sessions share
+# the same sequence. The order used is written to each session's timing file.
+balanced_rows: [[0, 1, 3, 2], [1, 2, 0, 3], [2, 3, 1, 0], [3, 0, 2, 1]]
+start_row: {A: 0, B: 1, C: 2, D: 3}
+
+# Capture and features
+track_constraints: {width: 640, height: 360, frameRate: 30}
+process_size: [640, 360]
+target_fps: 15                 # frames sent to the Face Landmarker per second (as S1)
+frames_bgr: true               # FastRTC video handlers receive bgr24 arrays (fastrtc/tracks.py)
+echo_size: [160, 90]
+eyes_closed_blink: 0.5         # proposed: mean eyeBlinkLeft/Right >= this -> eyes closed -> unknown
+
+# Evaluation (ADR 0004)
+pass:
+  min_macro_f1: 0.8            # FINAL_12 §1
+  primary: {model: hgb, calibration: true}   # proposed: the number the pass rule is judged on
+  main_folds: [[A, B], [B, A]]               # train -> test; primary = mean of the two
+robustness_folds: [[[A, B], C], [[A, B], D]] # train on A+B, test on C and on D
+random_state: 0
