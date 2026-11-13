@@ -23,6 +23,7 @@ HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
 CONFIG = REPO / "experiments" / "configs" / "s4_openrouter.yaml"
 NAME_TOKEN = "[NAME]"  # noqa: S105 (placeholder text, not a secret)
+LONG_PAUSE_S = 1.5  # pause length named in the prompt; an allowed number in replies
 
 SYSTEM_PROMPT = (
     "You are a presentation coach. You receive the transcript of a short practice talk and "
@@ -88,6 +89,7 @@ class Measures:
             self.fillers,
             self.fillers_per_min,
             self.long_pauses,
+            LONG_PAUSE_S,
         }
         out: set[str] = set()
         for v in vals:
@@ -171,7 +173,7 @@ def user_message(transcript: str, m: Measures) -> str:
         f"- words: {m.words}\n"
         f"- speech rate: {m.wpm} words per minute\n"
         f"- filler words: {m.fillers} ({_num(m.fillers_per_min)} per minute)\n"
-        f"- pauses longer than 1.5 s: {m.long_pauses}\n\n"
+        f"- pauses longer than {_num(LONG_PAUSE_S)} s: {m.long_pauses}\n\n"
         f"Transcript:\n{transcript}"
     )
 

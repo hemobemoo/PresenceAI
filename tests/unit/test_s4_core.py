@@ -166,6 +166,12 @@ def test_numbers_ok():
     assert not core.numbers_ok("You used 7 fillers.", m)
 
 
+def test_pause_length_named_in_prompt_is_an_allowed_number():
+    m = core.compute_measures(_prompt(), CFG["fillers"]["en"])
+    assert f"{core.LONG_PAUSE_S} s" in core.user_message("x", m)
+    assert core.numbers_ok(f"No pause was longer than {core.LONG_PAUSE_S} seconds.", m)
+
+
 # ---- summary
 
 

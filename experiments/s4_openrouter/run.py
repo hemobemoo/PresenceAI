@@ -94,16 +94,25 @@ def _score(
     choice = (body.get("choices") or [{}])[0]
     content = (choice.get("message") or {}).get("content")
     usage = body.get("usage") or {}
-    chk = core.check_reply(content, cfg["items_min"], cfg["items_max"])
-    sent = core.redact_names(p.transcript, p.names)
-    found = [
-        core.quote_found(i.evidence_quote, sent, p.lang, cfg["quote_min_words"]) for i in chk.items
-    ]
     row = {
         "provider": body.get("provider", ""),
         "finish_reason": choice.get("finish_reason", ""),
         "prompt_tokens": usage.get("prompt_tokens", ""),
         "completion_tokens": usage.get("completion_tokens", ""),
+        **_checks(content, p, m, cfg),
+    }
+    return row, content
+
+
+def _checks(
+    content: str | None, p: core.Prompt, m: core.Measures, cfg: dict[str, Any]
+) -> dict[str, Any]:
+    chk = core.check_reply(content, cfg["items_min"], cfg["items_max"])
+    sent = core.redact_names(p.transcript, p.names)
+    found = [
+        core.quote_found(i.evidence_quote, sent, p.lang, cfg["quote_min_words"]) for i in chk.items
+    ]
+    return {
         "strict_json": chk.strict_json,
         "json_valid": chk.json_valid,
         "schema_error": chk.error,
@@ -115,7 +124,37 @@ def _score(
         else "",
         "banned_term": any(core.item_has_banned_term(i, p.lang) for i in chk.items),
     }
-    return row, content
+
+
+def rescore(out: Path, run_id: str, cfg: dict[str, Any]) -> Path:
+    """Re-run the checks on a finished run's saved replies (no network); write a new summary."""
+    prompts = {
+        p.id: p
+        for lang in ("en", "ar")
+        for p in core.load_prompts(core.HERE / f"prompts_{lang}.yaml")
+    }
+    with (out / f"{run_id}_replies.jsonl").open(encoding="utf-8") as f:
+        content = {(r["model"], r["prompt_id"]): r["content"] for r in map(json.loads, f) if r}
+    with (out / f"{run_id}_requests.csv").open(newline="", encoding="utf-8") as f:
+        rows: list[dict[str, Any]] = list(csv.DictReader(f))
+    for row in rows:
+        for k in ("strict_json", "json_valid", "banned_term"):
+            row[k] = row[k] == "True"
+        for k in ("n_quotes", "n_quotes_found"):
+            row[k] = int(row[k])
+        row["latency_ms"] = float(row["latency_ms"]) if row["latency_ms"] else None
+        row["http_status"] = int(row["http_status"])
+        if row["http_status"] == 200:
+            p = prompts[row["prompt_id"]]
+            m = core.compute_measures(p, cfg["fillers"][p.lang])
+            row.update(_checks(content[(row["model"], row["prompt_id"])], p, m, cfg))
+    summary = core.summarise(rows, cfg["pass"]["min_json_valid"], cfg["pass"]["min_quote_found"])
+    path = out / f"{run_id}_summary_rescored.csv"
+    with path.open("w", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, fieldnames=list(summary[0]))
+        w.writeheader()
+        w.writerows(summary)
+    return path
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -124,10 +163,14 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--lang", default="en,ar")
     ap.add_argument("--limit", type=int, help="first N prompts per language")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--rescore", metavar="RUN_ID", help="re-check saved replies; no network")
     ap.add_argument("--out", type=Path, default=core.REPO / "experiments" / "results" / "s4")
     args = ap.parse_args(argv)
 
     cfg = core.load_config()
+    if args.rescore:
+        print(f"wrote {rescore(args.out, args.rescore, cfg).name}")
+        return 0
     models = args.models.split(",") if args.models else list(cfg["models"])
     langs = [lang.strip() for lang in args.lang.split(",")]
     prompts: list[core.Prompt] = []
