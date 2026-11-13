@@ -31,13 +31,13 @@ Enforcement:
 
 | Item | Rule |
 |---|---|
-| Consent switches | (a) take part / use the app, (b) camera, (c) keep encrypted raw recordings temporarily, (d) send transcript text to a hosted AI model (OpenRouter) for wording and follow-ups, (e) study only: blind rating of recordings, (f) study only: release of de-identified derived metrics |
+| Consent switches | (a) take part / use the app, (b) camera, (c) keep encrypted raw recordings temporarily, (d) send transcript text to a hosted AI model (OpenRouter) for wording and follow-ups; the text is stored by the model provider and may be used to improve its models, (e) study only: blind rating of recordings, (f) study only: release of de-identified derived metrics |
 | Encryption | Fernet key generated per installation (`MEDIA_KEY`); media encrypted at write time; in Stage B encrypted before upload to Supabase |
 | Retention | Raw media 30 days by default; study media until blind rating ends, max 60 days; user can delete any session at once; retention job runs at start-up and daily (Stage B) |
 | Derived metrics | Kept until the user deletes their profile |
 | Export | One zip: JSON, Parquet, decrypted media if still retained |
 | Minimisation | No name in the database (display name stays in the browser session); pseudonymous ids; no age, gender, employer or nationality; optional self-described first language for robustness slices only |
-| Hosted LLM | Text only, personal names redacted, no media, no ids; free endpoints that may train on prompts are blocked in OpenRouter privacy settings during the study; feature works off |
+| Hosted LLM | OpenRouter free endpoints that may log or train on prompts are allowed (decision 2026-11-13, ADR 0003; reason: more capable free models at no cost). Participants are told this in consent switch (d) and can decline it; declining (d) turns the feature off and the app uses templates. Protections stay: text only, personal names redacted, no media, no ids, no `user` field |
 | Training platforms | Raw study recordings never go to Kaggle, Colab or Hugging Face |
 | AI disclosure | Every generated paragraph marked "AI-generated"; "dispute this" button stores disputes for human review |
 
@@ -53,15 +53,17 @@ Enforcement:
 | Delete really deletes | `rights.delete(session_id)` | Test: no file/row remains, including Supabase in Stage B |
 | Retention | `retention.run()` | Test with clock override |
 | No emotion labels | §2 | Safety tests |
-| Hosted LLM payload is text-only | Request builder | Test inspects payload |
+| Hosted LLM payload is text-only, names redacted | Request builder | Test inspects payload (P7) |
+| Hosted LLM only with consent (d) | Provider chain checks consent; templates otherwise | Test: (d) off → no OpenRouter call (P7) |
 
 ## 5. Study ethics checklist
 
 - [ ] Ask your supervisor about Al-Balqa Applied University's approval route in week 1.
-- [ ] Information sheet and consent in English and Arabic, naming OpenRouter and the model, the retention period and the deletion process.
+- [ ] Tell your supervisor about the hosted-LLM privacy decision (ADR 0003, 2026-11-13): free endpoints that may log or train on prompts are allowed, behind consent switch (d).
+- [ ] Information sheet and consent in English and Arabic, naming OpenRouter and the model, the retention period and the deletion process, and stating that transcript text sent under switch (d) is stored by the model provider and may be used to train its models.
 - [ ] Voluntary; no grades; no one with authority over participants recruits or sees results.
 - [ ] Participants told: practice software, not an assessment of them, not used for hiring or grading.
-- [ ] OpenRouter privacy setting checked before participant 1; all arms use the same pinned model.
+- [ ] OpenRouter privacy setting checked before participant 1: it allows free endpoints that may log or train on prompts, and the consent wording matches the data policies of the pinned and fallback providers; all arms use the same pinned model.
 - [ ] Debrief sheet with the system's limitations.
 - [ ] TED research use confirmed with supervisor (`FINAL_07` E).
 
