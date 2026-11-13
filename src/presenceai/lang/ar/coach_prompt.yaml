@@ -10,6 +10,14 @@ language_rule: >-
   Everything else is Modern Standard Arabic. This rule does not apply to evidence_quote:
   copy it exactly from the transcript, in the transcript's own script.
 
+# Every feedback point (owner, 2026-11-13, from the S4 Arabic rating; ADR 0003). Applies to
+# templates, the provider chain and T2 data.
+# Rater criterion in E11: "explains the benefit to the user".
+feedback_point_rule: >-
+  Every feedback point must say three things: what was observed, with its evidence (the
+  evidence_quote or a measurement); why it matters for the user and their listeners; and what
+  the user gains by practising the suggestion. Describe observable behaviour only.
+
 # Examples given to the model and to raters; not a closed list. The owner may extend it.
 keep_english_examples: [slides, feedback, pace, presentation, demo, deadline, Q&A]
 

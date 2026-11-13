@@ -27,9 +27,25 @@ def test_pure_arabic_quote_is_not_flagged():
 @pytest.mark.parametrize("lang", LANGUAGES)
 def test_coach_prompt_pack_has_the_same_keys(lang: Language):
     pack = load_pack_file(lang, "coach_prompt.yaml")
-    assert set(pack) == {"language_rule", "keep_english_examples", "quotes_follow_transcript"}
+    assert set(pack) == {
+        "language_rule",
+        "feedback_point_rule",
+        "keep_english_examples",
+        "quotes_follow_transcript",
+    }
     assert pack["language_rule"].strip()
+    rule = pack["feedback_point_rule"]
+    assert "what was observed" in rule
+    assert "why it matters" in rule
+    assert "what the user gains" in rule
     assert pack["quotes_follow_transcript"] is True
+
+
+def test_feedback_point_rule_is_the_same_in_both_languages():
+    en, ar = (
+        load_pack_file(lang, "coach_prompt.yaml")["feedback_point_rule"] for lang in LANGUAGES
+    )
+    assert en == ar
 
 
 def test_arabic_rule_keeps_english_terms_in_latin_script_and_excludes_quotes():
