@@ -12,18 +12,20 @@ Assumes ~18 working weeks. Two tracks from day one: **Build** and **Study/Writin
 | S4 OpenRouter | Which free model gives valid JSON, verified quotes and allows training on outputs? | ≥ 95% JSON validity, ≥ 90% quote found on 30 prompts | Next model; templates as floor |
 | S5 Gaze | Can iris + head-pose features separate camera / notes / away for you? | ≥ 0.8 macro-F1 on your own protocol | Merge `at_screen` into `at_camera` |
 
+**Status (2026-11-13):** S1 passed (ADR 0002). S4 JSON/quote conditions met by Nemotron 3 Ultra, Nemotron 3.5 Super VL and Flint (ADR 0003); T2 teacher open (no provider confirmed to allow training on outputs). S5, S3 and S2 to run, in that order.
+
 ## 2. Phases
 
 | Phase | Weeks | Build | Study / writing | Exit criteria |
 |---|---|---|---|---|
-| P0 Setup + spikes | 1–2 | Repo, uv, CI, AGENTS.md, MCP, models download, S1–S5 | Supervisor: ethics route, TED use; consent draft (EN/AR); start Ch. 2 reading | CI green; spike results in ADRs |
-| P1 Speech | 3–4 | `speech/*`, CLI analyze, C1 synthetic speech, Arabic language pack basics | Record pilot set B1 | E2 passes on C1 |
+| P0 Setup + spikes | 1–2 | Repo, uv, CI, AGENTS.md, MCP, models download, S1–S5 | Supervisor: ethics route, TED use, NVIDIA free-tier reading (trial/evaluation only; ADR 0003), hosted-LLM data policy (free endpoints may log or train on prompts; consent switch (d)); consent draft (EN/AR); start Ch. 2 reading | CI green; spike results in ADRs |
+| P1 Speech | 3–4 | `speech/*`, CLI analyze, C1 synthetic speech, Arabic language pack basics, including the code-switching rule (`lang/ar/coach_prompt.yaml`, ADR 0003) | Record pilot set B1 | E2 passes on C1 |
 | P2 Text + rubric + KB | 5–6 | `text/*`, `rubric/*`, VALUE-adapted rubric, knowledge base from open textbooks, C2 synthetic transcripts | Rubric anchors reviewed by supervisor | Assessment with verified evidence for every finding |
 | P3 App | 7 | Gradio pages, storage, encryption, retention, export/delete, EN/AR UI | Ch. 3 skeleton | Record → report end to end locally; safety tests pass |
-| P4 Training | 6–9 (parallel) | T1 on Kaggle (2–3 runs), T3 on protocol data, T2 pairs + first Coach-SLM | — | T1 in faster-whisper; E3 first numbers; T3 F1 recorded |
+| P4 Training | 6–9 (parallel) | T1 on Kaggle (2–3 runs), T3 on protocol data, T2 pairs (open-weight Apache-2.0/MIT teacher run on Kaggle, so only the model licence applies; ADR 0003) + first Coach-SLM | — | T1 in faster-whisper; E3 first numbers; T3 F1 recorded |
 | P5 Engine | 8–9 | Policies, library (~140 items), adaptive live prompts, simulator, progress page | Engine section of Ch. 3 | Full journey works; E9 plots |
-| P6 Vision + live loop | 10–11 | Live meters and prompts, posture/gesture/expression events, calibration | Robustness matrix B2 recorded | E7 run; unstable measures disabled |
-| P7 Coach + pilot prep | 12 | Guardrails, provider chain, follow-ups, rater page, randomisation; optional Stage B deploy | Protocol and analysis plan committed; raters trained | Dry-run session ≤ 45 min; **feature freeze** `v0.9-study` |
+| P6 Vision + live loop | 10–11 | Live meters and prompts, posture/gesture/expression events, calibration, low-light / low-camera-fps notice, battery run | Robustness matrix B2 recorded | E7 run; unstable measures disabled |
+| P7 Coach + pilot prep | 12 | Guardrails, provider chain (prompt builder with `coach_prompt.yaml` rules), consent-(d) and payload tests (text only, names redacted; (d) off → no OpenRouter call), follow-ups, rater page, randomisation; optional Stage B deploy | Protocol and analysis plan committed; raters trained | Dry-run session ≤ 45 min; **feature freeze** `v0.9-study` |
 | P8 Study + experiments | 13–15 | Bug fixes only; run E1–E9, E11, E12 on the frozen tag | Participants (13–14), blind rating (14–15), annotation | All experiments reproduce from clean clone |
 | P9 Write + ship | 16–18 | Cards, README, demo fixtures, `v1.0` | E10 analysis; Ch. 4–6; abstract; slides | Draft to supervisor; demo rehearsed twice |
 
@@ -48,7 +50,9 @@ Never cut: evidence linking, adaptive + fixed policies, simulator, T1 (main trai
 | Kaggle quota or session limits | M | M | Small models first (whisper-small); Colab as second source; checkpoints every epoch |
 | T1 does not improve fillers | M | M | Still publishable as a negative result; fusion detector remains |
 | Webcam gaze too inaccurate | M | M | Coarse zones only; per-user calibration; report accuracy |
-| OpenRouter free model withdrawn mid-study | H | M | Pinned + fallback are both NVIDIA (single-provider risk, ADR 0003): emergency fallback from another provider (Recursive Flint, passed the S4 re-run), `coach_slm`, cache, templates floor; freeze model for study weeks |
+| OpenRouter free model withdrawn mid-study | H | M | Pinned and first fallback are both NVIDIA (single-provider risk, ADR 0003); Flint (Recursive) as emergency fallback, `coach_slm`, cache, templates floor; freeze model for study weeks |
+| NVIDIA trial term judged to exclude the study | M | M | Supervisor confirms the reading (ADR 0003); if excluded, Flint becomes pinned |
+| No hosted teacher allowed for T2 | H | L | Open-weight teacher on Kaggle; T2 is second in the cut order |
 | Ethics approval or recruitment slow | H | H | Start week 1; crossover design at n ≈ 12; simulation carries C1 |
 | Licence surprise (TED, NC-SA texts) | M | M | Supervisor check in week 1; NC-SA text excluded from training |
 | Expression labels perceived as emotion detection | M | H | Fixed label set, UI copy review, explanation on About page |
@@ -61,7 +65,7 @@ Never cut: evidence linking, adaptive + fixed policies, simulator, T1 (main trai
 | 1 Introduction | Problem, aims, objectives, stakeholders (students, job seekers, learners, instructors, researchers), challenges (verbatim fillers, webcam gaze, small n, zero-cost hosting, ethics line), outline | Concept, FINAL_01 |
 | 2 Related Works | AI speaking/interview coaches (MACH, Naim et al., commercial tools); disfluency detection (PodcastFillers, CrisperWhisper); spoken assessment (Speak & Improve); gaze estimation with webcams; adaptive learning (knowledge tracing, bandits); emotion-inference critique and EU AI Act; comparison table | FINAL_07 F, arXiv MCP |
 | 3 Methodology | Measurement definitions, rubric adaptation from VALUE, engine mathematics, training methods (T1–T3), study design, analysis plan | FINAL_04, 05, 06, 10 |
-| 4 Design & Implementation | Architecture, live loop, deployment stages, data model, UI screens, privacy mechanisms, tooling and agents | FINAL_02, 03, 08, 09, 11 |
+| 4 Design & Implementation | Architecture, live loop, deployment stages, data model, UI screens, privacy mechanisms, tooling and agents; feasibility spikes | FINAL_02, 03, 08, 09, 11; `docs/report-drafts/S*_summary.md` |
 | 5 Results & Discussion | E1–E12 tables and figures, fairness slices, limitations | `experiments/results/` |
 | 6 Conclusion & Future Work | Answer RQs within what data supports; future: full Arabic, avatar coach, public deployment, interview scenario, longer study | — |
 

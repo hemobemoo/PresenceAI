@@ -72,7 +72,8 @@ Rules: every training run is a notebook in `training/` with fixed seed, logs its
 | Method | QLoRA r=16 with Unsloth on Kaggle, 2–3 epochs, max length 2,048 |
 | Export | Unsloth GGUF export (q4_k_m) → `llama-cpp-python` on the laptop |
 | Arabic wording | Teacher prompts for Arabic items use the code-switching rule in `lang/ar/coach_prompt.yaml` (FINAL_04 §5, ADR 0003). Arabic pairs are **kept only if** no quote contains Latin-script text missing from the transcript (`latin_outside_transcript`); hand-written gold pairs follow the same rule |
-| Evaluation | E11: faithfulness (quote found, numbers correct), guardrail violations, JSON validity, blind rater actionability vs teacher and templates, Arabic code-switching rule followed (rater criterion), latency on laptop |
+| Feedback points | Teacher prompts in both languages add `feedback_point_rule` from `lang/<lang>/coach_prompt.yaml` (ADR 0003): each point says what was observed (with evidence), why it matters for the user, and what they gain by practising it. Pairs are **kept only if** every item has a non-empty observation, evidence quote and suggestion; whether the benefit is stated is checked by hand on the gold set and a sample of teacher pairs (no automatic check), and rated in E11 |
+| Evaluation | E11: faithfulness (quote found, numbers correct), guardrail violations, JSON validity, blind rater actionability vs teacher and templates, Arabic code-switching rule followed (rater criterion), explains the benefit to the user (rater criterion), latency on laptop |
 | Status in product | Provider option `coach_slm`; default stays OpenRouter unless E11 shows parity |
 
 ## 6. Provider chain at runtime
@@ -83,7 +84,7 @@ openrouter (pinned free model) ──429/timeout──▶ openrouter fallback(s)
 
 Model ids come from `configs/models.yaml` (ADR 0003): pinned `nvidia/nemotron-3-ultra-550b-a55b:free`, fallback `nvidia/nemotron-3.5-super-vl:free` (both NVIDIA), then the emergency fallback `recursive/flint-v1.0:free` from a different provider (passed the S4 re-run). The chain runs only when consent switch (d) is on; otherwise templates are used (FINAL_11 §3).
 
-Every generated string passes the same guardrails regardless of provider (`FINAL_11` §2). Arabic requests add `language_rule` from `lang/ar/coach_prompt.yaml` (code-switching for English terms in the wording; quotes copied exactly) to the system prompt, and Arabic quotes are rejected when `latin_outside_transcript` is non-empty (P7: prompt builder and its tests do not exist yet). Cache by prompt hash; log model id, provider, latency.
+Every generated string passes the same guardrails regardless of provider (`FINAL_11` §2). The prompt builder adds `feedback_point_rule` (observation with evidence, why it matters, what the user gains) in both languages, and for Arabic also `language_rule` (code-switching for English terms in the wording; quotes copied exactly), both from `lang/<lang>/coach_prompt.yaml`. Arabic quotes are rejected when `latin_outside_transcript` is non-empty (P7: prompt builder and its tests do not exist yet). Cache by prompt hash; log model id, provider, latency.
 
 ## 7. Model cards
 

@@ -164,7 +164,7 @@ secondary rate changed; the pass results did not.
 
 ## 5. Decision
 
-The decisions below were recorded in ADR 0003, which remained "proposed" at the time of writing.
+The decisions below were recorded in ADR 0003, which the project owner accepted on 2026-11-13.
 
 **Model chain.** On 2026-11-13 the project owner chose NVIDIA models only for the pinned model and
 the first fallback. Both had passed the first run. After the re-run, a model from another
@@ -221,6 +221,11 @@ Where the rule was recorded:
 - the Arabic language pack (`src/presenceai/lang/ar/coach_prompt.yaml`);
 - the plan sections for language packs, coach prompts and T2 training data;
 - the evaluation of the coaching model (E11), as a criterion for the blind raters.
+
+**Feedback-point rule.** The usefulness finding was turned into a second rule, in both languages:
+every feedback point states what was observed, with its evidence, why it matters for the user, and
+what the user gains by practising it. It was recorded in both language packs, in the T2 data
+filter, and in the E11 rater criteria ("explains the benefit to the user").
 
 The product prompt builder, its tests and the rater guide were scheduled for phase P7. The spike
 prompt was not changed, so that both recorded runs remained reproducible.

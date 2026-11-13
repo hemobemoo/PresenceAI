@@ -1,8 +1,9 @@
 # 0003 — OpenRouter free models and prompt privacy (spike S4)
 
-- Status: **proposed**. Part A (privacy), the model choice in Part B and Flint as the emergency
-  fallback were decided by the owner on 2026-11-13. The re-run (20261113-211500) and the Arabic
-  wording ratings are done; the owner accepts the ADR after CI is green.
+- Status: **accepted** (owner, 2026-11-13), on the condition that CI was green on commit
+  `6166819`; it was (both CI jobs passed). Part A (privacy), the model choice in Part B and
+  Flint as the emergency fallback were decided by the owner on 2026-11-13, after the re-run
+  (20261113-211500) and the Arabic wording ratings.
 - Date: 2026-11-13
 - Decider: project owner
 - Plan reference: docs/plan/FINAL_12_ROADMAP_AND_THESIS.md §1 (S4) and §4 (risks); FINAL_11 §3–§5;
@@ -138,7 +139,7 @@ Notes on the ratings:
    Arabic text. This became a design rule (Consequences).
 2. *Usefulness.* Most replies were rated 4 with the note that they had good structure and tips,
    but should focus more on how the insight helps the user, with an extra suggestion or
-   rephrasing.
+   rephrasing. This also became a design rule (Consequences).
 
 ### Options considered
 
@@ -248,12 +249,24 @@ No provider is confirmed as usable for generating T2 teacher data (`terms_review
   - Plan docs: FINAL_04 §5 (language packs), FINAL_06 §5 (T2 teacher prompts and data filter)
     and §6 (provider chain), FINAL_10 E11 (rater criterion).
   - **P7 items:**
-    - the product prompt builder that inserts `language_rule`, and its test;
+    - the product prompt builder that inserts `feedback_point_rule` (both languages) and
+      `language_rule` (Arabic), and its test;
     - rejecting Arabic quotes flagged by `latin_outside_transcript` in the provider chain;
-    - the rater guide and page criterion.
+    - the rater guide and page criteria (code-switching; explains the benefit to the user).
 
     None exists yet.
   - The S4 spike prompt was **not** changed, so both recorded runs stay reproducible.
+- **Feedback-point rule** (owner, 2026-11-13, from the second rating note), in both languages:
+  - Every feedback point says what was observed (with evidence), why it matters for the user,
+    and what they gain by practising it.
+  - Rule text: `feedback_point_rule` in `src/presenceai/lang/en/coach_prompt.yaml` and
+    `lang/ar/coach_prompt.yaml` (identical; tests in `tests/unit/test_arabic_code_switching.py`).
+  - Plan docs:
+    - FINAL_06 §5: in the T2 data filter, the benefit is checked by hand on the gold set and a
+      sample, because there is no automatic check;
+    - FINAL_06 §6: the prompt builder;
+    - FINAL_10 E11: rater criterion "explains the benefit to the user".
+  - The S4 spike prompt was not changed.
 - **Known false positive:** the banned-term check also matches words inside quoted transcript
   text (dots, en30). Recorded for the product guardrail design, not changed here.
 - **The decision is wrong if:**
@@ -278,7 +291,8 @@ No provider is confirmed as usable for generating T2 teacher data (`terms_review
   - `tests/unit/test_openrouter_models.py`
   - `docs/plan/FINAL_03_TECH_STACK.md` (§5)
   - `docs/plan/FINAL_06_MODELS_AND_TRAINING.md` (§6)
-  - `docs/plan/FINAL_12_ROADMAP_AND_THESIS.md` (§4 risk table)
+  - `docs/plan/FINAL_12_ROADMAP_AND_THESIS.md` (§1 status, §2 phases P0/P1/P4/P6/P7, §4 risk
+    table, §5 Chapter 4 mapping)
 - **Arabic code-switching:**
   - `src/presenceai/lang/ar/coach_prompt.yaml`
   - `src/presenceai/lang/en/coach_prompt.yaml`
@@ -287,6 +301,7 @@ No provider is confirmed as usable for generating T2 teacher data (`terms_review
   - `docs/plan/FINAL_04_MULTIMODAL_MEASUREMENT.md` (§5)
   - `docs/plan/FINAL_06_MODELS_AND_TRAINING.md` (§5, §6)
   - `docs/plan/FINAL_10_EVALUATION.md` (E11)
+  - (feedback-point rule: the same pack files, FINAL_06 and FINAL_10)
 - **Spike:**
   - `experiments/configs/s4_openrouter.yaml`
   - `experiments/configs/s4_rerun.yaml`
