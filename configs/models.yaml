@@ -28,8 +28,10 @@ nlp:
   spacy_en: {id: en_core_web_sm, licence: MIT}
 llm:
   openrouter:
-    # ADR 0003 (proposed): pinned passed S4 run 20261113-143329; both fallbacks did NOT pass
-    # (flint: 0.833 JSON validity, gemma: HTTP 429 on 33/35) and are provisional until a re-run.
+    # ADR 0003 (proposed; owner's choice 2026-11-13): NVIDIA pinned + NVIDIA fallback, both
+    # passed S4 run 20261113-143329. Last fallback = emergency fallback from another provider
+    # (Recursive), passed re-run 20261113-211500. Chain: pinned -> fallbacks in order ->
+    # coach_slm -> templates. Frozen during study weeks.
     pinned: nvidia/nemotron-3-ultra-550b-a55b:free
-    fallbacks: [recursive/flint-v1.0:free, google/gemma-4-31b-it:free]
+    fallbacks: [nvidia/nemotron-3.5-super-vl:free, recursive/flint-v1.0:free]
   coach_slm: {id: null, licence: null, digest: null}      # TODO: after T2

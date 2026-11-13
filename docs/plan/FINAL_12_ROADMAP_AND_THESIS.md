@@ -48,7 +48,7 @@ Never cut: evidence linking, adaptive + fixed policies, simulator, T1 (main trai
 | Kaggle quota or session limits | M | M | Small models first (whisper-small); Colab as second source; checkpoints every epoch |
 | T1 does not improve fillers | M | M | Still publishable as a negative result; fusion detector remains |
 | Webcam gaze too inaccurate | M | M | Coarse zones only; per-user calibration; report accuracy |
-| OpenRouter free model withdrawn mid-study | H | M | Two fallbacks, cache, templates; freeze model for study weeks |
+| OpenRouter free model withdrawn mid-study | H | M | Pinned + fallback are both NVIDIA (single-provider risk, ADR 0003): emergency fallback from another provider (Recursive Flint, passed the S4 re-run), `coach_slm`, cache, templates floor; freeze model for study weeks |
 | Ethics approval or recruitment slow | H | H | Start week 1; crossover design at n ≈ 12; simulation carries C1 |
 | Licence surprise (TED, NC-SA texts) | M | M | Supervisor check in week 1; NC-SA text excluded from training |
 | Expression labels perceived as emotion detection | M | H | Fixed label set, UI copy review, explanation on About page |

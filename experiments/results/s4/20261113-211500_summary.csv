@@ -1,0 +1,5 @@
+model,lang,n,http_ok,retried,strict_json_rate,json_valid_rate,quotes,quote_found_rate,all_quotes_found_rate,numbers_ok_rate,banned_term_replies,finish_length,latency_ms_p50,latency_ms_p95,latency_ms_mean,providers,passed
+dots-studio/dots-3-note-preview:free,ar,5,5,0,1.0,1.0,15,0.333,0.0,1.0,0,0,7125.2,7889.7,7100.2,AtlasCloud,
+dots-studio/dots-3-note-preview:free,en,30,30,0,1.0,1.0,90,1.0,1.0,0.567,1,0,4728.6,6893.9,5047.1,AtlasCloud,True
+recursive/flint-v1.0:free,ar,5,5,0,1.0,1.0,15,1.0,1.0,1.0,0,0,18833.7,31415.6,21242.2,Recursive,
+recursive/flint-v1.0:free,en,30,30,0,1.0,1.0,90,1.0,1.0,1.0,0,0,18772.4,37812.4,21377.5,Recursive,True

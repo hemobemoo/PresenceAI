@@ -67,9 +67,9 @@ def test_empty_env_values_do_not_override(monkeypatch: pytest.MonkeyPatch, tmp_p
     assert m.fallbacks == ("b/one:free",)
 
 
-def test_repo_config_has_pinned_and_two_fallbacks():
+def test_repo_config_has_pinned_and_at_least_one_fallback():
     m = openrouter_models(_settings(), MODELS_CONFIG)
     assert m.pinned is not None and m.pinned.endswith(":free")
-    assert len(m.fallbacks) == 2
+    assert len(m.fallbacks) >= 1
     assert all(f.endswith(":free") for f in m.fallbacks)
-    assert len({m.pinned.split("/")[0], *(f.split("/")[0] for f in m.fallbacks)}) == 3
+    assert len({m.pinned, *m.fallbacks}) == 1 + len(m.fallbacks)  # no model listed twice

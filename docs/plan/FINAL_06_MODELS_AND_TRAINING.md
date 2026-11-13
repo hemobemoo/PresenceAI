@@ -77,8 +77,10 @@ Rules: every training run is a notebook in `training/` with fixed seed, logs its
 ## 6. Provider chain at runtime
 
 ```
-openrouter (pinned free model) ──429/timeout──▶ openrouter fallback ──▶ coach_slm (if installed) ──▶ templates
+openrouter (pinned free model) ──429/timeout──▶ openrouter fallback(s), in order ──▶ coach_slm (if installed) ──▶ templates
 ```
+
+Model ids come from `configs/models.yaml` (ADR 0003): pinned `nvidia/nemotron-3-ultra-550b-a55b:free`, fallback `nvidia/nemotron-3.5-super-vl:free` (both NVIDIA), then the emergency fallback `recursive/flint-v1.0:free` from a different provider (passed the S4 re-run). The chain runs only when consent switch (d) is on; otherwise templates are used (FINAL_11 §3).
 
 Every generated string passes the same guardrails regardless of provider (`FINAL_11` §2). Cache by prompt hash; log model id, provider, latency.
 
