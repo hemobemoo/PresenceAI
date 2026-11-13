@@ -1,0 +1,40 @@
+# Spike S4 (OpenRouter free models) settings. Pass rule from docs/plan/FINAL_12_ROADMAP_AND_THESIS.md
+# §1: >= 95 % JSON validity and >= 90 % quote found on 30 prompts. Recorded in docs/adr/0003.
+
+pass:
+  min_json_valid: 0.95        # share of English replies that parse and match the reply schema
+  min_quote_found: 0.90       # share of quotes (all items of valid English replies) found verbatim
+
+# Shortlist approved by the owner on 2026-11-13 (seven models, six providers).
+models:
+  - nvidia/nemotron-3.5-super-vl:free
+  - google/gemma-4-31b-it:free
+  - thinkingmachines/inkling-2-small:free
+  - recursive/flint-v1.0:free
+  - dots-studio/dots-3-note-preview:free
+  - liquid/lfm-3-1.7b:free
+  - nvidia/nemotron-3-ultra-550b-a55b:free
+
+endpoint: https://openrouter.ai/api/v1/chat/completions
+request:
+  temperature: 0.2
+  max_tokens: 4096            # room for reasoning models; finish_reason is recorded
+  response_format: {type: json_object}
+  # Same for every model: low reasoning effort (ignored by non-reasoning models), reasoning
+  # text kept out of the reply. A smoke test at max_tokens 2048 without effort gave an empty
+  # reply (finish_reason length) from a reasoning model.
+  reasoning: {effort: low, exclude: true}
+  provider: {data_collection: allow}   # owner's decision 2026-11-13 (ADR 0003)
+interval_s: 4.0               # >= 4 s between request starts keeps under 20 requests/minute
+timeout_s: 120
+retry_statuses: [408, 429, 500, 502, 503, 504]
+retry_wait_s: 20              # one retry per request
+arabic_prompts: 5             # Arabic check: first N prompts of prompts_ar.yaml
+
+# Filler words counted when computing the measurements given to the model.
+fillers:
+  en: ["um", "uh", "erm", "you know"]
+  ar: ["يعني", "امم", "اه"]
+quote_min_words: 3            # a shorter "quote" counts as not found
+items_min: 2                  # schema: number of feedback items accepted (3 are requested)
+items_max: 4
