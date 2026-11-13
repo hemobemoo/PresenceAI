@@ -59,6 +59,7 @@ REQUEST_FIELDS = [
     "n_quotes_found",
     "numbers_ok",
     "banned_term",
+    "latin_quote",
 ]
 
 
@@ -124,6 +125,7 @@ def _checks(
         if chk.json_valid
         else "",
         "banned_term": any(core.item_has_banned_term(i, p.lang) for i in chk.items),
+        "latin_quote": any(core.latin_quote(i.evidence_quote, sent, p.lang) for i in chk.items),
     }
 
 
@@ -248,6 +250,7 @@ def main(argv: list[str] | None = None) -> int:
                 n_quotes=0,
                 n_quotes_found=0,
                 banned_term=False,
+                latin_quote=False,
             )
             content = None
             if status == 200 and not body.get("error"):

@@ -1,8 +1,8 @@
 # 0003 — OpenRouter free models and prompt privacy (spike S4)
 
-- Status: **proposed**. Part A (privacy) and the model choice in Part B were decided by the owner
-  on 2026-11-13. The owner accepts the ADR after the re-run (done, 20261113-211500) and after
-  returning the Arabic wording ratings.
+- Status: **proposed**. Part A (privacy), the model choice in Part B and Flint as the emergency
+  fallback were decided by the owner on 2026-11-13. The re-run (20261113-211500) and the Arabic
+  wording ratings are done; the owner accepts the ADR after CI is green.
 - Date: 2026-11-13
 - Decider: project owner
 - Plan reference: docs/plan/FINAL_12_ROADMAP_AND_THESIS.md §1 (S4) and §4 (risks); FINAL_11 §3–§5;
@@ -14,6 +14,9 @@
     `_summary_rescored.csv`
   - Re-run `20261113-211500` (Flint and dots; settings `experiments/configs/s4_rerun.yaml`):
     `experiments/results/s4/20261113-211500_requests.csv`, `_replies.jsonl`, `_summary.csv`
+  - Arabic ratings (owner): `<run>_ar_rating_sheet.csv` (blinded, as rated), unblinded by
+    `ratings.py` into `<run>_ar_ratings_unblinded.csv` and `<run>_ar_ratings_summary.csv`, for
+    both runs
   - Provider data policies: `experiments/results/s4/20261113-143154_policies.csv`
   - Licence and terms: `experiments/s4_openrouter/terms_review.md`
 
@@ -107,7 +110,35 @@ Notes on the table:
 | Flint (re-run) | 5/5 | 15/15 |
 | dots (re-run) | 5/5 | 5/15 |
 
-dots' Arabic quotes contained Latin fragments not in the transcript (for example in ar01).
+dots' Arabic quotes contained Latin fragments not in the transcript (for example in ar01). The
+check added after the rating (`latin_quote_replies` in `<run>_summary_rescored.csv`) flags all
+5 dots Arabic replies in the re-run and no reply from any other model.
+
+**Owner's Arabic wording ratings** (1–5; 1 = unusable, 3 = understandable but awkward, 5 = natural
+MSA). Ratings were given blind. Only values 1–5 count as rated; the owner entered 0 for replies
+with nothing to rate. From `<run>_ar_ratings_summary.csv`:
+
+| Model | Run | Rated / replies | Mean |
+|---|---|---|---|
+| nvidia/nemotron-3-ultra-550b-a55b:free | 143329 | 5 / 5 | 4.00 |
+| nvidia/nemotron-3.5-super-vl:free | 143329 | 5 / 5 | 3.80 |
+| recursive/flint-v1.0:free | 143329 | 4 / 5 | 3.75 |
+| recursive/flint-v1.0:free | 211500 | 5 / 5 | 3.80 |
+| dots-studio/dots-3-note-preview:free | 211500 | 5 / 5 | 4.00 |
+| dots, gemma, lfm, inkling | 143329 | 0 / 5 | – |
+
+Notes on the ratings:
+- The first-run sheet includes two replies that were not valid JSON (Flint and Super VL, ar01),
+  rated 3 with the note that they were not JSON and lacked insight.
+- dots was rated 4.00 for wording, although only 5/15 of its quotes were found. Wording and
+  quote fidelity are separate criteria.
+
+**Qualitative findings from the Arabic rating** (owner, 2026-11-13, all replies in both runs):
+1. *Code-switching.* A good Arabic reply knows when to keep English terminology inside the
+   Arabic text. This became a design rule (Consequences).
+2. *Usefulness.* Most replies were rated 4 with the note that they had good structure and tips,
+   but should focus more on how the insight helps the user, with an extra suggestion or
+   rephrasing.
 
 ### Options considered
 
@@ -169,6 +200,11 @@ production. If the supervisor disagrees:
 - Flint becomes the pinned model;
 - this ADR is superseded.
 
+**Trade-off if Flint becomes pinned:** Flint's latency in the re-run was p50 18.8 s / p95 37.8 s
+per report. This is close to Super VL (19.5 / 38.2 s) and faster than Ultra (27.2 / 54.6 s), so
+it is no slower than the current chain. It is still a long wait for the user, and without NVIDIA
+the chain would have no second hosted model before `coach_slm` and templates.
+
 ### T2 teacher (open)
 
 No provider is confirmed as usable for generating T2 teacher data (`terms_review.md`):
@@ -196,14 +232,34 @@ No provider is confirmed as usable for generating T2 teacher data (`terms_review
   - It was fixed (`core.LONG_PAUSE_S`, new test).
   - The saved replies were re-checked with `run.py --rescore 20261113-143329`.
   - Only `numbers_ok_rate` changed; the pass results did not.
+- **Arabic code-switching rule** (owner, 2026-11-13, from the Arabic rating):
+  - In the coach's own wording, common English technical and academic terms (e.g. *slides*,
+    *feedback*, *pace*) stay in English script where Arabic-speaking students would naturally
+    use them.
+  - They are never transliterated into Arabic letters. The Arabic equivalent may be given on
+    first use. Everything else is Modern Standard Arabic.
+  - **Quotes are excluded:** quoted spans must match the transcript exactly, and the quote
+    check is unchanged.
+  - Rule text for the prompt template: `src/presenceai/lang/ar/coach_prompt.yaml`
+    (`language_rule`), with an English counterpart in `lang/en/coach_prompt.yaml`.
+  - Check: `presenceai.coach.guardrails.latin_outside_transcript` flags Latin-script text in an
+    Arabic quote that is not in the transcript (the dots failure). Tests are in
+    `tests/unit/test_arabic_code_switching.py`.
+  - Plan docs: FINAL_04 §5 (language packs), FINAL_06 §5 (T2 teacher prompts and data filter)
+    and §6 (provider chain), FINAL_10 E11 (rater criterion).
+  - **P7 items:**
+    - the product prompt builder that inserts `language_rule`, and its test;
+    - rejecting Arabic quotes flagged by `latin_outside_transcript` in the provider chain;
+    - the rater guide and page criterion.
+
+    None exists yet.
+  - The S4 spike prompt was **not** changed, so both recorded runs stay reproducible.
 - **Known false positive:** the banned-term check also matches words inside quoted transcript
   text (dots, en30). Recorded for the product guardrail design, not changed here.
 - **The decision is wrong if:**
   - in the product, the pinned model's JSON validity on real sessions falls below 95 %; or
   - NVIDIA's free endpoints become unavailable during the study.
-- **Open before acceptance:**
-  - the owner's Arabic ratings (`20261113-143329_ar_rating_sheet.csv` and
-    `20261113-211500_ar_rating_sheet.csv`);
+- **Still open (followed up after acceptance):**
   - the supervisor told of the privacy decision (FINAL_11 §5);
   - the supervisor's view on the NVIDIA trial terms.
 
@@ -223,11 +279,19 @@ No provider is confirmed as usable for generating T2 teacher data (`terms_review
   - `docs/plan/FINAL_03_TECH_STACK.md` (§5)
   - `docs/plan/FINAL_06_MODELS_AND_TRAINING.md` (§6)
   - `docs/plan/FINAL_12_ROADMAP_AND_THESIS.md` (§4 risk table)
+- **Arabic code-switching:**
+  - `src/presenceai/lang/ar/coach_prompt.yaml`
+  - `src/presenceai/lang/en/coach_prompt.yaml`
+  - `src/presenceai/coach/guardrails.py`
+  - `tests/unit/test_arabic_code_switching.py`
+  - `docs/plan/FINAL_04_MULTIMODAL_MEASUREMENT.md` (§5)
+  - `docs/plan/FINAL_06_MODELS_AND_TRAINING.md` (§5, §6)
+  - `docs/plan/FINAL_10_EVALUATION.md` (E11)
 - **Spike:**
   - `experiments/configs/s4_openrouter.yaml`
   - `experiments/configs/s4_rerun.yaml`
   - `experiments/s4_openrouter/`: core.py, run.py, policies.py, prompts_en.yaml,
-    prompts_ar.yaml, terms_review.md, README.md
+    prompts_ar.yaml, ratings.py, terms_review.md, README.md
   - `tests/unit/test_s4_core.py`
   - `experiments/results/s4/`
 - **Report:**

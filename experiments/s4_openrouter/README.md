@@ -7,6 +7,7 @@ Report draft: `docs/report-drafts/S4_summary.md`.
 |---|---|
 | `core.py` | Prompts, measurements, name redaction, payload guard, reply schema, quote check, summary, data-policy parser (unit-tested in `tests/unit/test_s4_core.py`) |
 | `run.py` | Sends every prompt to every shortlisted model and writes the results |
+| `ratings.py` | Unblinds the owner's Arabic rating sheets with their keys; per-model mean and n rated |
 | `policies.py` | Records each model's provider data policy from its public OpenRouter page |
 | `prompts_en.yaml`, `prompts_ar.yaml` | 30 English and 5 Arabic **synthetic** practice-talk transcripts with fictional names |
 | `terms_review.md` | Licence and provider terms on training with outputs (T2 teacher) and on prompt use |
@@ -26,6 +27,7 @@ uv run python experiments/s4_openrouter/policies.py        # provider data polic
 uv run python experiments/s4_openrouter/run.py             # full run, ~245 requests
 uv run python experiments/s4_openrouter/run.py --config experiments/configs/s4_rerun.yaml  # 70 requests
 uv run python experiments/s4_openrouter/run.py --rescore 20261113-143329  # re-check saved replies, no network
+uv run python experiments/s4_openrouter/ratings.py 20261113-143329 20261113-211500  # after rating
 ```
 
 ## Arabic rating

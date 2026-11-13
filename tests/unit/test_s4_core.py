@@ -238,3 +238,21 @@ def test_rerun_config_keeps_the_privacy_settings_and_pass_rule():
     assert rerun["pass"] == CFG["pass"]
     for model in rerun["models"]:
         assert core.request_for(rerun, model)["provider"] == {"data_collection": "allow"}
+
+
+def test_latin_quote_flags_arabic_quotes_only():
+    assert core.latin_quote("يساعد students على", "يساعد الطلاب على", "ar")
+    assert not core.latin_quote("I use students here", "I use pupils here", "en")
+
+
+def test_rating_summary_counts_only_1_to_5():
+    rows = [
+        {"model": "a", "rating_1_to_5": "4"},
+        {"model": "a", "rating_1_to_5": "3"},
+        {"model": "a", "rating_1_to_5": "0"},  # owner's "no reply to rate"
+        {"model": "b", "rating_1_to_5": ""},
+    ]
+    assert core.rating_summary(rows) == [
+        {"model": "a", "n_replies": 3, "n_rated": 2, "mean_rating": 3.5},
+        {"model": "b", "n_replies": 1, "n_rated": 0, "mean_rating": None},
+    ]

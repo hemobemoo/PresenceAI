@@ -53,6 +53,15 @@ it was sent.
 - **Secondary checks** were recorded but did not count towards the pass condition. The first
   tested whether every number in the reply was one of the measurements. The second tested
   whether the reply contained a term the project bans, such as emotion or personality words.
+- **Latin script in Arabic quotes** (added after the Arabic rating): an Arabic quote was flagged
+  if it contained Latin-script words that did not occur in the transcript. Both runs were
+  re-checked from the saved replies without new requests (`<run id>_summary_rescored.csv`).
+
+**Arabic wording rating.** The project owner rated the wording of every Arabic reply from 1 to 5
+(1 = unusable, 3 = understandable but awkward, 5 = natural Modern Standard Arabic). The ratings
+were made on a sheet that showed letter codes instead of model names. Only after rating were the
+codes mapped back to models (`ratings.py`). Values outside 1–5 were treated as not rated; the
+owner entered 0 where there was no reply to rate.
 
 **Provider policies.** Each provider's data policy was recorded from its public OpenRouter model
 page (`policies.py`, 2026-11-13). Each licence and set of terms of service was read for how
@@ -108,7 +117,34 @@ One dots reply ended with a content-filter finish but was still valid.
 - Nemotron 3 Ultra and Flint (re-run) each returned 5 valid replies, with all 15 quotes found.
 - Nemotron 3.5 Super VL returned 4 valid replies, with all 12 quotes found.
 - dots (re-run) returned 5 valid replies, but only 5 of 15 quotes were found. Its quotes
-  contained Latin-script fragments that did not occur in the transcripts.
+  contained Latin-script fragments that did not occur in the transcripts. The Latin-script check
+  flagged all five of these replies and no reply from any other model.
+
+**Table 2.** Owner's Arabic wording ratings (`<run id>_ar_ratings_summary.csv`).
+
+| Model | Run | Rated / replies | Mean rating |
+|---|---|---|---|
+| nvidia/nemotron-3-ultra-550b-a55b:free | 143329 | 5 / 5 | 4.00 |
+| nvidia/nemotron-3.5-super-vl:free | 143329 | 5 / 5 | 3.80 |
+| recursive/flint-v1.0:free | 143329 | 4 / 5 | 3.75 |
+| recursive/flint-v1.0:free | 211500 | 5 / 5 | 3.80 |
+| dots-studio/dots-3-note-preview:free | 211500 | 5 / 5 | 4.00 |
+| dots, Gemma, Liquid and Inkling | 143329 | 0 / 5 | – |
+
+Notes on the ratings:
+
+- Two first-run replies that were not valid JSON were rated 3, with the note that they lacked
+  insight.
+- dots received the highest wording rating, although most of its quotes were not found. This
+  showed that wording quality and quote fidelity had to be judged separately.
+
+**Qualitative findings from the owner's rating notes:**
+
+- *Code-switching.* A good Arabic reply knew when to keep English terminology inside the Arabic
+  text. This note applied to all replies in both runs.
+- *Usefulness.* Most replies were rated 4. They were described as well structured with useful
+  tips, but they did not explain enough how each point would help the user. An extra suggestion
+  or a rephrased point was recommended.
 
 **Banned terms.** One dots reply (en30) was flagged. The flagged word was part of a phrase quoted
 from the transcript, so the flag was a false positive of the check.
@@ -168,18 +204,39 @@ used at no cost.
   `user` field.
 - Speak & Improve data is still never sent to OpenRouter (`docs/plan/FINAL_07_DATA_SOURCES.md`).
 
+**Arabic code-switching rule.** The code-switching finding was turned into a design rule. The rule
+applies to the coach's own Arabic wording:
+
+- Common English technical and academic terms, such as *slides*, *feedback* and *pace*, stay in
+  English script where Arabic-speaking students would naturally use them.
+- These terms are never transliterated into Arabic letters. The Arabic equivalent may be given
+  on first use.
+- Everything else is Modern Standard Arabic.
+
+Quoted spans are excluded from the rule, because they must match the transcript exactly. The
+Latin-script check enforces this: it detects text added to a quote, which was the dots failure.
+
+Where the rule was recorded:
+
+- the Arabic language pack (`src/presenceai/lang/ar/coach_prompt.yaml`);
+- the plan sections for language packs, coach prompts and T2 training data;
+- the evaluation of the coaching model (E11), as a criterion for the blind raters.
+
+The product prompt builder, its tests and the rater guide were scheduled for phase P7. The spike
+prompt was not changed, so that both recorded runs remained reproducible.
+
 **Items left open at the time of writing:**
 
 - **NVIDIA trial terms.** These terms limit use to trial and evaluation without production use.
   The owner's working reading was that a private, non-commercial university research prototype
   with volunteer participants is evaluation. This reading was pending the supervisor's
   confirmation. If it is not confirmed, the NVIDIA models leave the chain and Flint becomes the
-  pinned model.
+  pinned model. This would cost no extra latency (Flint: p50 18.8 s, p95 37.8 s in the re-run),
+  but the chain would have no second hosted model.
 - **T2 teacher.** No provider was confirmed as allowing its outputs to be used as training data
   for the later fine-tuning task T2. The option proposed for phase P4 was to generate the
   teacher data on Kaggle with an open-weight model under an Apache-2.0 or MIT licence. Only the
   model licence would then apply, and no provider's terms.
-- **Arabic ratings.** The owner's 1–5 ratings of the Arabic wording had not yet been returned.
 
 ## 6. Limitations
 
@@ -193,9 +250,10 @@ used at no cost.
   Inkling result shows.
 - The Gemma result reflects the provider's rate limits on the day of the run, not the model's
   output quality.
-- Five Arabic prompts were too few for a pass decision. The owner's wording ratings are recorded
-  separately in the two rating sheets, `20261113-143329_ar_rating_sheet.csv` and
-  `20261113-211500_ar_rating_sheet.csv`.
+- Five Arabic prompts were too few for a pass decision.
+- The Arabic replies were rated by one rater, the project owner, so inter-rater agreement could
+  not be estimated.
+- The first-run ratings were partial: replies with no content were not rated.
 - The payload and consent rules were tested in the spike code only. Product-level tests are
   planned for phase P7.
 
@@ -203,14 +261,17 @@ used at no cost.
 
 - **Results**, in `experiments/results/s4/`:
   - first run: `20261113-143329_requests.csv`, `_replies.jsonl`, `_summary.csv`,
-    `_summary_rescored.csv` and `_ar_rating_sheet.csv`;
-  - re-run: `20261113-211500_requests.csv`, `_replies.jsonl`, `_summary.csv` and
-    `_ar_rating_sheet.csv`;
+    `_summary_rescored.csv`, `_ar_rating_sheet.csv`, `_ar_ratings_unblinded.csv` and
+    `_ar_ratings_summary.csv`;
+  - re-run: `20261113-211500_requests.csv`, `_replies.jsonl`, `_summary.csv`,
+    `_summary_rescored.csv`, `_ar_rating_sheet.csv`, `_ar_ratings_unblinded.csv` and
+    `_ar_ratings_summary.csv`;
   - provider policies: `20261113-143154_policies.csv`.
 - **Spike code and terms review:** `experiments/s4_openrouter/`, with unit tests in
   `tests/unit/test_s4_core.py`.
 - **Settings:** `experiments/configs/s4_openrouter.yaml` and `experiments/configs/s4_rerun.yaml`.
-- **Configuration:** `configs/models.yaml` (`llm.openrouter`).
+- **Configuration:** `configs/models.yaml` (`llm.openrouter`); Arabic rule
+  `src/presenceai/lang/ar/coach_prompt.yaml`.
 - **Decision record:** `docs/adr/0003-openrouter-model-and-privacy.md`.
 - **Commits:** `de10057` (privacy decision), `fc2c432` (spike harness), `7594412` (first-run
-  results), and the re-run commit on branch `spike/s4-openrouter`.
+  results), `13df62e` (re-run), and the ratings commit on branch `spike/s4-openrouter`.

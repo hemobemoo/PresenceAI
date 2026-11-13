@@ -16,7 +16,11 @@ from typing import Any, Literal
 import yaml
 from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
 
-from presenceai.coach.guardrails import _normalise_ar, contains_banned_term
+from presenceai.coach.guardrails import (
+    _normalise_ar,
+    contains_banned_term,
+    latin_outside_transcript,
+)
 
 Lang = Literal["en", "ar"]
 HERE = Path(__file__).resolve().parent
@@ -319,6 +323,11 @@ def numbers_ok(text: str, m: Measures) -> bool:
     return all(_num(float(tok)) in allowed for tok in tokens)
 
 
+def latin_quote(quote: str, sent_transcript: str, lang: Lang) -> bool:
+    """Arabic only: the quote holds Latin-script text that is not in the transcript (ADR 0003)."""
+    return lang == "ar" and bool(latin_outside_transcript(quote, sent_transcript))
+
+
 def item_has_banned_term(item: FeedbackItem, lang: Lang) -> bool:
     return contains_banned_term(f"{item.observation} {item.suggestion}", lang)
 
@@ -370,6 +379,7 @@ def summarise(
             if valid
             else 0,
             "banned_term_replies": sum(1 for r in valid if r["banned_term"]),
+            "latin_quote_replies": sum(1 for r in valid if r.get("latin_quote") in (True, "True")),
             "finish_length": sum(1 for r in rs if r["finish_reason"] == "length"),
             "latency_ms_p50": _p(lat, 0.5),
             "latency_ms_p95": _p(lat, 0.95),
@@ -421,3 +431,28 @@ def parse_policy(html: str, model: str) -> Policy | None:
             privacy_url=d.get("privacyPolicyURL", ""),
         )
     return None
+
+
+# ---------------------------------------------------------------- Arabic ratings
+
+
+def rating_summary(rows: Sequence[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Per model: replies, ratings on the 1-5 scale and their mean. Other values (blank, 0,
+    text) count as not rated; the owner used 0 for "no reply to rate"."""
+    out: list[dict[str, Any]] = []
+    for model in sorted({str(r["model"]) for r in rows}):
+        vals: list[int] = []
+        rs = [r for r in rows if r["model"] == model]
+        for r in rs:
+            v = str(r.get("rating_1_to_5", "")).strip()
+            if v.isdigit() and 1 <= int(v) <= 5:
+                vals.append(int(v))
+        out.append(
+            {
+                "model": model,
+                "n_replies": len(rs),
+                "n_rated": len(vals),
+                "mean_rating": round(statistics.fmean(vals), 2) if vals else None,
+            }
+        )
+    return out

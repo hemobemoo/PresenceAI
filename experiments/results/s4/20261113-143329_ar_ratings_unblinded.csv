@@ -1,0 +1,36 @@
+﻿prompt_id,model_code,model,rating_1_to_5,notes
+ar01,A,recursive/flint-v1.0:free,3,"no JSON, and it lacks insight"
+ar01,B,nvidia/nemotron-3.5-super-vl:free,3,"no JSON, and it lacks insight"
+ar01,C,nvidia/nemotron-3-ultra-550b-a55b:free,4,"good structure and tips, but we need to focus on what the insight will help the user, an extra suggestion or rephrase"
+ar01,D,dots-studio/dots-3-note-preview:free,0,no reply to rate
+ar01,E,google/gemma-4-31b-it:free,0,no reply to rate
+ar01,F,thinkingmachines/inkling-2-small:free,0,no reply to rate
+ar01,G,liquid/lfm-3-1.7b:free,0,no reply to rate
+ar02,A,recursive/flint-v1.0:free,4,"good structure and tips, but we need to focus on what the insight will help the user, an extra suggestion or rephrase"
+ar02,B,nvidia/nemotron-3.5-super-vl:free,4,"good structure and tips, but we need to focus on what the insight will help the user, an extra suggestion or rephrase"
+ar02,C,nvidia/nemotron-3-ultra-550b-a55b:free,4,"good structure and tips, but we need to focus on what the insight will help the user, an extra suggestion or rephrase"
+ar02,D,dots-studio/dots-3-note-preview:free,0,no reply to rate
+ar02,E,google/gemma-4-31b-it:free,0,no reply to rate
+ar02,F,thinkingmachines/inkling-2-small:free,0,no reply to rate
+ar02,G,liquid/lfm-3-1.7b:free,0,no reply to rate
+ar03,A,recursive/flint-v1.0:free,4,"good structure and tips, but we need to focus on what the insight will help the user, an extra suggestion or rephrase"
+ar03,B,nvidia/nemotron-3.5-super-vl:free,4,"good structure and tips, but we need to focus on what the insight will help the user, an extra suggestion or rephrase"
+ar03,C,nvidia/nemotron-3-ultra-550b-a55b:free,4,"good structure and tips, but we need to focus on what the insight will help the user, an extra suggestion or rephrase"
+ar03,D,dots-studio/dots-3-note-preview:free,0,no reply to rate
+ar03,E,google/gemma-4-31b-it:free,0,no reply to rate
+ar03,F,thinkingmachines/inkling-2-small:free,0,no reply to rate
+ar03,G,liquid/lfm-3-1.7b:free,0,no reply to rate
+ar04,A,recursive/flint-v1.0:free,4,"good structure and tips, but we need to focus on what the insight will help the user, an extra suggestion or rephrase"
+ar04,B,nvidia/nemotron-3.5-super-vl:free,4,"good structure and tips, but we need to focus on what the insight will help the user, an extra suggestion or rephrase"
+ar04,C,nvidia/nemotron-3-ultra-550b-a55b:free,4,"good structure and tips, but we need to focus on what the insight will help the user, an extra suggestion or rephrase"
+ar04,D,dots-studio/dots-3-note-preview:free,0,no reply to rate
+ar04,E,google/gemma-4-31b-it:free,0,no reply to rate
+ar04,F,thinkingmachines/inkling-2-small:free,0,no reply to rate
+ar04,G,liquid/lfm-3-1.7b:free,0,no reply to rate
+ar05,A,recursive/flint-v1.0:free,0,no reply to rate
+ar05,B,nvidia/nemotron-3.5-super-vl:free,4,"good structure and tips, but we need to focus on what the insight will help the user, an extra suggestion or rephrase"
+ar05,C,nvidia/nemotron-3-ultra-550b-a55b:free,4,"good structure and tips, but we need to focus on what the insight will help the user, an extra suggestion or rephrase"
+ar05,D,dots-studio/dots-3-note-preview:free,0,no reply to rate
+ar05,E,google/gemma-4-31b-it:free,0,no reply to rate
+ar05,F,thinkingmachines/inkling-2-small:free,0,no reply to rate
+ar05,G,liquid/lfm-3-1.7b:free,0,no reply to rate
