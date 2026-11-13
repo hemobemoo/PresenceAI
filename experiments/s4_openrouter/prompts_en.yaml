@@ -1,0 +1,315 @@
+# Spike S4 English prompts. SYNTHETIC: written for this spike on 2026-11-13; no real person or
+# recording. Names listed under `names` are fictional and are redacted before sending.
+# duration_s and long_pauses are assigned test values; words, wpm and fillers are computed.
+lang: en
+prompts:
+  - id: en01
+    topic: final-year project defence opening
+    duration_s: 48
+    long_pauses: 1
+    names: [Lina Haddad]
+    transcript: >
+      Good morning, my name is Lina Haddad and today I will present our final year project. Um, the
+      project is a mobile app that helps students find study rooms on campus. We surveyed one
+      hundred and twenty students and most of them said they waste time looking for a free room.
+      So, uh, our app shows live room availability using the booking system. In this talk I will
+      cover the problem, the design, and the results of our pilot.
+
+  - id: en02
+    topic: product pitch
+    duration_s: 40
+    long_pauses: 0
+    transcript: >
+      Imagine you could cut your grocery bill by a fifth without changing what you eat. That is
+      what FreshTrack does. It reads your receipts, tracks what you throw away, and suggests
+      smaller purchases next week. Our beta users saved an average of eighteen percent in their
+      first month. We are asking for your support to launch in three more cities next spring.
+
+  - id: en03
+    topic: research findings summary
+    duration_s: 62
+    long_pauses: 3
+    transcript: >
+      So, um, our study looked at sleep and exam performance. We, uh, we collected data from
+      sixty students over one semester. Um, students who slept less than six hours before an exam
+      scored lower on average. But, you know, the effect was small and there were many other
+      factors. Uh, we did not control for caffeine use, which is a limitation. Um, in future work
+      we want to, uh, repeat the study with a larger sample and maybe use sleep trackers.
+
+  - id: en04
+    topic: club announcement
+    duration_s: 30
+    long_pauses: 0
+    transcript: >
+      Hi everyone. The robotics club is meeting this Thursday at five in room two hundred and
+      four. We are building a line following robot for the national competition. No experience is
+      needed. Bring a laptop if you have one. We will provide the parts and the pizza.
+
+  - id: en05
+    topic: team status update
+    duration_s: 55
+    long_pauses: 2
+    names: [Omar Khalil, Sara]
+    transcript: >
+      This week the backend team finished the login service. Omar Khalil fixed the password reset
+      bug, and Sara wrote the tests for the payment module. Um, we are behind on the reporting
+      page because the design changed twice. Uh, our plan is to finish it by Tuesday. The main
+      risk is the database migration, which we have not tested on real data yet.
+
+  - id: en06
+    topic: history class presentation
+    duration_s: 70
+    long_pauses: 1
+    transcript: >
+      The printing press changed how ideas moved across Europe. Before it, books were copied by
+      hand and were very expensive. After Gutenberg's press, the cost of a book fell sharply and
+      the number of books grew quickly. This helped spread new religious and scientific ideas. It
+      also helped standardise languages, because printers chose one spelling and used it in
+      thousands of copies. Today we see a similar change with the internet.
+
+  - id: en07
+    topic: job interview self introduction
+    duration_s: 45
+    long_pauses: 2
+    names: [Rami Saleh]
+    transcript: >
+      Uh, hello, I'm Rami Saleh. I studied computer engineering and, um, I graduated last June.
+      During my internship I, uh, built a dashboard for monitoring server health. It reduced the
+      time to find outages from about an hour to ten minutes. Um, I enjoy solving problems with
+      data and, you know, I would like to grow as a backend developer in your team.
+
+  - id: en08
+    topic: science explainer
+    duration_s: 58
+    long_pauses: 0
+    transcript: >
+      Why is the sky blue? Sunlight contains all colours. When it enters the atmosphere, it hits
+      tiny gas molecules. Short wavelengths, like blue, are scattered much more than long
+      wavelengths, like red. So when you look at the sky away from the sun, you see this scattered
+      blue light coming from every direction. At sunset, light travels through more air, the blue
+      is scattered away, and the reds and oranges remain.
+
+  - id: en09
+    topic: thesis method section
+    duration_s: 66
+    long_pauses: 4
+    transcript: >
+      For the method, um, we used a, uh, a convolutional neural network. Um, the input is a
+      spectrogram of two seconds of audio. Uh, we trained it on, um, about four thousand labelled
+      clips. Uh, we used five fold cross validation. Um, and, uh, the metric is macro F1 because
+      the classes are, um, not balanced. Uh, I will show the results on the next slide.
+
+  - id: en10
+    topic: charity fundraising appeal
+    duration_s: 42
+    long_pauses: 1
+    transcript: >
+      Last winter, two hundred families in our town could not afford heating. This year we want to
+      change that. Every twenty dollars buys one week of heating oil for a family. We have already
+      raised half of our target. Tonight, I ask you to help us raise the other half. Thank you for
+      listening, and thank you for caring about your neighbours.
+
+  - id: en11
+    topic: software demo
+    duration_s: 75
+    long_pauses: 3
+    transcript: >
+      Okay so, um, here is the main screen. You can see the list of tasks on the left. Uh, if I
+      click on one, the details open on the right. Um, you can add a due date here and, uh, assign
+      it to a team member. Oh, sorry, that's the wrong button. Um, this one. So now the task shows
+      in the calendar view. Uh, we also send a reminder one day before the due date.
+
+  - id: en12
+    topic: business quarterly review
+    duration_s: 60
+    long_pauses: 1
+    transcript: >
+      Revenue for the third quarter was four point two million, up nine percent on last year.
+      Most of the growth came from our subscription product, while hardware sales were flat. Costs
+      rose faster than planned because of shipping prices. For the fourth quarter we will focus on
+      renewals and on reducing shipping costs by moving to a regional warehouse.
+
+  - id: en13
+    topic: wedding toast
+    duration_s: 50
+    long_pauses: 2
+    names: [Dana, Yousef]
+    transcript: >
+      I have known Dana since we were seven years old. We shared a desk, a bicycle, and far too
+      many secrets. When she met Yousef, she called me at midnight to tell me about him. Um, I
+      knew then that this was different. Yousef, thank you for making my best friend laugh every
+      single day. Please raise your glasses to Dana and Yousef.
+
+  - id: en14
+    topic: environmental talk
+    duration_s: 64
+    long_pauses: 2
+    transcript: >
+      Plastic bags take hundreds of years to break down. In our city alone we use about one
+      million of them every month. Um, many end up in the river. Last year volunteers removed three
+      tonnes of rubbish from the river banks. We are proposing a small fee on plastic bags at
+      supermarkets. Cities that did this saw bag use fall by more than half within a year.
+
+  - id: en15
+    topic: medical student case presentation
+    duration_s: 72
+    long_pauses: 3
+    transcript: >
+      The patient is a fifty five year old man who presented with chest pain for two hours. Um,
+      the pain was central and spread to the left arm. Uh, his blood pressure was high and his
+      heart rate was one hundred and ten. The ECG showed changes in the inferior leads. Um, we
+      started treatment for a suspected heart attack and, uh, referred him for an angiogram.
+
+  - id: en16
+    topic: book review
+    duration_s: 52
+    long_pauses: 1
+    transcript: >
+      The book I chose is about how habits form. The author argues that small changes, repeated
+      every day, add up to large results. What I liked most is the idea of making good habits easy
+      and bad habits hard. What I liked less is that many examples are from sports and business,
+      so they may not fit everyone. Overall I would recommend it to first year students.
+
+  - id: en17
+    topic: engineering design review
+    duration_s: 80
+    long_pauses: 5
+    transcript: >
+      So the, um, the bracket failed at, uh, about seventy percent of the design load. Um, we
+      think the problem is the, uh, the weld at the corner. Um, the simulation did not include,
+      uh, residual stress from welding. Um, so we have two options. Uh, we can make the plate
+      thicker, or, um, we can change the weld to a bolted joint. Uh, the bolted joint is, um,
+      cheaper but heavier.
+
+  - id: en18
+    topic: travel story
+    duration_s: 46
+    long_pauses: 0
+    transcript: >
+      Three years ago I missed my train in a small town in the mountains. The next train was the
+      following morning. A family who ran the bakery invited me to stay with them. I learned to
+      make bread at four in the morning. I still make that bread every weekend, and every time I
+      remember that missing a train was the best mistake I ever made.
+
+  - id: en19
+    topic: policy debate opening
+    duration_s: 58
+    long_pauses: 1
+    transcript: >
+      Our team argues that university lectures should be recorded and shared online. First,
+      recordings help students who work or care for family members. Second, students can review
+      difficult parts at their own pace. Third, research shows attendance does not fall much when
+      recordings exist. Our opponents will say recordings reduce interaction, and we will answer
+      that point directly.
+
+  - id: en20
+    topic: cooking demonstration
+    duration_s: 54
+    long_pauses: 2
+    transcript: >
+      First, um, heat the oil in a pan over medium heat. Add the onions and cook them for about
+      eight minutes until they are soft. Uh, then add the garlic and the spices and stir for one
+      minute. Now add the tomatoes. Let it simmer for twenty minutes. Um, you know it is ready when
+      the sauce is thick and the oil comes to the top.
+
+  - id: en21
+    topic: student council campaign speech
+    duration_s: 44
+    long_pauses: 1
+    names: [Hala Mansour]
+    transcript: >
+      My name is Hala Mansour and I am running for student council. I have three promises. Longer
+      library hours during exams. A clear process to report broken equipment. And a monthly open
+      meeting where any student can speak. I will publish what the council does every month, so
+      you can check whether I kept these promises.
+
+  - id: en22
+    topic: data science results
+    duration_s: 68
+    long_pauses: 2
+    transcript: >
+      Our model predicts which customers will cancel their contract. Um, on the test set it
+      reached an accuracy of eighty seven percent. But accuracy is misleading here, because only
+      ten percent of customers cancel. So we also report recall, which was sixty two percent. Uh,
+      that means we miss about four in ten customers who cancel. Our next step is to add usage
+      data from the last three months.
+
+  - id: en23
+    topic: safety briefing
+    duration_s: 36
+    long_pauses: 0
+    transcript: >
+      Before we start, a few safety points. The fire exits are at the back and on the left. In an
+      alarm, leave your bags and walk, do not run, to the car park. Goggles must be worn at all
+      times in the lab. If you spill a chemical, tell the supervisor straight away.
+
+  - id: en24
+    topic: architecture student project
+    duration_s: 63
+    long_pauses: 3
+    transcript: >
+      Uh, the building is a community library for, um, a neighbourhood of about five thousand
+      people. Um, we placed the reading room on the north side to get, uh, soft daylight. The
+      children's area is on the ground floor, near the garden. Um, the roof collects rainwater,
+      uh, which is used for the toilets and the garden. Um, the main material is local stone.
+
+  - id: en25
+    topic: conference lightning talk
+    duration_s: 38
+    long_pauses: 0
+    transcript: >
+      One question drives our work: can small farms predict crop disease with a phone camera? We
+      trained a lightweight model on twelve thousand leaf photos. It runs offline on a basic phone
+      and gives an answer in under two seconds. In field tests with forty farmers, it matched expert
+      diagnosis four times out of five.
+
+  - id: en26
+    topic: retirement farewell speech
+    duration_s: 57
+    long_pauses: 2
+    names: [Nabil Aziz]
+    transcript: >
+      Today we say goodbye to Mr. Nabil Aziz after thirty two years at this school. Um, he taught
+      physics to more than three thousand students. Many of them became engineers and teachers
+      themselves. Uh, he was always the first in the building and the last to leave. Mr. Aziz, on
+      behalf of all of us, thank you, and enjoy your time in the garden.
+
+  - id: en27
+    topic: economics lecture excerpt
+    duration_s: 74
+    long_pauses: 2
+    transcript: >
+      Inflation means that prices in general are rising, so each unit of money buys less. Central
+      banks usually aim for about two percent a year. When inflation is too high, they raise
+      interest rates. Borrowing becomes more expensive, people and firms spend less, and price
+      growth slows. The risk is that if rates rise too fast, the economy can fall into a recession.
+
+  - id: en28
+    topic: customer complaint handling training
+    duration_s: 49
+    long_pauses: 1
+    transcript: >
+      When a customer complains, first listen without interrupting. Then repeat the problem back in
+      your own words, so they know you understood. Um, say what you can do and by when. Do not
+      promise what you cannot deliver. Finally, follow up within two days to check the problem is
+      really solved.
+
+  - id: en29
+    topic: hackathon pitch
+    duration_s: 41
+    long_pauses: 2
+    transcript: >
+      Uh, hi, we're team Byte. Um, our app, uh, it connects people who have, um, extra food with,
+      you know, shelters nearby. Uh, a restaurant posts what they have, and, um, a volunteer picks
+      it up. Uh, we built it in thirty hours. Um, we tested it with, uh, two restaurants this
+      morning.
+
+  - id: en30
+    topic: closing of a thesis defence
+    duration_s: 51
+    long_pauses: 1
+    transcript: >
+      To conclude, this thesis showed that a small model trained on local data can match a large
+      general model on our task, while running on a laptop. The main limitation is the size of our
+      test set, which was only three hundred samples. In future work we will collect more data from
+      other regions. Thank you, and I am happy to take your questions.

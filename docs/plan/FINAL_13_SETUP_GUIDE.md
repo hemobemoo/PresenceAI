@@ -163,7 +163,7 @@ Make sure your Claude plan includes Claude Code (2.4). Login happens in step 7.
    - `presenceai-app` — for the app. Set a **credit limit** (e.g. $1) so a bug cannot spend your balance on paid models; free models cost $0.
    - `cline-dev` — for Cline, with its own small limit. Keeping them separate lets you see agent usage apart from app usage on the activity page.
    - If offered, set an expiry date for each key and note it in your password manager.
-2. **Privacy settings** (openrouter.ai/settings/privacy): in the **free models** section, turn off routing to providers that may train on inputs or log them. ✓ OpenRouter states that with training opted out it will not route to providers that train. Some free models may then have no endpoint; that is decided in spike S4.
+2. **Privacy settings** (openrouter.ai/settings/privacy): in the **free models** section, **allow** free endpoints that may log or train on prompts. Why: the more capable free models are served only by such providers, and they cost nothing (decision of 2026-11-13, `docs/adr/0003-openrouter-model-and-privacy.md`). The protections stay: the app sends text only, with personal names redacted, no media, no ids and no `user` field, and only when the participant has accepted consent switch (d); otherwise it uses templates. The app also sends `provider.data_collection: "allow"` with each request. If this setting blocks those endpoints, requests fail with "No endpoints found matching your data policy".
 3. Leave your existing key alone or delete it if it was used elsewhere.
 
 ### 3.4 Hugging Face
@@ -457,7 +457,7 @@ Start each in a fresh session. Use `/verify` before you push.
 | `claude mcp list` shows `github` failing | `echo ${GITHUB_PAT:+set}` prints `set`? If not, the variable is not in this terminal; reopen it. Check the token has access to the `presenceai` repo |
 | `context7` failing | Same as above for `CONTEXT7_API_KEY`; or remove the header line to use it without a key (lower limits) |
 | OpenRouter check returns 401 | Wrong key in `.env`, or the key was disabled/expired |
-| OpenRouter free model returns "No endpoints found matching your data policy" | Expected for some free models after the privacy change; S4 picks one that works |
+| OpenRouter free model returns "No endpoints found matching your data policy" | Your OpenRouter privacy setting still blocks free endpoints that may log or train on prompts. Allow them as described in step 3.3 (item 2), then retry |
 | Hugging Face check returns 401 | Token deleted or pasted with spaces |
 | `serena` not found | Open a new terminal; `uv tool update-shell` adds uv tools to PATH |
 | Claude Code cannot see files on WSL | You opened `/mnt/c/...`; move the repo to `~/projects` |

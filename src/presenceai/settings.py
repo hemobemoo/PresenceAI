@@ -11,6 +11,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
+import yaml
 from pydantic import BaseModel, ConfigDict, Field, SecretStr
 from pydantic_settings import (
     BaseSettings,
@@ -22,6 +23,7 @@ from pydantic_settings import (
 REPO_ROOT = Path(__file__).resolve().parents[2]
 CONFIG_DIR = REPO_ROOT / "configs"
 DEFAULT_CONFIG = CONFIG_DIR / "default.yaml"
+MODELS_CONFIG = CONFIG_DIR / "models.yaml"
 
 Runtime = Literal["local", "space", "offline"]
 Profile = Literal["lite", "standard", "space"]
@@ -71,6 +73,9 @@ class Settings(BaseSettings):
     expressions: ExpressionThresholds = ExpressionThresholds()
 
     openrouter_api_key: SecretStr | None = None
+    # Optional overrides of configs/models.yaml `llm.openrouter` (ADR 0003). Not secrets.
+    openrouter_model: str | None = None
+    openrouter_fallback_models: str | None = None  # comma-separated
     hf_token: SecretStr | None = None
     supabase_url: SecretStr | None = None
     supabase_key: SecretStr | None = None
@@ -97,3 +102,28 @@ class Settings(BaseSettings):
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:
     return Settings()
+
+
+class OpenRouterModels(_Section):
+    pinned: str | None
+    fallbacks: tuple[str, ...]
+
+
+def openrouter_models(
+    settings: Settings | None = None, models_yaml: Path = MODELS_CONFIG
+) -> OpenRouterModels:
+    """Pinned and fallback OpenRouter model ids.
+
+    `configs/models.yaml` (`llm.openrouter`) is the source of truth. Non-empty
+    OPENROUTER_MODEL / OPENROUTER_FALLBACK_MODELS (comma-separated) override it (ADR 0003).
+    """
+    s = settings if settings is not None else get_settings()
+    data = yaml.safe_load(models_yaml.read_text(encoding="utf-8")) or {}
+    cfg = (data.get("llm") or {}).get("openrouter") or {}
+    pinned: str | None = cfg.get("pinned") or None
+    fallbacks = tuple(str(f) for f in (cfg.get("fallbacks") or []) if f)
+    if s.openrouter_model and s.openrouter_model.strip():
+        pinned = s.openrouter_model.strip()
+    if s.openrouter_fallback_models and s.openrouter_fallback_models.strip():
+        fallbacks = tuple(f.strip() for f in s.openrouter_fallback_models.split(",") if f.strip())
+    return OpenRouterModels(pinned=pinned, fallbacks=fallbacks)

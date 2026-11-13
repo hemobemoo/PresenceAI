@@ -1,0 +1,8 @@
+model_code,model
+B,nvidia/nemotron-3.5-super-vl:free
+E,google/gemma-4-31b-it:free
+F,thinkingmachines/inkling-2-small:free
+A,recursive/flint-v1.0:free
+D,dots-studio/dots-3-note-preview:free
+G,liquid/lfm-3-1.7b:free
+C,nvidia/nemotron-3-ultra-550b-a55b:free

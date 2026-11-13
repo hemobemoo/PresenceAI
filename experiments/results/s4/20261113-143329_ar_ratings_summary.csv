@@ -1,0 +1,8 @@
+model,n_replies,n_rated,mean_rating
+dots-studio/dots-3-note-preview:free,5,0,
+google/gemma-4-31b-it:free,5,0,
+liquid/lfm-3-1.7b:free,5,0,
+nvidia/nemotron-3-ultra-550b-a55b:free,5,5,4.0
+nvidia/nemotron-3.5-super-vl:free,5,5,3.8
+recursive/flint-v1.0:free,5,4,3.75
+thinkingmachines/inkling-2-small:free,5,0,

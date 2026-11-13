@@ -1,0 +1,8 @@
+checked_at,model,provider,training,training_openrouter,retains_prompts,retention_days,requires_user_ids,terms_url,privacy_url
+20261113-143154,nvidia/nemotron-3.5-super-vl:free,Nvidia,True,True,True,,True,https://assets.ngc.nvidia.com/products/api-catalog/legal/NVIDIA%20API%20Trial%20Terms%20of%20Service.pdf,https://www.nvidia.com/en-us/about-nvidia/privacy-policy/
+20261113-143154,google/gemma-4-31b-it:free,Google AI Studio,False,False,True,55,True,https://cloud.google.com/terms/,https://cloud.google.com/terms/cloud-privacy-notice
+20261113-143154,thinkingmachines/inkling-2-small:free,Thinking Machines,True,True,True,,True,https://thinkingmachines.ai/legal/tml-free-research-api-tier-terms-of-service.pdf,https://thinkingmachines.ai/legal/tml-free-research-api-tier-privacy-notice.pdf
+20261113-143154,recursive/flint-v1.0:free,Recursive,False,False,True,,,https://recursive.com/legal/terms-of-use,https://recursive.com/legal/privacy-policy
+20261113-143154,dots-studio/dots-3-note-preview:free,AtlasCloud,False,False,True,,,,https://www.atlascloud.ai/privacy
+20261113-143154,liquid/lfm-3-1.7b:free,Liquid,True,False,True,,True,https://www.liquid.ai/terms-conditions,https://www.liquid.ai/privacy-policy
+20261113-143154,nvidia/nemotron-3-ultra-550b-a55b:free,Nvidia,True,True,True,,True,https://assets.ngc.nvidia.com/products/api-catalog/legal/NVIDIA%20API%20Trial%20Terms%20of%20Service.pdf,https://www.nvidia.com/en-us/about-nvidia/privacy-policy/

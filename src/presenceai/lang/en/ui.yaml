@@ -8,6 +8,6 @@ consent:
     use_app: "Use the app"
     camera: "Use the camera"
     keep_recordings: "Keep encrypted recordings temporarily"
-    hosted_ai: "Send transcript text to a hosted AI model for wording"
+    hosted_ai: "Send transcript text to a hosted AI model for wording. The model provider stores this text and may use it to improve its models."
     study_rating: "Study only: blind rating of my recordings"
     study_release: "Study only: release of de-identified derived metrics"

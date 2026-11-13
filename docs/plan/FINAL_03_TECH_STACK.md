@@ -54,7 +54,7 @@ Replaced: NiceGUI (no browser mic/webcam recorder without custom JS).
 
 | Role | Choice | Cost | Checked |
 |---|---|---|---|
-| Default LLM | **OpenRouter** free model, pinned id + 2 fallbacks, called with the `openai` SDK | $0; 20 req/min, 1,000/day | ✓ |
+| Default LLM | **OpenRouter** free model: pinned id + fallback(s) from `configs/models.yaml` (S4, ADR 0003: NVIDIA pinned, NVIDIA fallback, Recursive emergency fallback), called with the `openai` SDK | $0; 20 req/min, 1,000/day | ✓ |
 | Teacher for T2 data | Same, restricted to a model whose licence allows training on its outputs (e.g. Apache-2.0/MIT open-weight models) | $0 | ~ |
 | Coach-SLM (T2) | Fine-tuned small instruct model (start with Qwen3.5 0.8B or 2B; licence to confirm) served as GGUF with `llama-cpp-python` | $0 | ~ |
 | Fallback | Deterministic templates in EN and AR | — | — |

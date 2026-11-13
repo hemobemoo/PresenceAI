@@ -1,0 +1,15 @@
+model,lang,n,http_ok,retried,strict_json_rate,json_valid_rate,quotes,quote_found_rate,all_quotes_found_rate,numbers_ok_rate,banned_term_replies,latin_quote_replies,finish_length,latency_ms_p50,latency_ms_p95,latency_ms_mean,providers,passed
+dots-studio/dots-3-note-preview:free,ar,5,5,0,0.0,0.0,0,0.0,0.0,0,0,0,5,52361.6,56200.8,53357.3,AtlasCloud,
+dots-studio/dots-3-note-preview:free,en,30,30,0,0.4,0.4,36,1.0,0.4,1.0,0,0,18,47386.2,53862.6,45342.4,AtlasCloud,False
+google/gemma-4-31b-it:free,ar,5,0,5,0.0,0.0,0,0.0,0.0,0,0,0,0,490.9,777.7,563.5,,
+google/gemma-4-31b-it:free,en,30,2,30,0.067,0.067,6,1.0,0.067,1.0,0,0,0,616.5,25362.4,5537.7,Google AI Studio,False
+liquid/lfm-3-1.7b:free,ar,5,5,0,0.0,0.0,0,0.0,0.0,0,0,0,5,19039.7,22265.3,18790.7,Liquid,
+liquid/lfm-3-1.7b:free,en,30,30,0,0.033,0.033,3,1.0,0.033,1.0,0,0,29,19553.3,26639.1,20095.1,Liquid,False
+nvidia/nemotron-3-ultra-550b-a55b:free,ar,5,5,0,1.0,1.0,15,1.0,1.0,0.8,0,0,0,46681.4,81134.3,52825.4,Nvidia,
+nvidia/nemotron-3-ultra-550b-a55b:free,en,30,30,0,1.0,1.0,90,1.0,1.0,0.467,0,0,0,27209.5,54573.2,30242.4,Nvidia,True
+nvidia/nemotron-3.5-super-vl:free,ar,5,5,0,0.8,0.8,12,1.0,0.8,1.0,0,0,1,30330.5,119861.9,51533.0,Nvidia,
+nvidia/nemotron-3.5-super-vl:free,en,30,30,1,0.967,0.967,87,1.0,0.967,1.0,0,0,1,19514.2,38198.8,21679.2,Nvidia,True
+recursive/flint-v1.0:free,ar,5,5,0,0.6,0.6,9,1.0,0.6,1.0,0,0,2,22097.1,30267.4,22895.3,Recursive,
+recursive/flint-v1.0:free,en,30,30,0,0.833,0.833,75,1.0,0.833,1.0,0,0,5,21417.3,27860.6,21096.2,Recursive,False
+thinkingmachines/inkling-2-small:free,ar,5,0,0,0.0,0.0,0,0.0,0.0,0,0,0,0,293.1,2023.2,725.1,,
+thinkingmachines/inkling-2-small:free,en,30,0,0,0.0,0.0,0,0.0,0.0,0,0,0,0,305.1,464.6,322.1,,False

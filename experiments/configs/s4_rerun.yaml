@@ -1,0 +1,37 @@
+# Spike S4 re-run (owner, 2026-11-13): only the two non-NVIDIA models whose first-run failures
+# were output-limit cut-offs (run 20261113-143329). Same prompts, pass rule and privacy settings
+# as s4_openrouter.yaml; only the output cap and reasoning setting differ. Gemma is not re-run
+# (its failures were rate limits). Recorded in docs/adr/0003.
+
+pass:
+  min_json_valid: 0.95
+  min_quote_found: 0.90
+
+models:
+  - recursive/flint-v1.0:free
+  - dots-studio/dots-3-note-preview:free
+
+endpoint: https://openrouter.ai/api/v1/chat/completions
+request:
+  temperature: 0.2
+  max_tokens: 16384           # first run: 4096, too small for these two reasoning models
+  response_format: {type: json_object}
+  reasoning: {enabled: false}
+  provider: {data_collection: allow}   # owner's decision 2026-11-13 (ADR 0003)
+# Reasoning off where the endpoint allows it. OpenRouter /api/v1/models (read 2026-11-13) lists
+# reasoning as mandatory for Flint and optional for dots, so Flint gets the lowest effort instead.
+model_overrides:
+  recursive/flint-v1.0:free:
+    reasoning: {effort: minimal, exclude: true}
+interval_s: 4.0
+timeout_s: 180
+retry_statuses: [408, 429, 500, 502, 503, 504]
+retry_wait_s: 20
+arabic_prompts: 5
+
+fillers:
+  en: ["um", "uh", "erm", "you know"]
+  ar: ["يعني", "امم", "اه"]
+quote_min_words: 3
+items_min: 2
+items_max: 4

@@ -1,0 +1,16 @@
+# English rules for the coach prompt (provider chain, P7) and for T2 teacher data (FINAL_06 §5).
+
+language_rule: >-
+  Write observation and suggestion in plain English. Copy evidence_quote exactly from the
+  transcript.
+
+# Every feedback point (owner, 2026-11-13, from the S4 Arabic rating; ADR 0003). Applies to
+# templates, the provider chain and T2 data.
+# Rater criterion in E11: "explains the benefit to the user".
+feedback_point_rule: >-
+  Every feedback point must say three things: what was observed, with its evidence (the
+  evidence_quote or a measurement); why it matters for the user and their listeners; and what
+  the user gains by practising the suggestion. Describe observable behaviour only.
+
+keep_english_examples: []
+quotes_follow_transcript: true

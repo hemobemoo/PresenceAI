@@ -97,6 +97,7 @@ Rules enforced in code and tests:
 | Content measures (§3) | ✓ | Not scored; transcript shown; future work |
 | Vision (§4) | ✓ | ✓ (language-independent) |
 | Feedback text | Templates + LLM wording | Arabic templates; LLM wording off by default |
+| Arabic code-switching (ADR 0003) | — | In the coach's own wording (templates, LLM, Coach-SLM), common English technical/academic terms that Arabic-speaking students use (e.g. *slides*, *feedback*, *pace*) stay in English script; never transliterated into Arabic letters; the Arabic equivalent may follow on first use; everything else is Modern Standard Arabic. **Quotes are excluded**: quoted spans match the transcript exactly, and `coach.guardrails.latin_outside_transcript` flags Latin-script text in an Arabic quote that is not in the transcript. Rule text: `lang/ar/coach_prompt.yaml` |
 | UI | LTR | RTL strings and text components |
 
 Language detection on the first 30 s; mismatch with the chosen language triggers a notice, not an error.
