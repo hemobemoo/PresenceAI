@@ -3,6 +3,7 @@
     uv run python experiments/s4_openrouter/run.py --dry-run   # build and check payloads only
     uv run python experiments/s4_openrouter/run.py                    # full run (~245 requests)
     uv run python experiments/s4_openrouter/run.py --models google/gemma-4-31b-it:free --limit 2
+    uv run python experiments/s4_openrouter/run.py --config experiments/configs/s4_rerun.yaml
 
 The key comes from OPENROUTER_API_KEY via presenceai.settings (read from .env); it is never
 printed, logged or written. Payloads are text only, personal names are redacted, there is no
@@ -164,10 +165,11 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--limit", type=int, help="first N prompts per language")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--rescore", metavar="RUN_ID", help="re-check saved replies; no network")
+    ap.add_argument("--config", type=Path, default=core.CONFIG)
     ap.add_argument("--out", type=Path, default=core.REPO / "experiments" / "results" / "s4")
     args = ap.parse_args(argv)
 
-    cfg = core.load_config()
+    cfg = core.load_config(args.config)
     if args.rescore:
         print(f"wrote {rescore(args.out, args.rescore, cfg).name}")
         return 0
@@ -183,7 +185,9 @@ def main(argv: list[str] | None = None) -> int:
     for p in prompts:  # round robin: every model sees each prompt at about the same time
         m = core.compute_measures(p, cfg["fillers"][p.lang])
         for model in models:
-            jobs.append((p, m, model, core.build_payload(model, p, m, cfg["request"])))
+            jobs.append(
+                (p, m, model, core.build_payload(model, p, m, core.request_for(cfg, model)))
+            )
     print(
         f"{len(jobs)} requests: {len(models)} models x {len(prompts)} prompts ({','.join(langs)})"
     )

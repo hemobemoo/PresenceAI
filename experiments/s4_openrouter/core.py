@@ -178,6 +178,11 @@ def user_message(transcript: str, m: Measures) -> str:
     )
 
 
+def request_for(cfg: dict[str, Any], model: str) -> dict[str, Any]:
+    """Request settings for one model: `request`, with keys replaced by `model_overrides[model]`."""
+    return {**cfg["request"], **(cfg.get("model_overrides") or {}).get(model, {})}
+
+
 def build_payload(
     model: str, p: Prompt, m: Measures, request_cfg: dict[str, Any]
 ) -> dict[str, Any]:

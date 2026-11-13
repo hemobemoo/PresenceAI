@@ -222,3 +222,19 @@ def test_parse_policy_picks_the_free_variant():
     assert pol is not None
     assert pol.provider == "Free" and pol.training is True and pol.retention_days == 30
     assert core.parse_policy(html, "org/other:free") is None
+
+
+def test_model_overrides_replace_request_keys_for_that_model_only():
+    cfg = {
+        "request": {"max_tokens": 10, "reasoning": {"effort": "low"}},
+        "model_overrides": {"a/x:free": {"reasoning": {"enabled": False}}},
+    }
+    assert core.request_for(cfg, "a/x:free") == {"max_tokens": 10, "reasoning": {"enabled": False}}
+    assert core.request_for(cfg, "b/y:free") == cfg["request"]
+
+
+def test_rerun_config_keeps_the_privacy_settings_and_pass_rule():
+    rerun = core.load_config(core.REPO / "experiments" / "configs" / "s4_rerun.yaml")
+    assert rerun["pass"] == CFG["pass"]
+    for model in rerun["models"]:
+        assert core.request_for(rerun, model)["provider"] == {"data_collection": "allow"}
