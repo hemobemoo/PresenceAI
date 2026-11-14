@@ -1,7 +1,7 @@
 # 0007 — faster-whisper on a ZeroGPU Space (spike S2)
 
-- Status: **proposed**. The owner fixed the pass rule on 2026-11-14, before any run. Results are
-  pending.
+- Status: **proposed**. The owner fixed the pass rule on 2026-11-14, before any run. Results: pass
+  (run `20261114-z1`); see "Results" and "Decision".
 - Date: 2026-11-14
 - Decider: project owner
 - Plan reference: docs/plan/FINAL_12_ROADMAP_AND_THESIS.md §1 (S2); FINAL_02 §4 (Stage B);
@@ -73,6 +73,25 @@ previous text. GPU compute type float16.
 are an experiment-only exception to AGENTS.md rule 2 (owner, 2026-11-14). `HF_TOKEN` is used by
 name only and never printed.
 
+**Downloads outside `scripts/download_models.py`.** Two public files were downloaded on the laptop
+while preparing S2. The owner approved them after the fact on 2026-11-14; the AGENTS exception was
+not widened, and any future download outside `scripts/download_models.py` needs the owner first.
+Each file's SHA-256 matched the Hub's LFS hash.
+
+| File | Repo and revision | Bytes | SHA-256 | Used for |
+|---|---|---|---|---|
+| `model.safetensors` | `openai/whisper-large-v3-turbo` @ `41f01f3fe87f28c78e2fbf8b568835947dd65ed9` | 1,617,824,864 | `542566a422ae4f3fd23f1ba11add198fca01bbf82e66e6a2857b3f608b1eb9d1` | the one-time CTranslate2 conversion |
+| `data/test-00000-of-00001.parquet` | `amaai-lab/DisfluencySpeech` (dataset) @ `b7da294fe3a70dd96df6640893f2a5dfc2c87638` | 70,868,626 | `e78837be393206fc0ae6a0cefb4ec8c942c3e26401640eb8af67cf0dac21b4b0` | the 3-minute and probe clips |
+
+**Setup check (2026-11-14, read-only, with the upload token).**
+- The model repo and the Space both exist and are private.
+- The Space SDK is Gradio, and the requested hardware is `zero-a10g` (ZeroGPU).
+- The Space has the secret `HF_TOKEN` (name only) and the variable `S2_MODEL_REPO`, which matches
+  the model repo's ID exactly.
+- The upload token is fine-grained, with write access to these two repos only. On the first
+  check it saw neither repo; the owner added them to its permissions.
+- **Quota before the run:** the owner's billing page showed "Zero GPU 0/5 min".
+
 ## Pass rule (owner, 2026-11-14, fixed before the run)
 
 All three must hold:
@@ -95,6 +114,75 @@ All three must hold:
 **If the rule fails:** the numbers are reported, and the plan's fallback (Whisper `small` on the
 Space CPU, or dropping Stage B) goes to the owner.
 
-## Results
+## Results (run `20261114-z1`, 2026-11-14)
 
-Pending.
+Sources: `experiments/results/s2/20261114-z1_probe.json`, `_calls.csv`, `_decision.csv` and
+`_cpu.json`.
+
+**Space.**
+- Built from the Space repo commit `766fd30`, with the model repo pinned at `7f416da`. All 10
+  model files on the Hub matched the manifest: SHA-256 for both `model.bin` files, size for the
+  others.
+- Hardware: NVIDIA RTX PRO 6000 Blackwell Server Edition, as the MIG slice `2g.48gb`.
+- Packages: torch 2.9.1 (CUDA 12.8, cuDNN 9.10.2); `nvidia-cublas-cu12` 12.8.4.1;
+  `nvidia-cudnn-cu12` 9.10.2.21; ctranslate2 4.9.0; faster-whisper 1.2.1; av 19.0.2;
+  gradio 5.23.1; spaces 0.51.3.
+- The model download at Space start took 4.2 s.
+
+**Probe** (10 s clip).
+- CTranslate2 saw 1 CUDA device inside `@spaces.GPU`, with float16 among its compute types.
+- The model loaded in 1.18 s, and the clip transcribed correctly in 10.74 s.
+- GPU time: 11.92 s.
+- The slow transcription of this first clip did not recur (see below). One explanation is one-off
+  CUDA kernel compilation on first use with this new GPU generation. This is a hypothesis, not
+  something the probe measured.
+
+**Measured calls** (182.65 s clip).
+
+| Call | GPU-s (inside `@spaces.GPU`) | Model load | Transcription | Model already loaded | Client round trip |
+|---|---|---|---|---|---|
+| cold | 4.682 | 1.268 | 3.390 | no | 12.381 |
+| warm 1 | 4.706 | 1.248 | 3.452 | no | 9.530 |
+| warm 2 | 3.008 | 0 | 3.006 | yes | 6.613 |
+| warm 3 | 3.133 | 0 | 3.131 | yes | 6.506 |
+
+**Pass rule.**
+
+| Condition | Value | Holds |
+|---|---|---|
+| Every transcript non-empty | 4 of 4 | yes |
+| Median warm GPU-s < 60 | 3.133 | yes |
+| No call over the 60 s reservation | largest 4.706 | yes |
+
+**For information.**
+- **Transcription speed:** 0.017–0.019 × real time.
+- **WER against the clip reference:** 8.02 on all four calls (base turbo).
+- **Model staying loaded:** in 2 of the 3 warm calls the model was still loaded from the previous
+  call. Loading it again took 1.25 s.
+- **Total GPU time measured inside the function:** 27.45 s (probe 11.92, calls 15.53).
+- **CPU fallback:** whisper-small int8 on the Space CPU took 8.21 s to transcribe (model load
+  0.38 s), WER 9.00. The Space reported 192 CPUs, which is the host's count; the Space's own CPU
+  share is not known.
+- **Quota:** "Zero GPU 0/5 min" before the run (owner's billing page). After the run: pending the
+  owner's reading.
+
+## Decision
+
+**Pass** under the rule fixed before the run (owner, 2026-11-14). A private ZeroGPU Space ran
+faster-whisper large-v3-turbo on a 3-minute clip in 3.1–4.7 GPU-seconds per analysis, far inside
+the 60 s reservation and a free account's 5-minute daily quota. Stage B can keep Whisper on
+ZeroGPU, and the CPU fallback is not needed for this question.
+
+Limits:
+- **One clip, one day.** These are four calls on one public clip, one speaker, measured on one
+  day. Queue waits and GPU availability vary.
+- **Measured inside the function.** GPU-seconds were timed inside `@spaces.GPU`. The quota
+  ZeroGPU charges may add some overhead; the owner's after-run quota reading is the cross-check.
+- **Reservation can block visitors.** A visitor can only start a call if their remaining quota
+  covers the reservation. With `duration=60`, the last minute of a visitor's quota cannot be used.
+  A shorter reservation, which ZeroGPU also queues with higher priority, is a later design
+  decision for Stage B; it was not changed here.
+- **Not Stage B as designed.** This is not the full Stage B pipeline: no live loop, no TURN relay,
+  no Supabase, and audio was uploaded as a file.
+
+Status stays **proposed** until the owner accepts it.

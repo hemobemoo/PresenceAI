@@ -1,0 +1,42 @@
+{
+  "run_id": "20261114-z1",
+  "client_s": 18.365,
+  "error": "",
+  "mode": "probe",
+  "torch_cuda_available": true,
+  "torch_cuda": "12.8",
+  "torch_cudnn": 91002,
+  "gpu_name": "NVIDIA RTX PRO 6000 Blackwell Server Edition MIG 2g.48gb",
+  "ct2_cuda_devices": 1,
+  "ct2_cuda_compute_types": [
+    "bfloat16",
+    "float16",
+    "float32",
+    "int8",
+    "int8_bfloat16",
+    "int8_float16",
+    "int8_float32"
+  ],
+  "model_cached": false,
+  "load_s": 1.175,
+  "transcribe_s": 10.742,
+  "audio_s": 10.0,
+  "text": "And he's taken them and raped them and then brought them right back and just kind of thrown them out of the car in the front yard. But boy, once it gets over...",
+  "gpu_s": 11.922,
+  "env": {
+    "versions": {
+      "torch": "2.9.1",
+      "ctranslate2": "4.9.0",
+      "faster-whisper": "1.2.1",
+      "av": "19.0.2",
+      "numpy": "2.5.3",
+      "gradio": "5.23.1",
+      "spaces": "0.51.3",
+      "huggingface_hub": "1.16.1",
+      "nvidia-cublas-cu12": "12.8.4.1",
+      "nvidia-cudnn-cu12": "9.10.2.21"
+    },
+    "download_s": 4.221,
+    "cpu_count": 192
+  }
+}

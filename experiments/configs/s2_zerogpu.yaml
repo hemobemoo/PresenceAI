@@ -8,7 +8,7 @@ model:
   ct2_quantization: float16                    # stored weights
   converted_with: {ctranslate2: "4.9.0", transformers: "4.57.6"}
   # The private model repo id is a Space variable (S2_MODEL_REPO), not stored here.
-  repo_revision: null                          # set after `hf upload` (commit of the model repo)
+  repo_revision: 7f416daaa0f1dba91ed5a76dcec1cb5a4dd1710c   # private model repo commit (2026-11-14)
   turbo_subfolder: large-v3-turbo-ct2-f16
   cpu_subfolder: small-ct2-int8                # S3 run 20261114-c3 base export (whisper-small)
 

@@ -95,6 +95,7 @@ def wer(reference: str, hypothesis: str) -> float:
     if spec is None or spec.loader is None:
         raise ImportError("cannot load experiments/s3_unsloth_whisper/common.py")
     mod = importlib.util.module_from_spec(spec)
+    sys.modules["s3_common"] = mod  # dataclasses need the module registered while it loads
     spec.loader.exec_module(mod)
     return mod.corpus_wer([reference], [hypothesis])
 
