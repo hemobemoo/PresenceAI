@@ -1,0 +1,144 @@
+{
+  "config": {
+    "source_notebook": {
+      "repo": "unslothai/notebooks",
+      "path": "nb/Whisper.ipynb",
+      "commit": "5f42bb99c0ce07b1b45d41fc9a9dc3452b889b9f"
+    },
+    "base_model": {
+      "id": "unsloth/whisper-small",
+      "revision": "023f354567bbe9a875605cb8e7ef40ff9629653a"
+    },
+    "dataset": {
+      "id": "amaai-lab/DisfluencySpeech",
+      "revision": "b7da294fe3a70dd96df6640893f2a5dfc2c87638",
+      "text_column": "transcript_a",
+      "n_train": 200,
+      "n_validation": 50,
+      "n_test": 10
+    },
+    "seeds": {
+      "data": 3407,
+      "lora": 3407,
+      "trainer": 3407
+    },
+    "lora": {
+      "r": 64,
+      "alpha": 64,
+      "dropout": 0,
+      "target_modules": [
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    "train": {
+      "per_device_train_batch_size": 1,
+      "gradient_accumulation_steps": 4,
+      "warmup_steps": 5,
+      "max_steps": 100,
+      "learning_rate": 0.0001,
+      "logging_steps": 1,
+      "eval_steps": 10,
+      "optim": "adamw_8bit",
+      "weight_decay": 0.001,
+      "lr_scheduler_type": "linear"
+    },
+    "runtime": {
+      "platform": "colab",
+      "gpu": "T4",
+      "timeout_s": 5400,
+      "ct2_quantization": "int8"
+    },
+    "local": {
+      "compute_type": "int8",
+      "beam_size": 5,
+      "language": "en",
+      "temperature": 0.0,
+      "condition_on_previous_text": false,
+      "vad_filter": false
+    },
+    "fillers": [
+      "uh",
+      "um",
+      "er",
+      "erm",
+      "ah",
+      "hm",
+      "hmm",
+      "mm"
+    ],
+    "pass": {
+      "loss_window": 10,
+      "max_wer_increase_points": 10.0
+    }
+  },
+  "build": {
+    "run_id": "20261114-c2",
+    "repo_commit": "411998d29c7ae82967b3e3dc9ce18bde8f393821",
+    "repo_dirty": false
+  },
+  "changes_from_notebook": "Adapted from unslothai/notebooks nb/Whisper.ipynb (Colab) at the commit in\nCONFIG[\"source_notebook\"]. Its code cells are the same as nb/Kaggle-Whisper.ipynb at that commit\nexcept the install cell; this script uses the Colab install cell. Changes from the notebook:\n- base model whisper-small (notebook: whisper-large-v3), pinned by revision;\n- data: DisfluencySpeech (pinned revision), `transcript_a`, 200 train / 50 validation clips\n  chosen with a fixed seed (notebook: Etherll/kaira);\n- validation loss only (no argmax WER metric), evaluated at step 0 and every eval_steps;\n- max_steps 100 and eval_steps 10;\n- CUDA_VISIBLE_DEVICES=0;\n- `mslk` is uninstalled only if it is installed and fails to import (Kaggle run 1 failed on\n  this; see env_fixes);\n- if the merge writes no config.json / generation_config.json, they are copied from the base\n  model (run c1 failed at conversion without them; see env_fixes);\n- after training: LoRA merged to 16-bit, base and fine-tuned models converted to CTranslate2,\n  10 test clips written as WAV for the local CPU check, SHA-256 of every output file recorded.\n",
+  "started_unix": 1794676266.9635925,
+  "env_fixes": [
+    "config.json copied from the base model into the merged model",
+    "generation_config.json copied from the base model into the merged model"
+  ],
+  "runtime": {
+    "on_colab": true,
+    "colab_release_tag": "release-colab-external-images_20261112-060057_RC00",
+    "cuda_visible_devices": "0",
+    "nvidia_smi": "Tesla T4, 580.82.07, 15360 MiB"
+  },
+  "versions_after_install": {
+    "python": "3.13.16",
+    "platform": "Linux-6.6.159+-x86_64-with-glibc2.39",
+    "torch": "2.14.1+cu130",
+    "transformers": "4.57.6",
+    "unsloth": "2026.11.4",
+    "unsloth_zoo": "2026.11.4",
+    "peft": "0.21.2",
+    "trl": "0.22.2",
+    "datasets": "3.6.0",
+    "ctranslate2": "4.9.0",
+    "accelerate": "1.15.0",
+    "bitsandbytes": "0.50.2",
+    "torchao": "0.18.0",
+    "librosa": "0.11.0",
+    "soundfile": "0.14.0"
+  },
+  "gpu": "Tesla T4",
+  "cuda": "13.0",
+  "eval_loss_step0": 2.089759588241577,
+  "train_runtime_s": 97.4982,
+  "peak_gpu_mem_gb": 0.934,
+  "merge_method": "unsloth save_pretrained_merged(save_method=None)",
+  "status": "error",
+  "traceback": "Traceback (most recent call last):\n  File \"/content/train_s3.py\", line 371, in <module>\n    main()\n    ~~~~^^\n  File \"/content/train_s3.py\", line 345, in main\n    sh(f\"{conv} --model {base_dir} --output_dir {OUT}/ct2_base --quantization {q} {copy}\")\n    ~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/train_s3.py\", line 59, in sh\n    subprocess.run(cmd, shell=True, check=True)  # noqa: S602 (fixed commands, Colab only)\n    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.13/subprocess.py\", line 578, in run\n    raise CalledProcessError(retcode, process.args,\n                             output=stdout, stderr=stderr)\nsubprocess.CalledProcessError: Command 'ct2-transformers-converter --model /root/.cache/huggingface/hub/models--unsloth--whisper-small/snapshots/023f354567bbe9a875605cb8e7ef40ff9629653a --output_dir /content/s3/ct2_base --quantization int8 --copy_files tokenizer.json preprocessor_config.json' returned non-zero exit status 1.\n",
+  "sha256": {
+    "ct2_ft/config.json": {
+      "bytes": 2348,
+      "sha256": "707bcfea9f540464f702957e4c974a262cd378df563f25c96da0778e3b9f7b84"
+    },
+    "ct2_ft/model.bin": {
+      "bytes": 248203797,
+      "sha256": "6cb9e0a6e5418a22016ec5e1c7fd919bd5a8f4ebe380baf195fab961a8e19189"
+    },
+    "ct2_ft/preprocessor_config.json": {
+      "bytes": 356,
+      "sha256": "994838f1fa6462c8b9b3c90edada831f11f3dd8b4664634e18f4694d005c9dbf"
+    },
+    "ct2_ft/tokenizer.json": {
+      "bytes": 3931230,
+      "sha256": "f1ed71a6a9e8f1f7feecad691817e3be0ebd4e3bf515a372bde419e0e4cfb200"
+    },
+    "ct2_ft/vocabulary.json": {
+      "bytes": 1068103,
+      "sha256": "5ad28279db5e546349708b9a74736e2c018737ac5a600f1048f1f26c99b85b47"
+    },
+    "train_log.csv": {
+      "bytes": 4196,
+      "sha256": "e21009a549f3a7f0524231954929817cc64e751669b39f07c0d30b0e0d3bbef5"
+    }
+  },
+  "finished_unix": 1794676518.6133168
+}

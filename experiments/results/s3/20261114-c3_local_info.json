@@ -1,0 +1,26 @@
+{
+  "run_id": "20261114-c3",
+  "cpu": "Intel64 Family 6 Model 154 Stepping 4, GenuineIntel",
+  "cpu_count": 12,
+  "platform": "Windows-11-10.0.26300-SP0",
+  "faster_whisper": "1.2.1",
+  "ctranslate2": "4.9.0",
+  "options": {
+    "compute_type": "int8",
+    "beam_size": 5,
+    "language": "en",
+    "temperature": 0.0,
+    "condition_on_previous_text": false,
+    "vad_filter": false
+  },
+  "fillers_total": {
+    "ref": 8,
+    "base": 1,
+    "ft": 8
+  },
+  "cpu_s_per_clip_mean": {
+    "base": 3.868,
+    "ft": 3.587
+  },
+  "audio_s_total": 64.56
+}
