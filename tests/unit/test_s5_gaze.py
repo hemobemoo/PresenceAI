@@ -229,3 +229,23 @@ def test_changed_features_file_is_rejected(tmp_path: Path):
     path.write_text(path.read_text(encoding="utf-8") + "\n", encoding="utf-8")
     with pytest.raises(evaluate.ManifestError):
         evaluate.load_sessions(tmp_path / "data", tmp_path / "out" / "features_manifest.csv")
+
+
+def test_per_zone_exclusion_confusion_and_calibration_check(tmp_path: Path):
+    rng = np.random.default_rng(4)
+    _write_session(tmp_path, "A", _session_rows("A", rng, unknown_every=5))
+    _write_session(tmp_path, "B", _session_rows("B", rng))
+    sessions = evaluate.load_sessions(tmp_path / "data", tmp_path / "out" / "features_manifest.csv")
+    by_zone = {(r["session"], r["zone"]): r for r in evaluate.excluded_by_zone(sessions)}
+    assert len(by_zone) == 8
+    assert by_zone[("A", "away")]["excluded_share"] == pytest.approx(0.2)
+    assert by_zone[("B", "away")]["excluded_share"] == 0
+    conf = evaluate.primary_confusion(sessions, CFG)
+    for test, zones in (("B", 4), ("A", 3)):
+        cells = [c for c in conf if c["test"] == test and c["zones"] == zones]
+        assert len(cells) == zones * zones
+        n_test = len(evaluate.prepared(sessions[test], CFG["pass"]["primary"]["calibration"]))
+        assert sum(c["count"] for c in cells) == n_test
+    cal = {r["session"]: r for r in evaluate.calibration_check(sessions)}
+    assert cal["B"]["calibration_known"] == cal["B"]["calibration_frames"]
+    assert cal["B"]["mean_abs_z"] >= 0

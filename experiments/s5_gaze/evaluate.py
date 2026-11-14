@@ -14,7 +14,8 @@ SHA-256 in experiments/results/s5/features_manifest.csv before use.
 - Decision (pass rule in the config): primary 4-zone mean >= threshold -> pass; else primary
   3-zone mean >= threshold -> pass_fallback; else fail (report only, change nothing).
 
-Writes experiments/results/s5/<stamp>_eval.csv, _excluded.csv and _decision.csv.
+Writes experiments/results/s5/<stamp>_eval.csv, _excluded.csv, _excluded_by_zone.csv,
+_calibration.csv, _confusion.csv (primary model, main folds) and _decision.csv.
 """
 
 from __future__ import annotations
@@ -31,7 +32,7 @@ import numpy as np
 import pandas as pd
 from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import f1_score
+from sklearn.metrics import confusion_matrix, f1_score
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 
@@ -100,6 +101,64 @@ def excluded_table(sessions: dict[str, pd.DataFrame]) -> list[dict[str, Any]]:
     return rows
 
 
+def excluded_by_zone(sessions: dict[str, pd.DataFrame]) -> list[dict[str, Any]]:
+    """Excluded (unknown) share of hold frames per session and zone."""
+    rows = []
+    for name, df in sessions.items():
+        hold = df[df["phase"] == "hold"]
+        for zone in sorted(set(hold["label"].astype(str))):
+            z = hold[hold["label"] == zone]
+            no_face = int((~_truthy(z["face_found"])).sum())
+            closed = int((_truthy(z["face_found"]) & _truthy(z["eyes_closed"])).sum())
+            rows.append(
+                {
+                    "session": name,
+                    "zone": zone,
+                    "hold_frames": len(z),
+                    "unknown_no_face": no_face,
+                    "unknown_eyes_closed": closed,
+                    "excluded_share": round((no_face + closed) / len(z), 4) if len(z) else None,
+                }
+            )
+    return rows
+
+
+def calibration_check(sessions: dict[str, pd.DataFrame]) -> list[dict[str, Any]]:
+    """How far the calibration offset is from the session's own at_camera hold frames.
+
+    Distance per feature in units of the at_camera hold standard deviation; reported as the
+    mean over features, the largest single feature, and the same for the calibration's first
+    second (eyes may still be moving to the lens) and the rest.
+    """
+    rows = []
+    for name, df in sessions.items():
+        known: Any = df[known_mask(df)]
+        cal: Any = known[known["phase"] == "calibration_camera"]
+        cam: Any = known[(known["phase"] == "hold") & (known["label"] == "at_camera")]
+        sd = cam[FCOLS].std()
+
+        def dist(part: Any, cam: Any = cam, sd: Any = sd) -> Any:
+            return ((part[FCOLS].mean() - cam[FCOLS].mean()) / sd).abs()
+
+        d, first, rest = dist(cal), dist(cal[cal["t_s"] < 1.0]), dist(cal[cal["t_s"] >= 1.0])
+        rows.append(
+            {
+                "session": name,
+                "calibration_frames": int((df["phase"] == "calibration_camera").sum()),
+                "calibration_known": len(cal),
+                "frames_first_1s": int((cal["t_s"] < 1.0).sum()),
+                "mean_abs_z": round(float(d.mean()), 3),
+                "max_abs_z": round(float(d.max()), 3),
+                "max_feature": str(d.idxmax()),
+                "mean_abs_z_first_1s": round(float(first.mean()), 3)
+                if (cal["t_s"] < 1.0).any()
+                else None,
+                "mean_abs_z_after_1s": round(float(rest.mean()), 3),
+            }
+        )
+    return rows
+
+
 def prepared(df: pd.DataFrame, calibration: bool) -> Any:
     """Known hold frames with features (optionally minus the camera-calibration mean)."""
     known: Any = df[known_mask(df)]
@@ -129,6 +188,41 @@ def make_model(kind: str, random_state: int) -> Any:
 def labels_for(df: Any, n_zones: int, merge: dict[str, str]) -> Any:
     y = df["label"].astype(str)
     return y.replace(merge) if n_zones == 3 else y
+
+
+def primary_confusion(
+    sessions: dict[str, pd.DataFrame], cfg: dict[str, Any]
+) -> list[dict[str, Any]]:
+    """Confusion counts (true x predicted) of the primary model on the main folds, 4 and 3 zones."""
+    prim = cfg["pass"]["primary"]
+    merge = cfg["merge_for_fallback"]
+    rows: list[dict[str, Any]] = []
+    for train, test in cfg["pass"]["main_folds"]:
+        if train not in sessions or test not in sessions:
+            continue
+        tr = prepared(sessions[train], bool(prim["calibration"]))
+        te = prepared(sessions[test], bool(prim["calibration"]))
+        for n_zones in (4, 3):
+            y_tr, y_te = labels_for(tr, n_zones, merge), labels_for(te, n_zones, merge)
+            labels = sorted(set(y_tr) | set(y_te))
+            model = make_model(str(prim["model"]), int(cfg["random_state"]))
+            model.fit(tr[FCOLS].to_numpy(), y_tr.to_numpy())
+            cm = confusion_matrix(y_te, model.predict(te[FCOLS].to_numpy()), labels=labels)
+            for i, true in enumerate(labels):
+                for j, pred in enumerate(labels):
+                    rows.append(
+                        {
+                            "train": train,
+                            "test": test,
+                            "model": prim["model"],
+                            "calibration": prim["calibration"],
+                            "zones": n_zones,
+                            "true": true,
+                            "pred": pred,
+                            "count": int(cm[i, j]),
+                        }
+                    )
+    return rows
 
 
 def evaluate(sessions: dict[str, pd.DataFrame], cfg: dict[str, Any]) -> list[dict[str, Any]]:
@@ -231,6 +325,11 @@ def main(argv: list[str] | None = None) -> int:
     rows = evaluate(sessions, cfg)
     decision = {"evaluated_at": stamp, **decide(rows, cfg)}
     _write(args.out / f"{stamp}_excluded.csv", excluded)
+    _write(args.out / f"{stamp}_excluded_by_zone.csv", excluded_by_zone(sessions))
+    _write(args.out / f"{stamp}_calibration.csv", calibration_check(sessions))
+    confusion = primary_confusion(sessions, cfg)
+    if confusion:
+        _write(args.out / f"{stamp}_confusion.csv", confusion)
     if rows:
         _write(args.out / f"{stamp}_eval.csv", rows)
     _write(args.out / f"{stamp}_decision.csv", [decision])
