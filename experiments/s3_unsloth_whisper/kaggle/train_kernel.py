@@ -7,6 +7,7 @@ Adapted from unslothai/notebooks nb/Kaggle-Whisper.ipynb at the commit in CONFIG
   chosen with a fixed seed (notebook: Etherll/kaira);
 - validation loss only (no argmax WER metric), evaluated at step 0 and every eval_steps;
 - max_steps 100 and eval_steps 10;
+- `mslk` uninstalled after the notebook's installs (Kaggle image conflict, see install());
 - after training: LoRA merged to 16-bit, base and fine-tuned models converted to CTranslate2,
   and 10 test clips written as WAV for the local CPU check.
 
@@ -84,6 +85,11 @@ def install() -> None:
     }.get(tv, "torchcodec>=0.12.0" if tv >= (2, 12) else "torchcodec")
     sh(f'pip install -q librosa soundfile evaluate jiwer "{codec}" "datasets>=3.4.1,<4.0.0"')
     sh("pip install -q ctranslate2")
+    # Environment fix (run 1 failed here, 2026-11-14): Kaggle's image ships `mslk`, whose
+    # mslk.so does not load with the image's torch 2.11+cu130; torchao imports it when present
+    # (`import unsloth` -> torchao -> mslk) and fails. Removing it makes torchao skip it.
+    sh("pip uninstall -y -q mslk")
+    INFO["env_fixes"] = ["pip uninstall mslk (torchao import fails on Kaggle image otherwise)"]
 
 
 def pick(split: str, n: int):
