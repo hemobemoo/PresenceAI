@@ -1211,6 +1211,7 @@ name = "presenceai"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "av" },
     { name = "faster-whisper" },
     { name = "fastrtc" },
     { name = "gradio" },
@@ -1239,6 +1240,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "av", specifier = ">=19.0.2" },
     { name = "faster-whisper", specifier = ">=1.2.1" },
     { name = "fastrtc", specifier = ">=0.0.34" },
     { name = "gradio", specifier = ">=5.23.1" },

@@ -182,24 +182,6 @@ def test_built_checksums_feed_ingest_verify(built: Any, tmp_path: Path):
     assert colab.verify(s3)["sha256"] == table
 
 
-def test_load_wav_reads_16k_mono_pcm_and_rejects_other_formats(tmp_path: Path):
-    import wave
-
-    check_local: Any = importlib.import_module("check_local")
-    ok, bad = tmp_path / "ok.wav", tmp_path / "bad.wav"
-    for path, rate in ((ok, 16000), (bad, 8000)):
-        with wave.open(str(path), "wb") as w:
-            w.setnchannels(1)
-            w.setsampwidth(2)
-            w.setframerate(rate)
-            w.writeframes(b"\x00\x00\xff\x7f\x00\x80")  # 0, 32767, -32768
-    audio = check_local.load_wav(ok)
-    assert audio.dtype.name == "float32"
-    assert audio.tolist() == pytest.approx([0.0, 32767 / 32768, -1.0])
-    with pytest.raises(ValueError, match="16 kHz mono"):
-        check_local.load_wav(bad)
-
-
 def _fake_run(root: Path, tamper: bool = False) -> Path:
     s3 = root / "s3"
     files = {

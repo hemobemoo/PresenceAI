@@ -18,42 +18,29 @@ import os
 import platform
 import sys
 import time
-import wave
 from pathlib import Path
 from typing import Any
 
-import numpy as np
+from presenceai.speech import audio
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import common
 
 
-def load_wav(path: Path) -> np.ndarray:
-    """16 kHz mono 16-bit PCM WAV -> float32 in [-1, 1].
-
-    The clips are decoded here and passed to faster-whisper as an array: faster-whisper 1.2.1
-    decodes files with PyAV and passes `metadata_errors`, which PyAV 19 no longer accepts
-    (TypeError on 2026-11-14 with av 19.0.2). An array is faster-whisper's documented input.
-    """
-    with wave.open(str(path), "rb") as w:
-        if (w.getnchannels(), w.getsampwidth(), w.getframerate()) != (1, 2, 16000):
-            raise ValueError(f"{path.name}: expected 16 kHz mono 16-bit PCM")
-        pcm = np.frombuffer(w.readframes(w.getnframes()), dtype="<i2")
-    return pcm.astype(np.float32) / 32768.0
-
-
 def transcribe(model: Any, wav: Path, opts: dict[str, Any]) -> tuple[str, float]:
+    """Through the shared loader (ADR 0006): the clip reaches faster-whisper as an array."""
     t0 = time.perf_counter()  # timing includes decoding the clip
-    segments, _ = model.transcribe(
-        load_wav(wav),
+    segments, _ = audio.transcribe(
+        model,
+        wav,
         language=opts["language"],
         beam_size=opts["beam_size"],
         temperature=opts["temperature"],
         condition_on_previous_text=opts["condition_on_previous_text"],
         vad_filter=opts["vad_filter"],
     )
-    text = " ".join(s.text.strip() for s in segments).strip()  # generator: decoding runs here
+    text = " ".join(s.text.strip() for s in segments).strip()
     return text, round(time.perf_counter() - t0, 3)
 
 
