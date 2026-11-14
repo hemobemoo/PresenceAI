@@ -144,7 +144,7 @@ the export step after training. Each failure was fixed and rerun with the owner'
 - This affects any later use of faster-whisper with file paths. The owner decided on 2026-11-14:
   - always pass audio to faster-whisper as an array, through one shared loader;
   - do not pin PyAV.
-  The loader and a CI guard come in a separate follow-up change, after this spike is merged.
+  The loader and a CI guard came in a separate follow-up change: ADR 0006.
 
 **Reproducibility.**
 - Training repeated closely across c1–c3 with the same seeds: the first logged loss was 2.4542 in
