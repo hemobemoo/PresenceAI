@@ -2,7 +2,7 @@
 
 - Status: **proposed**. The pass rule was fixed by the owner on 2026-11-14, before the run. The run
   moved from Kaggle to Google Colab on 2026-11-14 (see "Platform change").
-  Results are pending.
+  Results: pass (run `20261114-c3`); see "Results" and "Decision".
 - Date: 2026-11-14
 - Decider: project owner
 - Plan reference: docs/plan/FINAL_12_ROADMAP_AND_THESIS.md §1 (S3); FINAL_06 §3 (T1);
@@ -109,6 +109,85 @@ The setup, seeds, data and pass rule above are unchanged. Only where the script 
     copied.
   - The zip is deleted afterwards.
 
-## Results
+## Runs on Colab (2026-11-14)
 
-Pending.
+All three runs used the same T4 runtime, one after another, with the same seeds, data and settings.
+Each run's script was checked against its build by SHA-256 before it ran. Runs c1 and c2 failed in
+the export step after training. Each failure was fixed and rerun with the owner's approval.
+
+| Run | Repo commit | Training | Export | Record |
+|---|---|---|---|---|
+| `20261114-c1` | `bafb786` | eval loss 2.0898 → 0.5560, 116 s | **failed**: the Unsloth merge wrote no `config.json`, so CTranslate2 could not recognise the model | `20261114-c1_run_info.json`, `_train_log.csv` |
+| `20261114-c2` | `411998d` | eval loss 2.0898 → 0.5560, 97 s | fine-tuned model converted; **base failed**: the pinned base snapshot has no `tokenizer.json` | `20261114-c2_run_info.json`, `_train_log.csv` |
+| `20261114-c3` | `c1cced7` | eval loss 2.0898 → 0.5559, 99 s | **both converted** | all files below |
+
+**Export fixes.** Both are recorded in `env_fixes` in `20261114-c3_run_info.json`.
+- `config.json` and `generation_config.json` are copied from the pinned base model into the merged
+  model when the merge writes none. A LoRA merge does not change the architecture.
+- `ct2_base` gets `tokenizer.json` from the fine-tuned export. In c2's runtime, the base tokenizer
+  and that file had the same vocabulary (51,865 tokens) and gave identical token ids for test text.
+  The only difference was the default `<|en|><|transcribe|>` prefix stored in the file, which
+  faster-whisper sets itself.
+- So `save_pretrained_merged(save_method=None)` does not give a folder CTranslate2 can convert on its
+  own. T1 needs these two steps, or a merge that saves the full config.
+
+**Laptop check.**
+- faster-whisper 1.2.1 cannot decode files with the project's PyAV 19.0.2: it passes the
+  `metadata_errors` argument, which PyAV 19 no longer accepts (`TypeError`).
+- `check_local.py` therefore reads the 16 kHz mono WAV clips with the standard `wave` module and
+  passes the audio to faster-whisper as an array, which is its documented input.
+- This affects any later use of faster-whisper with file paths, and is noted for the T1/P-stage
+  owner.
+
+**Reproducibility.**
+- Training repeated closely across c1–c3 with the same seeds: the first logged loss was 2.4542 in
+  all three runs, and the final validation loss was 0.5560, 0.5560 and 0.5559.
+- c2 and c3 reused c1's installed packages in the same runtime. Their install step re-ran the same
+  commands over that environment.
+
+## Results (run `20261114-c3`)
+
+Sources: `experiments/results/s3/20261114-c3_run_info.json`, `_train_log.csv`,
+`_models_manifest.csv`, `_local.csv`, `_local_info.json` and `_decision.csv`.
+
+**Environment.**
+- **Colab:** Tesla T4, 15,360 MiB, driver 580.82.07, CUDA 13.0; image tag
+  `release-colab-external-images_20261112-060057_RC00`.
+- **Packages:** Python 3.13.16; torch 2.14.1+cu130; transformers 4.57.6; Unsloth and unsloth_zoo
+  2026.11.4; PEFT 0.21.2; TRL 0.22.2; datasets 3.6.0; CTranslate2 4.9.0.
+- **Training:** 98.6 s, peak GPU memory reserved 0.934 GB; whole script 228 s. Merge:
+  `save_pretrained_merged(save_method=None)`.
+- **Transfer:** `s3_20261114-c3.zip`, 424,694,737 bytes. All 22 files matched their SHA-256 in
+  `run_info.json`; the zip was then deleted.
+- **Laptop:** Intel64 Family 6 Model 154, 12 logical CPUs, Windows 11; faster-whisper 1.2.1,
+  CTranslate2 4.9.0, int8.
+
+**Pass rule.**
+
+| Condition | Value | Holds |
+|---|---|---|
+| 1a. Validation loss, step 0 → end | 2.0898 → 0.5559 | yes |
+| 1b. Mean training loss, first 10 → last 10 steps | 1.8103 → 0.5655 | yes |
+| 2. Fine-tuned model loads on the laptop CPU; 10 of 10 transcripts non-empty | loaded; 10 of 10 | yes |
+| 3. Fine-tuned WER − base WER ≤ 10 points | 4.04 − 9.42 = −5.38 | yes |
+
+**For information** (10 clips, 64.56 s of audio):
+- **Fillers** (uh, um, er, erm, ah, hm, hmm, mm): reference 8, base 1, fine-tuned 8.
+- **CPU time per clip, mean, including decoding:** base 3.868 s, fine-tuned 3.587 s.
+
+## Decision
+
+**Pass** under the rule fixed before the run (owner, 2026-11-14). The Unsloth Whisper pipeline
+trains on Colab, exports to CTranslate2 and runs in faster-whisper on the laptop CPU, and the
+fine-tuned model is not worse than the base model on the 10 test clips. T1 keeps the Unsloth
+route; the Hugging Face `Seq2SeqTrainer` + PEFT fallback is not needed.
+
+Limits that matter for T1 and E3:
+- **One speaker.** DisfluencySpeech has a single speaker, and the test clips are that speaker. The
+  lower WER and the kept fillers may reflect adaptation to that speaker and to the transcript
+  style, for example "fifteen dollars" where the base model wrote "$15".
+- **Small sample.** Ten clips and eight reference fillers are too few to estimate filler recall.
+  That is E3's job.
+- **One new error.** The fine-tuned model wrote "caught" for "called" in `test_06`.
+
+Status stays **proposed** until the owner accepts it.

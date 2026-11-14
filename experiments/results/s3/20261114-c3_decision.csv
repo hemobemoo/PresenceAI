@@ -1,0 +1,2 @@
+run_id,loss_falls,eval_loss_step0,eval_loss_final,train_loss_first,train_loss_last,ct2_loads_and_all_nonempty,base_wer,ft_wer,wer_increase_points,max_wer_increase_points,wer_ok,outcome,load_error
+20261114-c3,True,2.0898,0.5559,1.8103,0.5655,True,9.42,4.04,-5.38,10.0,True,pass,
