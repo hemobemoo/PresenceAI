@@ -1,7 +1,8 @@
 # 0005 — Unsloth Whisper fine-tuning on Kaggle (spike S3)
 
-- Status: **proposed**. The pass rule was fixed by the owner on 2026-11-14, before the run. The run
-  moved from Kaggle to Google Colab on 2026-11-14 (see "Platform change").
+- Status: **accepted** by the owner on 2026-11-14, after CI passed on `c4b4c2e`. The pass rule was
+  fixed by the owner on 2026-11-14, before the run. The run moved from Kaggle to Google Colab on
+  2026-11-14 (see "Platform change").
   Results: pass (run `20261114-c3`); see "Results" and "Decision".
 - Date: 2026-11-14
 - Decider: project owner
@@ -62,6 +63,10 @@ All three must hold:
    laptop CPU and returns a non-empty transcript for all 10 test clips.
 3. **No damage.** The fine-tuned model's WER on the 10 test clips is **no more than 10 points**
    worse than the base model's.
+   - This is a feasibility limit only: it checks that the pipeline does not break the model.
+   - It is not the T1 target. FINAL_06 §3 sets that target: WER on clean speech no more than
+     +1 point absolute on LibriSpeech test-clean, plus higher filler F1 and repetition recall.
+     Those are measured in E3 (FINAL_10).
    - WER is pooled over the 10 clips (total edits / total reference words × 100) against
      `transcript_a`.
    - Text is normalised: lower case; punctuation and hyphens removed; apostrophes and filler
@@ -136,8 +141,10 @@ the export step after training. Each failure was fixed and rerun with the owner'
   `metadata_errors` argument, which PyAV 19 no longer accepts (`TypeError`).
 - `check_local.py` therefore reads the 16 kHz mono WAV clips with the standard `wave` module and
   passes the audio to faster-whisper as an array, which is its documented input.
-- This affects any later use of faster-whisper with file paths, and is noted for the T1/P-stage
-  owner.
+- This affects any later use of faster-whisper with file paths. The owner decided on 2026-11-14:
+  - always pass audio to faster-whisper as an array, through one shared loader;
+  - do not pin PyAV.
+  The loader and a CI guard come in a separate follow-up change, after this spike is merged.
 
 **Reproducibility.**
 - Training repeated closely across c1–c3 with the same seeds: the first logged loss was 2.4542 in
@@ -183,11 +190,15 @@ fine-tuned model is not worse than the base model on the 10 test clips. T1 keeps
 route; the Hugging Face `Seq2SeqTrainer` + PEFT fallback is not needed.
 
 Limits that matter for T1 and E3:
-- **One speaker.** DisfluencySpeech has a single speaker, and the test clips are that speaker. The
-  lower WER and the kept fillers may reflect adaptation to that speaker and to the transcript
-  style, for example "fifteen dollars" where the base model wrote "$15".
+- **Not evidence of generalisation.** The WER gain (9.42 → 4.04) and the kept fillers come from one
+  speaker: DisfluencySpeech has a single speaker, and the test clips are that same speaker. Part of
+  the gain is writing style rather than recognition, for example "fifteen dollars" where the base
+  model wrote "$15". The result therefore says nothing about other speakers, or about the T1
+  target, which E3 measures.
+- **Feasibility limit only.** Passing the +10-point limit shows that the pipeline did not damage
+  the model. It is not the T1 target (+1 point on LibriSpeech test-clean, FINAL_06 §3).
 - **Small sample.** Ten clips and eight reference fillers are too few to estimate filler recall.
   That is E3's job.
 - **One new error.** The fine-tuned model wrote "caught" for "called" in `test_06`.
 
-Status stays **proposed** until the owner accepts it.
+Accepted by the owner on 2026-11-14.

@@ -72,6 +72,11 @@ to hold:
 3. **The model is not damaged.** The fine-tuned model's WER on the 10 clips was at most 10
    percentage points higher than the base model's.
 
+The 10-point limit was a feasibility limit only: it checked that the pipeline did not break the
+model. It was not the T1 target. That target, set in FINAL_06 §3, is a WER on clean speech no more
+than 1 point higher than the base model on LibriSpeech test-clean, together with higher filler F1
+and repetition recall. It is measured in experiment E3 (FINAL_10).
+
 Filler counts and CPU time per clip were reported for information only.
 
 ## 4. Results
@@ -137,21 +142,28 @@ instead of "called" in `test_06.wav`.
 ## 5. Decision
 
 Under the rule fixed before the run, the spike passed (decider: project owner, 14 November 2026,
-ADR 0005, status proposed until accepted). The Unsloth pipeline trained on a free GPU, exported to
+ADR 0005, accepted the same day). The Unsloth pipeline trained on a free GPU, exported to
 CTranslate2 and ran with faster-whisper on the laptop CPU, and the fine-tuned model was not worse
 than the base model on the test clips. T1 keeps the Unsloth route, and the fallback is not
 needed.
 
 T1 carries forward:
 - the two export steps (configuration files for the merged model, and the base tokenizer);
-- the PyAV incompatibility. The latter affects any later use of faster-whisper with file paths
-  and is left for the owner to resolve.
+- the PyAV incompatibility, which affects any later use of faster-whisper with file paths. The
+  owner decided on 14 November 2026 that audio is always passed to faster-whisper as an array
+  through one shared loader, without pinning PyAV. This is implemented in a separate follow-up
+  change.
 
 ## 6. Limitations
 
-- **One speaker.** The dataset has a single speaker, and the test clips came from that speaker.
-  The lower WER and the kept fillers may partly reflect adaptation to this speaker and to the
-  dataset's transcription style. They do not show an improvement for other speakers.
+- **Not evidence of generalisation.** The WER gain (9.42 to 4.04) and the kept fillers were
+  measured on one speaker. The dataset has a single speaker, and the test clips came from that
+  speaker. Part of the gain came from writing style rather than recognition, such as "fifteen
+  dollars" instead of "$15". The result therefore says nothing about other speakers or about the
+  T1 target.
+- **Feasibility limit only.** Passing the 10-point limit showed that the pipeline did not damage
+  the model. It does not show that T1's target of at most 1 point on LibriSpeech test-clean is
+  met; experiment E3 tests that.
 - **Small sample.** Ten clips and eight reference fillers are too few to estimate how well
   fillers are recognised. That is the purpose of experiment E3.
 - **Shared runtime.** The three Colab runs shared one runtime, so runs c2 and c3 started from
