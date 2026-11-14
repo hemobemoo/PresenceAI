@@ -3,7 +3,7 @@ transcribe the 10 test clips, and apply the pass rule (ADR 0005).
 
     uv run python experiments/s3_unsloth_whisper/check_local.py --run-id <id>
 
-Reads models/s3/<run>/{base,ft} and data/s3/<run>/clips (git-ignored, written by push.py fetch)
+Reads models/s3/<run>/{base,ft} and data/s3/<run>/clips (git-ignored, written by colab.py ingest)
 and experiments/results/s3/<run>_train_log.csv. Writes experiments/results/s3/<run>_local.csv
 (per clip: reference, both transcripts, filler counts, CPU seconds), <run>_local_info.json and
 <run>_decision.csv. Transcripts are of public DisfluencySpeech clips.

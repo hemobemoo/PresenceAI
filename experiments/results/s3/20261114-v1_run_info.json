@@ -1,0 +1,97 @@
+{
+  "config": {
+    "source_notebook": {
+      "repo": "unslothai/notebooks",
+      "path": "nb/Kaggle-Whisper.ipynb",
+      "commit": "5f42bb99c0ce07b1b45d41fc9a9dc3452b889b9f"
+    },
+    "base_model": {
+      "id": "unsloth/whisper-small",
+      "revision": "023f354567bbe9a875605cb8e7ef40ff9629653a"
+    },
+    "dataset": {
+      "id": "amaai-lab/DisfluencySpeech",
+      "revision": "b7da294fe3a70dd96df6640893f2a5dfc2c87638",
+      "text_column": "transcript_a",
+      "n_train": 200,
+      "n_validation": 50,
+      "n_test": 10
+    },
+    "seeds": {
+      "data": 3407,
+      "lora": 3407,
+      "trainer": 3407
+    },
+    "lora": {
+      "r": 64,
+      "alpha": 64,
+      "dropout": 0,
+      "target_modules": [
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    "train": {
+      "per_device_train_batch_size": 1,
+      "gradient_accumulation_steps": 4,
+      "warmup_steps": 5,
+      "max_steps": 100,
+      "learning_rate": 0.0001,
+      "logging_steps": 1,
+      "eval_steps": 10,
+      "optim": "adamw_8bit",
+      "weight_decay": 0.001,
+      "lr_scheduler_type": "linear"
+    },
+    "kaggle": {
+      "slug": "presenceai-s3-unsloth-whisper",
+      "title": "PresenceAI S3 Unsloth Whisper",
+      "accelerator": "NvidiaTeslaT4",
+      "timeout_s": 5400,
+      "ct2_quantization": "int8"
+    },
+    "local": {
+      "compute_type": "int8",
+      "beam_size": 5,
+      "language": "en",
+      "temperature": 0.0,
+      "condition_on_previous_text": false,
+      "vad_filter": false
+    },
+    "fillers": [
+      "uh",
+      "um",
+      "er",
+      "erm",
+      "ah",
+      "hm",
+      "hmm",
+      "mm"
+    ],
+    "pass": {
+      "loss_window": 10,
+      "max_wer_increase_points": 10.0
+    }
+  },
+  "started_unix": 1794658771.036971,
+  "changes_from_notebook": "Spike S3 Kaggle script kernel: LoRA fine-tune of Whisper-small with Unsloth (ADR 0005).\n\nAdapted from unslothai/notebooks nb/Kaggle-Whisper.ipynb at the commit in CONFIG\n(source_notebook). Changes from the notebook, all recorded in run_info.json:\n- base model whisper-small (notebook: whisper-large-v3), pinned by revision;\n- data: DisfluencySpeech (pinned revision), `transcript_a`, 200 train / 50 validation clips\n  chosen with a fixed seed (notebook: Etherll/kaira);\n- validation loss only (no argmax WER metric), evaluated at step 0 and every eval_steps;\n- max_steps 100 and eval_steps 10;\n- after training: LoRA merged to 16-bit, base and fine-tuned models converted to CTranslate2,\n  and 10 test clips written as WAV for the local CPU check.\n\npush.py replaces {\"source_notebook\": {\"repo\": \"unslothai/notebooks\", \"path\": \"nb/Kaggle-Whisper.ipynb\", \"commit\": \"5f42bb99c0ce07b1b45d41fc9a9dc3452b889b9f\"}, \"base_model\": {\"id\": \"unsloth/whisper-small\", \"revision\": \"023f354567bbe9a875605cb8e7ef40ff9629653a\"}, \"dataset\": {\"id\": \"amaai-lab/DisfluencySpeech\", \"revision\": \"b7da294fe3a70dd96df6640893f2a5dfc2c87638\", \"text_column\": \"transcript_a\", \"n_train\": 200, \"n_validation\": 50, \"n_test\": 10}, \"seeds\": {\"data\": 3407, \"lora\": 3407, \"trainer\": 3407}, \"lora\": {\"r\": 64, \"alpha\": 64, \"dropout\": 0, \"target_modules\": [\"q_proj\", \"v_proj\"]}, \"train\": {\"per_device_train_batch_size\": 1, \"gradient_accumulation_steps\": 4, \"warmup_steps\": 5, \"max_steps\": 100, \"learning_rate\": 0.0001, \"logging_steps\": 1, \"eval_steps\": 10, \"optim\": \"adamw_8bit\", \"weight_decay\": 0.001, \"lr_scheduler_type\": \"linear\"}, \"kaggle\": {\"slug\": \"presenceai-s3-unsloth-whisper\", \"title\": \"PresenceAI S3 Unsloth Whisper\", \"accelerator\": \"NvidiaTeslaT4\", \"timeout_s\": 5400, \"ct2_quantization\": \"int8\"}, \"local\": {\"compute_type\": \"int8\", \"beam_size\": 5, \"language\": \"en\", \"temperature\": 0.0, \"condition_on_previous_text\": false, \"vad_filter\": false}, \"fillers\": [\"uh\", \"um\", \"er\", \"erm\", \"ah\", \"hm\", \"hmm\", \"mm\"], \"pass\": {\"loss_window\": 10, \"max_wer_increase_points\": 10.0}} before upload. Nothing here reads a secret: the model and\nthe dataset are public. Runs only on Kaggle (unsloth, torch and ctranslate2 are installed below).\n",
+  "versions_after_install": {
+    "python": "3.13.16",
+    "platform": "Linux-6.18.55+-x86_64-with-glibc2.39",
+    "torch": "2.11.0+cu130",
+    "transformers": "4.57.6",
+    "unsloth": "2026.11.4",
+    "unsloth_zoo": "2026.11.4",
+    "peft": "0.21.2",
+    "trl": "0.22.2",
+    "datasets": "3.6.0",
+    "ctranslate2": "4.9.0",
+    "accelerate": "1.15.0",
+    "bitsandbytes": "0.50.2",
+    "librosa": "0.11.0",
+    "soundfile": "0.14.0"
+  },
+  "status": "error",
+  "traceback": "Traceback (most recent call last):\n  File \"/usr/local/lib/python3.13/dist-packages/torch/_ops.py\", line 1503, in load_library\n    ctypes.CDLL(path)\n    ~~~~~~~~~~~^^^^^^\n  File \"/usr/lib/python3.13/ctypes/__init__.py\", line 361, in __init__\n    self._handle = self._load_library(name, mode, handle, winmode)\n                   ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.13/ctypes/__init__.py\", line 403, in _load_library\n    return _dlopen(name, mode)\nOSError: libnvrtc.so.12: cannot open shared object file: No such file or directory\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/kaggle/src/script.py\", line 279, in <module>\n    main()\n    ~~~~^^\n  File \"/kaggle/src/script.py\", line 104, in main\n    from transformers import WhisperForConditionalGeneration\n  File \"<frozen importlib._bootstrap>\", line 1429, in _handle_fromlist\n  File \"/usr/local/lib/python3.13/dist-packages/transformers/utils/import_utils.py\", line 2317, in __getattr__\n    module = self._get_module(self._class_to_module[name])\n  File \"/usr/local/lib/python3.13/dist-packages/transformers/utils/import_utils.py\", line 2347, in _get_module\n    raise e\n  File \"/usr/local/lib/python3.13/dist-packages/transformers/utils/import_utils.py\", line 2345, in _get_module\n    return importlib.import_module(\".\" + module_name, self.__name__)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.13/importlib/__init__.py\", line 88, in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.13/dist-packages/transformers/models/whisper/modeling_whisper.py\", line 32, in <module>\n    from ...modeling_layers import GradientCheckpointingLayer\n  File \"/usr/local/lib/python3.13/dist-packages/transformers/modeling_layers.py\", line 28, in <module>\n    from .processing_utils import Unpack\n  File \"/usr/local/lib/python3.13/dist-packages/transformers/processing_utils.py\", line 75, in <module>\n    from .modeling_utils import PreTrainedAudioTokenizerBase\n  File \"/usr/local/lib/python3.13/dist-packages/transformers/modeling_utils.py\", line 73, in <module>\n    from .quantizers import HfQuantizer\n  File \"/usr/local/lib/python3.13/dist-packages/transformers/quantizers/__init__.py\", line 14, in <module>\n    from .auto import AutoHfQuantizer, AutoQuantizationConfig, register_quantization_config, register_quantizer\n  File \"/usr/local/lib/python3.13/dist-packages/transformers/quantizers/auto.py\", line 62, in <module>\n    from .quantizer_torchao import TorchAoHfQuantizer\n  File \"/usr/local/lib/python3.13/dist-packages/transformers/quantizers/quantizer_torchao.py\", line 39, in <module>\n    import torchao\n  File \"/usr/local/lib/python3.13/dist-packages/torchao/__init__.py\", line 107, in <module>\n    from torchao.quantization import (\n        quantize_,\n    )\n  File \"/usr/local/lib/python3.13/dist-packages/torchao/quantization/__init__.py\", line 24, in <module>\n    from .quant_api import (\n    ...<17 lines>...\n    )\n  File \"/usr/local/lib/python3.13/dist-packages/torchao/quantization/quant_api.py\", line 47, in <module>\n    from torchao.prototype.quantization.quant_api import (\n        Float8StaticActivationFloat8WeightConfig,  # noqa: F401\n    )\n  File \"/usr/local/lib/python3.13/dist-packages/torchao/prototype/quantization/__init__.py\", line 2, in <module>\n    from .quant_api import Int8DynamicActivationUIntxWeightConfig, UIntxWeightOnlyConfig\n  File \"/usr/local/lib/python3.13/dist-packages/torchao/prototype/quantization/quant_api.py\", line 37, in <module>\n    from torchao.quantization.quantize_.workflows import (\n        QuantizeTensorToFloat8Kwargs,\n    )\n  File \"/usr/local/lib/python3.13/dist-packages/torchao/quantization/quantize_/workflows/__init__.py\", line 4, in <module>\n    from .float8.float8_sparse_2x4_1d_data_1d_metadata_tensor import (\n        Float8Sparse2x4_1DData1DMetadataTensor,\n    )\n  File \"/usr/local/lib/python3.13/dist-packages/torchao/quantization/quantize_/workflows/float8/float8_sparse_2x4_1d_data_1d_metadata_tensor.py\", line 39, in <module>\n    from .float8_tensor import QuantizeTensorToFloat8Kwargs\n  File \"/usr/local/lib/python3.13/dist-packages/torchao/quantization/quantize_/workflows/float8/float8_tensor.py\", line 50, in <module>\n    if _is_mslk_available():\n       ~~~~~~~~~~~~~~~~~~^^\n  File \"/usr/local/lib/python3.13/dist-packages/torchao/utils.py\", line 1230, in _is_mslk_available\n    import mslk  # noqa: F401\n    ^^^^^^^^^^^\n  File \"/usr/local/lib/python3.13/dist-packages/mslk/__init__.py\", line 63, in <module>\n    _load_library(f\"{library}.so\", __version__, __variant__ == \"docs\")\n    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.13/dist-packages/mslk/__init__.py\", line 26, in _load_library\n    raise error\n  File \"/usr/local/lib/python3.13/dist-packages/mslk/__init__.py\", line 19, in _load_library\n    torch.ops.load_library(library_path)\n    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.13/dist-packages/torch/_ops.py\", line 1505, in load_library\n    raise OSError(f\"Could not load this library: {path}\") from e\nOSError: Could not load this library: /usr/local/lib/python3.13/dist-packages/mslk/mslk.so\n",
+  "finished_unix": 1794658868.2208822
+}

@@ -69,7 +69,7 @@ ignore = ["RUF001", "RUF002", "RUF003"]
 pythonVersion = "3.12"
 typeCheckingMode = "standard"
 include = ["src", "tests", "scripts", "experiments"]
-exclude = ["experiments/s3_unsloth_whisper/kaggle"]  # runs only on Kaggle (unsloth, torch)
+exclude = ["experiments/s3_unsloth_whisper/colab"]  # runs only on Colab (unsloth, torch)
 venvPath = "."
 venv = ".venv"
 

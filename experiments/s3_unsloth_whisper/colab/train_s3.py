@@ -1,23 +1,20 @@
-"""Spike S3 Kaggle script kernel: LoRA fine-tune of Whisper-small with Unsloth (ADR 0005).
+"""Spike S3 Colab script: LoRA fine-tune of Whisper-small with Unsloth (ADR 0005).
 
-Adapted from unslothai/notebooks nb/Kaggle-Whisper.ipynb at the commit in CONFIG
-(source_notebook). Changes from the notebook, all recorded in run_info.json:
-- base model whisper-small (notebook: whisper-large-v3), pinned by revision;
-- data: DisfluencySpeech (pinned revision), `transcript_a`, 200 train / 50 validation clips
-  chosen with a fixed seed (notebook: Etherll/kaira);
-- validation loss only (no argmax WER metric), evaluated at step 0 and every eval_steps;
-- max_steps 100 and eval_steps 10;
-- `mslk` uninstalled after the notebook's installs (Kaggle image conflict, see install());
-- after training: LoRA merged to 16-bit, base and fine-tuned models converted to CTranslate2,
-  and 10 test clips written as WAV for the local CPU check.
-
-push.py replaces __CONFIG_JSON__ before upload. Nothing here reads a secret: the model and
-the dataset are public. Runs only on Kaggle (unsloth, torch and ctranslate2 are installed below).
+colab.py build injects the config and the build info and puts this script in a notebook cell
+(%%writefile /content/train_s3.py), which runs it as `python /content/train_s3.py` on a Colab T4
+runtime. Outputs go to /content/s3. Nothing here reads a secret: the model and the dataset are
+public. Runs only on Colab (unsloth, torch and ctranslate2 are installed below).
 """
 
-import csv
-import json
 import os
+
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"  # one GPU only, set before torch is imported
+
+import csv
+import hashlib
+import importlib.metadata as md
+import importlib.util
+import json
 import platform
 import shutil
 import subprocess
@@ -26,18 +23,45 @@ import time
 import traceback
 
 CONFIG = json.loads(r"""__CONFIG_JSON__""")
-OUT = "/kaggle/working/s3"
-INFO: dict = {"config": CONFIG, "started_unix": time.time(), "changes_from_notebook": __doc__}
+BUILD = json.loads(r"""__BUILD_JSON__""")
+OUT = "/content/s3"
+WORK = "/content/s3_work"  # merged model and trainer output; deleted before the end
+
+CHANGES_FROM_NOTEBOOK = """\
+Adapted from unslothai/notebooks nb/Whisper.ipynb (Colab) at the commit in
+CONFIG["source_notebook"]. Its code cells are the same as nb/Kaggle-Whisper.ipynb at that commit
+except the install cell; this script uses the Colab install cell. Changes from the notebook:
+- base model whisper-small (notebook: whisper-large-v3), pinned by revision;
+- data: DisfluencySpeech (pinned revision), `transcript_a`, 200 train / 50 validation clips
+  chosen with a fixed seed (notebook: Etherll/kaira);
+- validation loss only (no argmax WER metric), evaluated at step 0 and every eval_steps;
+- max_steps 100 and eval_steps 10;
+- CUDA_VISIBLE_DEVICES=0;
+- `mslk` is uninstalled only if it is installed and fails to import (Kaggle run 1 failed on
+  this; see env_fixes);
+- after training: LoRA merged to 16-bit, base and fine-tuned models converted to CTranslate2,
+  10 test clips written as WAV for the local CPU check, SHA-256 of every output file recorded.
+"""
+
+INFO: dict = {
+    "config": CONFIG,
+    "build": BUILD,
+    "changes_from_notebook": CHANGES_FROM_NOTEBOOK,
+    "started_unix": time.time(),
+    "env_fixes": [],
+}
 
 
 def sh(cmd: str) -> None:
     print("+", cmd, flush=True)
-    subprocess.run(cmd, shell=True, check=True)  # noqa: S602 (fixed commands, Kaggle only)
+    subprocess.run(cmd, shell=True, check=True)  # noqa: S602 (fixed commands, Colab only)
+
+
+def on_colab() -> bool:
+    return any(k.startswith("COLAB_") for k in os.environ)  # the notebook's own test
 
 
 def versions() -> dict:
-    import importlib.metadata as md
-
     out = {"python": sys.version.split()[0], "platform": platform.platform()}
     for pkg in (
         "torch",
@@ -50,6 +74,7 @@ def versions() -> dict:
         "ctranslate2",
         "accelerate",
         "bitsandbytes",
+        "torchao",
         "librosa",
         "soundfile",
     ):
@@ -60,18 +85,39 @@ def versions() -> dict:
     return out
 
 
+def runtime_info() -> dict:
+    info = {
+        "on_colab": on_colab(),
+        "colab_release_tag": os.environ.get("COLAB_RELEASE_TAG"),
+        "cuda_visible_devices": os.environ.get("CUDA_VISIBLE_DEVICES"),
+    }
+    try:
+        q = ["--query-gpu=name,driver_version,memory.total", "--format=csv,noheader"]
+        info["nvidia_smi"] = subprocess.run(  # noqa: S603 (fixed command)
+            ["nvidia-smi", *q],  # noqa: S607
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout.strip()
+    except Exception as exc:
+        info["nvidia_smi"] = repr(exc)
+    return info
+
+
 def install() -> None:
-    # Notebook cell 1 (same packages and pins), plus ctranslate2 for the conversion.
-    sh("pip install -q pip3-autoremove")
-    sh(
-        "pip install -q torch torchvision torchaudio xformers --index-url https://download.pytorch.org/whl/cu128"
-    )
-    sh("pip install -q unsloth")
-    sh('pip install -q --no-deps --upgrade "torchao>=0.16.0"')
+    # Notebook install cell (same packages and pins), plus ctranslate2 for the conversion.
+    if not on_colab():
+        sh("pip install -q unsloth")  # the notebook's non-Colab branch
+    else:
+        sh(
+            'pip install -q sentencepiece protobuf "datasets==4.3.0" "huggingface_hub>=0.34.0"'
+            " hf_transfer"
+        )
+        sh("pip install -q --no-deps unsloth_zoo bitsandbytes accelerate peft trl triton unsloth")
+        sh("unsloth install-kernels")
+        sh('pip install -q --no-deps --upgrade "torchao>=0.16.0"')
     sh("pip install -q transformers==4.57.6")
     sh("pip install -q --no-deps trl==0.22.2")
-    import importlib.metadata as md
-
     try:
         tv = tuple(int(x) for x in md.version("torch").split("+")[0].split(".")[:2])
     except Exception:
@@ -85,11 +131,13 @@ def install() -> None:
     }.get(tv, "torchcodec>=0.12.0" if tv >= (2, 12) else "torchcodec")
     sh(f'pip install -q librosa soundfile evaluate jiwer "{codec}" "datasets>=3.4.1,<4.0.0"')
     sh("pip install -q ctranslate2")
-    # Environment fix (run 1 failed here, 2026-11-14): Kaggle's image ships `mslk`, whose
-    # mslk.so does not load with the image's torch 2.11+cu130; torchao imports it when present
-    # (`import unsloth` -> torchao -> mslk) and fails. Removing it makes torchao skip it.
-    sh("pip uninstall -y -q mslk")
-    INFO["env_fixes"] = ["pip uninstall mslk (torchao import fails on Kaggle image otherwise)"]
+    # Conditional fix (Kaggle run 1, 2026-11-14): an installed `mslk` whose library does not load
+    # breaks `import unsloth` (unsloth -> torchao -> mslk). Remove it only in that case.
+    if importlib.util.find_spec("mslk") is not None:
+        probe = subprocess.run([sys.executable, "-c", "import mslk"], capture_output=True)
+        if probe.returncode != 0:
+            sh("pip uninstall -y -q mslk")
+            INFO["env_fixes"].append("pip uninstall mslk (installed, failed to import)")
 
 
 def pick(split: str, n: int):
@@ -100,8 +148,29 @@ def pick(split: str, n: int):
     return ds.cast_column("audio", Audio(sampling_rate=16000))
 
 
+def sha256(path: str) -> str:
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def checksums(root: str) -> dict:
+    """SHA-256 of every file under root except run_info.json (which holds this table)."""
+    out = {}
+    for d, _, files in os.walk(root):
+        for name in files:
+            p = os.path.join(d, name)
+            rel = os.path.relpath(p, root).replace(os.sep, "/")
+            if rel != "run_info.json":
+                out[rel] = {"bytes": os.path.getsize(p), "sha256": sha256(p)}
+    return dict(sorted(out.items()))
+
+
 def main() -> None:
     os.makedirs(OUT, exist_ok=True)
+    INFO["runtime"] = runtime_info()
     install()
     INFO["versions_after_install"] = versions()
 
@@ -111,6 +180,7 @@ def main() -> None:
     from unsloth import FastModel, is_bf16_supported
 
     INFO["gpu"] = torch.cuda.get_device_name(0) if torch.cuda.is_available() else None
+    INFO["cuda"] = torch.version.cuda
     base_dir = snapshot_download(
         CONFIG["base_model"]["id"], revision=CONFIG["base_model"]["revision"]
     )
@@ -203,7 +273,7 @@ def main() -> None:
             eval_steps=t["eval_steps"],
             eval_strategy="steps",
             seed=CONFIG["seeds"]["trainer"],
-            output_dir="/kaggle/working/outputs",
+            output_dir=f"{WORK}/outputs",
             save_strategy="no",
             report_to="none",
         ),
@@ -241,7 +311,7 @@ def main() -> None:
         w.writeheader()
         w.writerows(rows)
 
-    merged = "/kaggle/working/merged"
+    merged = f"{WORK}/merged"
     try:
         model.save_pretrained_merged(merged, tokenizer, save_method=None)
         INFO["merge_method"] = "unsloth save_pretrained_merged(save_method=None)"
@@ -251,7 +321,7 @@ def main() -> None:
         merged_model.save_pretrained(merged)
         tokenizer.save_pretrained(merged)
         INFO["merge_method"] = "peft merge_and_unload"
-    q = CONFIG["kaggle"]["ct2_quantization"]
+    q = CONFIG["runtime"]["ct2_quantization"]
     copy = "--copy_files tokenizer.json preprocessor_config.json"
     conv = "ct2-transformers-converter"
     sh(f"{conv} --model {merged} --output_dir {OUT}/ct2_ft --quantization {q} {copy}")
@@ -275,8 +345,7 @@ def main() -> None:
         w = csv.DictWriter(f, fieldnames=["clip", "duration_s", "reference"])
         w.writeheader()
         w.writerows(refs)
-    shutil.rmtree(merged, ignore_errors=True)
-    shutil.rmtree("/kaggle/working/outputs", ignore_errors=True)
+    shutil.rmtree(WORK, ignore_errors=True)
 
 
 if __name__ == "__main__":
@@ -288,14 +357,14 @@ if __name__ == "__main__":
         INFO["status"] = "error"
         INFO["traceback"] = traceback.format_exc()
         code = 1
-    INFO["finished_unix"] = time.time()
     os.makedirs(OUT, exist_ok=True)
+    try:
+        INFO["sha256"] = checksums(OUT)
+    except Exception:
+        INFO["sha256_error"] = traceback.format_exc()
+    INFO["finished_unix"] = time.time()
     with open(f"{OUT}/run_info.json", "w", encoding="utf-8") as f:
         json.dump(INFO, f, indent=2, default=str)
-    print(
-        json.dumps(
-            {k: INFO.get(k) for k in ("status", "gpu", "eval_loss_step0", "train_runtime_s")}
-        ),
-        flush=True,
-    )
-    sys.exit(code)  # the script ends here, so the Kaggle session (and its GPU) stops
+    print(json.dumps({k: INFO.get(k) for k in ("gpu", "eval_loss_step0", "train_runtime_s")}))
+    print(f"S3 DONE: status={INFO['status']}", flush=True)
+    sys.exit(code)

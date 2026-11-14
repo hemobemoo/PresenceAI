@@ -1,12 +1,13 @@
-# Spike S3 (Unsloth Whisper on Kaggle). Question and pass condition from
+# Spike S3 (Unsloth Whisper; runs on Google Colab after Kaggle runs 1-2, see ADR 0005).
+# Question and pass condition from
 # docs/plan/FINAL_12_ROADMAP_AND_THESIS.md §1; the pass rule below is fixed in
 # docs/adr/0005-unsloth-whisper-kaggle.md before the run (owner, 2026-11-14).
 
-# Reproducibility (recorded again in the run-info file written on Kaggle)
+# Reproducibility (recorded again in run_info.json, written on Colab)
 source_notebook:
   repo: unslothai/notebooks
-  path: nb/Kaggle-Whisper.ipynb
-  commit: 5f42bb99c0ce07b1b45d41fc9a9dc3452b889b9f   # 2026-10-22, adapted (training cells)
+  path: nb/Whisper.ipynb               # Colab version; Kaggle runs 1-2 used nb/Kaggle-Whisper.ipynb
+  commit: 5f42bb99c0ce07b1b45d41fc9a9dc3452b889b9f   # 2026-10-22; both notebooks differ only in the install cell
 base_model:
   id: unsloth/whisper-small            # mirror of openai/whisper-small (MIT); card says apache-2.0
   revision: 023f354567bbe9a875605cb8e7ef40ff9629653a
@@ -36,12 +37,11 @@ train:
   weight_decay: 0.001
   lr_scheduler_type: linear
 
-# Kaggle job: private script kernel, GPU T4, internet on (pip + Hugging Face), no secrets.
-kaggle:
-  slug: presenceai-s3-unsloth-whisper
-  title: PresenceAI S3 Unsloth Whisper
-  accelerator: NvidiaTeslaT4           # Unsloth needs compute capability >= 7.0 (not P100)
-  timeout_s: 5400                      # hard cap: the session stops after 90 min at the latest
+# Colab runtime (free T4), no Drive mount, no secrets; FINAL_06 §2 backup to Kaggle.
+runtime:
+  platform: colab
+  gpu: T4                              # Unsloth needs compute capability >= 7.0
+  timeout_s: 5400                      # hard cap on the training script: 90 min
   ct2_quantization: int8
 
 # Local check on the owner's laptop CPU (faster-whisper)

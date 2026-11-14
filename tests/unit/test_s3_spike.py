@@ -1,10 +1,12 @@
-"""Tests for experiments/s3_unsloth_whisper: normalisation, WER, fillers, pass rule, job build."""
+"""Tests for experiments/s3_unsloth_whisper: normalisation, WER, fillers, pass rule, Colab build
+and ingest."""
 
 import ast
 import importlib
 import json
 import re
 import sys
+import zipfile
 from pathlib import Path
 from typing import Any
 
@@ -13,9 +15,10 @@ import pytest
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "experiments" / "s3_unsloth_whisper"))
 common: Any = importlib.import_module("common")
-push: Any = importlib.import_module("push")
+colab: Any = importlib.import_module("colab")
 CFG = common.load_config()
 SHA = re.compile(r"[0-9a-f]{40}")
+NL = "\n"
 
 
 def test_config_pins_notebook_dataset_model_and_seeds():
@@ -26,6 +29,7 @@ def test_config_pins_notebook_dataset_model_and_seeds():
     assert CFG["dataset"]["text_column"] == "transcript_a"
     assert (CFG["dataset"]["n_train"], CFG["dataset"]["n_test"]) == (200, 10)
     assert CFG["pass"]["max_wer_increase_points"] == 10.0
+    assert CFG["runtime"]["platform"] == "colab" and "kaggle" not in CFG
 
 
 def test_normalise_keeps_fillers_and_apostrophes():
@@ -86,16 +90,84 @@ def test_decide(loss_ok: bool, loads: bool, hyps: list[str], base: float, ft: fl
     assert d["outcome"] == outcome
 
 
-def test_kaggle_job_is_private_gpu_and_carries_config(tmp_path: Path):
-    out = push.build(CFG, "someone", tmp_path)
-    meta = json.loads((out / "kernel-metadata.json").read_text(encoding="utf-8"))
-    assert meta["id"] == f"someone/{CFG['kaggle']['slug']}"
-    assert meta["is_private"] is True and meta["enable_gpu"] is True
-    assert meta["kernel_type"] == "script" and meta["code_file"] == "train_kernel.py"
-    script = (out / "train_kernel.py").read_text(encoding="utf-8")
-    assert "__CONFIG_JSON__" not in script
+def _injected(script: str, name: str) -> Any:
+    opening = f'{name} = json.loads(r"""'
+    start = script.index(opening) + len(opening)
+    return json.loads(script[start : script.index('""")', start)])
+
+
+def test_colab_notebook_carries_config_and_no_kaggle_or_secrets(tmp_path: Path):
+    nb_path = colab.build(CFG, "test-run", tmp_path)
+    nb = json.loads(nb_path.read_text(encoding="utf-8"))
+    cells = ["".join(c["source"]) for c in nb["cells"] if c["cell_type"] == "code"]
+    first_line, script = cells[1].split(NL, 1)
+    assert first_line == "%%writefile /content/train_s3.py"
+    assert script == (tmp_path / "train_s3.py").read_text(encoding="utf-8")
+    assert "__CONFIG_JSON__" not in script and "__BUILD_JSON__" not in script
     ast.parse(script)  # still valid Python after injection
-    start = script.index('CONFIG = json.loads(r"""') + len('CONFIG = json.loads(r"""')
-    injected = json.loads(script[start : script.index('""")', start)])
-    assert injected == json.loads(json.dumps(CFG))
-    assert not re.search(r"token|api_key|secret", json.dumps(injected), re.IGNORECASE)
+    assert _injected(script, "CONFIG") == json.loads(json.dumps(CFG))
+    assert _injected(script, "BUILD")["run_id"] == "test-run"
+    assert 'OUT = "/content/s3"' in script and "/kaggle" not in script
+    assert 'os.environ["CUDA_VISIBLE_DEVICES"] = "0"' in script
+    assert "S3 DONE: status=" in script and "__doc__" not in script
+    every = NL.join(cells)
+    assert "drive.mount" not in every and "userdata" not in every
+    assert not re.search(r"token|api_key|secret", json.dumps(CFG), re.IGNORECASE)
+    assert f"!timeout {CFG['runtime']['timeout_s']} python /content/train_s3.py" in every
+    assert "T4" in cells[0] and "runtime.unassign()" in cells[-1]
+
+
+def _fake_run(root: Path, tamper: bool = False) -> Path:
+    s3 = root / "s3"
+    files = {
+        "train_log.csv": b"step,loss",
+        "ct2_base/model.bin": b"base",
+        "ct2_ft/model.bin": b"ft",
+        "clips/test_00.wav": b"RIFF",
+        "clips/refs.csv": b"clip,duration_s,reference",
+    }
+    table = {}
+    for rel, data in files.items():
+        (s3 / rel).parent.mkdir(parents=True, exist_ok=True)
+        (s3 / rel).write_bytes(data)
+        table[rel] = {"bytes": len(data), "sha256": colab.sha256(s3 / rel)}
+    (s3 / "run_info.json").write_text(json.dumps({"status": "ok", "sha256": table}), "utf-8")
+    if tamper:
+        (s3 / "ct2_ft/model.bin").write_bytes(b"FT")
+    zp = root / "s3_run.zip"
+    with zipfile.ZipFile(zp, "w") as z:
+        for f in s3.rglob("*"):
+            if f.is_file():
+                z.write(f, f.relative_to(root).as_posix())
+    return zp
+
+
+@pytest.fixture
+def dirs(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
+    for name in ("DATA_DIR", "MODELS_DIR", "RESULTS"):
+        monkeypatch.setattr(common, name, tmp_path / name.lower())
+    return tmp_path
+
+
+def test_ingest_moves_verified_files(dirs: Path):
+    out = colab.ingest("r1", _fake_run(dirs / "dl"))
+    assert out == {"run_id": "r1", "status": "ok", "files_verified": 5, "model_files": 2}
+    assert (common.MODELS_DIR / "r1" / "ft" / "model.bin").read_bytes() == b"ft"
+    assert (common.DATA_DIR / "r1" / "clips" / "refs.csv").exists()
+    assert (common.RESULTS / "r1_run_info.json").exists()
+    assert (common.RESULTS / "r1_models_manifest.csv").exists()
+    assert not (common.DATA_DIR / "r1" / "raw").exists()
+
+
+def test_ingest_refuses_a_checksum_mismatch(dirs: Path):
+    with pytest.raises(ValueError, match=r"checksum mismatch: ct2_ft/model\.bin"):
+        colab.ingest("r2", _fake_run(dirs / "dl", tamper=True))
+    assert not (common.MODELS_DIR / "r2").exists() and not common.RESULTS.exists()
+
+
+def test_safe_extract_rejects_paths_outside(tmp_path: Path):
+    zp = tmp_path / "bad.zip"
+    with zipfile.ZipFile(zp, "w") as z:
+        z.writestr("../evil.txt", "x")
+    with pytest.raises(ValueError, match="unsafe path"):
+        colab.safe_extract(zp, tmp_path / "out")
