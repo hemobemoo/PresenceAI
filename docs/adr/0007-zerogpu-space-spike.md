@@ -1,7 +1,8 @@
 # 0007 — faster-whisper on a ZeroGPU Space (spike S2)
 
-- Status: **proposed**. The owner fixed the pass rule on 2026-11-14, before any run. Results: pass
-  (run `20261114-z1`); see "Results" and "Decision".
+- Status: **accepted** by the owner on 2026-11-14, after CI passed on `6162727`. The owner fixed
+  the pass rule on 2026-11-14, before any run. Results: pass (run `20261114-z1`); see "Results" and
+  "Decision".
 - Date: 2026-11-14
 - Decider: project owner
 - Plan reference: docs/plan/FINAL_12_ROADMAP_AND_THESIS.md §1 (S2); FINAL_02 §4 (Stage B);
@@ -158,13 +159,20 @@ Sources: `experiments/results/s2/20261114-z1_probe.json`, `_calls.csv`, `_decisi
 - **Transcription speed:** 0.017–0.019 × real time.
 - **WER against the clip reference:** 8.02 on all four calls (base turbo).
 - **Model staying loaded:** in 2 of the 3 warm calls the model was still loaded from the previous
-  call. Loading it again took 1.25 s.
+  call. Those two calls did not include a model load. The cold call (4.68 s, full load of 1.27 s)
+  and warm call 1 (4.71 s, load of 1.25 s) are therefore the stronger evidence that one analysis
+  stays under 60 GPU-seconds with the model load included.
 - **Total GPU time measured inside the function:** 27.45 s (probe 11.92, calls 15.53).
 - **CPU fallback:** whisper-small int8 on the Space CPU took 8.21 s to transcribe (model load
   0.38 s), WER 9.00. The Space reported 192 CPUs, which is the host's count; the Space's own CPU
   share is not known.
-- **Quota:** "Zero GPU 0/5 min" before the run (owner's billing page). After the run: pending the
-  owner's reading.
+- **Quota cross-check:** the owner's billing page showed "Zero GPU 0/5 min" before the run and
+  "0.5/5 min" after it. The page rounds to half-minutes.
+  - The reading agrees with the 27.45 GPU-seconds measured inside the function (0.46 min).
+  - Had ZeroGPU charged the 60 s reservation for each of the five GPU calls (probe and four
+    calls), it would have shown about 5 min.
+  - So ZeroGPU appears to charge actual use, not the reservation. At half-minute resolution, any
+    overhead per call cannot be measured more precisely than this.
 
 ## Decision
 
@@ -176,8 +184,9 @@ ZeroGPU, and the CPU fallback is not needed for this question.
 Limits:
 - **One clip, one day.** These are four calls on one public clip, one speaker, measured on one
   day. Queue waits and GPU availability vary.
-- **Measured inside the function.** GPU-seconds were timed inside `@spaces.GPU`. The quota
-  ZeroGPU charges may add some overhead; the owner's after-run quota reading is the cross-check.
+- **Measured inside the function.** GPU-seconds were timed inside `@spaces.GPU`. The owner's
+  quota reading (0.5 of 5 min after the run, rounded to half-minutes) agrees with that measurement.
+  At that resolution, overhead per call cannot be ruled out.
 - **Reservation can block visitors.** A visitor can only start a call if their remaining quota
   covers the reservation. With `duration=60`, the last minute of a visitor's quota cannot be used.
   A shorter reservation, which ZeroGPU also queues with higher priority, is a later design
@@ -185,4 +194,5 @@ Limits:
 - **Not Stage B as designed.** This is not the full Stage B pipeline: no live loop, no TURN relay,
   no Supabase, and audio was uploaded as a file.
 
-Status stays **proposed** until the owner accepts it.
+Accepted by the owner on 2026-11-14. After the run, the Space was paused with the upload token and
+kept private for Stage B. The private model repo was kept.

@@ -89,16 +89,22 @@ for information only.
 - **Speed:** transcription ran at about 0.02 times real time.
 - **WER:** 8.02 against the clip's reference text in all four calls.
 - **Model reuse:** in two of the three warm calls the model was still loaded from the previous
-  call.
+  call, so those calls did not include loading it. The cold call (4.68 seconds, with a full model
+  load of 1.27 seconds) and the first warm call (4.71 seconds, with a load) are therefore the
+  stronger evidence that one analysis stays under 60 GPU-seconds with loading included.
 - **Total GPU time** measured inside the function was 27.45 seconds, probe included.
 - **CPU fallback** (`20261114-z1_cpu.json`): Whisper `small` on the Space's CPU transcribed the
   clip in 8.21 seconds, with a WER of 9.00.
-- **Quota:** the owner's billing page showed "Zero GPU 0/5 min" before the run.
+- **Quota:** the owner's billing page showed "Zero GPU 0/5 min" before the run and "0.5/5 min"
+  after it; the page rounds to half-minutes. This agreed with the 27.45 seconds measured. If
+  ZeroGPU had charged the 60-second reservation for each of the five GPU calls, the page would
+  have shown about 5 minutes. ZeroGPU therefore appeared to charge actual use rather than the
+  reservation.
 
 ## 5. Decision
 
 Under the rule fixed before the run, the spike passed (decider: project owner, 14 November 2026,
-ADR 0007, status proposed until accepted). One three-minute analysis used between 3.0 and 4.7
+ADR 0007, accepted the same day). One three-minute analysis used between 3.0 and 4.7
 GPU-seconds, far below the 60-second reservation and the five-minute daily quota of a free
 account. Stage B can therefore run Whisper on ZeroGPU, and the CPU fallback is not required to
 answer this question.
@@ -107,8 +113,9 @@ answer this question.
 
 - **Small sample.** Four calls on one public clip with one speaker were measured on a single day.
   Queue times and GPU availability on a shared service vary.
-- **Measurement point.** GPU time was measured inside the decorated function. The quota actually
-  charged may include some overhead; the owner's reading of the quota after the run is the check.
+- **Measurement point.** GPU time was measured inside the decorated function. The owner's quota
+  reading agreed with it, but at half-minute resolution any small overhead per call could not be
+  measured.
 - **Reservation and quota.** A visitor can only start a call while their remaining quota covers the
   60-second reservation. Choosing a shorter reservation for Stage B is left as a design decision.
 - **Not the full Stage B.** The spike covered transcription only. The live loop, the network relay
