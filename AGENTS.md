@@ -4,7 +4,7 @@ The plan lives in `docs/plan/FINAL_00` … `FINAL_12`. Read `FINAL_00_README_DEC
 
 ## Non-negotiables
 1. Python 3.12 only. Do not hand-write .js/.ts/.html/.css files. UI = Gradio + FastRTC.
-2. $0 stack. Allowed network calls at runtime: OpenRouter (only from `src/presenceai/coach/providers/openrouter.py`, text only, only when the user enabled AI wording) and Supabase (only from `src/presenceai/storage/media.py`, Stage B only). Model downloads happen only in `scripts/download_models.py`.
+2. $0 stack. Allowed network calls at runtime: OpenRouter (only from `src/presenceai/coach/providers/openrouter.py`, text only, only when the user enabled AI wording) and Supabase (only from `src/presenceai/storage/media.py`, Stage B only). Model downloads happen only in `scripts/download_models.py`. Experiment-only exception (owner, 2026-11-14, ADR 0007): code in `experiments/s2_zerogpu/` may call the owner's private S2 Space with `gradio_client`, using `HF_TOKEN` by variable name only and never printing it.
 3. Never add emotion, mood, personality, honesty, intelligence, confidence or hireability inference. `vision/expressions.py` may emit only: `smile_visible`, `brows_raised`, `brows_lowered`, `eyes_closed`, `mouth_moving_silent`. No face recognition. Expression events never feed scores, the skill profile or LLM prompts.
 4. Every feedback statement carries evidence (transcript span and/or timestamp) and a confidence. LLM claims whose quote is not found in the transcript are dropped.
 5. Raw media is encrypted at write time (Fernet, key from `MEDIA_KEY`). Never log, print or upload raw media or any key.

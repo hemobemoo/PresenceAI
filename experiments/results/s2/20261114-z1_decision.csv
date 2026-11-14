@@ -1,0 +1,2 @@
+run_id,calls,warm_calls,all_calls_ok,nonempty,median_warm_gpu_s,max_median_warm_gpu_s,median_ok,max_call_gpu_s,max_any_call_gpu_s,max_ok,outcome,wer_vs_reference
+20261114-z1,4,3,True,True,3.133,60.0,True,4.706,60.0,True,pass,"[8.02, 8.02, 8.02, 8.02]"

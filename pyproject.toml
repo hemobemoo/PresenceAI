@@ -70,7 +70,10 @@ ignore = ["RUF001", "RUF002", "RUF003"]
 pythonVersion = "3.12"
 typeCheckingMode = "standard"
 include = ["src", "tests", "scripts", "experiments"]
-exclude = ["experiments/s3_unsloth_whisper/colab"]  # runs only on Colab (unsloth, torch)
+exclude = [
+    "experiments/s3_unsloth_whisper/colab",  # runs only on Colab (unsloth, torch)
+    "experiments/s2_zerogpu/space",  # runs only on the ZeroGPU Space (spaces, torch)
+]
 venvPath = "."
 venv = ".venv"
 
