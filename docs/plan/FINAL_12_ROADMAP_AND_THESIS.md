@@ -67,7 +67,7 @@ Never cut: evidence linking, adaptive + fixed policies, simulator, T1 (main trai
 | 3 Methodology | Measurement definitions, rubric adaptation from VALUE, engine mathematics, training methods (T1–T3), study design, analysis plan | FINAL_04, 05, 06, 10 |
 | 4 Design & Implementation | Architecture, live loop, deployment stages, data model, UI screens, privacy mechanisms, tooling and agents; feasibility spikes | FINAL_02, 03, 08, 09, 11; `docs/report-drafts/S*_summary.md` |
 | 5 Results & Discussion | E1–E12 tables and figures, fairness slices, limitations | `experiments/results/` |
-| 6 Conclusion & Future Work | Answer RQs within what data supports; future: full Arabic, avatar coach, public deployment, interview scenario, longer study | — |
+| 6 Conclusion & Future Work | Answer RQs within what data supports; future: full Arabic, avatar coach, public deployment, interview scenario, longer study, separate `at_screen` gaze zone (ADR 0004) | — |
 
 Keep a weekly half-page log in `docs/thesis/log.md`; it becomes most of Chapter 4.
 

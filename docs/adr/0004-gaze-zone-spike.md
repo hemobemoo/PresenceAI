@@ -1,6 +1,7 @@
 # 0004 — Gaze zones from webcam landmarks (spike S5)
 
-- Status: **proposed**, waiting for the owner's acceptance.
+- Status: **accepted** (owner, 2026-11-14), on the condition that CI was green on the final
+  commit.
   - The protocol, data handling and pass rule were set by the owner on 2026-11-14, before
     recording.
   - Sessions A–D were recorded on 2026-11-14.
@@ -116,8 +117,12 @@ combinations are reported.
 
 - **Checksums:** the SHA-256 of each of the four feature files matches `features_manifest.csv`,
   and the row counts match.
-- **Unused files:** `data/s5/` also holds four files from interrupted attempts that are not in
-  the manifest and are not used: three header-only A files and a 365-row B file.
+- **Unused files:** `data/s5/` also held four files from interrupted attempts that were not in
+  the manifest and were not used: three header-only A files and a 365-row B file.
+  - At the owner's request (2026-11-14), they were deleted so that later runs cannot pick them up
+    by mistake: `20261114-013936_A`, `20261114-014502_A`, `20261114-015130_A` and
+    `20261114-135710_B` (`_features.csv`).
+  - The four files listed in the manifest remain.
 - **No per-frame data committed:** `experiments/results/s5/` contains no per-frame features.
 - **Printed numbers:** the decision printed by `evaluate.py` matches the eval CSV.
   - 4 zones: mean of 0.6444 (A→B) and 0.7645 (B→A) = 0.7045.
@@ -259,13 +264,18 @@ For the MVP, the gaze labels are:
 
 - **T3 and E7** train and evaluate three labels, and report the excluded share per zone and
   condition.
-- **For T3 to address:**
-  - `down_notes` frames lost to the eyes-closed rule;
-  - `away` frames with no face found;
-  - the noisy calibration offset.
+- **T3/P6 items (owner, 2026-11-14)**, also listed in FINAL_06 §4:
+  1. **Lost face after a head turn.** Frames where the face disappears right after a large head
+     yaw count as `away`, not `unknown`; otherwise looking away is under-counted. In S5 this
+     affected 19–68 % of `away` frames (A, C, D).
+  2. **Looking down vs eyes closed.** Head pitch is used so that looking down at notes is not
+     excluded as eyes closed. In S5 the blink rule removed 18.5 % (A) and 8.9 % (D) of
+     `down_notes` frames.
+  3. **Calibration.** A longer calibration with a settle period (or several calibration looks),
+     because the 3-second offset in S5 was noisy and did not help consistently.
 
-  In the product, a lost face while the head is turned may itself be evidence for `away`. That
-  is a design question for P6, not decided here.
+  Thresholds for items 1 and 2 (yaw angle, time window, pitch) are set in `configs/` and
+  recorded in an ADR when T3 is built.
 - **Limitation:** one participant (the owner). Cross-person accuracy is tested in E7 with
   volunteers, leave-one-person-out.
 - **The decision is wrong if** E7 gives a 3-zone macro-F1 well below 0.8 across people.
