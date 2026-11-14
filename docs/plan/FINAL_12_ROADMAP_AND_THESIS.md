@@ -12,7 +12,7 @@ Assumes ~18 working weeks. Two tracks from day one: **Build** and **Study/Writin
 | S4 OpenRouter | Which free model gives valid JSON, verified quotes and allows training on outputs? | ≥ 95% JSON validity, ≥ 90% quote found on 30 prompts | Next model; templates as floor |
 | S5 Gaze | Can iris + head-pose features separate camera / notes / away for you? | ≥ 0.8 macro-F1 on your own protocol | Merge `at_screen` into `at_camera` |
 
-**Status (2026-11-13):** S1 passed (ADR 0002). S4 JSON/quote conditions met by Nemotron 3 Ultra, Nemotron 3.5 Super VL and Flint (ADR 0003); T2 teacher open (no provider confirmed to allow training on outputs). S5, S3 and S2 to run, in that order.
+**Status (2026-11-14):** S1 passed (ADR 0002). S4 JSON/quote conditions met by Nemotron 3 Ultra, Nemotron 3.5 Super VL and Flint (ADR 0003); T2 teacher open (no provider confirmed to allow training on outputs). S5 passed with the planned fallback (ADR 0004): `at_screen` merged into `at_camera`. S3 and S2 to run, in that order.
 
 ## 2. Phases
 
@@ -67,7 +67,7 @@ Never cut: evidence linking, adaptive + fixed policies, simulator, T1 (main trai
 | 3 Methodology | Measurement definitions, rubric adaptation from VALUE, engine mathematics, training methods (T1–T3), study design, analysis plan | FINAL_04, 05, 06, 10 |
 | 4 Design & Implementation | Architecture, live loop, deployment stages, data model, UI screens, privacy mechanisms, tooling and agents; feasibility spikes | FINAL_02, 03, 08, 09, 11; `docs/report-drafts/S*_summary.md` |
 | 5 Results & Discussion | E1–E12 tables and figures, fairness slices, limitations | `experiments/results/` |
-| 6 Conclusion & Future Work | Answer RQs within what data supports; future: full Arabic, avatar coach, public deployment, interview scenario, longer study | — |
+| 6 Conclusion & Future Work | Answer RQs within what data supports; future: full Arabic, avatar coach, public deployment, interview scenario, longer study, separate `at_screen` gaze zone (ADR 0004) | — |
 
 Keep a weekly half-page log in `docs/thesis/log.md`; it becomes most of Chapter 4.
 

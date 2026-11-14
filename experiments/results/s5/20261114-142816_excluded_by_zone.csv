@@ -1,0 +1,17 @@
+session,zone,hold_frames,unknown_no_face,unknown_eyes_closed,excluded_share
+A,at_camera,410,0,1,0.0024
+A,at_screen,408,0,4,0.0098
+A,away,414,78,1,0.1908
+A,down_notes,410,0,76,0.1854
+B,at_camera,412,0,1,0.0024
+B,at_screen,416,0,3,0.0072
+B,away,415,1,0,0.0024
+B,down_notes,411,0,5,0.0122
+C,at_camera,393,0,0,0.0
+C,at_screen,396,0,0,0.0
+C,away,402,169,0,0.4204
+C,down_notes,398,0,6,0.0151
+D,at_camera,409,0,0,0.0
+D,at_screen,410,0,3,0.0073
+D,away,410,258,21,0.6805
+D,down_notes,407,0,36,0.0885
