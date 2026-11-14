@@ -60,11 +60,12 @@ LLM judge claims are kept only if the quoted span is found in the transcript (ra
 
 | Label | Meaning |
 |---|---|
-| `at_camera` | Looking at the lens (audience proxy) |
-| `at_screen` | Looking at the screen area near the camera (slides, self-view) |
-| `down_notes` | Looking down (notes, keyboard) |
+| `at_camera` | Looking toward the audience: the lens or the screen area near it (slides, self-view) |
+| `down_notes` | Looking down at notes or the keyboard |
 | `away` | Looking elsewhere |
-| `unknown` | Eyes not reliably visible (glare, occlusion) |
+| `unknown` | No face found, or eyes closed / not reliably visible (glare, occlusion) |
+
+MVP label set after spike S5 (ADR 0004, planned fallback): the lens and the screen area could not be separated reliably from webcam features (4-zone macro-F1 0.70; 3-zone 0.93), so they form one `at_camera` label. A separate `at_screen` label is **future work**.
 
 Features: iris centre relative to eye corners (both eyes), eyelid aperture, head yaw/pitch. Classifier: T3 (`FINAL_06` §4), personalised by the optional 10 s calibration. Reported: share of time per zone, longest `away`/`down_notes` stretch, gaze at camera during the opening and conclusion. Accuracy per zone is measured in E7 and shown on the About page.
 

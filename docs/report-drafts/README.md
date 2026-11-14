@@ -35,4 +35,4 @@ these drafts are not edited into it automatically.
 |---|---|---|
 | `S1_summary.md` | Spike S1, live capture transport | `docs/adr/0002-live-capture-transport.md` |
 | `S4_summary.md` | Spike S4, OpenRouter free model choice and hosted-LLM privacy decision | `docs/adr/0003-openrouter-model-and-privacy.md` |
-| `S5_summary.md` | Spike S5, gaze zones from webcam landmarks (results pending) | `docs/adr/0004-gaze-zone-spike.md` |
+| `S5_summary.md` | Spike S5, gaze zones from webcam landmarks (pass with fallback: three zones) | `docs/adr/0004-gaze-zone-spike.md` |

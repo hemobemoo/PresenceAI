@@ -12,7 +12,7 @@ Assumes ~18 working weeks. Two tracks from day one: **Build** and **Study/Writin
 | S4 OpenRouter | Which free model gives valid JSON, verified quotes and allows training on outputs? | ≥ 95% JSON validity, ≥ 90% quote found on 30 prompts | Next model; templates as floor |
 | S5 Gaze | Can iris + head-pose features separate camera / notes / away for you? | ≥ 0.8 macro-F1 on your own protocol | Merge `at_screen` into `at_camera` |
 
-**Status (2026-11-13):** S1 passed (ADR 0002). S4 JSON/quote conditions met by Nemotron 3 Ultra, Nemotron 3.5 Super VL and Flint (ADR 0003); T2 teacher open (no provider confirmed to allow training on outputs). S5, S3 and S2 to run, in that order.
+**Status (2026-11-14):** S1 passed (ADR 0002). S4 JSON/quote conditions met by Nemotron 3 Ultra, Nemotron 3.5 Super VL and Flint (ADR 0003); T2 teacher open (no provider confirmed to allow training on outputs). S5 passed with the planned fallback (ADR 0004): `at_screen` merged into `at_camera`. S3 and S2 to run, in that order.
 
 ## 2. Phases
 

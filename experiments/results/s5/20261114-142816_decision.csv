@@ -1,0 +1,2 @@
+evaluated_at,primary_model,primary_calibration,threshold,macro_f1_4_zones,macro_f1_3_zones,outcome
+20261114-142816,hgb,True,0.8,0.7045,0.9264,pass_fallback

@@ -1,0 +1,5 @@
+session,calibration_frames,calibration_known,frames_first_1s,mean_abs_z,max_abs_z,max_feature,mean_abs_z_first_1s,mean_abs_z_after_1s
+A,30,30,1,0.777,1.798,l_iris_x,0.961,0.776
+B,32,32,3,0.712,1.598,r_iris_x,1.616,0.674
+C,25,25,0,0.375,0.935,roll_deg,,0.375
+D,32,32,2,1.022,2.298,r_iris_y,1.851,1.048

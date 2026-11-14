@@ -4,6 +4,11 @@
 
 zones: [at_camera, at_screen, down_notes, away]   # FINAL_04 §4.2; `unknown` is set by rule
 merge_for_fallback: {at_screen: at_camera}         # 3-zone fallback (FINAL_12 §1)
+# Outcome (evaluation 20261114-140550, reproduced by 20261114-142816): pass_fallback. The MVP and
+# T3 use three labels, `at_camera` (lens + screen area), `down_notes`, `away`, plus `unknown`
+# (presenceai.schemas.features.GazeZone; ADR 0004). `zones` above stays at four because it
+# defines the recorded S5 protocol, so the spike can be reproduced.
+mvp_zones: [at_camera, down_notes, away]
 
 # Owner's protocol (2026-11-14). The notes position is fixed for every session.
 notes_position: "A4 sheet flat on the desk, immediately to the right of the laptop, same taped spot every session"
