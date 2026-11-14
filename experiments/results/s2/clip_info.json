@@ -1,0 +1,13 @@
+{
+  "dataset": "amaai-lab/DisfluencySpeech",
+  "revision": "b7da294fe3a70dd96df6640893f2a5dfc2c87638",
+  "file": "data/test-00000-of-00001.parquet",
+  "seed": 3407,
+  "clips": 27,
+  "full_seconds": 182.65,
+  "probe_seconds": 10.0,
+  "sha256": {
+    "clip_full.wav": "715fa9a83d1a3b814ec9a8e8434ebf8c527dc30c4e24341844f584f049317827",
+    "clip_probe.wav": "69ef496edee948029aa572ae4da427b9e48a48a18362ce375dceeeb958aa8619"
+  }
+}
