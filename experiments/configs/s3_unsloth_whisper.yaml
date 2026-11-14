@@ -1,0 +1,62 @@
+# Spike S3 (Unsloth Whisper on Kaggle). Question and pass condition from
+# docs/plan/FINAL_12_ROADMAP_AND_THESIS.md §1; the pass rule below is fixed in
+# docs/adr/0005-unsloth-whisper-kaggle.md before the run (owner, 2026-11-14).
+
+# Reproducibility (recorded again in the run-info file written on Kaggle)
+source_notebook:
+  repo: unslothai/notebooks
+  path: nb/Kaggle-Whisper.ipynb
+  commit: 5f42bb99c0ce07b1b45d41fc9a9dc3452b889b9f   # 2026-10-22, adapted (training cells)
+base_model:
+  id: unsloth/whisper-small            # mirror of openai/whisper-small (MIT); card says apache-2.0
+  revision: 023f354567bbe9a875605cb8e7ef40ff9629653a
+dataset:
+  id: amaai-lab/DisfluencySpeech       # Apache-2.0, single speaker
+  revision: b7da294fe3a70dd96df6640893f2a5dfc2c87638
+  text_column: transcript_a            # verbal disfluencies kept (fillers, restarts), no <laughter> tags
+  n_train: 200                         # from split "train"
+  n_validation: 50                     # from split "validation" (validation loss)
+  n_test: 10                           # from split "test" (local transcription check)
+seeds:
+  data: 3407                           # shuffle seed for picking clips
+  lora: 3407                           # LoRA random_state (notebook value)
+  trainer: 3407                        # Seq2SeqTrainingArguments seed (notebook value)
+
+# Training (notebook values unless noted)
+lora: {r: 64, alpha: 64, dropout: 0, target_modules: [q_proj, v_proj]}
+train:
+  per_device_train_batch_size: 1
+  gradient_accumulation_steps: 4
+  warmup_steps: 5
+  max_steps: 100                       # changed: 2 epochs over 200 clips (notebook: 60)
+  learning_rate: 1.0e-4
+  logging_steps: 1
+  eval_steps: 10                       # changed (notebook: 5); validation loss also at step 0
+  optim: adamw_8bit
+  weight_decay: 0.001
+  lr_scheduler_type: linear
+
+# Kaggle job: private script kernel, GPU T4, internet on (pip + Hugging Face), no secrets.
+kaggle:
+  slug: presenceai-s3-unsloth-whisper
+  title: PresenceAI S3 Unsloth Whisper
+  accelerator: NvidiaTeslaT4           # Unsloth needs compute capability >= 7.0 (not P100)
+  timeout_s: 5400                      # hard cap: the session stops after 90 min at the latest
+  ct2_quantization: int8
+
+# Local check on the owner's laptop CPU (faster-whisper)
+local:
+  compute_type: int8
+  beam_size: 5
+  language: en
+  temperature: 0.0
+  condition_on_previous_text: false
+  vad_filter: false
+
+# Filler words counted for information only (not part of the pass rule)
+fillers: [uh, um, er, erm, ah, hm, hmm, mm]
+
+# Pass rule (ADR 0005). All three must hold.
+pass:
+  loss_window: 10                      # mean of the first vs last 10 logged training losses
+  max_wer_increase_points: 10.0        # fine-tuned WER - base WER on the 10 test clips, in points
