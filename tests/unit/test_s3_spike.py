@@ -2,7 +2,9 @@
 and ingest."""
 
 import ast
+import hashlib
 import importlib
+import importlib.util
 import json
 import re
 import sys
@@ -115,6 +117,54 @@ def test_colab_notebook_carries_config_and_no_kaggle_or_secrets(tmp_path: Path):
     assert not re.search(r"token|api_key|secret", json.dumps(CFG), re.IGNORECASE)
     assert f"!timeout {CFG['runtime']['timeout_s']} python /content/train_s3.py" in every
     assert "T4" in cells[0] and "runtime.unassign()" in cells[-1]
+
+
+def test_build_is_lf_and_the_integrity_cell_matches_it(tmp_path: Path):
+    colab.build(CFG, "test-run", tmp_path)
+    data = (tmp_path / "train_s3.py").read_bytes()
+    assert b"\r" not in data
+    nb = json.loads((tmp_path / "S3_test-run.ipynb").read_text(encoding="utf-8"))
+    cells = ["".join(c["source"]) for c in nb["cells"] if c["cell_type"] == "code"]
+    assert hashlib.sha256(data).hexdigest() in cells[2]
+
+
+@pytest.fixture
+def built(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Any:
+    """The built Colab script imported as a module (main() does not run on import)."""
+    monkeypatch.setenv("CUDA_VISIBLE_DEVICES", "")  # restored after the test
+    colab.build(CFG, "test-run", tmp_path / "build")
+    spec = importlib.util.spec_from_file_location("built_s3", tmp_path / "build" / "train_s3.py")
+    assert spec is not None and spec.loader is not None
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def test_fill_missing_config_copies_only_what_the_merge_left_out(built: Any, tmp_path: Path):
+    base, merged = tmp_path / "base", tmp_path / "merged"
+    base.mkdir()
+    merged.mkdir()
+    (base / "config.json").write_text('{"model_type": "whisper"}', encoding="utf-8")
+    (base / "generation_config.json").write_text("{}", encoding="utf-8")
+    (merged / "generation_config.json").write_text('{"kept": true}', encoding="utf-8")
+    fixes = built.fill_missing_config(str(merged), str(base))
+    assert fixes == ["config.json copied from the base model into the merged model"]
+    assert json.loads((merged / "config.json").read_text(encoding="utf-8"))["model_type"]
+    assert json.loads((merged / "generation_config.json").read_text(encoding="utf-8")) == {
+        "kept": True
+    }
+    assert built.fill_missing_config(str(merged), str(base)) == []
+
+
+def test_built_checksums_feed_ingest_verify(built: Any, tmp_path: Path):
+    s3 = tmp_path / "s3"
+    (s3 / "ct2_ft").mkdir(parents=True)
+    (s3 / "ct2_ft" / "model.bin").write_bytes(b"x")
+    (s3 / "train_log.csv").write_text("step", encoding="utf-8")
+    table = built.checksums(str(s3))
+    assert set(table) == {"ct2_ft/model.bin", "train_log.csv"}
+    (s3 / "run_info.json").write_text(json.dumps({"sha256": table}), encoding="utf-8")
+    assert colab.verify(s3)["sha256"] == table
 
 
 def _fake_run(root: Path, tamper: bool = False) -> Path:

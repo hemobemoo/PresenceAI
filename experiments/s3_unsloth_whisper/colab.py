@@ -88,6 +88,13 @@ def notebook(cfg: dict[str, Any], run_id: str, body: str) -> dict[str, Any]:
         "print('GPU:', gpu or 'none')\n"
         f"assert {rt['gpu']!r} in gpu, 'Choose Runtime > Change runtime type > T4 GPU'\n"
     )
+    integrity = (
+        "# The script in Colab must be byte-identical to the build (SHA-256, LF line endings).\n"
+        "import hashlib\n"
+        "h = hashlib.sha256(open('/content/train_s3.py', 'rb').read()).hexdigest()\n"
+        "print(h)\n"
+        f"assert h == {hashlib.sha256(body.encode('utf-8')).hexdigest()!r}, 'script differs'\n"
+    )
     run = f"!timeout {int(rt['timeout_s'])} python /content/train_s3.py\n"
     download = (
         "import os, shutil\n"
@@ -114,6 +121,7 @@ def notebook(cfg: dict[str, Any], run_id: str, body: str) -> dict[str, Any]:
             {"cell_type": "markdown", "metadata": {}, "source": intro.splitlines(keepends=True)},
             _code(gpu_check),
             _code("%%writefile /content/train_s3.py\n" + body),
+            _code(integrity),
             _code(run),
             _code(download),
             _code(end),
@@ -125,9 +133,12 @@ def build(cfg: dict[str, Any], run_id: str, out: Path = BUILD_DIR) -> Path:
     """Write the injected script and the notebook; return the notebook path."""
     out.mkdir(parents=True, exist_ok=True)
     body = script(cfg, {"run_id": run_id, **repo_commit()})
-    (out / TEMPLATE.name).write_text(body, encoding="utf-8")
+    # LF on every platform, so the SHA-256 checked in Colab matches this file.
+    (out / TEMPLATE.name).write_text(body, encoding="utf-8", newline="\n")
     nb_path = out / f"S3_{run_id}.ipynb"
-    nb_path.write_text(json.dumps(notebook(cfg, run_id, body), indent=1), encoding="utf-8")
+    nb_path.write_text(
+        json.dumps(notebook(cfg, run_id, body), indent=1), encoding="utf-8", newline="\n"
+    )
     return nb_path
 
 

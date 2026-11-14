@@ -39,6 +39,8 @@ except the install cell; this script uses the Colab install cell. Changes from t
 - CUDA_VISIBLE_DEVICES=0;
 - `mslk` is uninstalled only if it is installed and fails to import (Kaggle run 1 failed on
   this; see env_fixes);
+- if the merge writes no config.json / generation_config.json, they are copied from the base
+  model (run c1 failed at conversion without them; see env_fixes);
 - after training: LoRA merged to 16-bit, base and fine-tuned models converted to CTranslate2,
   10 test clips written as WAV for the local CPU check, SHA-256 of every output file recorded.
 """
@@ -166,6 +168,20 @@ def checksums(root: str) -> dict:
             if rel != "run_info.json":
                 out[rel] = {"bytes": os.path.getsize(p), "sha256": sha256(p)}
     return dict(sorted(out.items()))
+
+
+def fill_missing_config(merged: str, base_dir: str) -> list:
+    """Copy config.json and generation_config.json from the base model when the merge wrote
+    none (run c1: Unsloth save_pretrained_merged(save_method=None) wrote weights and tokenizer
+    only, so the CTranslate2 converter could not recognise the model). A LoRA merge does not
+    change the architecture, and base and fine-tuned models are then converted alike."""
+    fixes = []
+    for name in ("config.json", "generation_config.json"):
+        src, dst = os.path.join(base_dir, name), os.path.join(merged, name)
+        if not os.path.exists(dst) and os.path.exists(src):
+            shutil.copy2(src, dst)
+            fixes.append(f"{name} copied from the base model into the merged model")
+    return fixes
 
 
 def main() -> None:
@@ -321,6 +337,7 @@ def main() -> None:
         merged_model.save_pretrained(merged)
         tokenizer.save_pretrained(merged)
         INFO["merge_method"] = "peft merge_and_unload"
+    INFO["env_fixes"] += fill_missing_config(merged, base_dir)
     q = CONFIG["runtime"]["ct2_quantization"]
     copy = "--copy_files tokenizer.json preprocessor_config.json"
     conv = "ct2-transformers-converter"
