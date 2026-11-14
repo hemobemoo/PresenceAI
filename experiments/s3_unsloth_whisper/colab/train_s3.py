@@ -41,6 +41,8 @@ except the install cell; this script uses the Colab install cell. Changes from t
   this; see env_fixes);
 - if the merge writes no config.json / generation_config.json, they are copied from the base
   model (run c1 failed at conversion without them; see env_fixes);
+- the base snapshot has no tokenizer.json, so ct2_base gets the fine-tuned export's
+  tokenizer.json, which is the same tokenizer (run c2 failed here; see env_fixes);
 - after training: LoRA merged to 16-bit, base and fine-tuned models converted to CTranslate2,
   10 test clips written as WAV for the local CPU check, SHA-256 of every output file recorded.
 """
@@ -181,6 +183,29 @@ def fill_missing_config(merged: str, base_dir: str) -> list:
         if not os.path.exists(dst) and os.path.exists(src):
             shutil.copy2(src, dst)
             fixes.append(f"{name} copied from the base model into the merged model")
+    return fixes
+
+
+TOKENIZER_FILES = ("tokenizer.json", "preprocessor_config.json")  # faster-whisper reads these
+
+
+def copy_files_arg(model_dir: str) -> str:
+    """--copy_files for the tokenizer files the model folder actually has (run c2: the pinned
+    base snapshot has no tokenizer.json, only vocab.json and merges.txt)."""
+    names = [n for n in TOKENIZER_FILES if os.path.exists(os.path.join(model_dir, n))]
+    return " --copy_files " + " ".join(names) if names else ""
+
+
+def fill_missing_files(src_dir: str, dst_dir: str, names) -> list:
+    """Copy files dst_dir lacks from src_dir. Used for ct2_base's tokenizer.json, taken from the
+    fine-tuned export: a LoRA merge leaves the tokenizer unchanged (checked in run c2: same
+    vocabulary and same token ids), so both models decode with the same tokenizer."""
+    fixes = []
+    for name in names:
+        src, dst = os.path.join(src_dir, name), os.path.join(dst_dir, name)
+        if not os.path.exists(dst) and os.path.exists(src):
+            shutil.copy2(src, dst)
+            fixes.append(f"{name} copied from {os.path.basename(src_dir)} into {dst_dir}")
     return fixes
 
 
@@ -339,10 +364,10 @@ def main() -> None:
         INFO["merge_method"] = "peft merge_and_unload"
     INFO["env_fixes"] += fill_missing_config(merged, base_dir)
     q = CONFIG["runtime"]["ct2_quantization"]
-    copy = "--copy_files tokenizer.json preprocessor_config.json"
     conv = "ct2-transformers-converter"
-    sh(f"{conv} --model {merged} --output_dir {OUT}/ct2_ft --quantization {q} {copy}")
-    sh(f"{conv} --model {base_dir} --output_dir {OUT}/ct2_base --quantization {q} {copy}")
+    for src, dst in ((merged, f"{OUT}/ct2_ft"), (base_dir, f"{OUT}/ct2_base")):
+        sh(f"{conv} --model {src} --output_dir {dst} --quantization {q}{copy_files_arg(src)}")
+    INFO["env_fixes"] += fill_missing_files(f"{OUT}/ct2_ft", f"{OUT}/ct2_base", TOKENIZER_FILES)
 
     import soundfile as sf
 

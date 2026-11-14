@@ -156,6 +156,21 @@ def test_fill_missing_config_copies_only_what_the_merge_left_out(built: Any, tmp
     assert built.fill_missing_config(str(merged), str(base)) == []
 
 
+def test_export_copies_only_existing_tokenizer_files_and_fills_the_base(built: Any, tmp_path: Path):
+    base, ft_out, base_out = tmp_path / "base", tmp_path / "ct2_ft", tmp_path / "ct2_base"
+    for d in (base, ft_out, base_out):
+        d.mkdir()
+    (base / "preprocessor_config.json").write_text("{}", encoding="utf-8")  # no tokenizer.json
+    assert built.copy_files_arg(str(base)) == " --copy_files preprocessor_config.json"
+    assert built.copy_files_arg(str(base_out)) == ""
+    (ft_out / "tokenizer.json").write_text('{"tok": 1}', encoding="utf-8")
+    (base_out / "preprocessor_config.json").write_text("{}", encoding="utf-8")
+    fixes = built.fill_missing_files(str(ft_out), str(base_out), built.TOKENIZER_FILES)
+    assert fixes == [f"tokenizer.json copied from ct2_ft into {base_out}"]
+    assert (base_out / "tokenizer.json").read_text(encoding="utf-8") == '{"tok": 1}'
+    assert built.fill_missing_files(str(ft_out), str(base_out), built.TOKENIZER_FILES) == []
+
+
 def test_built_checksums_feed_ingest_verify(built: Any, tmp_path: Path):
     s3 = tmp_path / "s3"
     (s3 / "ct2_ft").mkdir(parents=True)
