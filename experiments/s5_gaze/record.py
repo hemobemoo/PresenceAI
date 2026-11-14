@@ -71,14 +71,17 @@ TEXT = {
 
 def beep(times: int, freq: int = 880) -> None:
     """Laptop-speaker beep on Windows; terminal bell elsewhere."""
-    try:
+    if sys.platform == "win32":  # winsound exists only on Windows (and only there for pyright)
         import winsound
 
-        for _ in range(times):
-            winsound.Beep(freq, 140)
-            time.sleep(0.06)
-    except (ImportError, RuntimeError):
-        print("\a" * times, end="", flush=True)
+        try:
+            for _ in range(times):
+                winsound.Beep(freq, 140)
+                time.sleep(0.06)
+            return
+        except RuntimeError:
+            pass
+    print("\a" * times, end="", flush=True)
 
 
 def sha256(path: Path) -> str:
