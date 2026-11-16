@@ -1,8 +1,8 @@
 # 0011 — Pauses and speech rate: VAD, pause positions, rate windows, syllable pace, confidence
 
-- Status: **accepted** by the owner on 2026-11-17 (slice 2 plan, with changes 1–3 below). Two
-  values were filled in by the agent and need the owner's confirmation: the C1 split's
-  `dev_fraction: 0.3` and `seed: 20261117` (see "C1 split").
+- Status: **accepted** by the owner on 2026-11-17 (slice 2 plan, with changes 1–3 below). The C1
+  split values (`dev_fraction: 0.3`, `seed: 20261117`) were confirmed by the owner the same day,
+  with stratification added (see "C1 split").
 - Date: 2026-11-17
 - Decider: project owner
 - Plan reference: docs/plan/FINAL_04 §2 (rate, pauses, pace), §5 (Arabic), §6 (confidence);
@@ -93,8 +93,14 @@ A measure that does not use the transcript (syllable pace) uses the speaking-tim
 C1 (slice 5) is split once, before any tuning, by **script**, so that all clips made from one
 script fall in the same part. The split uses a fixed seed:
 
-- `dev_fraction: 0.3` (about 90 of about 300 clips) and `seed: 20261117`. **These two numbers are
-  the agent's proposal, waiting for the owner's confirmation.**
+- `dev_fraction: 0.3` (about 90 of about 300 clips) and `seed: 20261117`, **confirmed by the owner
+  on 2026-11-17**.
+- **Stratified** (owner, 2026-11-17): both parts must cover the full speaking-rate range of C1
+  (110–200 wpm, FINAL_10 §2) and every Kokoro voice used. Scripts are grouped by the speaking-rate
+  band and voice of their clips, and each group is split 30 / 70 with the same seed. The rate bands
+  and the voice list are fixed in the C1 generation plan (slice 5) before the split runs.
+- **Check:** the split script prints the number of clips per part by rate band and by voice, and
+  stops with an error if any band or voice is missing from either part.
 - VAD values (`speech.vad`) and the syllable values are tuned **only on the development part**.
 - E2 pass/fail against ADR 0009's targets is scored **only on the held-out test part**. Changes
   made after seeing test results are reported as such.
@@ -108,5 +114,10 @@ script fall in the same part. The split uses a fixed seed:
   gave 193 wpm, 219 articulation wpm, 4.7 syllables/s and 34 pauses (11 at sentence boundaries,
   3 at clause boundaries, 20 mid-sentence). The run took 45 s. It shows the pipeline works, not
   that it is accurate. Accuracy is E2's job.
+- **Watch in E2 (owner, 2026-11-17):** in the smoke test, 20 of 34 pauses were `mid_sentence`.
+  The DisfluencySpeech transcripts may be lightly punctuated, so punctuation gaps could inflate that
+  share. E2 therefore reports the share of pauses labelled `mid_sentence` next to the C1 ground
+  truth (pauses inserted inside vs. between sentences), per clip and overall, on the test part.
+  It also reports how often a pause's position label is wrong.
 - Re-check `min_speech_duration_ms` (250 vs 100) and `max_words_per_sentence_mark` on the C1
   development part and on the owner's Arabic B1 clips. Any change needs an update to this ADR.

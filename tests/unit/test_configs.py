@@ -98,5 +98,8 @@ def test_e2_dev_test_split_is_fixed():
     split = _load("evaluation.yaml")["e2"]["split"]
     assert split["unit"] == "script"
     assert split["tune_on"] == "dev" and split["score_on"] == "test"
-    assert 0 < split["dev_fraction"] < 0.5
-    assert isinstance(split["seed"], int)
+    assert split["dev_fraction"] == 0.3  # owner-confirmed 2026-11-17 (ADR 0011)
+    assert split["seed"] == 20261117
+    assert split["stratify_by"] == ["rate_band", "voice"]
+    assert split["print_counts"] is True
+    assert _load("evaluation.yaml")["e2"]["report_pause_position"] is True

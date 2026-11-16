@@ -7,9 +7,12 @@ e2:                                  # ADR 0009 (accepted 2026-11-17); data: C1 
     "1.0": 0.90
   duration_error_s_max: 0.10         # mean absolute error across clips
   report_per_clip: true              # every per-clip value is written next to the aggregate
-  split:                             # ADR 0011: C1 split once, before any tuning
+  report_pause_position: true        # ADR 0011: mid_sentence share vs C1 truth, position error rate
+  split:                             # ADR 0011: C1 split once, before any tuning (owner-confirmed)
     unit: script                     # all clips of one script fall in the same part
     dev_fraction: 0.3                # ~90 of ~300 clips; VAD and detector values are tuned here only
     seed: 20261117
+    stratify_by: [rate_band, voice]  # both parts cover 110-200 wpm and every Kokoro voice
+    print_counts: true               # per part, by rate band and voice; empty cell -> error
     tune_on: dev
     score_on: test                   # E2 pass/fail (targets above) uses the held-out test part only
