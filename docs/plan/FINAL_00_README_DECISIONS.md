@@ -28,7 +28,7 @@ Legend used in every FINAL file: ✓ = checked on the provider's own page on 11 
 
 | # | Your answer | Decision in this plan |
 |---|---|---|
-| 1 | Users: all three groups equally | Product language and scenarios suit students, job seekers and general learners. Study recruits a mixed sample (`FINAL_01` §2) |
+| 1 | Users: all three groups equally | Product language and scenarios suit students, job seekers and general learners. No study sample is recruited (ADR 0010) |
 | 2 | Primary: general presentation / public speaking. Secondary: project defense | Primary scenario **"Prepared short presentation (2–3 min)"**. Secondary **"Project defense with skeptical follow-up questions"**. Interview is a YAML stub |
 | 3 | Hybrid; cloud where it suits, local where it suits; must cost nothing | See round 2 Q1/Q2 and `FINAL_02` |
 | 4 | Process in memory and delete, unless that hurts the engine | Superseded by round 2 Q3 (encrypted temporary storage). The engine only needs derived features, so retention is driven by study rating and re-analysis needs, not by the engine |
@@ -39,7 +39,7 @@ Legend used in every FINAL file: ✓ = checked on the provider's own page on 11 
 | 9 | Data priority F > E > D > C > G > B > A | `FINAL_07` is ordered exactly this way, with each source's role |
 | 10 | Fine-tune a language/speech/vision model | See round 2 Q4 |
 | 11 | Contributions: adaptive exercise recommendation; multimodal communication measurement | These are the two named contributions (`FINAL_01` §5). Calibration and fairness become supporting evidence |
-| 12 | About 20 participants, mixed | Two-arm exploratory study, n ≈ 20 (`FINAL_10` §3) |
+| 12 | ~~About 20 participants, mixed~~ superseded 2026-11-17 | No volunteer study (ADR 0010): public data, simulation, expert agreement, n = 1 self-study (`FINAL_10` §3) |
 | 13 | Private research prototype now; public later | No public launch in scope. Online access is by invitation only |
 | 14 | New finalized file set | This set |
 

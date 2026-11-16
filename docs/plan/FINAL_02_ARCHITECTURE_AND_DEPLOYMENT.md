@@ -61,7 +61,7 @@ Rule used: put a job in the cloud only if (a) the cloud does it for $0 and (b) t
 
 | Stage | When | What | Cost |
 |---|---|---|---|
-| **A. Local web app** | Weeks 1–18 (always available) | `uv run presenceai` starts Gradio on `http://127.0.0.1:7860`; participants come in person and use your laptop | $0 |
+| **A. Local web app** | Weeks 1–18 (always available) | `uv run presenceai` starts Gradio on `http://127.0.0.1:7860`; the owner uses it on the laptop (no participants, ADR 0010) | $0 |
 | **A′. Local network demo** | Demo day | Same app on your laptop; if a second device must connect, use the LAN address with HTTPS via Gradio's own options ~ | $0 |
 | **B. Invited online pilot (optional)** | Weeks 13–16 | Private Gradio Space on ZeroGPU: CPU work (live loop, text, engine) on the Space's CPU, Whisper inside `@spaces.GPU`; WebRTC relayed through Cloudflare TURN using your HF token (10 GB/month free); Supabase free for pilot data | $0; GPU time is charged to each visitor's own daily ZeroGPU quota |
 | C. Public deployment | Future work | Not in scope | — |
@@ -80,7 +80,7 @@ Stage B constraints you must design for:
 | Azure for Students | $100 credit for 12 months, renewable while a student, no card | Credit, not free forever; App Service/Container Apps would consume it | ✓ |
 | Oracle Always Free | Arm VM, now 2 OCPU / 12 GB | Card needed for identity verification; capacity can be scarce | ✓ |
 | Lightning AI / Modal free credits | Small monthly GPU credit | Credit-based; terms change | ~ |
-| Run Stage A only | Everything works | No remote participants | — |
+| Run Stage A only | Everything works | No online demo | — |
 
 Not used: Render/Streamlit Cloud free tiers (≈ 0.5–1 GB RAM, too small for Whisper and MediaPipe) ~.
 

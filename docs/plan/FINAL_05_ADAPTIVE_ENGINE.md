@@ -102,9 +102,9 @@ Rate limit: one prompt per 20 s. Users can turn prompts off; that choice is logg
 
 | Policy | Report | Exercise choice | Live prompts | Used in |
 |---|---|---|---|---|
-| `AdaptivePolicy` | Full | Weakest reliable skill | Engine-chosen | Study arm A, simulation |
-| `FixedSequencePolicy` | Full | Same fixed order for all | Same fixed set | Study arm F, simulation |
-| `PracticeOnlyPolicy` | None | Repeat task | None | Simulation; study only if n ≥ 30 |
+| `AdaptivePolicy` | Full | Weakest reliable skill | Engine-chosen | Simulation (E9), expert agreement (E13), self-study A blocks (E14) |
+| `FixedSequencePolicy` | Full | Same fixed order for all | Same fixed set | Simulation (E9), self-study B blocks (E14) |
+| `PracticeOnlyPolicy` | None | Repeat task | None | Simulation (optional baseline) |
 | `RandomPolicy` | Full | Random | Random | Simulation sanity check |
 | `OraclePolicy` | — | Uses true latent skill | — | Simulation upper bound |
 
@@ -112,7 +112,11 @@ All implement `Policy.next(profile, history, library) -> Decision`.
 
 ## 8. Simulator
 
-Synthetic learners: latent skill vector, per-skill learning rate (gain when the exercise targets that skill, small transfer to related skills), forgetting, measurement noise per skill (set from E1–E7 error rates), camera-off share, dropout. Outputs per policy over 2,000+ learners × 10 sessions: sessions to target, final mean skill, regret vs oracle, robustness to wrong noise assumptions. Seeded, config-driven, results in `experiments/results/`.
+**This is the main evaluation of C1** (ADR 0010; there is no user study). Policies compared: adaptive, fixed, random and oracle.
+
+Synthetic learners: latent skill vector, per-skill learning rate (gain when the exercise targets that skill, small transfer to related skills), forgetting, measurement noise per skill (set from the E1–E7 error rates measured on public data, `docs/data/DATA_SOURCES.md`), camera-off share, dropout. Outputs per policy over 2,000+ learners × 10 sessions: sessions to target, final mean skill, regret vs oracle, robustness to wrong noise assumptions. Seeded, config-driven, results in `experiments/results/`.
+
+Two human checks complement the simulator (FINAL_10 §3): E13 compares the engine's weakest-skill and exercise choice on ~40 public talks with two blind expert raters; E14 is the owner's single-case ABAB self-study (adaptive vs fixed blocks, n = 1).
 
 ## 9. Tests that guard the engine
 

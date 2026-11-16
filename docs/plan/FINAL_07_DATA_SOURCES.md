@@ -2,6 +2,8 @@
 
 ✓ = licence/access read on the source page on 11 Nov 2026 · ~ = confirm on the page before download and before citing.
 
+Licence, use, restrictions, attribution text and the public-data shortlist for C2 (ADR 0010) are kept per source in `docs/data/DATA_SOURCES.md`; nothing on that shortlist is downloaded before the owner approves it. All planned data sources, books and datasets are used for non-commercial academic research and graduation-project purposes only, under each source's terms, with each source acknowledged.
+
 Store everything under `data/` (git-ignored) and record each item in `data/README.md`: name, version/date, URL, licence, citation, local path, used for (train / eval / knowledge / teaching).
 
 ## F. Books, articles and text (priority 1)
@@ -44,7 +46,7 @@ Licence facts: TED Talks are CC BY-NC-ND 4.0; edits/derivatives are not allowed;
 wget -P data/public/tedlium https://www.openslr.org/resources/51/TEDLIUM_release-3.tgz   # ~
 ```
 
-Ask your supervisor to confirm the TED research use before E12; it is the least certain licensing item in the plan.
+TED research use follows the rules in `docs/data/DATA_SOURCES.md`: evaluation only (no derivatives, never training), TED's own download option, derived features kept, video deleted after extraction.
 
 ## D. Public speech datasets (priority 3)
 
@@ -92,16 +94,16 @@ Used as **links** in the teaching library only (YouTube/TED/university channels)
 
 | Set | Size | Role |
 |---|---|---|
-| B1 Pilot presentations (you + 2–3 friends with consent) | 30–40 clips, EN and AR | Detector development, T1 hand-corrected verbatim data, fixtures |
-| B2 Gaze/robustness protocol | You + 4–6 volunteers × ~16 conditions | T3 training and E7 |
+| B1 Pilot presentations (owner only, ADR 0010) | 30–40 clips, EN and AR | Detector development, T1 hand-corrected verbatim data, fixtures |
+| B2 Gaze/robustness protocol | Owner only × ~16 conditions (ADR 0010) | T3 training and E7 |
 | B3 Annotations | 40 clips in Label Studio | Fillers, pauses, structure, supporting material, gaze spot checks |
 
-## A. Participant recordings (priority 7, exploratory study)
+## A. Participant recordings: not applicable
 
-~20 participants × (baseline + practice + post + follow-up), blind human ratings by 2–3 raters. Pseudonymous; encrypted; deleted after rating per `FINAL_11`. Never uploaded to training platforms.
+No human-participant study (ADR 0010). C2 is validated on public recordings (`docs/data/DATA_SOURCES.md`); C1 on simulation, expert agreement on public talks and the owner's single-case self-study.
 
 ## What is released at the end
 
 | Released | Not released |
 |---|---|
-| Code, rubrics (CC BY-NC-SA), exercise library, lexicons, C1–C3 synthetic sets, T1/T3 models with cards, T2 adapter if licences allow, derived metrics from consenting participants | Any raw voice/video, PodcastFillers/S&I/TED material, participant transcripts |
+| Code, rubrics (CC BY-NC-SA), exercise library, lexicons, C1–C3 synthetic sets, T1/T3 models with cards, T2 adapter if licences allow | Any raw voice/video (including the owner's), PodcastFillers/S&I/TED material, Columbia Gaze images |

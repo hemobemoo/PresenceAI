@@ -194,6 +194,8 @@ The NVIDIA API Trial ToS limit use:
 - §1.2: "for limited trial purposes only and without use … in production";
 - §1.4: internal testing and evaluation only, without a subscription.
 
+**Update 2026-11-17 (ADR 0010):** there are no volunteer participants and no supervisor confirmation is sought; the owner's working position is that a non-commercial academic research prototype counts as evaluation use.
+
 **Owner's working reading (2026-11-13), pending the supervisor's confirmation:** a private,
 non-commercial university research prototype with volunteer participants is evaluation, not
 production. If the supervisor disagrees:

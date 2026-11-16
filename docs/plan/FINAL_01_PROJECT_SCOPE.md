@@ -37,24 +37,24 @@ Delivery measures: speech rate, pauses, fillers, repetitions, loudness, pitch va
 
 ## 5. Contributions (the two you chose)
 
-**C1 — Adaptive exercise recommendation.** A per-skill belief model with uncertainty, a "weakest reliable skill" policy, a difficulty ladder, engine-chosen live prompts, and a fair comparison against fixed-sequence and practice-only baselines, in simulation and in an exploratory user study.
+**C1 — Adaptive exercise recommendation.** A per-skill belief model with uncertainty, a "weakest reliable skill" policy, a difficulty ladder, engine-chosen live prompts, and a fair comparison against fixed-sequence, random and oracle policies in a simulator whose measurement noise is set from the public-data results of E1–E7 (main evaluation), checked against two blind expert raters on public talks and in a single-case (n = 1) self-study (ADR 0010).
 
-**C2 — Multimodal communication measurement.** A transparent, evidence-linked measurement layer across speech, text and video, including a fine-tuned verbatim speech recogniser for fillers (T1), a calibrated gaze-zone classifier (T3), detector fusion with calibrated confidence, and robustness testing across accents, Arabic, lighting, glasses and camera position.
+**C2 — Multimodal communication measurement.** A transparent, evidence-linked measurement layer across speech, text and video, including a fine-tuned verbatim speech recogniser for fillers (T1), a calibrated gaze-zone classifier (T3), detector fusion with calibrated confidence, and robustness testing across accents, Arabic, lighting, glasses and camera position, validated on public recordings with many speakers and on the owner's own protocol recordings (ADR 0010).
 
 Supporting evidence (not separate contributions): confidence calibration, fairness/robustness analysis, Coach-SLM vs hosted LLM comparison.
 
 ## 6. Research questions
 
-**Main:** Does adaptive, skill-progressive coaching improve observable presentation performance more than a fixed sequence of the same exercises?
+**Main:** Under realistic measurement error, does adaptive, skill-progressive exercise selection reach target skill levels faster than a fixed sequence of the same exercises, and do its choices agree with expert judgement?
 
 | Sub-question | Answered by |
 |---|---|
 | RQ1 How accurately can the system measure the delivery and content behaviours it coaches? | E1–E7 |
 | RQ2 Does fine-tuning Whisper for verbatim transcription improve filler measurement enough to change feedback? | E3 |
 | RQ3 Under what measurement noise does adaptive selection beat a fixed sequence? | E9 simulation |
-| RQ4 In a small exploratory study, what is the size and direction of the adaptive effect on human-rated performance? | E10 |
+| RQ4 Do the engine's weakest-skill and exercise choices agree with two blind expert raters on public talks, and what does a single-case ABAB self-study show (n = 1, no generalisation)? | E13, E14 |
 | RQ5 Can a fine-tuned small model write feedback as faithfully as a hosted model? | E11 |
-| RQ6 Where does measurement degrade (accent, Arabic, lighting, glasses, camera position, camera-off)? | E1, E7, E10 slices |
+| RQ6 Where does measurement degrade (accent, Arabic, lighting, glasses, camera position, camera-off)? | E1, E7 slices |
 
 ## 7. MVP user journey
 
@@ -72,5 +72,6 @@ Supporting evidence (not separate contributions): confidence calibration, fairne
 - Face recognition or identity tracking; cross-user ranking; any report to an employer or instructor.
 - Animated or video avatar coach (future work).
 - Full Arabic semantic scoring and Arabic LLM feedback quality evaluation (future work).
-- Public deployment, payments, accounts beyond the invited pilot (future work).
+- Public deployment, payments, user accounts (future work).
+- A multi-participant user study with real learners (future work; removed from this project by ADR 0010).
 - Slide-to-speech alignment (dropped from MVP per your Q5 selection).

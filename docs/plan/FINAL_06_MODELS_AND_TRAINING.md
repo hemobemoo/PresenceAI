@@ -52,7 +52,7 @@ Rules: every training run is a notebook in `training/` with fixed seed, logs its
 |---|---|
 | Labels | `at_camera` (lens or screen area: toward the audience), `down_notes`, `away` (+ `unknown` by rule). `at_screen` merged into `at_camera` after S5 (ADR 0004); a separate `at_screen` is future work |
 | Features | Iris-to-eye-corner ratios (both eyes), eyelid aperture, head yaw/pitch/roll, face size |
-| Data | Prompted-target recordings: you and 4–6 volunteers look at on-screen targets in a fixed order (labels known by protocol, no manual annotation), across the robustness conditions (lighting, glasses, camera height, distance) |
+| Data | Prompted-target recordings: the owner only (ADR 0010) looks at on-screen targets in a fixed order (labels known by protocol, no manual annotation), across the robustness conditions (lighting, glasses, camera height, distance) |
 | Model | scikit-learn: logistic regression baseline, HistGradientBoosting main; per-user offset from the 10 s calibration |
 | Evaluation | Leave-one-person-out macro-F1 over the three labels; per-condition breakdown and excluded (`unknown`) share per zone (E7) |
 | Runs on | Laptop CPU in seconds; saved with `skops` ~ |

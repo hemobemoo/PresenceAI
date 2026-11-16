@@ -31,14 +31,14 @@ Enforcement:
 
 | Item | Rule |
 |---|---|
-| Consent switches | (a) take part / use the app, (b) camera, (c) keep encrypted raw recordings temporarily, (d) send transcript text to a hosted AI model (OpenRouter) for wording and follow-ups; the text is stored by the model provider and may be used to improve its models, (e) study only: blind rating of recordings, (f) study only: release of de-identified derived metrics |
+| Consent switches | The app's own user consent: (a) use the app, (b) camera, (c) keep encrypted raw recordings temporarily, (d) send transcript text to a hosted AI model (OpenRouter) for wording and follow-ups; the text is stored by the model provider and may be used to improve its models. The former study-only switches (e) blind rating of recordings and (f) release of de-identified derived metrics are **not applicable: no human-participant study** (ADR 0010) |
 | Encryption | Fernet key generated per installation (`MEDIA_KEY`); media encrypted at write time; in Stage B encrypted before upload to Supabase |
-| Retention | Raw media 30 days by default; study media until blind rating ends, max 60 days; user can delete any session at once; retention job runs at start-up and daily (Stage B) |
+| Retention | Raw media 30 days by default (the former study-media rule is not applicable: no human-participant study); user can delete any session at once; retention job runs at start-up and daily (Stage B) |
 | Derived metrics | Kept until the user deletes their profile |
 | Export | One zip: JSON, Parquet, decrypted media if still retained |
 | Minimisation | No name in the database (display name stays in the browser session); pseudonymous ids; no age, gender, employer or nationality; optional self-described first language for robustness slices only |
-| Hosted LLM | OpenRouter free endpoints that may log or train on prompts are allowed (decision 2026-11-13, ADR 0003; reason: more capable free models at no cost). Participants are told this in consent switch (d) and can decline it; declining (d) turns the feature off and the app uses templates. Protections stay: text only, personal names redacted, no media, no ids, no `user` field |
-| Training platforms | Raw study recordings never go to Kaggle, Colab or Hugging Face |
+| Hosted LLM | OpenRouter free endpoints that may log or train on prompts are allowed (decision 2026-11-13, ADR 0003; reason: more capable free models at no cost). Users are told this in consent switch (d) and can decline it; declining (d) turns the feature off and the app uses templates. Protections stay: text only, personal names redacted, no media, no ids, no `user` field |
+| Training platforms | Raw recordings, including the owner's own, never go to Kaggle, Colab or Hugging Face |
 | AI disclosure | Every generated paragraph marked "AI-generated"; "dispute this" button stores disputes for human review |
 
 ## 4. Requirements → implementation → test
@@ -56,17 +56,17 @@ Enforcement:
 | Hosted LLM payload is text-only, names redacted | Request builder | Test inspects payload (P7) |
 | Hosted LLM only with consent (d) | Provider chain checks consent; templates otherwise | Test: (d) off → no OpenRouter call (P7) |
 
-## 5. Study ethics checklist
+## 5. Study ethics: not applicable
 
-- [ ] Ask your supervisor about Al-Balqa Applied University's approval route in week 1.
-- [ ] Tell your supervisor about the hosted-LLM privacy decision (ADR 0003, 2026-11-13): free endpoints that may log or train on prompts are allowed, behind consent switch (d).
-- [ ] Information sheet and consent in English and Arabic, naming OpenRouter and the model, the retention period and the deletion process, and stating that transcript text sent under switch (d) is stored by the model provider and may be used to train its models.
-- [ ] Voluntary; no grades; no one with authority over participants recruits or sees results.
-- [ ] Participants told: practice software, not an assessment of them, not used for hiring or grading.
-- [ ] OpenRouter privacy setting checked before participant 1: it allows free endpoints that may log or train on prompts, and the consent wording matches the data policies of the pinned and fallback providers; all arms use the same pinned model.
-- [ ] Debrief sheet with the system's limitations.
-- [ ] TED research use confirmed with supervisor (`FINAL_07` E).
+There is no human-participant study (ADR 0010, 2026-11-17). Not applicable, and removed: the study information and consent sheet (EN/AR), the study-only consent switches (e) and (f), the debrief sheet, the participant checklist and the supervisor email about the ethics approval route. The app's own user consent switches (a)–(d) in §3 stay.
+
+What remains, as recorded positions:
+
+- **Data use:** all planned data sources, books and datasets are used for non-commercial academic research and graduation-project purposes only, under each source's terms, with each source acknowledged (`docs/data/DATA_SOURCES.md`). Research-only or no-derivatives sources are used for evaluation only; no attempt is made to identify any speaker or face; raw public data and clips are not redistributed.
+- **NVIDIA free tier:** working position (owner, 2026-11-17, ADR 0010): a non-commercial academic research prototype counts as evaluation use under the NVIDIA API Trial terms (ADR 0003). If that changes, Flint becomes pinned (ADR 0003).
+- **Hosted LLM privacy:** the decision of 2026-11-13 (ADR 0003) is disclosed to every user in consent switch (d).
+- **E13 raters** rate published talks; nobody is recorded. **E14** uses only the owner's own recordings.
 
 ## 6. Documents to deliver
 
-`docs/cards/PRIVACY_ETHICS.md` (data-flow diagram, §2–§4), `DATA_CARD.md` (every source in FINAL_07 with licence and use), model cards for T1/T2/T3 and pretrained models, `LIMITATIONS.md` (Arabic depth, small study, simulated learners, webcam gaze accuracy, filler recall, cultural variation in delivery norms).
+`docs/cards/PRIVACY_ETHICS.md` (data-flow diagram, §2–§4), `DATA_CARD.md` (every source in FINAL_07 with licence and use), model cards for T1/T2/T3 and pretrained models, `LIMITATIONS.md` (no multi-participant user study, n = 1 self-study, Arabic depth, simulated learners, webcam gaze accuracy, filler recall, cultural variation in delivery norms).
