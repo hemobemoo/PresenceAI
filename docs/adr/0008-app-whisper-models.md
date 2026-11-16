@@ -41,13 +41,29 @@ nothing pinned, and the download script allowed only Google's storage host.
 
 ## Comparison with the S2 conversion
 
-S2 converted turbo from the Hub id. This script converts the same commit from a downloaded folder.
-Whether the converted files are byte-identical to `experiments/results/s2/model_manifest.csv` is
-recorded below once the download has run.
+S2 converted turbo from the Hub id. This script converts the same commit from a downloaded folder
+(run on 2026-11-17; `models/MANIFEST.json`). Compared with `experiments/results/s2/model_manifest.csv`:
 
-| File | S2 SHA-256 | This conversion | Match |
+| File (`large-v3-turbo-ct2-f16`) | Bytes | SHA-256 (first 16) | Match S2 |
 |---|---|---|---|
-| (filled in after the first run) | | | |
+| config.json | 2,487 | 27ec8ecb8ba05f3a | yes |
+| model.bin | 1,617,884,929 | e76620f83d5f5b69 | yes |
+| preprocessor_config.json | 340 | 7ccc62c6f2765af1 | yes |
+| tokenizer.json | 2,710,337 | 297b13372ac43916 | yes |
+| vocabulary.json | 1,119,981 | 697ee5a65726e46b | yes |
+
+**All five turbo files are byte-identical to S2.** So the conversion is reproducible from the
+downloaded folder with these versions, and the turbo model the app uses is the one S2 measured.
+
+whisper-small, for reference, compared with the S3 base export (`small-ct2-int8` in the same CSV):
+`model.bin` is byte-identical (248,203,797 bytes). `config.json`, `preprocessor_config.json`,
+`tokenizer.json` and `vocabulary.json` differ. S3 converted the `unsloth/whisper-small` mirror,
+whose tokenizer and preprocessor files are not the same as `openai/whisper-small`'s, so the
+weights are the same and the files that come with them are not.
+
+Smoke test (2026-11-17, laptop CPU, `int8`): `presenceai analyze data/s2/clip_probe.wav --lang en`
+(10 s public DisfluencySpeech clip) took 6 s with whisper_small and 24 s with whisper_turbo,
+including model load. Both returned word timestamps.
 
 ## Consequences
 
