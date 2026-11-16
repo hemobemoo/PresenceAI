@@ -1,0 +1,9 @@
+# Pass targets for experiments (FINAL_10 §1). Changed only with an ADR (AGENTS.md rule 7).
+
+e2:                                  # ADR 0009 (accepted 2026-11-17); data: C1 synthetic speech
+  wpm_error_pct_max: 5.0             # mean absolute % error across clips
+  pause_f1_min:                      # F1 over all clips, pauses at least this long (seconds)
+    "0.5": 0.90
+    "1.0": 0.90
+  duration_error_s_max: 0.10         # mean absolute error across clips
+  report_per_clip: true              # every per-clip value is written next to the aggregate

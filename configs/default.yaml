@@ -20,3 +20,11 @@ expressions:                    # FINAL_04 §4.3 — thresholds set from calibra
   baseline_delta: null          # TODO(ADR): δ above the user's neutral baseline
   min_duration_s: null          # TODO(ADR): plan suggests ≥ 0.5 s
   eyes_closed_min_s: null       # TODO(ADR): plan suggests ≥ 0.4 s
+
+asr:                            # FINAL_04 §2, FINAL_06 §1; decoding options as in S2/S3 (ADR 0005, 0007)
+  model: whisper_small          # whisper_small | whisper_turbo (keys under `asr:` in models.yaml)
+  device: cpu                   # cpu | cuda | auto
+  compute_type: int8            # CTranslate2 compute type on the laptop
+  beam_size: 5
+  temperature: 0.0
+  condition_on_previous_text: false
