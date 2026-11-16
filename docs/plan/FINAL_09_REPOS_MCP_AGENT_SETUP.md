@@ -19,7 +19,7 @@
 | # | Repo | Role | Note |
 |---|---|---|---|
 | 11 | Arize-ai/phoenix | Trace LLM calls while developing T2 and prompts | Elastic License 2.0 ✓ (not OSI) |
-| 53 | google-research/tabfm | Small-N baseline for "features → human rating" in E10 analysis | Weights non-commercial ✓ |
+| 53 | google-research/tabfm | Not used: was for the E10 analysis, removed by ADR 0010 | Weights non-commercial ✓ |
 | 22 | PYPE-AI-MAIN/cue-v1 | Turn detection for future interruptible panels | Needs GPU, early-stage ✓ |
 | 1 | opendatalab/MinerU | Parse open-textbook PDFs for the knowledge base if Pressbooks EPUB export is messy | Apache-2.0 + extra terms ✓ |
 | 52 | reflex-dev/xy | Thesis figures | Alpha ✓ |

@@ -14,7 +14,7 @@ features:
 
 retention:
   raw_media_days: 30            # source: FINAL_11 §3 — ADR pending
-  study_media_max_days: 60      # source: FINAL_11 §3 — ADR pending
+  study_media_max_days: 60      # not applicable: no human-participant study (ADR 0010); unused
 
 expressions:                    # FINAL_04 §4.3 — thresholds set from calibration data
   baseline_delta: null          # TODO(ADR): δ above the user's neutral baseline
