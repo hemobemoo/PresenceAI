@@ -1,7 +1,8 @@
 # 0010 — No volunteer study: evaluate on public data, simulation, expert agreement and n = 1
 
-- Status: **proposed** (the owner decided the direction on 2026-11-17; this ADR records the
-  replacement design and waits for the owner's "accepted")
+- Status: **accepted** by the owner on 2026-11-17, after the follow-ups on Arabic coverage, the
+  gaze approximation and the AMI licence were added (`docs/data/DATA_SOURCES.md` §2–§4,
+  `docs/cards/LIMITATIONS.md`, FINAL_10)
 - Date: 2026-11-17
 - Decider: project owner
 - Plan reference: docs/plan/FINAL_01 §5–§6; FINAL_05 §7–§8; FINAL_07 A, B; FINAL_10 §2–§4;
