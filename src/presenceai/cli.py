@@ -61,12 +61,18 @@ def analyze(
     from presenceai.speech import analyze as speech_analyze
     from presenceai.speech import asr
 
-    options = get_settings().asr
+    settings = get_settings()
+    options = settings.asr
     model_name = model.value if model is not None else options.model
     try:
         whisper = asr.load_model(model_name, options)
         report = speech_analyze.analyze_file(
-            file, language=lang.value, model=whisper, model_name=model_name, options=options
+            file,
+            language=lang.value,
+            model=whisper,
+            model_name=model_name,
+            options=options,
+            speech=settings.speech,
         )
     except asr.ModelNotAvailable as exc:
         typer.echo(str(exc), err=True)

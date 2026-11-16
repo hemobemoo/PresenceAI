@@ -9,12 +9,13 @@ This module imports only from `presenceai.schemas`.
 
 from __future__ import annotations
 
+from enum import StrEnum
 from pathlib import PurePosixPath, PureWindowsPath
 from typing import Literal, Self
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from presenceai.schemas.assessment import TranscriptSpan
+from presenceai.schemas.assessment import Confidence, Measurement, TranscriptSpan
 
 SpeechLanguage = Literal["en", "ar"]
 
@@ -74,6 +75,58 @@ class Transcript(_Frozen):
         return TranscriptSpan(start_char=start, end_char=end, text=self.text[start:end])
 
 
+class SpeechRegion(_Frozen):
+    """A stretch the VAD marks as speech, in seconds from the start of the recording."""
+
+    start_s: float = Field(ge=0)
+    end_s: float = Field(ge=0)
+
+    @model_validator(mode="after")
+    def _ordered(self) -> Self:
+        if self.end_s < self.start_s:
+            raise ValueError("end_s must be >= start_s")
+        return self
+
+    @property
+    def duration_s(self) -> float:
+        return self.end_s - self.start_s
+
+
+class PausePosition(StrEnum):
+    """Where a pause falls in the transcript (ADR 0011). Only `mid_sentence` may be penalised."""
+
+    SENTENCE_BOUNDARY = "sentence_boundary"  # after . ! ? ؟ …
+    CLAUSE_BOUNDARY = "clause_boundary"  # after , ، ; ؛ (reported separately, not penalised)
+    MID_SENTENCE = "mid_sentence"
+    UNKNOWN = "unknown"  # too little punctuation, or no recognised word next to the pause
+
+
+class PauseEvent(_Frozen):
+    start_s: float = Field(ge=0)
+    end_s: float = Field(ge=0)
+    position: PausePosition
+    confidence: Confidence
+    word_before: int | None = Field(default=None, ge=0)  # index into Transcript.words
+    word_after: int | None = Field(default=None, ge=0)
+
+    @model_validator(mode="after")
+    def _ordered(self) -> Self:
+        if self.end_s <= self.start_s:
+            raise ValueError("a pause must have end_s > start_s")
+        return self
+
+    @property
+    def duration_s(self) -> float:
+        return self.end_s - self.start_s
+
+
+class RateWindow(_Frozen):
+    start_s: float = Field(ge=0)
+    end_s: float = Field(ge=0)
+    words: int = Field(ge=0)
+    wpm: float = Field(ge=0)
+
+
 class AsrQuality(_Frozen):
     """FINAL_04 §2 'ASR confidence' inputs. None when there are no words / segments."""
 
@@ -85,11 +138,17 @@ class AsrQuality(_Frozen):
 class SpeechReport(_Frozen):
     """What `presenceai analyze` writes. Holds derived data only, never audio samples."""
 
-    schema_version: Literal[1] = 1
+    schema_version: Literal[2] = 2
     source_name: str = Field(min_length=1)  # file name only: no folders, no user names
     model: str = Field(min_length=1)  # key under `asr:` in configs/models.yaml
     transcript: Transcript
     asr_quality: AsrQuality
+    speech_regions: tuple[SpeechRegion, ...] = ()
+    pauses: tuple[PauseEvent, ...] = ()
+    rate_windows: tuple[RateWindow, ...] = ()
+    measurements: dict[str, Measurement] = Field(default_factory=dict)
+    # measure name -> reason; a measure that cannot be computed reliably is never a low score
+    not_measurable: dict[str, str] = Field(default_factory=dict)
 
     @model_validator(mode="after")
     def _file_name_only(self) -> Self:

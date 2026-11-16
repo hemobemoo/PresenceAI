@@ -7,3 +7,9 @@ e2:                                  # ADR 0009 (accepted 2026-11-17); data: C1 
     "1.0": 0.90
   duration_error_s_max: 0.10         # mean absolute error across clips
   report_per_clip: true              # every per-clip value is written next to the aggregate
+  split:                             # ADR 0011: C1 split once, before any tuning
+    unit: script                     # all clips of one script fall in the same part
+    dev_fraction: 0.3                # ~90 of ~300 clips; VAD and detector values are tuned here only
+    seed: 20261117
+    tune_on: dev
+    score_on: test                   # E2 pass/fail (targets above) uses the held-out test part only

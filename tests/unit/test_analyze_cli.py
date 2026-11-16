@@ -8,24 +8,42 @@ import pytest
 from typer.testing import CliRunner
 
 from presenceai import cli
-from presenceai.schemas.speech import SpeechReport
+from presenceai.schemas.speech import PausePosition, SpeechRegion, SpeechReport
 from presenceai.settings import AsrSettings
-from presenceai.speech import analyze, asr
+from presenceai.speech import analyze, asr, vad
+
+REGIONS = (SpeechRegion(start_s=0.0, end_s=1.2), SpeechRegion(start_s=2.0, end_s=3.6))
 
 
-def test_analyze_file_builds_a_report(fake_whisper: Any, silent_wav: Path):
+def fake_vad(samples: Any, opts: Any = None) -> tuple[SpeechRegion, ...]:
+    return REGIONS
+
+
+def test_analyze_file_builds_a_report(fake_whisper: Any, silent_wav: Path, speech_cfg: Any):
     report = analyze.analyze_file(
         silent_wav,
         language="en",
         model=fake_whisper(),
         model_name="whisper_small",
         options=AsrSettings(),
+        speech=speech_cfg,
+        vad=fake_vad,
     )
     assert isinstance(report, SpeechReport)
+    assert report.schema_version == 2
     assert report.source_name == "talk.wav"
     assert report.model == "whisper_small"
     assert report.transcript.text.startswith("Hello everyone.")
     assert report.asr_quality.word_count == 6
+    assert report.speech_regions == REGIONS
+    (pause,) = report.pauses  # 0.8 s gap after "everyone."
+    assert pause.position == PausePosition.SENTENCE_BOUNDARY
+    assert report.measurements["pauses.count_ge_0.25s"].value == 1
+    # only 3.6 s of speech: rate and pace are "not measurable", never a low score
+    assert {"rate.wpm", "rate.articulation_wpm", "pace.syllables_per_s"} <= set(
+        report.not_measurable
+    )
+    assert "rate.wpm" not in report.measurements
 
 
 @pytest.fixture
@@ -37,6 +55,7 @@ def patched_loader(monkeypatch: pytest.MonkeyPatch, fake_whisper: Any) -> dict[s
         return fake_whisper()
 
     monkeypatch.setattr(asr, "load_model", fake_load)
+    monkeypatch.setattr(vad, "detect_speech", fake_vad)
     return seen
 
 
