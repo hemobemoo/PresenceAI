@@ -7,12 +7,12 @@ Main evidence: system experiments on public data (E1–E8, E11, E12) and simulat
 | ID | Question | Data | Metrics |
 |---|---|---|---|
 | E1 | ASR accuracy, EN and AR | LibriSpeech test-clean; Common Voice EN accent slices; Common Voice AR + MASC test; TED-LIUM 3 test; AMI (IHM); 20 hand-corrected clips of the owner (B1) | WER per slice; gap best–worst slice |
-| E2 | Rate and pause accuracy | C1 synthetic speech (EN; targets ADR 0009); TED-LIUM 3 as an approximate real-speech check; annotated owner clips B1 (AR) | wpm error %, pause F1 at 0.5/1.0 s, duration error; live syllable-rate vs post wpm correlation |
-| E3 | **Filler detection: base vs T1** | DisfluencySpeech test, PodcastFillers test, AMI disfluency layer (licence to confirm) | Precision/recall/F1 per detector (lexicon on base, lexicon on T1, acoustic, fusion); CrisperWhisper as upper bound; LibriSpeech WER regression |
+| E2 | Rate and pause accuracy | C1 synthetic speech (EN; targets ADR 0009); TED-LIUM 3 as an approximate real-speech check; Arabic: annotated owner clips B1 only (no public Arabic source has word or pause timing, `DATA_SOURCES.md` §3), reported descriptively | wpm error %, pause F1 at 0.5/1.0 s, duration error; live syllable-rate vs post wpm correlation |
+| E3 | **Filler detection: base vs T1** | DisfluencySpeech test, PodcastFillers test, AMI disfluency layer (40 meetings, CC BY 4.0) | Precision/recall/F1 per detector (lexicon on base, lexicon on T1, acoustic, fusion); CrisperWhisper as upper bound; LibriSpeech WER regression |
 | E4 | Content detectors | C2 synthetic transcripts; public talk transcripts (TED, evaluation only) labelled by the two raters | Per-label F1 (central message, organization, hook, conclusion, supporting-material type, undefined jargon) |
 | E5 | Rubric detector ablation | Criterion labels on C2 + public talk transcripts | Cohen's κ vs human for rules / Laya / LLM judge / fusion; share of feedback statements with verified evidence |
 | E6 | Confidence calibration | E5 data | Reliability diagram, expected calibration error, before/after re-estimating detector reliabilities |
-| E7 | **Vision robustness and T3 gaze accuracy** | Owner's B2 protocol (lighting, glasses, camera height, distance, seated/standing); Columbia Gaze for the cross-person check | Gaze-zone macro-F1 on held-out B2 conditions and, cross-person, on Columbia Gaze (zones from known gaze angles by a rule fixed before evaluation) over `at_camera` (lens + screen area), `down_notes`, `away` (ADR 0004), with the excluded (`unknown`) share per zone and condition; per-condition change of framing/head-pose/posture measures; expression-label agreement with 2 human annotators on 300 sampled segments |
+| E7 | **Vision robustness and T3 gaze accuracy** | Owner's B2 protocol (lighting, glasses, camera height, distance, seated/standing); Columbia Gaze for the cross-person check | Gaze-zone macro-F1 on held-out B2 conditions and, cross-person, on Columbia Gaze (zones from known gaze angles by a rule fixed before evaluation) over `at_camera` (lens + screen area), `down_notes`, `away` (ADR 0004), with the excluded (`unknown`) share per zone and condition; per-condition change of framing/head-pose/posture measures; expression-label agreement with 2 human annotators on 300 sampled segments. **T3 is trained on one person (the owner) and tested across people only on Columbia Gaze, which has posed still images, not webcam video, so its cross-person accuracy is an approximation** (`docs/cards/LIMITATIONS.md`); AMI focus-of-attention video is a sanity check only |
 | E8 | Latency and live performance | 1 / 3 / 5 min sessions on `lite`, `standard`, `space` | Landmark fps, prompt delay, post-analysis seconds per stage, LLM wait and rate-limit counts, ZeroGPU seconds per analysis |
 | E9 | **Adaptive vs fixed in simulation** | C3 synthetic learners; noise per skill from E1–E7 on public data | Adaptive, fixed, random, oracle: sessions to target, final skill, regret vs oracle; sweeps over measurement noise and wrong noise assumptions. **Main evaluation of C1** |
 | E11 | Coach-SLM vs hosted LLM vs templates | 150 held-out assessments | Quote found %, numbers correct %, guardrail violations, JSON validity, blind actionability rating (1–5, 2 raters), explains the benefit to the user (rater criterion, `feedback_point_rule`), Arabic items: code-switching rule followed (rater criterion, FINAL_04 §5); rater guide and page in P7, laptop latency |
@@ -27,7 +27,7 @@ Every experiment script takes `--config` and `--seed`, writes to `experiments/re
 | Factor | Where tested | If it fails |
 |---|---|---|
 | Accent (EN) | E1, E3 | Confidence drops automatically when ASR word probability is low; report it |
-| Arabic | E1, E2 | Arabic shows basic measures only (by design); state WER |
+| Arabic | E1 (Common Voice Arabic, MASC), E2 (owner only) | Arabic shows basic measures only (by design); state WER; Arabic rate and pause accuracy is single-speaker and descriptive |
 | Speaking rate | E2 (110–200 wpm) | Targets are always relative to the user's own band |
 | Lighting, camera position, glasses, background, posture | E7 | Disable the affected measure under that condition |
 | Camera-off | UI test + camera-off sessions in E14 | Must complete the full journey without penalty |
@@ -59,7 +59,7 @@ There is no multi-participant user study and no participant recruitment (ADR 001
 | If | Then you can say |
 |---|---|
 | E3 shows T1 raises filler F1 without WER loss | Fine-tuning made a coached behaviour measurable |
-| E7 shows gaze F1 is stable across conditions except X | Gaze feedback is reliable under stated conditions |
+| E7 shows gaze F1 is stable across conditions except X | Gaze feedback is reliable under stated conditions for the person it was trained on; across people, only approximately (Columbia Gaze still images) |
 | E9 shows adaptive wins below noise level N | Adaptivity helps when measurement error is below N, which E1–E7 show is met for skills S |
 | E13 shows rater–engine agreement close to rater–rater agreement | The engine's choices are as consistent with experts as experts are with each other, on public talks |
 | E14 shows higher level or steeper trend in adaptive blocks | One learner's data are consistent with the simulation; no generalisation; validation with real learners is future work |

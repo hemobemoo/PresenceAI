@@ -28,7 +28,7 @@ before download and before citing (including the exact paper citation).
 | *Speak Out, Call In* (Mapes) | CC BY-NC-SA 4.0 | Knowledge base only | Non-commercial; share-alike; excluded from training | "*Speak Out, Call In: Public Speaking as Advocacy*, Meggie Mapes, CC BY-NC-SA 4.0." | ✓ 2026-11-11 |
 | DisfluencySpeech (amaai-lab) | Apache-2.0 | T1 training; E3 evaluation (test split) | Single speaker; scripts derive from Switchboard transcripts ~ | "DisfluencySpeech, AMAAI Lab, Apache-2.0, https://huggingface.co/datasets/amaai-lab/DisfluencySpeech." Paper ~ | ✓ 2026-11-17 |
 | LibriSpeech test-clean | CC BY 4.0 | Evaluation only (E1, E3 WER regression) | Attribution | "LibriSpeech ASR corpus, OpenSLR 12, CC BY 4.0." Paper ~ | ~ |
-| Common Voice (English accents; Arabic) | CC0-1.0 | Evaluation only (E1 accent and Arabic slices) | Privacy terms: no attempt to identify speakers; no redistribution of clips | "Mozilla Common Voice, CC0-1.0." | ✓ 2026-11-11 |
+| Common Voice (English accents; Arabic) | CC0-1.0 | Evaluation only (E1 accent and Arabic slices) | Privacy terms: downloaders agree not to determine the identity of speakers; no redistribution of clips. Download through Mozilla Data Collective (sign-in) | "Mozilla Common Voice, CC0-1.0." Cite the exact release used (e.g. "Common Voice Scripted Speech 23.0 – Arabic") | ✓ 2026-11-17 (Arabic: §3) |
 | MASC (Massive Arabic Speech Corpus) | CC BY 4.0 (IEEE DataPort; one HF mirror says CC BY-NC 4.0, so the DataPort terms are used) | Evaluation only (E1 Arabic) | Attribution; no redistribution | "MASC: Massive Arabic Speech Corpus, IEEE DataPort, CC BY 4.0." Paper ~ | ✓ 2026-11-11 (conflict noted) |
 | EdAcc (Edinburgh accent corpus) | ~ confirm on card | Evaluation only (E1 accents) until the licence is confirmed | ~ | ~ | ~ |
 | Speak & Improve Corpus 2025 | Non-commercial, registration | Evaluation only | Text and audio never sent to OpenRouter or any hosted model; local models only | Exact wording from the licence on registration ~ | ✓ 2026-11-11 |
@@ -45,7 +45,7 @@ Checked on 2026-11-17 from the source pages and search results. Nothing is downl
 
 | Candidate | Licence | Access | Labels useful to us | Speakers | Use if approved | Proposal |
 |---|---|---|---|---|---|---|
-| AMI Meeting Corpus | Signals, transcripts and *some* annotations CC BY 4.0 (current download page); 2006 release was CC BY-NC-SA 2.5. Which annotation layers are CC BY 4.0 is not stated, so check `LICENCE` in the annotation zip ~ | Free download (Edinburgh); HF mirror `edinburghcstr/ami` | Word-level orthographic transcripts with times; disfluency layer (subset ~); dialogue acts; focus-of-attention (head and gaze target) and head-gesture layers on a subset ~; close-up video | ~100 h of meetings, many speakers, many non-native | E1 (meeting speech WER), E3 (fillers vs disfluency layer), E7 gaze-away sanity check on focus-of-attention video ~; T1 training only on layers confirmed CC BY 4.0 | **Shortlist** (E1, E3); E7 only if focus-of-attention is CC BY 4.0 |
+| AMI Meeting Corpus | **CC BY 4.0** for all signals, the transcription, the *manual annotations package v1.6.2* and the *automatic annotations package v1.5.1* (official download page: both packages "license altered to CC BY 4.0", 10-Apr-2017). **Not covered:** the separately listed DOME dominance and social-role annotations (no licence stated; not used: they rate people, rule 3). Mirrors disagree (OpenSLR 16 lists CC BY-NC-SA 2.0 for v1.6.1; an HF card says non-commercial), so only the official Edinburgh files are used, and the `LICENCE` file inside the v1.6.2 zip is read and recorded before any other file is used (details in §4) | Official Edinburgh download only (not mirrors) | Manual v1.6 layers (official per-meeting table): word-level orthographic transcript with times (all meetings); **disfluency** (40 meetings: ES2002, ES2005, ES2006, ES2008, IS1001, IS1003, IS1009, TS3005, TS3006, TS3007, each a–d); **focus of attention** (head orientation and gaze target: table, whiteboard, slide screen, participants; 14 meetings); head, hand and leg movement; dialogue acts. AmiEmotion was never released and is never used | ~100 h of meetings, many speakers, many non-native | E1 (meeting speech WER); E3 (fillers vs the disfluency layer); E7 gaze-away sanity check on the 14 focus-of-attention meetings; T1 training allowed (CC BY 4.0) | **Shortlist** (E1, E3, E7 sanity check) |
 | PodcastFillers | See §1 (research-only annotations) | Zenodo record 7121457 | 35k manually annotated filler words ("uh", "um") and other non-filler events, with timestamps; automatic transcripts | 199 episodes, many speakers | E3 only (evaluation) | **Shortlist** (E3) |
 | DisfluencySpeech | Apache-2.0 | HF | Four transcript levels (with and without fillers, paralanguage) | **One** speaker | E3 and T1, but it adds no speaker variety for C2 | Keep as planned; not counted as multi-speaker |
 | TED / TED-LIUM 3 | CC BY-NC-ND (see §1) | TED download option; OpenSLR 51 | TED-LIUM 3: aligned transcripts (segment times) for ~2,350 talks; TED.com: talk transcripts | ~2,000 speakers | E1; E2 on real speech (wpm and long-pause checks against segment and word times obtained by forced alignment, reported as approximate); E12; E13 talks | **Shortlist** (E1, E2-real, E12, E13) |
@@ -59,10 +59,36 @@ Checked on 2026-11-17 from the source pages and search results. Nothing is downl
 
 | Experiment | Sources |
 |---|---|
-| E1 ASR accuracy | LibriSpeech test-clean, Common Voice (EN accents, AR), MASC, TED-LIUM 3 test, AMI (IHM) |
-| E2 rate and pauses | C1 (targets, ADR 0009); TED-LIUM 3 as a real-speech check (approximate); owner's B1 for Arabic |
-| E3 fillers | DisfluencySpeech test, PodcastFillers test, AMI disfluency layer ~ |
+| E1 ASR accuracy | LibriSpeech test-clean, Common Voice (EN accents; **AR**), **MASC (AR)**, TED-LIUM 3 test, AMI (IHM) |
+| E2 rate and pauses | C1 (EN, targets ADR 0009); TED-LIUM 3 as a real-speech check (approximate); **Arabic: owner's B1 only, see §3** |
+| E3 fillers | DisfluencySpeech test, PodcastFillers test, AMI disfluency layer (40 meetings, CC BY 4.0) |
 | E4–E6 content, rubric, calibration | C2 synthetic transcripts; criterion labels by the two raters on TED transcripts (evaluation only) |
-| E7 vision | Owner's B2 protocol; Columbia Gaze (cross-person); AMI focus-of-attention ~ |
+| E7 vision | Owner's B2 protocol; Columbia Gaze (cross-person, posed still images: an approximation, see `docs/cards/LIMITATIONS.md`); AMI focus-of-attention (14 meetings) as a sanity check |
 | E12 reference ranges | ~30 TED talks (derived features only) |
 | E13 expert agreement | ~40 TED talks, including Arabic-language TED talks where available |
+
+## 3. Arabic coverage (E1, E2)
+
+TEDx is excluded (§2), so these are the public sources that could cover Arabic. Checked on 2026-11-17.
+
+| Source | Licence | Speakers and size | Labels | Covers | Proposal |
+|---|---|---|---|---|---|
+| **Common Voice Arabic** (Scripted Speech 23.0) | CC0-1.0; downloaders agree not to determine the identity of speakers | 158 h recorded, 92 h validated, 1,654 speakers (Mozilla's automatically generated datasheet for release 23.0; the exact figures depend on the release, so the one used is cited) | One read sentence per clip with its transcript; optional self-reported demographics. **No word times and no pause labels** | E1 Arabic WER on read speech, many speakers | **Shortlist** (E1) |
+| **MASC** (Massive Arabic Speech Corpus) | CC BY 4.0 (IEEE DataPort terms) | ~1,000 h, many speakers and dialects | Transcribed segments from online videos; segment-level times ~ (to confirm on DataPort); no word-level or pause ground truth found | E1 Arabic WER across dialects, spontaneous and broadcast speech | **Shortlist** (E1) |
+| Arabic-language talks on TED.com | CC BY-NC-ND 4.0 | A small number of talks | TED transcripts | E12/E13 only (evaluation, derived features) | Keep for E12/E13 where available |
+| QASR / MGB-2 (Al Jazeera broadcasts) | Research release by QCRI; terms need an agreement and are not confirmed as open | ~2,000 h / 1,200 h | Lightly supervised transcripts, segment-aligned | Would add broadcast Arabic to E1 | **Not shortlisted**: licence and access not confirmed; no word-level timing ground truth either |
+| Kokoro (C1 generator) | Apache-2.0 | — | — | No Arabic voice in the MVP voice set | Cannot make Arabic C1 |
+
+**Result:**
+- **E1 (Arabic ASR) is covered** by Common Voice Arabic (read speech, 1,654 speakers) and MASC (multi-dialect).
+- **E2 (Arabic rate and pauses) has no suitable public source.** None of the allowed Arabic sources has word-level timing or pause ground truth, and Kokoro cannot synthesise Arabic. Arabic E2 is therefore measured only on the owner's own annotated recordings (B1), one speaker, and is reported descriptively. This gap is stated in `docs/cards/LIMITATIONS.md`.
+- Optionally, E2-style wpm on Common Voice Arabic can be reported against the reference word counts and VAD-measured speaking time. That is a consistency check, not ground truth.
+
+## 4. Before any AMI file is downloaded
+
+The licence is confirmed from the official download page (2026-11-17). Rules for using it:
+
+1. Download only from `groups.inf.ed.ac.uk/ami/download/` (not OpenSLR or HF mirrors, whose licence text differs).
+2. Use only the manual annotations package v1.6.2, the automatic annotations package v1.5.1 and the signals. Never use the DOME or social-role files.
+3. When the v1.6.2 zip is downloaded, after the owner's approval, its `LICENCE` file is read first and its wording is recorded in `data/README.md`. If it does not say CC BY 4.0, stop and ask before using any file.
+4. Attribution: "AMI Meeting Corpus, University of Edinburgh / AMI Consortium, CC BY 4.0, https://groups.inf.ed.ac.uk/ami/." Paper ~
