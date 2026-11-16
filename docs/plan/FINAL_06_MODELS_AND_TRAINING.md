@@ -6,7 +6,7 @@
 
 | Model | Role | Get it | Licence | Checked |
 |---|---|---|---|---|
-| Whisper `small`, `turbo` (via faster-whisper) | Baseline ASR (EN, AR) | Auto-download on first `WhisperModel("small")` | MIT | ✓ |
+| Whisper `small`, `turbo` (via faster-whisper) | Baseline ASR (EN, AR) | `scripts/download_models.py --only whisper_small whisper_turbo`: `openai/*` from huggingface.co at pinned commits, converted to CTranslate2 (ADR 0008); never downloaded by the app | MIT | ✓ |
 | Silero VAD | Voice activity | `pip install silero-vad` | MIT | ~ |
 | MediaPipe Face Landmarker | 478 landmarks, 52 blendshapes, head pose | `https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/latest/face_landmarker.task` | Apache-2.0 | ✓ |
 | MediaPipe Pose Landmarker (full) | Body landmarks | `https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/latest/pose_landmarker_full.task` | Apache-2.0 | ~ URL pattern |
