@@ -22,6 +22,7 @@ SKILLS = {
 EXPECTED = [
     "default.yaml",
     "engine.yaml",
+    "evaluation.yaml",
     "live.yaml",
     "models.yaml",
     "profiles/lite.yaml",
@@ -64,3 +65,11 @@ def test_runtime_and_profile_files_match_settings_literals():
         "standard",
         "space",
     }
+
+
+def test_e2_targets_match_adr_0009():
+    e2 = _load("evaluation.yaml")["e2"]
+    assert e2["wpm_error_pct_max"] == 5.0
+    assert e2["pause_f1_min"] == {"0.5": 0.90, "1.0": 0.90}
+    assert e2["duration_error_s_max"] == 0.10
+    assert e2["report_per_clip"] is True

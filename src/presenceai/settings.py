@@ -54,6 +54,17 @@ class ExpressionThresholds(_Section):
     eyes_closed_min_s: float | None = None
 
 
+class AsrSettings(_Section):
+    """Speech recognition options (FINAL_04 §2, FINAL_06 §1); same decoding as S2/S3."""
+
+    model: Literal["whisper_small", "whisper_turbo"] = "whisper_small"  # configs/models.yaml asr
+    device: Literal["cpu", "cuda", "auto"] = "cpu"
+    compute_type: str = "int8"
+    beam_size: int = Field(default=5, ge=1)
+    temperature: float = Field(default=0.0, ge=0)
+    condition_on_previous_text: bool = False
+
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -71,6 +82,7 @@ class Settings(BaseSettings):
     features: FeatureSwitches = FeatureSwitches()
     retention: RetentionPolicy = RetentionPolicy()
     expressions: ExpressionThresholds = ExpressionThresholds()
+    asr: AsrSettings = AsrSettings()
 
     openrouter_api_key: SecretStr | None = None
     # Optional overrides of configs/models.yaml `llm.openrouter` (ADR 0003). Not secrets.
