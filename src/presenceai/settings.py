@@ -3,6 +3,12 @@
 Secrets are `SecretStr` so they never appear in `repr()`, `str()`, logs or JSON dumps.
 Refer to them only by variable name: OPENROUTER_API_KEY, HF_TOKEN, SUPABASE_URL,
 SUPABASE_KEY, MEDIA_KEY.
+
+Environment variable names: ordinary fields need the `PRESENCEAI_` prefix
+(`PRESENCEAI_RUNTIME`, `PRESENCEAI_PROFILE`, `PRESENCEAI_LANGUAGE`, `PRESENCEAI_HOME`), so
+generic variables set by the OS or other tools (e.g. the Linux locale `LANGUAGE=en_US`) are
+never read as settings. Secrets and the documented OpenRouter overrides keep their exact
+names (see `.env.example`) through `validation_alias`.
 """
 
 from __future__ import annotations
@@ -12,7 +18,7 @@ from pathlib import Path
 from typing import Literal
 
 import yaml
-from pydantic import BaseModel, ConfigDict, Field, SecretStr
+from pydantic import AliasChoices, BaseModel, ConfigDict, Field, SecretStr
 from pydantic_settings import (
     BaseSettings,
     PydanticBaseSettingsSource,
@@ -173,10 +179,16 @@ class SpeechSettings(_Section):
     pitch_variation: PitchVariationSettings
 
 
+def _named(env_var: str) -> AliasChoices:
+    """Read `env_var` by its exact name (no prefix); the field name stays valid for args."""
+    return AliasChoices(env_var, env_var.lower())
+
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
+        env_prefix="PRESENCEAI_",  # generic names such as LANGUAGE (Linux locale) are ignored
         yaml_file=DEFAULT_CONFIG,
         extra="ignore",  # .env may hold variables for other tools (e.g. KAGGLE_*)
         frozen=True,
@@ -185,7 +197,9 @@ class Settings(BaseSettings):
     runtime: Runtime = "local"
     profile: Profile = "standard"
     language: Language = "en"
-    presenceai_home: Path = Path.home() / ".presenceai"
+    presenceai_home: Path = Field(
+        default=Path.home() / ".presenceai", validation_alias=_named("PRESENCEAI_HOME")
+    )
 
     features: FeatureSwitches = FeatureSwitches()
     retention: RetentionPolicy = RetentionPolicy()
@@ -193,14 +207,19 @@ class Settings(BaseSettings):
     asr: AsrSettings = AsrSettings()
     speech: SpeechSettings  # required: comes from configs/default.yaml
 
-    openrouter_api_key: SecretStr | None = None
+    # Read by exact variable name (no prefix); an alias replaces env_prefix for these fields.
+    openrouter_api_key: SecretStr | None = Field(
+        default=None, validation_alias=_named("OPENROUTER_API_KEY")
+    )
     # Optional overrides of configs/models.yaml `llm.openrouter` (ADR 0003). Not secrets.
-    openrouter_model: str | None = None
-    openrouter_fallback_models: str | None = None  # comma-separated
-    hf_token: SecretStr | None = None
-    supabase_url: SecretStr | None = None
-    supabase_key: SecretStr | None = None
-    media_key: SecretStr | None = None
+    openrouter_model: str | None = Field(default=None, validation_alias=_named("OPENROUTER_MODEL"))
+    openrouter_fallback_models: str | None = Field(  # comma-separated
+        default=None, validation_alias=_named("OPENROUTER_FALLBACK_MODELS")
+    )
+    hf_token: SecretStr | None = Field(default=None, validation_alias=_named("HF_TOKEN"))
+    supabase_url: SecretStr | None = Field(default=None, validation_alias=_named("SUPABASE_URL"))
+    supabase_key: SecretStr | None = Field(default=None, validation_alias=_named("SUPABASE_KEY"))
+    media_key: SecretStr | None = Field(default=None, validation_alias=_named("MEDIA_KEY"))
 
     @classmethod
     def settings_customise_sources(
