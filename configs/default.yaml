@@ -35,6 +35,8 @@ speech:                         # ADR 0011 (P1 slice 2: pauses and rate); FINAL_
     min_speech_duration_ms: 250 # Silero default; owner 2026-11-17 (100 only if C1 dev shows better)
     min_silence_duration_ms: 100  # below the smallest pause threshold, so 0.25 s pauses survive
     speech_pad_ms: 0            # padding would shorten every pause by 2 x pad
+  transcript:                   # ADR 0015: words Whisper invents in silence after the last speech
+    end_tolerance_s: 0.2        # PROVISIONAL; test-informed (end only); re-check on B1 (real words removed)
   pauses:
     thresholds_s: [0.25, 1.0, 2.0]          # FINAL_04 §2
     sentence_marks: [".", "!", "?", "؟", "…"] # pause after these = sentence_boundary

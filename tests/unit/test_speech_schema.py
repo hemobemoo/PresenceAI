@@ -77,7 +77,7 @@ def test_report_round_trips_through_json():
     )
     again = SpeechReport.model_validate_json(report.model_dump_json())
     assert again == report
-    assert again.schema_version == 4
+    assert again.schema_version == 5
 
 
 def test_report_source_is_a_file_name_not_a_path():

@@ -38,7 +38,8 @@ def test_analyze_file_builds_a_report(fake_whisper: Any, silent_wav: Path, speec
         pitch_tracker=fake_pitch,
     )
     assert isinstance(report, SpeechReport)
-    assert report.schema_version == 4
+    assert report.schema_version == 5
+    assert report.words_outside_speech == ()  # every word lies inside speech
     assert report.source_name == "talk.wav"
     assert report.model == "whisper_small"
     assert report.transcript.text.startswith("Hello everyone.")
@@ -185,3 +186,33 @@ def test_bad_baseline_file_is_rejected(
         cli.app, ["analyze", str(silent_wav), "--lang", "en", "--baseline", str(bad)]
     )
     assert result.exit_code == 1 and "Traceback" not in result.output
+
+
+def test_words_after_the_last_speech_are_left_out_of_the_report(
+    fake_whisper: Any, whisper_parts: Any, silent_wav: Path, speech_cfg: Any
+):
+    """ADR 0015: an invented "Thank you." 0.3 s after the last speech is removed before any
+    measure or quote, and listed apart."""
+    segs = [*fake_whisper().segments, whisper_parts.Segment(
+        3.9, 4.0, " Thank you.",
+        [whisper_parts.Word(" Thank", 3.9, 4.0, 0.2), whisper_parts.Word(" you.", 4.0, 4.0, 0.9)],
+    )]  # fmt: skip
+    report = analyze.analyze_file(
+        silent_wav, language="en", model=fake_whisper(segs), model_name="whisper_small",
+        options=AsrSettings(), speech=speech_cfg, vad=fake_vad, pitch_tracker=fake_pitch,
+    )  # fmt: skip
+    assert report.transcript.text == "Hello everyone. Today I will talk."
+    assert [w.text for w in report.words_outside_speech] == ["Thank", "you."]
+    assert report.asr_quality.word_count == 6
+    assert "transcript" not in report.not_measurable
+
+
+def test_no_speech_is_said_in_the_report(fake_whisper: Any, silent_wav: Path, speech_cfg: Any):
+    report = analyze.analyze_file(
+        silent_wav, language="en", model=fake_whisper(), model_name="whisper_small",
+        options=AsrSettings(), speech=speech_cfg, vad=lambda _: (), pitch_tracker=fake_pitch,
+    )  # fmt: skip
+    assert report.not_measurable["transcript"] == "no speech detected in this recording"
+    assert report.transcript.text == "" and report.transcript.words == ()
+    assert len(report.words_outside_speech) == 6
+    assert report.asr_quality.word_count == 0

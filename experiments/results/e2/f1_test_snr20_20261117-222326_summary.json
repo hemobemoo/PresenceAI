@@ -1,0 +1,101 @@
+{
+ "summary": {
+  "part": "test",
+  "condition": "snr20",
+  "clips": 201,
+  "wpm_mape_pct": 0.9251733562767432,
+  "wpm_mape_fillers_pct": 1.070098902657337,
+  "wpm_mape_no_fillers_pct": 0.8543208669351195,
+  "f1": {
+   "0.5": 0.9596683000376932,
+   "1.0": 0.9746682750301568
+  },
+  "f1_all": {
+   "0.5": 0.9246686065308761,
+   "1.0": 0.9522258414766558
+  },
+  "excluded": {
+   "0.5": 351,
+   "1.0": 158
+  },
+  "true_pauses": 1948,
+  "detected_pauses": 2571,
+  "matched": 1924,
+  "duration_mae_s": 0.08967188582813579,
+  "true_mid_share": 0.14322381930184805,
+  "detected_mid_share": 0.16258265266433294,
+  "position_error_rate": 0.27286902286902287,
+  "position_unknown_share": 0.0,
+  "position_table": {
+   "sentence_boundary": {
+    "sentence_boundary": 1024,
+    "clause_boundary": 87,
+    "mid_sentence": 48,
+    "unknown": 0
+   },
+   "clause_boundary": {
+    "sentence_boundary": 181,
+    "clause_boundary": 255,
+    "mid_sentence": 52,
+    "unknown": 0
+   },
+   "mid_sentence": {
+    "sentence_boundary": 128,
+    "clause_boundary": 29,
+    "mid_sentence": 120,
+    "unknown": 0
+   },
+   "unknown": {
+    "sentence_boundary": 0,
+    "clause_boundary": 0,
+    "mid_sentence": 0,
+    "unknown": 0
+   }
+  },
+  "mid_as_boundary_rate": 0.5667870036101083,
+  "boundary_as_mid_rate": 0.06071645415907711,
+  "kokoro_pauses": 50,
+  "passes": {},
+  "passed": null
+ },
+ "elapsed_s": 53.3,
+ "syllable_rate_vs_wpm_measured_r": 0.5979803476418549,
+ "syllable_rate_vs_wpm_true_r": 0.5930576270224199,
+ "syllable_rate_vs_articulation_true_r": 0.6468917200110779,
+ "snr_measured_db_median": 21.090059887964042,
+ "run": "f1",
+ "part": "test",
+ "condition": "snr20",
+ "model": "whisper_small",
+ "config_hash": "35df562d1acd331a",
+ "vad": {
+  "threshold": 0.5,
+  "min_speech_duration_ms": 250,
+  "min_silence_duration_ms": 100,
+  "speech_pad_ms": 0
+ },
+ "transcript": {
+  "edge_tolerance_s": 0.2
+ },
+ "asr": {
+  "model": "whisper_small",
+  "device": "cuda",
+  "compute_type": "int8",
+  "beam_size": 5,
+  "temperature": 0.0,
+  "condition_on_previous_text": false
+ },
+ "rerun_reason": null,
+ "versions": {
+  "python": "3.12.3",
+  "cpu": "x86_64",
+  "cuda_devices": "1",
+  "faster-whisper": "1.2.1",
+  "ctranslate2": "4.9.0",
+  "onnxruntime": "1.32.0",
+  "numpy": "2.5.4",
+  "librosa": "1.0.0"
+ },
+ "commit": "6d0eadaf4c9f43a2d1ccd00836ae04b3d6dedfc1",
+ "dirty": true
+}
