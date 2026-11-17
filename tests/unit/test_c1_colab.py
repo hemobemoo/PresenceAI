@@ -170,3 +170,18 @@ def test_ingest_rejects_a_changed_file(tmp_path: Path):
     with pytest.raises(ValueError, match="checksum"):
         colab.ingest("t2", zip_path, data=tmp_path / "data", results=tmp_path / "results",
                      lexicon=tmp_path / "lex.json")  # fmt: skip
+
+
+def test_generation_report_counts_by_voice_and_band():
+    info = {"generation": {
+        "clips": [
+            {"clip_id": "s01_r0", "voice": "af_heart", "wpm": 115.0, "attempts": 3},
+            {"clip_id": "s01_r4", "voice": "af_heart", "wpm": 190.0, "attempts": 1},
+        ],
+        "dropped": [{"clip_id": "s12_r0", "reason": "measured 104 wpm"}],  # af_bella, 119 wpm
+    }}  # fmt: skip
+    text = colab.generation_report(info)
+    lines = {tuple(line.split()[:2]): line.split()[2:] for line in text.splitlines()[1:6]}
+    assert lines[("band", "110-140")] == ["1", "1", "2", "1"]
+    assert lines[("voice", "af_bella")] == ["0", "0", "0", "1"]
+    assert "s12_r0: measured 104 wpm" in text

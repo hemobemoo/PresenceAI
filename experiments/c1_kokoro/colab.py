@@ -275,15 +275,56 @@ def ingest(run_id: str, zip_path: Path, data: Path = DATA, results: Path = RESUL
     }
 
 
+def generation_report(run_info: dict[str, Any]) -> str:
+    """Clips kept, re-rendered and dropped, by voice and by rate band. A kept clip's band is its
+    measured wpm; a dropped clip has none, so it is counted in its target's band."""
+    from collections import Counter
+
+    from presenceai.synth.c1 import rate_band
+
+    cfg = load_evaluation().c1
+    gen = run_info.get("generation") or {}
+    kept: Counter[tuple[str, str]] = Counter()
+    rerendered: Counter[tuple[str, str]] = Counter()
+    extra: Counter[tuple[str, str]] = Counter()
+    dropped: Counter[tuple[str, str]] = Counter()
+    for c in gen.get("clips", []):
+        band = rate_band(c["wpm"], cfg.rate_bands) or "outside"
+        for key in (("voice", c["voice"]), ("band", band)):
+            kept[key] += 1
+            rerendered[key] += c["attempts"] > 1
+            extra[key] += c["attempts"] - 1
+    voices = list(cfg.voices)
+    for d in gen.get("dropped", []):
+        script, render = d["clip_id"].split("_r")
+        voice = voices[(int(script[1:]) - 1) // cfg.scripts_per_voice]
+        target = cfg.target_wpm[int(render)]
+        for key in (("voice", voice), ("band", rate_band(target, cfg.rate_bands) or "outside")):
+            dropped[key] += 1
+    lines = ["kind   value        kept  re-rendered  extra renders  dropped"]
+    for kind, value in sorted(set(kept) | set(dropped)):
+        k = (kind, value)
+        lines.append(
+            f"{kind:<6} {value:<11} {kept[k]:>5}  {rerendered[k]:>11}  {extra[k]:>13}"
+            f"  {dropped[k]:>7}"
+        )
+    lines.append(f"dropped clips: {len(gen.get('dropped', []))}")
+    lines += [f"  {d['clip_id']}: {d['reason']}" for d in gen.get("dropped", [])]
+    return "\n".join(lines)
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
-    ap.add_argument("action", choices=["build", "ingest"])
+    ap.add_argument("action", choices=["build", "ingest", "report"])
     ap.add_argument("--run-id", required=True)
     ap.add_argument("--mode", choices=sorted(TIMEOUT_S), default="timing")
     ap.add_argument("--zip", type=Path, help="c1_<id>.zip downloaded from Colab (ingest)")
     args = ap.parse_args(argv)
     if args.action == "build":
         print(f"built {build(args.run_id, args.mode)}")
+    elif args.action == "report":
+        info = json.loads((RESULTS / f"{args.run_id}_run_info.json").read_text(encoding="utf-8"))
+        print(generation_report(info))
     else:
         if not args.zip:
             ap.error("ingest needs --zip")
