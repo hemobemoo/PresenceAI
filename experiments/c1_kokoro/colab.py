@@ -36,6 +36,23 @@ DATA = REPO_ROOT / "data" / "c1"
 BUILD_DIR = DATA / "colab"
 RESULTS = REPO_ROOT / "experiments" / "results" / "c1"
 LEXICON = REPO_ROOT / "resources" / "c1" / "lexicon_check.json"
+VENV = "/content/venv312"
+# kokoro 0.9.4 and misaki 0.9.4 require Python < 3.13 (PyPI metadata); Colab's kernel is 3.13.
+# The generator runs in its own venv on the image's Ubuntu Python 3.12, so nothing extra is
+# downloaded. Ubuntu's Python has no ensurepip, so the venv gets a copy of the runtime's own pip.
+VENV_CELL = '''# The generator's own Python 3.12 environment (kokoro 0.9.4 needs Python < 3.13).
+import os, pip, subprocess
+cmd = """
+set -e
+rm -rf VENV
+/usr/bin/python3.12 -m venv --without-pip VENV
+SP=$(VENV/bin/python -c "import sysconfig; print(sysconfig.get_paths()['purelib'])")
+cp -r PIPDIR "$SP/pip"
+VENV/bin/python -V
+VENV/bin/python -m pip --version
+""".replace("PIPDIR", os.path.dirname(pip.__file__))
+print(subprocess.run(["bash", "-c", cmd], capture_output=True, text=True, check=True).stdout)
+'''
 TIMEOUT_S = {"timing": 3600, "full": 4 * 3600}
 PACKAGE_FILES = (
     "src/presenceai/__init__.py",
@@ -117,12 +134,8 @@ def notebook(run_id: str, mode: str, body: str) -> dict[str, Any]:
         "                     capture_output=True, text=True).stdout.strip()\n"
         "print('GPU:', gpu or 'none')\n"
         "assert gpu, 'Choose Runtime > Change runtime type > T4 GPU'\n"
-        "import sys\n"
-        "print('Python', sys.version.split()[0])\n"
-        "# kokoro 0.9.4 and misaki 0.9.4 require Python < 3.13 (PyPI metadata)\n"
-        "assert sys.version_info < (3, 13), ('kokoro needs Python 3.12 or older: Runtime > '\n"
-        "    'Change runtime type > Runtime version: pick one with Python 3.12 or 3.11')\n"
     )
+    venv = VENV_CELL.replace("VENV", VENV)
     integrity = (
         "# The script in Colab must be byte-identical to the build (SHA-256, LF line endings).\n"
         "import hashlib\n"
@@ -130,7 +143,7 @@ def notebook(run_id: str, mode: str, body: str) -> dict[str, Any]:
         "print(h)\n"
         f"assert h == {hashlib.sha256(body.encode('utf-8')).hexdigest()!r}, 'script differs'\n"
     )
-    run = f"!C1_MODE={mode} timeout {TIMEOUT_S[mode]} python /content/generate_c1.py\n"
+    run = f"!C1_MODE={mode} timeout {TIMEOUT_S[mode]} {VENV}/bin/python /content/generate_c1.py\n"
     download = (
         "import os, shutil\n"
         "from google.colab import files\n"
@@ -155,6 +168,7 @@ def notebook(run_id: str, mode: str, body: str) -> dict[str, Any]:
         "cells": [
             {"cell_type": "markdown", "metadata": {}, "source": intro.splitlines(keepends=True)},
             _code(gpu_check),
+            _code(venv),
             _code("%%writefile /content/generate_c1.py\n" + body),
             _code(integrity),
             _code(run),

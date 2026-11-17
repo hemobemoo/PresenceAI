@@ -46,7 +46,8 @@ def test_build_writes_a_checked_notebook(tmp_path: Path):
     assert any(c.startswith("%%writefile /content/generate_c1.py") for c in cells)
     assert any(hashlib.sha256(body.encode()).hexdigest() in c for c in cells)
     assert any("C1_MODE=timing" in c for c in cells)
-    assert any("sys.version_info < (3, 13)" in c for c in cells)  # kokoro 0.9.4 needs < 3.13
+    assert any("/usr/bin/python3.12 -m venv" in c for c in cells)  # kokoro 0.9.4 needs < 3.13
+    assert any("venv312/bin/python /content/generate_c1.py" in c for c in cells)
     assert 'PACKAGE_B64 = "__PACKAGE_B64__"' not in body  # the package was injected
     assert 'r"""__CONFIG_JSON__"""' not in body
     compile(body, "generate_c1.py", "exec")
