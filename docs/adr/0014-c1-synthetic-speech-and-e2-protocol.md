@@ -161,6 +161,14 @@ reported next to it. Seed 20261117 per clip.
   and 0.982 at 1.0 s, duration error 0.076 s.
 - Position (headline): mid-sentence labelled as a boundary 58.9 %, boundary labelled
   mid-sentence 5.1 %.
+- **C1 cannot validate mid-sentence position labels** (owner, 2026-11-18). The 58.9 % comes
+  mainly from how C1 is built: a phrase cut at `|` is generated on its own, so it ends with
+  phrase-final intonation, and Whisper often punctuates it as a sentence or clause end (§3).
+  The error is in the lenient direction: only `mid_sentence` may count against the speaker
+  (ADR 0011), and true boundary pauses were labelled mid-sentence in only 5.1 % of cases.
+  So the app rarely penalises a pause it should not, but it misses many real mid-sentence
+  pauses. **The real check is on the owner's B1 recordings and annotated real speech**, not
+  on C1.
 - Noise, descriptive: at 20 dB / 10 dB, F1 0.960 / 0.959 at 0.5 s and duration error
   0.090 / 0.087 s; wpm error stays about 1 %.
 - Details: `experiments/results/e2/f1_test_results.md`, `f1_dev_findings.md`.
