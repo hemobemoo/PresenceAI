@@ -108,6 +108,33 @@ class PitchSettings(_Section):
     fmax_hz: float = Field(gt=0)
     frame_length: int = Field(gt=0)
     hop_length: int = Field(gt=0)
+    limit_band: float = Field(ge=0, lt=1)
+
+
+class LoudnessSettings(_Section):
+    frame_ms: int = Field(gt=0)
+    window_s: float = Field(gt=0)
+    min_speech_share: float = Field(ge=0, le=1)
+    clip_level: float = Field(gt=0, le=1)
+    clip_min_run: int = Field(ge=1)
+    clip_peak_min: float = Field(gt=0, le=1)
+    clip_pileup_band: float = Field(gt=0, lt=0.5)
+    clip_pileup_ratio: float = Field(gt=1)
+    noise_percentile: float = Field(ge=0, le=100)
+    snr_not_measurable_db: float
+    snr_low_db: float
+    min_non_speech_s: float = Field(ge=0)
+
+
+class PitchVariationSettings(_Section):
+    octave_limit_st: float = Field(gt=0)
+    fold_tolerance_st: float = Field(gt=0)
+    running_median_s: float = Field(gt=0)
+    max_corrected_share: float = Field(ge=0, le=1)
+    max_at_limit_share: float = Field(ge=0, le=1)
+    filler_margin_s: float = Field(ge=0)
+    min_voiced_s: float = Field(ge=0)
+    low_voiced_s: float = Field(ge=0)
 
 
 ConfidenceName = Literal["high", "medium", "low"]
@@ -132,7 +159,7 @@ class RepetitionSettings(_Section):
 
 
 class SpeechSettings(_Section):
-    """ADR 0011/0012 values. No defaults in code: thresholds live only in configs/ (rule 7)."""
+    """ADR 0011-0013 values. No defaults in code: thresholds live only in configs/ (rule 7)."""
 
     vad: VadSettings
     pauses: PauseSettings
@@ -142,6 +169,8 @@ class SpeechSettings(_Section):
     pitch: PitchSettings
     fillers: FillerSettings
     repetitions: RepetitionSettings
+    loudness: LoudnessSettings
+    pitch_variation: PitchVariationSettings
 
 
 class Settings(BaseSettings):

@@ -46,7 +46,9 @@ data set) and **CI** (Continuous Integration or confidence interval). The contex
 | **wpm** | Words per minute (speaking rate) |
 | **F0 / pYIN** | Fundamental frequency (pitch) / probabilistic YIN pitch tracker (librosa) |
 | **RMS** | Root mean square (loudness) |
-| **SNR** | Signal-to-noise ratio (pre-recording microphone check) |
+| **SNR** | Signal-to-noise ratio: median speech level minus the noise floor (pre-recording check; loudness and pitch confidence, ADR 0013) |
+| **dBFS** | Decibels relative to full scale (0 dBFS = the loudest level a file can store) |
+| **AGC** | Automatic gain control (browser `autoGainControl`; turned off for live capture, ADR 0013) |
 | **TTS** | Text-to-speech (Kokoro, used to generate C1) |
 | **LLM** | Large Language Model (hosted through OpenRouter, only when the user enables AI wording) |
 | **SLM** | Small Language Model (Coach-SLM = T2) |

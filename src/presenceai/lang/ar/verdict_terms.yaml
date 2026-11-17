@@ -1,0 +1,18 @@
+# كلمات حكم على الصوت أو الإلقاء لا يجوز أن تظهر في أي تقرير (ADR 0013).
+# Matched as whole words before letter normalisation: only diacritics are removed, and an
+# attached ال، ب، و، ف، ل، ك may come first. So آلي does not match إلى, and آليات does not match.
+# آلي also means "automatic": write تلقائي for that in our own text.
+terms:
+  - رتيب
+  - رتيبا
+  - رتيبة
+  - رتابة
+  - ممل
+  - مملا
+  - مملة
+  - باهت
+  - باهتا
+  - باهتة
+  - آلي
+  - آليا
+  - على وتيرة واحدة

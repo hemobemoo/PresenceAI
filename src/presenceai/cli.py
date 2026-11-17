@@ -41,6 +41,12 @@ class AsrModel(StrEnum):
     WHISPER_TURBO = "whisper_turbo"
 
 
+class Processing(StrEnum):
+    UNKNOWN = "unknown"
+    OFF = "off"
+    ON = "on"
+
+
 @app.command()
 def analyze(
     file: Annotated[
@@ -56,13 +62,48 @@ def analyze(
         Path | None,
         typer.Option("--out", dir_okay=False, help="Write the JSON report here (default: stdout)."),
     ] = None,
+    capture_processing: Annotated[
+        Processing,
+        typer.Option(
+            "--capture-processing",
+            help="Browser auto-gain / noise suppression / echo cancellation during recording. "
+            "Uploaded files are 'unknown' (loudness variation then has low confidence).",
+        ),
+    ] = Processing.UNKNOWN,
+    baseline: Annotated[
+        Path | None,
+        typer.Option(
+            "--baseline",
+            exists=True,
+            dir_okay=False,
+            help="An earlier report (JSON) of your own: adds the change in speech level.",
+        ),
+    ] = None,
 ) -> None:
     """Transcribe a recording and write a JSON speech report (derived data only, no audio)."""
+    from pydantic import ValidationError
+
+    from presenceai.schemas.speech import CaptureProcessing, SpeechReport
     from presenceai.speech import analyze as speech_analyze
     from presenceai.speech import asr
 
     settings = get_settings()
     options = settings.asr
+    state = capture_processing.value
+    capture = CaptureProcessing(
+        auto_gain_control=state, noise_suppression=state, echo_cancellation=state
+    )
+    base = None
+    if baseline is not None:
+        try:
+            earlier = SpeechReport.model_validate_json(baseline.read_text(encoding="utf-8"))
+        except (ValidationError, ValueError, OSError):
+            typer.echo(f"{baseline.name}: not a PresenceAI speech report", err=True)
+            raise typer.Exit(1) from None
+        if earlier.loudness_profile is None:
+            typer.echo(f"{baseline.name}: the report has no loudness profile", err=True)
+            raise typer.Exit(1)
+        base = (earlier.loudness_profile, earlier.capture, baseline.name)
     model_name = model.value if model is not None else options.model
     try:
         whisper = asr.load_model(model_name, options)
@@ -73,6 +114,8 @@ def analyze(
             model_name=model_name,
             options=options,
             speech=settings.speech,
+            capture=capture,
+            baseline=base,
         )
     except asr.ModelNotAvailable as exc:
         typer.echo(str(exc), err=True)

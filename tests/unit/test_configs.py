@@ -109,9 +109,10 @@ def test_filler_repetition_pitch_values_match_adr_0012():
     sp = _load("default.yaml")["speech"]
     assert sp["pitch"] == {
         "fmin_hz": 65.0,
-        "fmax_hz": 400.0,
+        "fmax_hz": 600.0,
         "frame_length": 1024,
         "hop_length": 160,
+        "limit_band": 0.02,
     }
     assert sp["fillers"]["confidence_cap_without_verbatim"] == {"en": "medium", "ar": "low"}
     assert sp["fillers"]["acoustic"]["min_duration_s"] == 0.15
@@ -151,3 +152,25 @@ def test_e3_ami_split_reproduces_from_its_seed():
     pool = split["pool"]
     dev = [rng.choice(sorted(s for s in pool if s.startswith(site))) for site in ("ES", "IS", "TS")]
     assert dev == _load("evaluation.yaml")["e3"]["tuning"]["ami_dev_sessions"]
+
+
+def test_loudness_and_pitch_variation_values_match_adr_0013():
+    sp = _load("default.yaml")["speech"]
+    lo, pv = sp["loudness"], sp["pitch_variation"]
+    assert lo["window_s"] == 1.0 and lo["frame_ms"] == 20
+    assert lo["min_speech_share"] == 0.5
+    assert (lo["clip_level"], lo["clip_min_run"]) == (0.999, 3)
+    assert (lo["snr_not_measurable_db"], lo["snr_low_db"], lo["min_non_speech_s"]) == (
+        10.0,
+        20.0,
+        1.0,
+    )
+    assert (pv["octave_limit_st"], pv["fold_tolerance_st"], pv["running_median_s"]) == (
+        9.0,
+        3.0,
+        0.25,
+    )
+    assert pv["max_corrected_share"] == 0.2 and pv["filler_margin_s"] == 0.05
+    assert (pv["min_voiced_s"], pv["low_voiced_s"]) == (5.0, 15.0)
+    assert sp["pitch"]["fmax_hz"] == 600.0  # owner, 2026-11-17: fair to higher voices
+    assert _load("engine.yaml")["opt_in"] == ["vocal_variety"]

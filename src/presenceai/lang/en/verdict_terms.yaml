@@ -1,0 +1,14 @@
+# Verdict words about a voice or delivery that no PresenceAI report may use (ADR 0013).
+# FINAL_04 §2: pitch variation is information only; no "monotone" verdict unless the user chose
+# that goal. Matched whole-word, case-insensitive, like banned_terms.yaml; list inflections.
+terms:
+  - monotone
+  - monotonous
+  - monotonously
+  - flat
+  - flatly
+  - dull
+  - boring
+  - robotic
+  - lifeless
+  - expressionless

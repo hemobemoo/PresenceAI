@@ -39,6 +39,26 @@ Started 2026-11-17. Kept up to date as experiments report (FINAL_11 §6).
 - Research-only and no-derivatives sources (TED, TED-LIUM 3, PodcastFillers, Columbia Gaze) are used
   for evaluation only, which limits training data.
 
+## Loudness and pitch
+
+- **Browser audio processing.** Auto-gain, noise suppression and echo cancellation flatten
+  loudness. Live capture turns them off (P6), but for uploaded files they are unknown, so loudness
+  variation and baseline comparisons have low confidence (ADR 0013).
+- **Loudness variation is always low confidence on uploaded files.** This includes all
+  public-video and public-audio evaluation data, because their capture settings are unknown.
+  Evaluation results for loudness variation therefore describe low-confidence measurements only.
+- **A change of microphone or distance cannot be detected**, so a change from your own baseline
+  is at most medium confidence even when the capture settings were off.
+- **Octave errors.** The pitch tracker can report half or double the real pitch. Such frames are
+  folded back or dropped; the same rule can also remove a real jump of more than 9 semitones
+  within half a second. The report counts how many frames were changed.
+- **Clipping in compressed files** is found by a plateau rule whose values come from synthetic
+  signals and are provisional. It is reported apart as "possible clipping", always low
+  confidence. In synthetic tests, loud limited (mastered) audio stayed well below the rule's
+  ratio. This is not yet checked on real public clips.
+- Pitch is tracked between 65 and 600 Hz. Very low or very high voices may reach the limits; the
+  report gives the share of frames at a limit and lowers confidence when it is high.
+
 ## Fillers and repetitions
 
 - **Until the verbatim model T1 exists (P4), filler and repetition counts are lower bounds**,

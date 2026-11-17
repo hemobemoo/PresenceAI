@@ -42,6 +42,30 @@ def load_audio(path: str | Path) -> np.ndarray:
     return np.concatenate(chunks).astype(np.float32, copy=False)
 
 
+def load_native(path: str | Path) -> tuple[np.ndarray, int]:
+    """Decode at the file's own sample rate and channel count, as float32 (channels, samples).
+
+    Used for clipping checks (ADR 0013): resampling to 16 kHz smooths clipped peaks away, so
+    clipping is detected on these original samples. Compressed formats (MP3, AAC) can decode to
+    values slightly above 1.0 where the source was clipped; they are kept as they are.
+    """
+    with av.open(str(path), mode="r") as container:
+        if not container.streams.audio:
+            raise ValueError(f"{Path(path).name}: no audio stream")
+        stream = container.streams.audio[0]
+        rate = int(stream.rate or stream.codec_context.sample_rate or SAMPLE_RATE)
+        layout = stream.layout.name if stream.layout else "mono"
+        # float output at the ORIGINAL rate and layout: no resampling, no downmix
+        resampler = av.AudioResampler(format="fltp", layout=layout, rate=rate)
+        chunks: list[np.ndarray] = []
+        for frame in container.decode(audio=0):
+            chunks.extend(f.to_ndarray() for f in resampler.resample(frame))
+        chunks.extend(f.to_ndarray() for f in resampler.resample(None))
+    if not chunks:
+        return np.zeros((1, 0), dtype=np.float32), rate
+    return np.concatenate(chunks, axis=1).astype(np.float32, copy=False), rate
+
+
 def transcribe(model: _WhisperModel, path: str | Path, **options: Any) -> tuple[list[Any], Any]:
     """Transcribe a file with a faster-whisper model; segments are fully decoded on return."""
     segments, info = model.transcribe(load_audio(path), **options)

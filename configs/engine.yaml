@@ -21,6 +21,9 @@ selection:
   exclude_recent: 3           # source: FINAL_05 §3 — ADR pending
   sampler: thompson_beta      # source: FINAL_05 §3
 
+# Skills the engine may use only when the user chose them as a goal (FINAL_05 §1, ADR 0013).
+opt_in: [vocal_variety]
+
 targets:                      # TODO(ADR): target μ per skill (FINAL_05 §1)
   central_message: null
   organization: null

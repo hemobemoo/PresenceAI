@@ -38,7 +38,7 @@ def test_analyze_file_builds_a_report(fake_whisper: Any, silent_wav: Path, speec
         pitch_tracker=fake_pitch,
     )
     assert isinstance(report, SpeechReport)
-    assert report.schema_version == 3
+    assert report.schema_version == 4
     assert report.source_name == "talk.wav"
     assert report.model == "whisper_small"
     assert report.transcript.text.startswith("Hello everyone.")
@@ -127,3 +127,61 @@ def test_cli_rejects_a_file_without_audio(patched_loader: dict[str, Any], tmp_pa
     result = CliRunner().invoke(cli.app, ["analyze", str(bad), "--lang", "en"])
     assert result.exit_code == 1
     assert "Traceback" not in result.output
+
+
+def test_pyin_runs_once_per_recording(fake_whisper: Any, silent_wav: Path, speech_cfg: Any):
+    calls: list[int] = []
+
+    def counting(samples: Any, sr: int, cfg: Any) -> PitchTrack:
+        calls.append(1)
+        return fake_pitch(samples, sr, cfg)
+
+    analyze.analyze_file(
+        silent_wav, language="en", model=fake_whisper(), model_name="whisper_small",
+        options=AsrSettings(), speech=speech_cfg, vad=fake_vad, pitch_tracker=counting,
+    )  # fmt: skip
+    assert calls == [1]
+
+
+def test_uploaded_files_have_unknown_capture_processing(
+    patched_loader: dict[str, Any], silent_wav: Path
+):
+    result = CliRunner().invoke(cli.app, ["analyze", str(silent_wav), "--lang", "en"])
+    report = SpeechReport.model_validate_json(result.stdout)
+    assert report.capture.auto_gain_control == "unknown"
+    assert report.capture.noise_suppression == "unknown"
+    assert report.capture.echo_cancellation == "unknown"
+
+
+def test_capture_processing_can_be_declared_off(patched_loader: dict[str, Any], silent_wav: Path):
+    result = CliRunner().invoke(
+        cli.app, ["analyze", str(silent_wav), "--lang", "en", "--capture-processing", "off"]
+    )
+    assert result.exit_code == 0, result.output
+    report = SpeechReport.model_validate_json(result.stdout)
+    assert report.capture.all_off
+
+
+def test_baseline_report_is_read(patched_loader: dict[str, Any], silent_wav: Path, tmp_path: Path):
+    base = tmp_path / "base.json"
+    first = CliRunner().invoke(
+        cli.app, ["analyze", str(silent_wav), "--lang", "en", "--out", str(base)]
+    )
+    assert first.exit_code == 0, first.output
+    result = CliRunner().invoke(
+        cli.app, ["analyze", str(silent_wav), "--lang", "en", "--baseline", str(base)]
+    )
+    assert result.exit_code == 0, result.output
+    report = SpeechReport.model_validate_json(result.stdout)
+    assert report.baseline_source == "base.json"
+
+
+def test_bad_baseline_file_is_rejected(
+    patched_loader: dict[str, Any], silent_wav: Path, tmp_path: Path
+):
+    bad = tmp_path / "bad.json"
+    bad.write_text("{}", encoding="utf-8")
+    result = CliRunner().invoke(
+        cli.app, ["analyze", str(silent_wav), "--lang", "en", "--baseline", str(bad)]
+    )
+    assert result.exit_code == 1 and "Traceback" not in result.output

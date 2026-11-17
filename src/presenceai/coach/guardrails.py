@@ -76,18 +76,65 @@ def banned_terms(lang: Language) -> tuple[str, ...]:
     return tuple(terms)
 
 
-@cache
-def _term_token_seqs(lang: Language) -> tuple[tuple[str, ...], ...]:
-    seqs = {tuple(_tokens(term, lang)) for term in banned_terms(lang)}
+def _seqs(terms: tuple[str, ...], lang: Language) -> tuple[tuple[str, ...], ...]:
+    seqs = {tuple(_tokens(term, lang)) for term in terms}
     seqs.discard(())
     return tuple(sorted(seqs))
+
+
+@cache
+def _term_token_seqs(lang: Language) -> tuple[tuple[str, ...], ...]:
+    return _seqs(banned_terms(lang), lang)
+
+
+def _contains(text: str, lang: Language, seqs: tuple[tuple[str, ...], ...]) -> bool:
+    cands = [_candidates(tok, lang) for tok in _tokens(text, lang)]
+    for seq in seqs:
+        n = len(seq)
+        for i in range(len(cands) - n + 1):
+            if all(seq[j] in cands[i + j] for j in range(n)):
+                return True
+    return False
 
 
 def contains_banned_term(text: str, lang: Language) -> bool:
     """True if `text` contains any banned emotion, mood or trait term for `lang`."""
     lang = _check_lang(lang)
-    cands = [_candidates(tok, lang) for tok in _tokens(text, lang)]
-    for seq in _term_token_seqs(lang):
+    return _contains(text, lang, _term_token_seqs(lang))
+
+
+@cache
+def verdict_terms(lang: Language) -> tuple[str, ...]:
+    """Verdict words about the voice ("monotone", "رتيب", ...) that no report may use (ADR 0013)."""
+    data = load_pack_file(_check_lang(lang), "verdict_terms.yaml")
+    return tuple(str(t) for t in data["terms"])
+
+
+def _verdict_tokens(text: str, lang: Language) -> list[str]:
+    """Whole words, before Arabic letter normalisation (owner, 2026-11-17).
+
+    Only diacritics and tatweel are removed; alef, ya and ta-marbuta forms are kept, so «آلي»
+    ("robotic") does not match «إلى» ("to"). The lists name each inflected form themselves.
+    """
+    if lang == "en":
+        return _EN_TOKEN.findall(text.casefold())
+    return _AR_TOKEN.findall(_AR_DIACRITICS.sub("", text))
+
+
+@cache
+def _verdict_seqs(lang: Language) -> tuple[tuple[str, ...], ...]:
+    seqs = {tuple(_verdict_tokens(term, lang)) for term in verdict_terms(lang)}
+    seqs.discard(())
+    return tuple(sorted(seqs))
+
+
+def contains_verdict_term(text: str, lang: Language) -> bool:
+    """True if `text` contains a verdict word for `lang` as a whole word. In Arabic an attached
+    article or preposition (ال، ب، و، ...) is allowed in front; no suffix is stripped."""
+    lang = _check_lang(lang)
+    words = _verdict_tokens(text, lang)
+    cands = [_strip_prefixes(w) if lang == "ar" else {w} for w in words]
+    for seq in _verdict_seqs(lang):
         n = len(seq)
         for i in range(len(cands) - n + 1):
             if all(seq[j] in cands[i + j] for j in range(n)):

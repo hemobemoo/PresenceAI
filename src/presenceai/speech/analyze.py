@@ -3,8 +3,8 @@
 Slice 1: transcription and ASR quality. Slice 2: VAD speech regions, pauses (with position),
 speech rate, articulation rate and syllable pace (ADR 0011). Slice 3: pitch track (pYIN, once
 per recording), fillers (lexicon + acoustic candidates), discourse markers and repetitions
-(ADR 0012). Loudness and pitch variation (slice 4) add their measurements here and reuse the
-pitch track.
+(ADR 0012). Slice 4: relative loudness (clipping on the original samples, noise, browser
+processing, optional baseline) and pitch variation from the same pitch track (ADR 0013).
 """
 
 from __future__ import annotations
@@ -15,9 +15,24 @@ from typing import Any
 
 import numpy as np
 
-from presenceai.schemas.speech import PitchTrack, SpeechLanguage, SpeechReport
+from presenceai.schemas.speech import (
+    CaptureProcessing,
+    LoudnessProfile,
+    PitchTrack,
+    SpeechLanguage,
+    SpeechReport,
+)
 from presenceai.settings import AsrSettings, PitchSettings, SpeechSettings
-from presenceai.speech import asr, audio, fillers, pauses, rate, repetitions
+from presenceai.speech import (
+    asr,
+    audio,
+    fillers,
+    loudness,
+    pauses,
+    pitch_variation,
+    rate,
+    repetitions,
+)
 from presenceai.speech import pitch as pitch_mod
 from presenceai.speech import vad as vad_mod
 
@@ -34,7 +49,10 @@ def analyze_file(
     speech: SpeechSettings,
     vad: vad_mod.Vad | None = None,
     pitch_tracker: PitchTracker | None = None,
+    capture: CaptureProcessing | None = None,
+    baseline: tuple[LoudnessProfile, CaptureProcessing, str] | None = None,
 ) -> SpeechReport:
+    capture = capture or CaptureProcessing()  # uploaded files: unknown
     transcript = asr.transcribe_file(model, path, language=language, options=options)
     samples = audio.load_audio(path)
     regions = vad(samples) if vad is not None else vad_mod.detect_speech(samples, speech.vad)
@@ -56,8 +74,22 @@ def analyze_file(
     reps = repetitions.find_repetitions(transcript, lexicon, speech)
     m_rep, nm_rep = repetitions.summarise(reps, transcript, regions, speech, verbatim=verbatim)
 
-    measurements |= m_rate | m_pace | m_fill | m_rep
-    not_measurable |= nm_rate | nm_pace | nm_fill | nm_rep
+    m_loud, nm_loud, profile = loudness.summarise(
+        samples,
+        audio.SAMPLE_RATE,
+        audio.load_native(path),
+        regions,
+        capture=capture,
+        baseline=baseline[:2] if baseline else None,
+        language=language,
+        cfg=speech,
+    )
+    m_pitch, nm_pitch, diag = pitch_variation.analyse(
+        track, regions, lexical, acoustic, language=language, snr_db=profile.snr_db, cfg=speech
+    )
+
+    measurements |= m_rate | m_pace | m_fill | m_rep | m_loud | m_pitch
+    not_measurable |= nm_rate | nm_pace | nm_fill | nm_rep | nm_loud | nm_pitch
 
     return SpeechReport(
         source_name=Path(path).name,
@@ -71,6 +103,10 @@ def analyze_file(
         acoustic_candidates=acoustic,
         repetitions=reps,
         pitch=track,
+        capture=capture,
+        loudness_profile=profile,
+        pitch_diagnostics=diag,
+        baseline_source=baseline[2] if baseline else None,
         measurements=measurements,
         not_measurable=not_measurable,
     )
