@@ -155,3 +155,34 @@ def test_config_hash_changes_with_vad_values():
     b = run.config_hash(EV, SPEECH.model_copy(update={"vad": vad}),
                         Settings(_env_file=None).asr, "whisper_small")  # pyright: ignore[reportCallIssue]  # fmt: skip
     assert a != b
+
+
+def test_config_hash_changes_with_the_trim_tolerance():
+    asr_opts = Settings(_env_file=None).asr  # pyright: ignore[reportCallIssue]
+    a = run.config_hash(EV, SPEECH, asr_opts, "whisper_small")
+    tr = SPEECH.transcript.model_copy(update={"edge_tolerance_s": 0.5})
+    b = run.config_hash(EV, SPEECH.model_copy(update={"transcript": tr}), asr_opts, "whisper_small")
+    assert a != b
+
+
+def test_evaluate_drops_words_after_the_last_speech(tmp_path: Path):
+    """ADR 0015: the runner trims like the app, so invented tail words do not raise wpm."""
+    paths, truths = build(tmp_path)
+    plain = fake_transcriber(truths)
+
+    def with_tail(path: Path) -> Transcript:
+        from speech_builders import transcript
+
+        t = plain(path)
+        end = t.duration_s - 0.01
+        toks = [(w.text, w.start_s, w.end_s) for w in t.words]
+        toks += [(x, end, end) for x in ("thank", "you", "very", "much")]
+        return transcript(toks, duration_s=t.duration_s)
+
+    kw: dict[str, Any] = {"vad": truth_vad(truths), "ev": EV, "speech": SPEECH,
+                          "progress": lambda _: None}  # fmt: skip
+    clean, extras_clean, _ = run.evaluate(paths, "test", "clean", transcribe=plain, **kw)
+    tail, extras_tail, _ = run.evaluate(paths, "test", "clean", transcribe=with_tail, **kw)
+    assert [s.wpm_measured for s in tail] == [s.wpm_measured for s in clean]
+    assert all(x["words_outside_speech"] == 4 for x in extras_tail)
+    assert all(x["words_outside_speech"] == 0 for x in extras_clean)

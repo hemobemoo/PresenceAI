@@ -9,7 +9,8 @@
   configs/default.yaml), `vad.detect_speech`, `pauses.find_pauses`, `rate.word_rate`, plus
   `rate.syllable_rate` for the live-pace correlation. pYIN is not needed.
 - Transcripts are cached per clip file, model and ASR options (data/c1/<run>/cache/), so a VAD
-  change re-runs only VAD and pauses.
+  change re-runs only VAD and pauses. Words outside speech are removed after VAD, as in the app
+  (`trim.trim_to_speech`, ADR 0015); the cache holds the untrimmed transcript.
 - `split` writes experiments/results/c1/<run>_split.csv and prints counts per part by band and
   voice; it stops on an empty cell.
 - `score --part test --condition clean` is the pass/fail run. It is refused a second time for
@@ -149,6 +150,7 @@ def config_hash(ev: EvaluationSettings, speech: SpeechSettings, asr: AsrSettings
         {
             "e2": ev.e2.model_dump(mode="json"),
             "vad": speech.vad.model_dump(mode="json"),
+            "transcript": speech.transcript.model_dump(mode="json"),
             "pauses": speech.pauses.model_dump(mode="json"),
             "rate": speech.rate.model_dump(mode="json"),
             "asr": asr.model_dump(mode="json"),
@@ -198,7 +200,7 @@ def evaluate(
     progress: Callable[[str], None] = print,
 ) -> tuple[list[E2ClipScore], list[dict[str, Any]], dict[str, Any]]:
     from presenceai.schemas.speech import CaptureProcessing
-    from presenceai.speech import audio, loudness, pauses, rate
+    from presenceai.speech import audio, loudness, pauses, rate, trim
 
     parts = read_split(paths)
     truths = [t for t in load_truths(paths) if parts.get(t.clip_id) == part]
@@ -213,6 +215,7 @@ def evaluate(
         transcript = transcribe(path)
         samples = audio.load_audio(path)
         regions = vad(samples)
+        transcript, outside = trim.trim_to_speech(transcript, regions, speech.transcript)
         events: tuple[PauseEvent, ...] = pauses.find_pauses(regions, transcript, speech)
         m_rate, _, _ = rate.word_rate(transcript, regions, speech)
         m_pace, _ = rate.syllable_rate(samples, audio.SAMPLE_RATE, regions, "en", speech)
@@ -228,6 +231,7 @@ def evaluate(
             snr_measured = profile.snr_db
         extras.append({
             "words_transcribed": len(transcript.words),
+            "words_outside_speech": len(outside),  # removed by ADR 0015, not counted
             "syllables_per_s": m_pace["pace.syllables_per_s"].value
             if "pace.syllables_per_s" in m_pace else None,
             "snr_measured_db": snr_measured,
@@ -326,26 +330,30 @@ def record(paths: Paths, entry: dict[str, Any]) -> None:
 # --- real model wiring ---------------------------------------------------------------------
 
 
-def cached_transcriber(paths: Paths, model_name: str, options: AsrSettings) -> Transcriber:
-    from presenceai.speech import asr
-
+def cache_file(paths: Paths, model_name: str, options: AsrSettings, clip: Path) -> Path:
+    """Where the transcript of `clip` is cached for this model and these ASR options."""
     key = hashlib.sha256(
         json.dumps(
             {"model": model_name, "asr": options.model_dump(mode="json")}, sort_keys=True
         ).encode()
     ).hexdigest()[:12]
-    folder = paths.cache(f"{model_name}_{key}")
+    digest = hashlib.sha256(clip.read_bytes()).hexdigest()[:16]
+    return paths.cache(f"{model_name}_{key}") / f"{clip.parent.name}_{clip.stem}_{digest}.json"
+
+
+def cached_transcriber(paths: Paths, model_name: str, options: AsrSettings) -> Transcriber:
+    from presenceai.speech import asr
+
     model: list[Any] = []
 
     def run(path: Path) -> Transcript:
-        digest = hashlib.sha256(path.read_bytes()).hexdigest()[:16]
-        f = folder / f"{path.parent.name}_{path.stem}_{digest}.json"
+        f = cache_file(paths, model_name, options, path)
         if f.exists():
             return Transcript.model_validate_json(f.read_text(encoding="utf-8"))
         if not model:
             model.append(asr.load_model(model_name, options))
         t = asr.transcribe_file(model[0], path, language="en", options=options)
-        folder.mkdir(parents=True, exist_ok=True)
+        f.parent.mkdir(parents=True, exist_ok=True)
         f.write_text(t.model_dump_json(), encoding="utf-8")
         return t
 
@@ -422,6 +430,7 @@ def main(argv: list[str] | None = None) -> int:
     summary = e2.summarise(scores, ev)
     meta |= {"run": args.run, "part": part, "condition": args.condition, "model": model_name,
              "config_hash": cfg_hash, "vad": speech.vad.model_dump(mode="json"),
+             "transcript": speech.transcript.model_dump(mode="json"),
              "asr": asr_opts.model_dump(mode="json"),
              "rerun_reason": args.rerun_reason, "versions": versions(), **_git()}  # fmt: skip
     out = write_results(paths, part, args.condition, scores, extras, summary, meta)

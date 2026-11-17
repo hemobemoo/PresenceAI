@@ -231,11 +231,13 @@ class AsrQuality(_Frozen):
 class SpeechReport(_Frozen):
     """What `presenceai analyze` writes. Holds derived data only, never audio samples."""
 
-    schema_version: Literal[4] = 4
+    schema_version: Literal[5] = 5
     source_name: str = Field(min_length=1)  # file name only: no folders, no user names
     model: str = Field(min_length=1)  # key under `asr:` in configs/models.yaml
-    transcript: Transcript
+    transcript: Transcript  # words outside speech already removed (ADR 0015)
     asr_quality: AsrQuality
+    # Words Whisper wrote before the first or after the last speech: never measured or quoted.
+    words_outside_speech: tuple[Word, ...] = ()
     speech_regions: tuple[SpeechRegion, ...] = ()
     pauses: tuple[PauseEvent, ...] = ()
     rate_windows: tuple[RateWindow, ...] = ()

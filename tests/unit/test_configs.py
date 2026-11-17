@@ -216,3 +216,7 @@ def test_kokoro_never_enters_the_app_dependencies():
         text = (REPO_ROOT / name).read_text(encoding="utf-8").lower()
         for pkg in ("kokoro", "misaki", "phonemizer", "espeak"):
             assert f'name = "{pkg}' not in text and f'"{pkg}' not in text, (name, pkg)
+
+
+def test_transcript_trim_value_matches_adr_0015():
+    assert _load("default.yaml")["speech"]["transcript"] == {"edge_tolerance_s": 0.2}

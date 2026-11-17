@@ -52,6 +52,21 @@ Started 2026-11-17. Kept up to date as experiments report (FINAL_11 §6).
 - The noise condition uses synthetic pink noise, not real room or babble noise, and has no pass
   target.
 
+## Invented words (speech recognition)
+
+- **Base Whisper sometimes writes words that were never said**, mostly in silence at the end of
+  a recording (C1 clip s10_r0: "Thank you very much for joining us. Thank you."). Words that
+  start after the last detected speech, or end before the first, are removed before anything is
+  measured or quoted (ADR 0015). Two kinds are **not caught**:
+  - an invented word that starts inside detected speech (in s10_r0, the first "Thank" begins
+    0.02 s before speech ends, so it stays);
+  - stray invented words in the middle of a recording (in s10_r0, a stray "and" and "I").
+
+  These still count towards speech rate and can appear in quotes.
+- **The 0.2 s margin is provisional.** It rests on one example in synthetic speech. On real
+  recordings, VAD can miss a quiet last word, and the rule would then remove a word that was
+  really said. It is re-checked on the owner's recordings (B1).
+
 ## Loudness and pitch
 
 - **Browser audio processing.** Auto-gain, noise suppression and echo cancellation flatten

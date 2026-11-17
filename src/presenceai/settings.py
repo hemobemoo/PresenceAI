@@ -164,10 +164,17 @@ class RepetitionSettings(_Section):
     window_s: float = Field(gt=0)
 
 
+class TranscriptSettings(_Section):
+    """ADR 0015: words this far past the first/last VAD speech are removed as invented."""
+
+    edge_tolerance_s: float = Field(ge=0)
+
+
 class SpeechSettings(_Section):
     """ADR 0011-0013 values. No defaults in code: thresholds live only in configs/ (rule 7)."""
 
     vad: VadSettings
+    transcript: TranscriptSettings
     pauses: PauseSettings
     rate: RateSettings
     syllables: SyllableSettings
