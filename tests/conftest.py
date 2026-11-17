@@ -102,6 +102,19 @@ def whisper_parts() -> Any:
 
 
 @pytest.fixture
+def sb() -> Any:
+    """Speech test-data builders (tests/fixtures/speech_builders.py)."""
+    import importlib.util
+
+    path = Path(__file__).parent / "fixtures" / "speech_builders.py"
+    spec = importlib.util.spec_from_file_location("speech_builders", path)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+@pytest.fixture
 def speech_cfg() -> Any:
     """`speech:` settings exactly as in configs/default.yaml (ADR 0011); no .env is read."""
     from presenceai.settings import Settings

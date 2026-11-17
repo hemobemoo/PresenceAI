@@ -53,3 +53,21 @@ speech:                         # ADR 0011 (P1 slice 2: pauses and rate); FINAL_
   confidence:                   # FINAL_04 §6 bands
     high: {min_word_probability: 0.85, min_speaking_time_s: 30.0}
     medium: {min_word_probability: 0.70, min_speaking_time_s: 10.0}
+  pitch:                        # ADR 0012: pYIN (librosa), run once per recording; reused in slice 4
+    fmin_hz: 65.0               # limited range keeps pYIN fast (~5 s per 3 min on the laptop)
+    fmax_hz: 400.0
+    frame_length: 1024          # 64 ms at 16 kHz (>= 4 periods at 65 Hz)
+    hop_length: 160             # 10 ms
+  fillers:                      # ADR 0012
+    # Base Whisper drops fillers: counts are lower bounds and confidence is capped until a
+    # verbatim model (T1, `verbatim: true` in models.yaml) is used.
+    confidence_cap_without_verbatim: {en: medium, ar: low}
+    acoustic:                   # PROVISIONAL: tune only on DisfluencySpeech non-test + AMI dev sessions
+      min_duration_s: 0.15
+      min_voiced_fraction: 0.7
+      max_pitch_sd_semitones: 1.0
+      max_unvoiced_gap_s: 0.05  # unvoiced dropouts merged inside one candidate
+      agreement_tolerance_s: 0.05  # candidate within this of a lexicon filler = both agree
+  repetitions:                  # FINAL_04 §2
+    max_ngram: 3
+    window_s: 2.0               # second copy starts within this many seconds of the first's end

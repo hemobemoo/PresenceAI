@@ -91,4 +91,5 @@ The licence is confirmed from the official download page (2026-11-17). Rules for
 1. Download only from `groups.inf.ed.ac.uk/ami/download/` (not OpenSLR or HF mirrors, whose licence text differs).
 2. Use only the manual annotations package v1.6.2, the automatic annotations package v1.5.1 and the signals. Never use the DOME or social-role files.
 3. When the v1.6.2 zip is downloaded, after the owner's approval, its `LICENCE` file is read first and its wording is recorded in `data/README.md`. If it does not say CC BY 4.0, stop and ask before using any file.
-4. Attribution: "AMI Meeting Corpus, University of Edinburgh / AMI Consortium, CC BY 4.0, https://groups.inf.ed.ac.uk/ami/." Paper ~
+4. Before any tuning, the speaker list in the corpus metadata is checked: no speaker may appear in both an E3 development session and a test session (ADR 0012). The result is recorded in ADR 0012.
+5. Attribution: "AMI Meeting Corpus, University of Edinburgh / AMI Consortium, CC BY 4.0, https://groups.inf.ed.ac.uk/ami/." Paper ~

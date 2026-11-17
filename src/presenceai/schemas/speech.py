@@ -127,6 +127,55 @@ class RateWindow(_Frozen):
     wpm: float = Field(ge=0)
 
 
+class PitchTrack(_Frozen):
+    """pYIN output for one recording (ADR 0012). Frame i is at i * hop_s; f0 is 0.0 when unvoiced.
+    Computed once per recording and reused (slice 4 pitch variation)."""
+
+    hop_s: float = Field(gt=0)
+    fmin_hz: float = Field(gt=0)
+    fmax_hz: float = Field(gt=0)
+    f0_hz: tuple[float, ...]
+    voiced: tuple[bool, ...]
+
+    @model_validator(mode="after")
+    def _same_length(self) -> Self:
+        if len(self.f0_hz) != len(self.voiced):
+            raise ValueError("f0_hz and voiced must have the same length")
+        return self
+
+
+class FillerKind(StrEnum):
+    HESITATION = "hesitation"  # counted as a filler
+    DISCOURSE_MARKER = "discourse_marker"  # information only, never penalised (ADR 0012)
+
+
+class FillerEvent(_Frozen):
+    kind: FillerKind
+    first_word: int = Field(ge=0)  # inclusive indices into Transcript.words
+    last_word: int = Field(ge=0)
+    start_s: float = Field(ge=0)
+    end_s: float = Field(ge=0)
+
+
+class AcousticCandidate(_Frozen):
+    """Voiced, steady-pitch sound inside speech with no recognised word on it (FINAL_04 §2)."""
+
+    start_s: float = Field(ge=0)
+    end_s: float = Field(ge=0)
+    voiced_fraction: float = Field(ge=0, le=1)
+    pitch_sd_semitones: float = Field(ge=0)
+    agrees_with_lexicon: bool  # next to or overlapping a lexicon hesitation
+
+
+class RepetitionEvent(_Frozen):
+    first_word: int = Field(ge=0)  # inclusive span covering every copy
+    last_word: int = Field(ge=0)
+    ngram: int = Field(ge=1)  # words in the repeated phrase
+    copies: int = Field(ge=2)  # copies in a row ("I I I" = 3)
+    start_s: float = Field(ge=0)
+    end_s: float = Field(ge=0)
+
+
 class AsrQuality(_Frozen):
     """FINAL_04 §2 'ASR confidence' inputs. None when there are no words / segments."""
 
@@ -138,7 +187,7 @@ class AsrQuality(_Frozen):
 class SpeechReport(_Frozen):
     """What `presenceai analyze` writes. Holds derived data only, never audio samples."""
 
-    schema_version: Literal[2] = 2
+    schema_version: Literal[3] = 3
     source_name: str = Field(min_length=1)  # file name only: no folders, no user names
     model: str = Field(min_length=1)  # key under `asr:` in configs/models.yaml
     transcript: Transcript
@@ -146,6 +195,11 @@ class SpeechReport(_Frozen):
     speech_regions: tuple[SpeechRegion, ...] = ()
     pauses: tuple[PauseEvent, ...] = ()
     rate_windows: tuple[RateWindow, ...] = ()
+    fillers: tuple[FillerEvent, ...] = ()
+    acoustic_candidates: tuple[AcousticCandidate, ...] = ()
+    repetitions: tuple[RepetitionEvent, ...] = ()
+    # Kept in memory for later stages (slice 4); left out of JSON to keep reports small.
+    pitch: PitchTrack | None = Field(default=None, exclude=True)
     measurements: dict[str, Measurement] = Field(default_factory=dict)
     # measure name -> reason; a measure that cannot be computed reliably is never a low score
     not_measurable: dict[str, str] = Field(default_factory=dict)

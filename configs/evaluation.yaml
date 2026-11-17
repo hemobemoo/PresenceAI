@@ -16,3 +16,23 @@ e2:                                  # ADR 0009 (accepted 2026-11-17); data: C1 
     print_counts: true               # per part, by rate band and voice; empty cell -> error
     tune_on: dev
     score_on: test                   # E2 pass/fail (targets above) uses the held-out test part only
+
+e3:                                  # ADR 0012; filler detection (FINAL_10 E3). Targets: none yet
+  tuning:                            # acoustic filler values are tuned ONLY here, before E3 runs
+    disfluencyspeech: [train, validation]   # Apache-2.0; its test split is used only for scoring
+    ami_dev_sessions: [ES2005, IS1001, TS3005]  # all four meetings (a-d) of each session
+  scoring:
+    disfluencyspeech: [test]
+    ami_test_sessions: [ES2002, ES2006, ES2008, IS1003, IS1009, TS3006, TS3007]
+    podcastfillers: [test]           # research-only: evaluation, never tuning or training
+  ami_split:                         # drawn once on 2026-11-17, before any AMI download or tuning
+    unit: session                    # a session's 4 meetings share speakers, so they stay together
+    stratify_by: site                # one dev session per site (ES, IS, TS)
+    seed: 20261117                   # random.Random(seed).choice per site, sessions sorted
+    pool: [ES2002, ES2005, ES2006, ES2008, IS1001, IS1003, IS1009, TS3005, TS3006, TS3007]  # disfluency layer
+  conditions:                        # every detector is scored in each ASR condition
+    - base                           # whisper_small / whisper_turbo as in the app (default)
+    - base_initial_prompt            # extra condition, not the default: Whisper prompted with
+                                     # filler-rich text (prompt fixed in the E3 config before E3)
+    - t1                             # after T1 (P4)
+  report: [precision, recall, f1]    # precision shows made-up fillers (e.g. from initial_prompt)
