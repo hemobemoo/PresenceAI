@@ -47,6 +47,12 @@ Started 2026-11-17. Kept up to date as experiments report (FINAL_11 §6).
 - **Mid-sentence pauses in C1 are built by joining separately generated phrases**, so the phrase
   before such a pause may sound like a phrase end rather than a hesitation, and Whisper may put a
   full stop there. E2's pause-position report shows how often this happens.
+- **C1 cannot validate mid-sentence pause labels.** In E2, 58.9 % of true mid-sentence pauses
+  were labelled as a sentence or clause boundary, mainly because of how C1 is built (above).
+  The error is lenient: boundary pauses, which never count against the speaker, were labelled
+  mid-sentence in only 5.1 % of cases, so the app rarely penalises a pause it should not, but it
+  misses many real mid-sentence pauses. How well mid-sentence pauses are found in real speech
+  is checked only on the developer's B1 recordings and on annotated real data (ADR 0014).
 - **C1 fillers are not used for filler detection (E3).** A TTS voice saying "um" on its own is
   not a real hesitation; E3 uses DisfluencySpeech, AMI and PodcastFillers.
 - The noise condition uses synthetic pink noise, not real room or babble noise, and has no pass
