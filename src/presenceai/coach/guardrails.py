@@ -110,15 +110,36 @@ def verdict_terms(lang: Language) -> tuple[str, ...]:
     return tuple(str(t) for t in data["terms"])
 
 
+def _verdict_tokens(text: str, lang: Language) -> list[str]:
+    """Whole words, before Arabic letter normalisation (owner, 2026-11-17).
+
+    Only diacritics and tatweel are removed; alef, ya and ta-marbuta forms are kept, so «آلي»
+    ("robotic") does not match «إلى» ("to"). The lists name each inflected form themselves.
+    """
+    if lang == "en":
+        return _EN_TOKEN.findall(text.casefold())
+    return _AR_TOKEN.findall(_AR_DIACRITICS.sub("", text))
+
+
 @cache
 def _verdict_seqs(lang: Language) -> tuple[tuple[str, ...], ...]:
-    return _seqs(verdict_terms(lang), lang)
+    seqs = {tuple(_verdict_tokens(term, lang)) for term in verdict_terms(lang)}
+    seqs.discard(())
+    return tuple(sorted(seqs))
 
 
 def contains_verdict_term(text: str, lang: Language) -> bool:
-    """True if `text` contains a verdict word for `lang` (same matching as banned terms)."""
+    """True if `text` contains a verdict word for `lang` as a whole word. In Arabic an attached
+    article or preposition (ال، ب، و، ...) is allowed in front; no suffix is stripped."""
     lang = _check_lang(lang)
-    return _contains(text, lang, _verdict_seqs(lang))
+    words = _verdict_tokens(text, lang)
+    cands = [_strip_prefixes(w) if lang == "ar" else {w} for w in words]
+    for seq in _verdict_seqs(lang):
+        n = len(seq)
+        for i in range(len(cands) - n + 1):
+            if all(seq[j] in cands[i + j] for j in range(n)):
+                return True
+    return False
 
 
 def latin_outside_transcript(quote: str, transcript: str) -> tuple[str, ...]:

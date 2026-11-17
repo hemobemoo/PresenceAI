@@ -218,26 +218,78 @@ def _write_mp3(path: Path, x: np.ndarray, sr: int) -> Path:
     return path
 
 
-def test_clipping_is_found_in_a_compressed_mp3(tmp_path: Path, speech_cfg: Any):
+def test_clipping_in_a_compressed_mp3_is_possible_clipping(tmp_path: Path, speech_cfg: Any):
     """Owner's point 3: a clipped recording that was compressed to MP3 still shows clipping when
-    the original-rate samples are checked (load_native), before resampling to 16 kHz."""
+    the original-rate samples are checked (load_native), before resampling to 16 kHz. LAME lowers
+    the clipped peaks to ~0.97, so it is the plateau rule that finds it: possible clipping."""
     sr = 44_100
     clipped = np.clip(tone(1.6, 3.0, sr=sr), -1.0, 1.0)  # hard-clipped sine
     path = _write_mp3(tmp_path / "clipped.mp3", clipped, sr)
     native, native_sr = audio.load_native(path)
     assert native_sr == sr and native.shape[0] == 2
-    runs, seconds = loudness.clipping(native, native_sr, speech_cfg.loudness)
+    hard = loudness.clipping(native, native_sr, speech_cfg.loudness)
+    runs, seconds = loudness.possible_clipping(native, native_sr, speech_cfg.loudness)
     assert runs > 50 and seconds > 0.1
+    assert hard[0] < runs  # plateau samples are not also counted as clipping
 
     clean = _write_mp3(tmp_path / "clean.mp3", tone(0.5, 3.0, sr=sr), sr)
     native, native_sr = audio.load_native(clean)
     assert loudness.clipping(native, native_sr, speech_cfg.loudness) == (0, 0.0)
+    assert loudness.possible_clipping(native, native_sr, speech_cfg.loudness) == (0, 0.0)
 
 
 def test_a_loud_unclipped_tone_is_not_clipping(speech_cfg: Any):
-    """Control for the pile-up rule: a sine is the hardest unclipped case (ratio ~2.3 < 4)."""
-    x = tone(0.95, 2.0, sr=44_100)
-    assert loudness.clipping(x[None, :], 44_100, speech_cfg.loudness) == (0, 0.0)
+    """Control for the plateau rule: a sine is the hardest unclipped case (ratio ~2.3 < 4)."""
+    x = tone(0.95, 2.0, sr=44_100)[None, :]
+    assert loudness.clipping(x, 44_100, speech_cfg.loudness) == (0, 0.0)
+    assert loudness.possible_clipping(x, 44_100, speech_cfg.loudness) == (0, 0.0)
+
+
+def _speechlike(seconds: float, sr: int, seed: int = 1) -> np.ndarray:
+    """Harmonic voice with moving pitch, a syllable envelope, phrase loudness and some noise."""
+    rng = np.random.default_rng(seed)
+    t = np.arange(int(seconds * sr)) / sr
+    phase = 2 * np.pi * np.cumsum(140 * 2 ** (2 * np.sin(2 * np.pi * 0.3 * t) / 12)) / sr
+    x = sum((0.7**k) * np.sin(k * phase + rng.uniform(0, 6)) for k in range(1, 12))
+    env = np.clip(np.sin(2 * np.pi * 4 * t), 0, None) ** 0.7
+    env *= 0.5 + 0.5 * np.abs(np.sin(2 * np.pi * 0.2 * t))
+    x = x * env + 0.02 * rng.standard_normal(t.size)
+    return x / np.max(np.abs(x))
+
+
+def _limit(x: np.ndarray, sr: int, drive_db: float, ceiling: float, release_ms: float):
+    """Look-ahead peak limiter (1 ms): |y| never exceeds the ceiling, gain recovers smoothly.
+    This is how mastered podcast and video audio gets loud without clipping."""
+    from scipy.ndimage import minimum_filter1d
+
+    y = x * 10 ** (drive_db / 20)
+    look = max(1, sr // 1000)
+    target = minimum_filter1d(np.minimum(1.0, ceiling / np.maximum(np.abs(y), 1e-9)), 2 * look + 1)
+    att, rel = np.exp(-2 / look), np.exp(-1 / (release_ms * sr / 1000))
+    g, cur = np.empty_like(target), 1.0
+    for i, tg in enumerate(target):
+        cur = att * cur + (1 - att) * tg if tg < cur else rel * cur + (1 - rel) * tg
+        g[i] = min(cur, tg)
+    return (y * g).astype(np.float32)
+
+
+@pytest.mark.parametrize("release_ms", [1.0, 80.0])
+def test_a_limited_but_unclipped_signal_is_not_possible_clipping(
+    tmp_path: Path, speech_cfg: Any, release_ms: float
+):
+    """Owner's safeguard 2 (ADR 0013): loud audio through a limiter, as mastered podcast or
+    video audio is, must stay well under the plateau ratio, both as WAV and after MP3. Measured
+    on 2026-11-17 over 3 seeds, drives +6 to +18 dB, ceilings 0.891-0.98, releases 1-80 ms:
+    at most 1.20 (WAV) and 0.20 (MP3), against the rule's 4."""
+    sr, lc = 44_100, speech_cfg.loudness
+    y = _limit(_speechlike(5.0, sr), sr, drive_db=18.0, ceiling=0.98, release_ms=release_ms)
+    assert float(np.abs(y).max()) <= 0.98 + 1e-6
+    ratio = loudness.pileup_ratio(y, lc)
+    assert ratio is not None and ratio < 0.5 * lc.clip_pileup_ratio
+    assert loudness.possible_clipping(y[None, :], sr, lc) == (0, 0.0)
+    native, _ = audio.load_native(_write_mp3(tmp_path / "limited.mp3", y, sr))
+    assert loudness.clipping(native, sr, lc) == (0, 0.0)
+    assert loudness.possible_clipping(native, sr, lc) == (0, 0.0)
 
 
 def test_clipping_share_measure(sb: Any, speech_cfg: Any):
@@ -250,3 +302,20 @@ def test_clipping_share_measure(sb: Any, speech_cfg: Any):
     assert profile.clipped_runs == 1
     assert m["loudness.clipping_share"].value == pytest.approx(0.01 / 16.0, rel=0.01)
     assert m["loudness.clipping_share"].evidence[0].time is not None
+    assert m["loudness.possible_clipping_share"].value == 0.0
+
+
+def test_possible_clipping_is_reported_apart_and_always_low(sb: Any, speech_cfg: Any):
+    """Owner's safeguard 1: plateau detections are "possible clipping", never mixed with hard
+    clipping, always low confidence even on a clean, quiet-room recording."""
+    x = _steps([0.2] * 8)
+    native = 0.5 * np.sin(2 * np.pi * 200 * np.arange(x.size) / SR)
+    native = np.clip(native * 2.0, -0.97, 0.97)  # a plateau at 0.97, as LAME leaves clipping
+    m, _, profile = _summary(
+        sb, speech_cfg, x, (sb.region(0.0, 16.0),), native=(native[None, :].astype(np.float32), SR)
+    )
+    assert profile.clipped_runs == 0 and profile.possible_clipped_runs > 0
+    assert m["loudness.clipping_share"].value == 0.0
+    pc = m["loudness.possible_clipping_share"]
+    assert pc.value > 0 and pc.confidence == Confidence.LOW
+    assert "possible clipping" in pc.method

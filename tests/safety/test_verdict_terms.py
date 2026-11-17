@@ -1,8 +1,8 @@
 """No verdict words ("monotone", "رتيب", ...) in speech report text, English or Arabic (ADR 0013).
 
 FINAL_04 §2: pitch variation is information only, with no "monotone" verdict unless the user
-chose that goal. The lists live in lang/<lang>/verdict_terms.yaml and are matched with the same
-normalisation as the banned-term guardrail (Arabic diacritics, prefixes, alef forms).
+chose that goal. The lists live in lang/<lang>/verdict_terms.yaml and are matched as whole words
+before Arabic letter normalisation (diacritics removed, attached prefixes allowed).
 """
 
 import json
@@ -36,6 +36,10 @@ def test_lists_exist(lang: Language):
         ("بصوت رتيب", "ar"),  # attached preposition
         ("الإلقاء ممل", "ar"),
         ("على وتيرة واحدة", "ar"),
+        ("صوت آلي", "ar"),
+        ("بصوتٍ آليٍّ", "ar"),  # diacritics
+        ("الإلقاء الآلي", "ar"),  # article
+        ("تحدّث رتيبًا", "ar"),  # tanween on the alef
     ],
 )
 def test_positives(text: str, lang: Language):
@@ -48,6 +52,11 @@ def test_positives(text: str, lang: Language):
         ("Pitch varied by 2.8 semitones (information only).", "en"),
         ("A flat-rate plan", "en"),  # 'flat-rate' is one token
         ("تغيّر الصوت بمقدار 2.8 نصف نغمة", "ar"),
+        ("انتقل إلى السؤال التالي", "ar"),  # إلى is not آلي
+        ("إلى", "ar"),
+        ("الى اللقاء", "ar"),  # إلى written without hamza
+        ("آليات التقييم", "ar"),  # "mechanisms": whole words only
+        ("آلية العمل", "ar"),
     ],
 )
 def test_negatives(text: str, lang: Language):

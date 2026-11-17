@@ -9,6 +9,8 @@
   a measurement**; it is kept only in `LoudnessProfile` for baseline comparisons.
 - Only windows that are mostly VAD speech count, so pauses are not "quiet".
 - Clipping is detected on the original samples before resampling (`audio.load_native`).
+  Samples at full scale are clipping; a plateau just under the peak (lossy files) is reported
+  apart as "possible clipping", always low confidence.
 - Noise: the floor is a low percentile of non-speech frames. Below `snr_not_measurable_db` the
   measures are "not measurable in this recording"; below `snr_low_db` confidence is low.
 - Browser processing (auto-gain, noise suppression, echo cancellation) flattens loudness. When
@@ -62,24 +64,33 @@ def window_levels(samples: np.ndarray, sr: int, cfg: LoudnessSettings) -> np.nda
     return np.array([power_mean_db(frames[i * per : (i + 1) * per]) for i in range(count)])
 
 
-def _clip_mask(native: np.ndarray, cfg: LoudnessSettings) -> np.ndarray:
-    """Samples (any channel) that look clipped, by either rule:
+def _hard_mask(native: np.ndarray, cfg: LoudnessSettings) -> np.ndarray:
+    """Rule 1, clipping: |x| >= `clip_level` in any channel (lossless files, and lossy overshoot
+    above full scale)."""
+    return np.any(np.abs(native) >= cfg.clip_level, axis=0)
 
-    1. hard: |x| >= `clip_level` (lossless files; lossy overshoot above full scale);
-    2. pile-up: the peak is near full scale and far more samples sit within `clip_pileup_band`
-       of it than in the band just below (a plateau that a lossy codec lowered to ~0.97).
-    """
-    a = np.abs(native)
-    mask = np.any(a >= cfg.clip_level, axis=0)
-    for ch in a:
-        peak = float(ch.max()) if ch.size else 0.0
-        if peak < cfg.clip_peak_min:
-            continue
-        top = ch >= peak * (1 - cfg.clip_pileup_band)
-        below = (ch >= peak * (1 - 2 * cfg.clip_pileup_band)) & ~top
-        if top.sum() >= cfg.clip_pileup_ratio * max(1, int(below.sum())):
-            mask |= top
-    return mask
+
+def pileup_ratio(channel: np.ndarray, cfg: LoudnessSettings) -> float | None:
+    """Samples within `clip_pileup_band` of the channel's peak divided by samples in the band
+    just below; None when the peak is under `clip_peak_min` (rule 2 does not apply)."""
+    a = np.abs(channel)
+    peak = float(a.max()) if a.size else 0.0
+    if peak < cfg.clip_peak_min:
+        return None
+    top = a >= peak * (1 - cfg.clip_pileup_band)
+    below = (a >= peak * (1 - 2 * cfg.clip_pileup_band)) & ~top
+    return float(top.sum() / max(1, int(below.sum())))
+
+
+def _plateau_mask(native: np.ndarray, cfg: LoudnessSettings) -> np.ndarray:
+    """Rule 2, possible clipping: a plateau just under the peak, as a lossy codec leaves it
+    (~0.97). Samples that rule 1 already counts are left out."""
+    mask = np.zeros(native.shape[-1], dtype=bool)
+    for ch in np.atleast_2d(native):
+        r = pileup_ratio(ch, cfg)
+        if r is not None and r >= cfg.clip_pileup_ratio:
+            mask |= np.abs(ch) >= float(np.abs(ch).max()) * (1 - cfg.clip_pileup_band)
+    return mask & ~_hard_mask(native, cfg)
 
 
 def _runs(mask: np.ndarray, min_run: int) -> list[tuple[int, int]]:
@@ -90,22 +101,28 @@ def _runs(mask: np.ndarray, min_run: int) -> list[tuple[int, int]]:
     ]
 
 
-def clipping(native: np.ndarray, sr: int, cfg: LoudnessSettings) -> tuple[int, float]:
-    """(runs, seconds) of clipping in the original samples; runs shorter than `clip_min_run`
-    samples are ignored."""
-    if native.size == 0:
-        return 0, 0.0
-    runs = _runs(_clip_mask(native, cfg), cfg.clip_min_run)
+def _count(mask: np.ndarray, sr: int, cfg: LoudnessSettings) -> tuple[int, float]:
+    runs = _runs(mask, cfg.clip_min_run)
     return len(runs), float(sum(b - a for a, b in runs) / sr)
 
 
-def _clip_spans(native: np.ndarray, sr: int, cfg: LoudnessSettings) -> list[TimeSpan]:
+def clipping(native: np.ndarray, sr: int, cfg: LoudnessSettings) -> tuple[int, float]:
+    """(runs, seconds) of clipping (rule 1) in the original samples; runs shorter than
+    `clip_min_run` samples are ignored."""
     if native.size == 0:
-        return []
-    return [
-        TimeSpan(start_s=a / sr, end_s=b / sr)
-        for a, b in _runs(_clip_mask(native, cfg), cfg.clip_min_run)
-    ]
+        return 0, 0.0
+    return _count(_hard_mask(np.atleast_2d(native), cfg), sr, cfg)
+
+
+def possible_clipping(native: np.ndarray, sr: int, cfg: LoudnessSettings) -> tuple[int, float]:
+    """(runs, seconds) of possible clipping (rule 2, plateau), not counting rule-1 samples."""
+    if native.size == 0:
+        return 0, 0.0
+    return _count(_plateau_mask(np.atleast_2d(native), cfg), sr, cfg)
+
+
+def _spans(mask: np.ndarray, sr: int, cfg: LoudnessSettings) -> list[TimeSpan]:
+    return [TimeSpan(start_s=a / sr, end_s=b / sr) for a, b in _runs(mask, cfg.clip_min_run)]
 
 
 def _speech_mask(times: np.ndarray, regions: tuple[SpeechRegion, ...]) -> np.ndarray:
@@ -127,11 +144,18 @@ def summarise(
     cfg: SpeechSettings,
 ) -> tuple[dict[str, Measurement], dict[str, str], LoudnessProfile]:
     lc = cfg.loudness
-    keys = ["loudness.variation_cv", "loudness.spread_db", "loudness.clipping_share"]
+    keys = [
+        "loudness.variation_cv",
+        "loudness.spread_db",
+        "loudness.clipping_share",
+        "loudness.possible_clipping_share",
+    ]
     if baseline is not None:
         keys.append("loudness.change_from_baseline_db")
     native_samples, native_sr = native
-    runs, clipped_s = clipping(native_samples, native_sr, lc)
+    native_2d = np.atleast_2d(native_samples)
+    runs, clipped_s = clipping(native_2d, native_sr, lc)
+    possible_runs, possible_s = possible_clipping(native_2d, native_sr, lc)
 
     frames = frame_levels(samples, sr, lc)
     frame_s = lc.frame_ms / 1000
@@ -151,6 +175,7 @@ def summarise(
         snr_db=snr,
         native_sample_rate=native_sr,
         clipped_runs=runs,
+        possible_clipped_runs=possible_runs,
     )
     if not regions or median_speech is None:
         return {}, dict.fromkeys(keys, "no speech detected"), profile
@@ -217,15 +242,37 @@ def summarise(
             ev,
         )  # fmt: skip
 
-    clip_ev = tuple(Evidence(time=s) for s in _clip_spans(native_samples, native_sr, lc)[:20])
     total_speech = sum(r.duration_s for r in regions) or speech_s
+
+    def share(seconds: float) -> float:
+        return min(1.0, seconds / total_speech) if total_speech else 0.0
+
+    def clip_evidence(mask: np.ndarray) -> tuple[Evidence, ...]:
+        if native_2d.size == 0:
+            return (Evidence(time=span),)
+        ev = tuple(Evidence(time=s) for s in _spans(mask, native_sr, lc)[:20])
+        return ev or (Evidence(time=span),)
+
     out["loudness.clipping_share"] = measure(
-        min(1.0, clipped_s / total_speech) if total_speech else 0.0,
+        share(clipped_s),
         "share of speech time",
         conf,
-        f"samples at or above {lc.clip_level:g} of full scale, or a plateau just under the"
-        f" peak (lossy files), in runs of >= {lc.clip_min_run}, on the original samples" + notes,
-        clip_ev or (Evidence(time=span),),
+        f"samples at or above {lc.clip_level:g} of full scale in runs of >= {lc.clip_min_run},"
+        " on the original samples" + notes,
+        clip_evidence(_hard_mask(native_2d, lc)),
+    )
+    # Rule 2 is reported apart and is always low confidence (owner, 2026-11-17): a plateau just
+    # under the peak is typical of a clipped file after lossy compression, but its values are
+    # provisional and come from synthetic signals.
+    out["loudness.possible_clipping_share"] = measure(
+        share(possible_s),
+        "share of speech time",
+        Confidence.LOW,
+        "possible clipping: a plateau just under the file's peak (within"
+        f" {lc.clip_pileup_band:.0%}, at least {lc.clip_pileup_ratio:g} times the band below),"
+        " typical of a clipped file after lossy compression; provisional rule, on the original"
+        " samples" + notes,
+        clip_evidence(_plateau_mask(native_2d, lc)),
     )
 
     if baseline is not None:

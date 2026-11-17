@@ -206,6 +206,7 @@ class LoudnessProfile(_Frozen):
     snr_db: float | None = None
     native_sample_rate: int | None = Field(default=None, gt=0)
     clipped_runs: int = Field(default=0, ge=0)
+    possible_clipped_runs: int = Field(default=0, ge=0)  # plateau rule, provisional
 
 
 class PitchDiagnostics(_Frozen):

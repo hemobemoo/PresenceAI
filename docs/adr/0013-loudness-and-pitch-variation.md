@@ -1,8 +1,9 @@
 # 0013 — Loudness and pitch variation
 
 - Status: **accepted** by the owner on 2026-11-17 (slice 4 plan, all seven proposed values, plus
-  changes 1–5). One addition was made during implementation and **needs the owner's
-  confirmation**: the second clipping rule for lossy files (§3, "pile-up").
+  changes 1–5). The plateau clipping rule added during implementation (§3) was confirmed by the
+  owner on 2026-11-17 **as provisional**, and is reported apart as "possible clipping" with low
+  confidence.
 - Date: 2026-11-17
 - Decider: project owner
 - Plan reference: docs/plan/FINAL_04 §1 (noise), §2 (loudness, pitch variation); FINAL_05 §1
@@ -58,16 +59,32 @@ unreliable.
 
 - Clipping is detected on samples decoded at the file's own rate and channels
   (`audio.load_native`), before resampling to 16 kHz.
-- Rule 1 (approved): `|x| >= 0.999` in runs of at least 3 samples.
-- **Rule 2, pile-up (added, PROVISIONAL, owner to confirm).** The owner's MP3 test showed that
-  LAME lowers clipped peaks to about 0.97, so rule 1 found nothing in a clipped MP3. A clipped
-  signal still has a plateau. When a channel's peak is at least 0.9 of full scale, and at least
-  4 times as many samples lie within 2 % of the peak as in the 2–4 % band below it, those
-  top-band samples count as clipped (same 3-sample runs).
-  - On synthetic signals, 2026-11-17: clipped MP3 sines gave a ratio of 13–173; an unclipped
-    0.95 sine gave 2.3 (a sine is the hardest unclipped case). A clipped speech-like signal
-    overshot past 1.0 after MP3, so rule 1 caught it.
+- **Rule 1, clipping** (approved): `|x| >= 0.999` in runs of at least 3 samples. Reported as
+  `loudness.clipping_share` and counted in `LoudnessProfile.clipped_runs`.
+- **Rule 2, possible clipping** (owner confirmed as provisional, 2026-11-17). The owner's MP3
+  test showed that LAME lowers clipped peaks to about 0.97, so rule 1 found nothing in a clipped
+  MP3. A clipped signal still has a plateau. When a channel's peak is at least 0.9 of full scale,
+  and at least 4 times as many samples lie within 2 % of the peak as in the 2–4 % band below it,
+  those top-band samples are possible clipping (same 3-sample runs).
+  - **Reported apart** as `loudness.possible_clipping_share` (and `possible_clipped_runs`),
+    **always low confidence**, never added to rule 1. Samples rule 1 already counts are left out.
   - Config: `clip_peak_min: 0.9`, `clip_pileup_band: 0.02`, `clip_pileup_ratio: 4.0`.
+- **Ratios measured on synthetic signals, 2026-11-17** (`loudness.pileup_ratio`):
+
+  | Signal | Ratio |
+  | --- | --- |
+  | hard-clipped sine, after MP3 | 13–173 |
+  | unclipped 0.95 sine (the hardest unclipped case) | 2.3 |
+  | loud speech-like signal through a look-ahead limiter, not clipped (owner's safeguard 2), WAV | 0.86–1.20 |
+  | the same, after MP3 (128 kbit/s) | 0.01–0.20 |
+  | hard-clipped speech-like signal, WAV | 39–50 |
+  | the same, after MP3 | 0.08–0.15 (its peaks overshoot to 1.04–1.06, so rule 1 catches it) |
+
+  The limiter cases cover 3 seeds, drive +6 to +18 dB, ceilings 0.891, 0.944 and 0.98 (−1, −0.5
+  and −0.18 dBFS), attack 1–5 ms and release 1–80 ms. None came near 4, so mastered podcast or
+  video audio should not be flagged. `test_a_limited_but_unclipped_signal_is_not_possible_clipping`
+  keeps this. **Re-check on real public clips** once they are downloaded, and record the ratios
+  here.
 
 ### 4. Noise and confidence
 
@@ -119,19 +136,27 @@ unreliable.
 ### 8. No verdicts; vocal_variety opt-in
 
 - `lang/en/verdict_terms.yaml` lists words such as monotone, flat, dull, boring and robotic.
-  `lang/ar/verdict_terms.yaml` lists words such as رتيب, رتابة, ممل, باهت and على وتيرة واحدة.
-  They are matched with the banned-term normalisation (`coach.guardrails.contains_verdict_term`).
+  `lang/ar/verdict_terms.yaml` lists words such as رتيب, رتابة, ممل, باهت, آلي and على وتيرة
+  واحدة.
+- **Whole words, before Arabic letter normalisation** (owner, 2026-11-17,
+  `coach.guardrails.contains_verdict_term`). Only diacritics and tatweel are removed, and an
+  attached ال، ب، و، ف، ل، ك may come first. No suffix is stripped, so the lists name each
+  inflected form. The banned-term normalisation had made «آلي» ("robotic") match the common word
+  «إلى» ("to"). Now it does not, and neither does «آليات» ("mechanisms"). Because «آلي» also
+  means "automatic", our own Arabic text uses «تلقائي» for that.
 - A safety test checks every report string, in English and Arabic, and every language-pack
-  string. The test found that «آلي» ("robotic", also "automatic") normalises like the common word
-  «إلى», so it is not listed.
+  string.
 - `configs/engine.yaml: opt_in: [vocal_variety]`: the engine (P5) may use this skill only when
   the user chose it.
 
 ## Consequences
 
 - `SpeechReport` is schema version 4. It adds `capture`, `loudness_profile`,
-  `pitch_diagnostics`, `baseline_source`, and the `loudness.*` and `pitch.*` measurements.
+  `pitch_diagnostics`, `baseline_source`, and the `loudness.*` (including
+  `loudness.possible_clipping_share`) and `pitch.*` measurements.
+- Loudness variation, spread and baseline change are always low confidence on uploaded files,
+  including all public-video evaluation data, because their capture settings are unknown.
 - Smoke test (3-minute public clip, capture unknown): signal-to-noise 55 dB; no clipping;
   loudness variation 0.29 (low, capture unknown); pitch spread 3.1 semitones (high).
-- Re-check: the pile-up clipping values on real clipped recordings; the octave limit on real
+- Re-check: the plateau ratio on real public clips (mastered and clipped); the octave limit on real
   speech (dropped counts); fmax on real higher voices (`at_limit_share`).

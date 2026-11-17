@@ -79,8 +79,9 @@ speech:                         # ADR 0011 (P1 slice 2: pauses and rate); FINAL_
     clip_level: 0.999           # |sample| >= this, on the ORIGINAL samples before resampling
     clip_min_run: 3             # consecutive samples; single peaks are not clipping
     # Lossy files (MP3, AAC) lower clipped peaks to ~0.97, so a second rule looks for a plateau:
-    # far more samples just under the file's own peak than in the band below it.
-    # PROVISIONAL (ADR 0013, owner to confirm): found on synthetic MP3s, 13-173 vs 2.3 unclipped.
+    # far more samples just under the file's own peak than in the band below it. Reported apart
+    # as "possible clipping", always low confidence. PROVISIONAL (owner confirmed, ADR 0013):
+    # clipped MP3 sines 13-173, unclipped sine 2.3, limited unclipped speech <= 1.20.
     clip_peak_min: 0.9          # pile-up rule only when the peak is near full scale
     clip_pileup_band: 0.02      # top band = within 2 % of the peak; next band = 2-4 % below
     clip_pileup_ratio: 4.0      # top-band samples / next-band samples at or above this = clipped
