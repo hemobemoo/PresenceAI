@@ -38,3 +38,18 @@ Started 2026-11-17. Kept up to date as experiments report (FINAL_11 §6).
   is covered by Common Voice Arabic and MASC (`docs/data/DATA_SOURCES.md` §3).
 - Research-only and no-derivatives sources (TED, TED-LIUM 3, PodcastFillers, Columbia Gaze) are used
   for evaluation only, which limits training data.
+
+## Fillers and repetitions
+
+- **Until the verbatim model T1 exists (P4), filler and repetition counts are lower bounds.**
+  Base Whisper leaves out many fillers and repetitions. Confidence is capped at medium for
+  English and low for Arabic (ADR 0012).
+- **False starts (cut-off words) are not measured** until T1, because they need a verbatim
+  transcript.
+- **Whisper's word timings can hide fillers from the acoustic detector.** A hesitation directly
+  next to a word is missed when Whisper stretches that word's timestamps over it. On a public clip
+  whisper-small did exactly this; turbo did not. E3 reports how often it happens.
+- The acoustic detector's values are provisional until they are tuned on DisfluencySpeech
+  train/validation data and held-out AMI sessions.
+- Discourse markers ("like", "so", "يعني", ...) are counted every time they occur, including
+  ordinary uses, so their counts are upper bounds and information only.

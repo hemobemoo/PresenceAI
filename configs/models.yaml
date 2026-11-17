@@ -9,16 +9,18 @@ asr:
   whisper_small:
     backend: faster-whisper
     licence: MIT
+    verbatim: false                        # drops fillers; filler/repetition counts are lower bounds
     source: {repo: openai/whisper-small, revision: 973afd24965f72e36ca33b3055d56a652f456b4d}
     quantization: int8                     # as the S3 base export (ADR 0005)
     dir: whisper-small-ct2-int8
   whisper_turbo:
     backend: faster-whisper
     licence: MIT
+    verbatim: false
     source: {repo: openai/whisper-large-v3-turbo, revision: 41f01f3fe87f28c78e2fbf8b568835947dd65ed9}
     quantization: float16                  # same revision and settings as S2 (ADR 0007)
     dir: whisper-large-v3-turbo-ct2-f16
-  t1_verbatim: {id: null, backend: faster-whisper, licence: null, digest: null}   # TODO: after T1
+  t1_verbatim: {id: null, backend: faster-whisper, licence: null, digest: null, verbatim: true}   # TODO: after T1
 vad:
   silero: {id: silero-vad, licence: MIT, digest: null}
 vision:

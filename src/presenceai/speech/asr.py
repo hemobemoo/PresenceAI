@@ -39,6 +39,13 @@ def model_dir(
     return models_root / str(entry["dir"])
 
 
+def is_verbatim(name: str, *, models_yaml: Path = MODELS_CONFIG) -> bool:
+    """`verbatim` flag of an `asr:` entry: True only for a model that keeps fillers (T1)."""
+    entries = (yaml.safe_load(models_yaml.read_text(encoding="utf-8")) or {}).get("asr") or {}
+    entry = entries.get(name)
+    return bool(entry.get("verbatim")) if isinstance(entry, dict) else False
+
+
 def _whisper_model_class() -> Any:
     from faster_whisper import WhisperModel  # heavy import, only when a model is really loaded
 

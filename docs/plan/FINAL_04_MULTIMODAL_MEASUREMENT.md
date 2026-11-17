@@ -19,8 +19,8 @@ Every measure is a `Measurement(value, unit, confidence, method, evidence[], lan
 | Pace estimate (syll/s) | **Live** | Syllable nuclei from intensity peaks in voiced regions, 5 s window | No ASR needed; works for Arabic |
 | Articulation rate | Post | Words ÷ voiced time | — |
 | Pauses | Live (timer) + Post | Gaps ≥ 0.25 / 1.0 / 2.0 s from VAD; count, mean, p90, longest, position (mid-sentence vs boundary) | Boundary pauses are not penalised |
-| Fillers per 100 words | Post | Fusion of (a) lexicon on T1 verbatim transcript, (b) acoustic candidates (voiced, no aligned word, low pitch variance); confidence high if both agree | Reported as a range when confidence is low |
-| Repetitions / false starts | Post | Repeated 1–3-grams within 2 s; T1 transcript marks | — |
+| Fillers per 100 words | Post | Fusion of (a) hesitation lexicon on the transcript (T1 verbatim once available), (b) acoustic candidates (voiced, no aligned word, low pitch variance; provisional values); confidence high if both agree. Discourse markers ("like", "you know", "يعني", "طيب") are counted separately as information only, as upper bounds (ADR 0012) | Reported as a range (lexicon to lexicon + acoustic-only). With base Whisper the count is a lower bound and confidence is capped: medium (EN), low (AR) |
+| Repetitions / false starts | Post | Repeated 1–3-grams within 2 s (same normalisation as fillers, incl. Arabic; hesitations skipped); false starts from T1 transcript marks, **not measured until T1 (P4)** | Lower bound with base Whisper (ADR 0012) |
 | Loudness | **Live** + Post | RMS in 1 s windows; coefficient of variation; clipping | — |
 | Pitch variation | Post | pYIN F0 → semitone SD over voiced frames | Shown as information; no "monotone" verdict without user goal |
 | Response latency (S2) | Post | First voice onset after the follow-up question ends | From event log |
@@ -93,7 +93,7 @@ Rules enforced in code and tests:
 |---|---|---|
 | ASR | faster-whisper (base or T1) | faster-whisper `language="ar"`; T1 Arabic is future work |
 | Rate, pauses, loudness, pitch, live pace, timing | ✓ | ✓ (rate in words/min and syllables/s) |
-| Fillers | Lexicon + acoustic + T1 | Lexicon (e.g. "يعني", "امم", "اه", "يعني يعني", "طيب") + acoustic; lower confidence |
+| Fillers | Lexicon + acoustic + T1 | Hesitation lexicon (e.g. "امم", "اه", "ممم") + acoustic; confidence low. "يعني" and "طيب" are discourse markers, counted separately as information only; "يعني يعني" counts as a repetition (changed by ADR 0012) |
 | Repetitions | ✓ | ✓ |
 | Content measures (§3) | ✓ | Not scored; transcript shown; future work |
 | Vision (§4) | ✓ | ✓ (language-independent) |

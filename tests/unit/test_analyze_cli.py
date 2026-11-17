@@ -8,15 +8,22 @@ import pytest
 from typer.testing import CliRunner
 
 from presenceai import cli
-from presenceai.schemas.speech import PausePosition, SpeechRegion, SpeechReport
+from presenceai.schemas.speech import PausePosition, PitchTrack, SpeechRegion, SpeechReport
 from presenceai.settings import AsrSettings
-from presenceai.speech import analyze, asr, vad
+from presenceai.speech import analyze, asr, pitch, vad
 
 REGIONS = (SpeechRegion(start_s=0.0, end_s=1.2), SpeechRegion(start_s=2.0, end_s=3.6))
 
 
 def fake_vad(samples: Any, opts: Any = None) -> tuple[SpeechRegion, ...]:
     return REGIONS
+
+
+def fake_pitch(samples: Any, sr: int, cfg: Any) -> PitchTrack:
+    n = 400  # 4 s at 10 ms, all unvoiced: no acoustic candidates
+    return PitchTrack(
+        hop_s=0.01, fmin_hz=65.0, fmax_hz=400.0, f0_hz=(0.0,) * n, voiced=(False,) * n
+    )
 
 
 def test_analyze_file_builds_a_report(fake_whisper: Any, silent_wav: Path, speech_cfg: Any):
@@ -28,9 +35,10 @@ def test_analyze_file_builds_a_report(fake_whisper: Any, silent_wav: Path, speec
         options=AsrSettings(),
         speech=speech_cfg,
         vad=fake_vad,
+        pitch_tracker=fake_pitch,
     )
     assert isinstance(report, SpeechReport)
-    assert report.schema_version == 2
+    assert report.schema_version == 3
     assert report.source_name == "talk.wav"
     assert report.model == "whisper_small"
     assert report.transcript.text.startswith("Hello everyone.")
@@ -44,6 +52,11 @@ def test_analyze_file_builds_a_report(fake_whisper: Any, silent_wav: Path, speec
         report.not_measurable
     )
     assert "rate.wpm" not in report.measurements
+    # slice 3: no fillers in "Hello everyone. Today I will talk.", lower bound with base model
+    assert report.fillers == () and report.repetitions == ()
+    assert report.measurements["fillers.count"].value == 0
+    assert "lower bound" in report.measurements["fillers.per_100_words"].method
+    assert report.pitch is not None and "pitch" not in report.model_dump()
 
 
 @pytest.fixture
@@ -56,6 +69,7 @@ def patched_loader(monkeypatch: pytest.MonkeyPatch, fake_whisper: Any) -> dict[s
 
     monkeypatch.setattr(asr, "load_model", fake_load)
     monkeypatch.setattr(vad, "detect_speech", fake_vad)
+    monkeypatch.setattr(pitch, "track", fake_pitch)
     return seen
 
 

@@ -103,3 +103,51 @@ def test_e2_dev_test_split_is_fixed():
     assert split["stratify_by"] == ["rate_band", "voice"]
     assert split["print_counts"] is True
     assert _load("evaluation.yaml")["e2"]["report_pause_position"] is True
+
+
+def test_filler_repetition_pitch_values_match_adr_0012():
+    sp = _load("default.yaml")["speech"]
+    assert sp["pitch"] == {
+        "fmin_hz": 65.0,
+        "fmax_hz": 400.0,
+        "frame_length": 1024,
+        "hop_length": 160,
+    }
+    assert sp["fillers"]["confidence_cap_without_verbatim"] == {"en": "medium", "ar": "low"}
+    assert sp["fillers"]["acoustic"]["min_duration_s"] == 0.15
+    assert sp["fillers"]["acoustic"]["min_voiced_fraction"] == 0.7
+    assert sp["fillers"]["acoustic"]["max_pitch_sd_semitones"] == 1.0
+    assert sp["repetitions"] == {"max_ngram": 3, "window_s": 2.0}
+    asr = _load("models.yaml")["asr"]
+    assert asr["whisper_small"]["verbatim"] is False and asr["whisper_turbo"]["verbatim"] is False
+
+
+def test_lexicon_files_exist_for_both_languages():
+    from presenceai.speech.fillers import load_lexicon
+
+    for lang in ("en", "ar"):
+        lex = load_lexicon(lang)
+        assert lex.hesitations and lex.discourse_markers
+    ar = load_lexicon("ar")
+    assert ("يعني",) in ar.discourse_markers and ("يعني",) not in ar.hesitations
+
+
+def test_e3_tuning_and_scoring_data_never_overlap():
+    e3 = _load("evaluation.yaml")["e3"]
+    dev, test = set(e3["tuning"]["ami_dev_sessions"]), set(e3["scoring"]["ami_test_sessions"])
+    assert not dev & test and dev | test == set(e3["ami_split"]["pool"])
+    assert {s[:2] for s in dev} == {"ES", "IS", "TS"}  # one per site
+    assert "test" not in e3["tuning"]["disfluencyspeech"]
+    assert "podcastfillers" not in e3["tuning"]  # research-only: evaluation only
+    assert "base_initial_prompt" in e3["conditions"] and e3["conditions"][0] == "base"
+    assert "precision" in e3["report"]
+
+
+def test_e3_ami_split_reproduces_from_its_seed():
+    import random
+
+    split = _load("evaluation.yaml")["e3"]["ami_split"]
+    rng = random.Random(split["seed"])  # noqa: S311  (reproducible split, not security)
+    pool = split["pool"]
+    dev = [rng.choice(sorted(s for s in pool if s.startswith(site))) for site in ("ES", "IS", "TS")]
+    assert dev == _load("evaluation.yaml")["e3"]["tuning"]["ami_dev_sessions"]

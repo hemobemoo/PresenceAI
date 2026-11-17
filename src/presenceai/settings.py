@@ -103,14 +103,45 @@ class ConfidenceSettings(_Section):
     medium: ConfidenceBand
 
 
+class PitchSettings(_Section):
+    fmin_hz: float = Field(gt=0)
+    fmax_hz: float = Field(gt=0)
+    frame_length: int = Field(gt=0)
+    hop_length: int = Field(gt=0)
+
+
+ConfidenceName = Literal["high", "medium", "low"]
+
+
+class AcousticFillerSettings(_Section):
+    min_duration_s: float = Field(gt=0)
+    min_voiced_fraction: float = Field(ge=0, le=1)
+    max_pitch_sd_semitones: float = Field(gt=0)
+    max_unvoiced_gap_s: float = Field(ge=0)
+    agreement_tolerance_s: float = Field(ge=0)
+
+
+class FillerSettings(_Section):
+    confidence_cap_without_verbatim: dict[Language, ConfidenceName]
+    acoustic: AcousticFillerSettings
+
+
+class RepetitionSettings(_Section):
+    max_ngram: int = Field(ge=1)
+    window_s: float = Field(gt=0)
+
+
 class SpeechSettings(_Section):
-    """ADR 0011 values. No defaults in code: thresholds live only in configs/ (AGENTS.md rule 7)."""
+    """ADR 0011/0012 values. No defaults in code: thresholds live only in configs/ (rule 7)."""
 
     vad: VadSettings
     pauses: PauseSettings
     rate: RateSettings
     syllables: SyllableSettings
     confidence: ConfidenceSettings
+    pitch: PitchSettings
+    fillers: FillerSettings
+    repetitions: RepetitionSettings
 
 
 class Settings(BaseSettings):

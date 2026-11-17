@@ -1,0 +1,15 @@
+# Arabic fillers (FINAL_04 §5 as changed by ADR 0012). Matched after normalisation: diacritics
+# and tatweel removed, alef forms unified (أ إ آ ٱ -> ا), stretched letters collapsed.
+#
+# hesitations: counted as fillers.
+# discourse_markers: reported separately, information only, never penalised; counts are upper
+#   bounds. يعني and طيب moved here from the filler list (owner, 2026-11-17). A doubled marker
+#   ("يعني يعني") is counted as a repetition, not as a filler.
+hesitations:
+  - امم
+  - اه
+  - ممم
+  - آآ
+discourse_markers:
+  - يعني
+  - طيب

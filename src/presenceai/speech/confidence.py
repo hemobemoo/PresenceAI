@@ -21,6 +21,14 @@ def _meets(band: ConfidenceBand, probability: float | None, speaking_time_s: flo
     return ok_p and ok_t
 
 
+_ORDER = {Confidence.LOW: 0, Confidence.MEDIUM: 1, Confidence.HIGH: 2}
+
+
+def cap(confidence: Confidence, ceiling: Confidence) -> Confidence:
+    """The lower of the two."""
+    return confidence if _ORDER[confidence] <= _ORDER[ceiling] else ceiling
+
+
 def band(
     cfg: ConfidenceSettings, *, probability: float | None, speaking_time_s: float | None
 ) -> Confidence:

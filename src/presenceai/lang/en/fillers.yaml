@@ -1,0 +1,22 @@
+# English fillers (FINAL_04 §2, ADR 0012). Matched after normalisation (lower case, edge
+# punctuation removed, letter stretching ignored: "Ummm" = "um").
+#
+# hesitations: counted as fillers (fillers per 100 words).
+# discourse_markers: reported separately, information only, never penalised. Every occurrence is
+#   counted, including ordinary uses ("I like it"), so counts are upper bounds.
+hesitations:
+  - uh
+  - um
+  - uhm
+  - erm
+  - er
+  - ah
+  - hmm
+  - mm
+discourse_markers:
+  - like
+  - you know
+  - I mean
+  - so
+  - basically
+  - actually
