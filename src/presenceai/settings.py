@@ -167,7 +167,7 @@ class RepetitionSettings(_Section):
 class TranscriptSettings(_Section):
     """ADR 0015: words this far past the first/last VAD speech are removed as invented."""
 
-    edge_tolerance_s: float = Field(ge=0)
+    end_tolerance_s: float = Field(ge=0)
 
 
 class SpeechSettings(_Section):

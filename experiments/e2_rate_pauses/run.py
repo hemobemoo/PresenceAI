@@ -320,6 +320,15 @@ def write_results(
     return out
 
 
+def ledger_entry(meta: dict[str, Any], passed: bool | None, result: str) -> dict[str, Any]:
+    entry = {k: meta[k] for k in ("run", "part", "condition", "config_hash")}
+    entry |= {"passed": passed, "commit": meta.get("commit"),
+              "rerun_reason": meta.get("rerun_reason")}  # fmt: skip
+    if meta.get("label"):  # e.g. "test-informed" (ADR 0015); absent in older entries
+        entry["label"] = meta["label"]
+    return entry | {"finished": datetime.now(UTC).isoformat(timespec="seconds"), "result": result}
+
+
 def record(paths: Paths, entry: dict[str, Any]) -> None:
     ledger = _ledger(paths)
     ledger.append(entry)
@@ -387,6 +396,10 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--model", default=None, help="ASR model (default: asr.model)")
     ap.add_argument("--rerun-reason", default=None)
     ap.add_argument(
+        "--label", choices=["test-informed"], default=None,
+        help="recorded in the ledger and results: e.g. a config changed after seeing the test part",
+    )  # fmt: skip
+    ap.add_argument(
         "--device", choices=["cpu", "cuda"], default=None,
         help="ASR device (default: asr.device in configs/default.yaml); compute type unchanged",
     )  # fmt: skip
@@ -432,13 +445,10 @@ def main(argv: list[str] | None = None) -> int:
              "config_hash": cfg_hash, "vad": speech.vad.model_dump(mode="json"),
              "transcript": speech.transcript.model_dump(mode="json"),
              "asr": asr_opts.model_dump(mode="json"),
-             "rerun_reason": args.rerun_reason, "versions": versions(), **_git()}  # fmt: skip
+             "rerun_reason": args.rerun_reason, "label": args.label,
+             "versions": versions(), **_git()}  # fmt: skip
     out = write_results(paths, part, args.condition, scores, extras, summary, meta)
-    record(paths, {"run": args.run, "part": part, "condition": args.condition,
-                   "config_hash": cfg_hash, "passed": summary.passed, "commit": meta["commit"],
-                   "rerun_reason": args.rerun_reason,
-                   "finished": datetime.now(UTC).isoformat(timespec="seconds"),
-                   "result": out.name})  # fmt: skip
+    record(paths, ledger_entry(meta, summary.passed, out.name))
     print(json.dumps(summary.model_dump(mode="json"), indent=1))
     print(f"wrote {out.relative_to(REPO_ROOT)}")
     return 0

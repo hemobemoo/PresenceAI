@@ -11,13 +11,14 @@ counts the words the rule would remove, split into
 and the mean wpm error with the removed words left out (rate.word_rate, as the app computes it).
 
 Rules (a word is kept when ...):
-- ends:      its span touches [first speech onset - tol, last speech offset + tol] (ADR 0015)
+- end:       it starts at or before the last speech offset + tol (ADR 0015, as changed)
+- ends:      its span touches [first speech onset - tol, last speech offset + tol] (first rule)
 - regions:   its span touches some speech region widened by tol (also checks pauses)
 - mid_ends:  its midpoint lies in [first onset - tol, last offset + tol]
 - mid_regions: its midpoint lies in some region widened by tol
 
-Writes experiments/results/e2/<run>_dev_outside_speech.csv and prints the words the chosen rule
-(ends, configs/default.yaml tolerance) removes.
+Writes experiments/results/e2/<run>_dev_outside_speech.csv and prints the words the rule in use
+(end, configs/default.yaml tolerance) removes.
 """
 
 from __future__ import annotations
@@ -39,7 +40,7 @@ from presenceai.settings import get_settings
 from presenceai.speech import audio, rate, vad
 
 TOLERANCES = (0.0, 0.05, 0.1, 0.2, 0.3, 0.5)
-RULES = ("ends", "regions", "mid_ends", "mid_regions")
+RULES = ("end", "ends", "regions", "mid_ends", "mid_regions")
 FILLERS = {"um", "uh", "er", "erm", "hmm", "mm"}
 
 _spec = importlib.util.spec_from_file_location("e2_run", Path(__file__).with_name("run.py"))
@@ -59,6 +60,8 @@ def keeper(regions: tuple[SpeechRegion, ...], tol: float, rule: str) -> Callable
 
     def keep(w: Word) -> bool:
         mid = (w.start_s + w.end_s) / 2
+        if rule == "end":
+            return w.start_s <= last
         if rule == "ends":
             return w.end_s >= first and w.start_s <= last
         if rule == "regions":
@@ -116,7 +119,7 @@ def main(argv: list[str] | None = None) -> int:
     base_err: list[float] = []
     extra_total = 0
     chosen: list[tuple[str, str, float, float, float, str]] = []
-    tol_cfg = speech.transcript.edge_tolerance_s
+    tol_cfg = speech.transcript.end_tolerance_s
     cache_dirs: set[str] = set()
     for truth in truths:
         clip = paths.clips / f"{truth.clip_id}.flac"
@@ -139,7 +142,7 @@ def main(argv: list[str] | None = None) -> int:
                         continue
                     cell["real" if is_real else "extra"] += 1
                     cell["clips"].add(truth.clip_id)
-                    if rule == "ends" and tol == tol_cfg:
+                    if rule == "end" and tol == tol_cfg:
                         chosen.append((truth.clip_id, w.text, round(w.start_s, 2),
                                        round(w.end_s, 2), round(w.probability, 2),
                                        "real" if is_real else "extra"))  # fmt: skip
@@ -161,7 +164,7 @@ def main(argv: list[str] | None = None) -> int:
     print(json.dumps({"dev_clips": len(truths), "words_not_in_script": extra_total,
                       "cache": sorted(cache_dirs)}, indent=1))  # fmt: skip
     print(out.read_text(encoding="utf-8"))
-    print(f"removed by 'ends' at {tol_cfg} s (configs/default.yaml):")
+    print(f"removed by 'end' at {tol_cfg} s (configs/default.yaml):")
     for row in chosen:
         print("  ", row)
     print(f"wrote {out.relative_to(REPO_ROOT) if out.is_relative_to(REPO_ROOT) else out}")

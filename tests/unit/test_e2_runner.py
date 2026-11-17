@@ -160,7 +160,7 @@ def test_config_hash_changes_with_vad_values():
 def test_config_hash_changes_with_the_trim_tolerance():
     asr_opts = Settings(_env_file=None).asr  # pyright: ignore[reportCallIssue]
     a = run.config_hash(EV, SPEECH, asr_opts, "whisper_small")
-    tr = SPEECH.transcript.model_copy(update={"edge_tolerance_s": 0.5})
+    tr = SPEECH.transcript.model_copy(update={"end_tolerance_s": 0.5})
     b = run.config_hash(EV, SPEECH.model_copy(update={"transcript": tr}), asr_opts, "whisper_small")
     assert a != b
 
@@ -186,3 +186,12 @@ def test_evaluate_drops_words_after_the_last_speech(tmp_path: Path):
     assert [s.wpm_measured for s in tail] == [s.wpm_measured for s in clean]
     assert all(x["words_outside_speech"] == 4 for x in extras_tail)
     assert all(x["words_outside_speech"] == 0 for x in extras_clean)
+
+
+def test_ledger_entry_carries_a_test_informed_label():
+    meta = {"run": "f1", "part": "test", "condition": "clean", "config_hash": "abc",
+            "commit": "c0ffee", "rerun_reason": None, "label": "test-informed"}  # fmt: skip
+    e = run.ledger_entry(meta, True, "f1_test_clean_x_summary.json")
+    assert e["label"] == "test-informed" and e["passed"] is True and e["config_hash"] == "abc"
+    plain = run.ledger_entry(meta | {"label": None}, None, "r.json")
+    assert "label" not in plain and plain["result"] == "r.json"

@@ -1,4 +1,4 @@
-"""speech/trim.py: words Whisper invents before the first or after the last speech (ADR 0015).
+"""speech/trim.py: words Whisper invents after the last speech (ADR 0015, end only).
 
 C1 clip s10_r0 is the model case: after the last sentence ("... useful for all.") Whisper added
 "Thank you very much for joining us. Thank you." squeezed into the trailing silence.
@@ -31,11 +31,11 @@ def regions(sb: Any, spans: Any) -> Any:
 def cfg(speech_cfg: Any, tol: float | None = None) -> Any:
     if tol is None:
         return speech_cfg.transcript
-    return speech_cfg.transcript.model_copy(update={"edge_tolerance_s": tol})
+    return speech_cfg.transcript.model_copy(update={"end_tolerance_s": tol})
 
 
 def test_tolerance_comes_from_config(speech_cfg: Any):
-    assert speech_cfg.transcript.edge_tolerance_s == 0.2  # ADR 0015 (provisional)
+    assert speech_cfg.transcript.end_tolerance_s == 0.2  # ADR 0015 (provisional)
 
 
 def test_invented_words_after_the_last_speech_are_dropped(sb: Any, speech_cfg: Any):
@@ -68,7 +68,7 @@ def test_first_word_stretched_back_to_zero_is_kept(sb: Any, speech_cfg: Any):
     assert dropped == () and len(kept.words) == 2
 
 
-def test_tolerance_decides_at_the_edge(sb: Any, speech_cfg: Any):
+def test_tolerance_decides_at_the_end(sb: Any, speech_cfg: Any):
     t = sb.transcript([("in", 0.0, 0.9), ("near", 1.15, 1.3), ("far", 1.35, 1.5)])
     r = regions(sb, [(0.0, 1.0)])
     _, dropped = trim.trim_to_speech(t, r, cfg(speech_cfg))  # 0.2 s: near kept, far dropped
@@ -77,11 +77,12 @@ def test_tolerance_decides_at_the_edge(sb: Any, speech_cfg: Any):
     assert [w.text for w in dropped0] == ["near", "far"]
 
 
-def test_words_before_the_first_speech_are_dropped(sb: Any, speech_cfg: Any):
-    t = sb.transcript([("Thanks.", 0.1, 0.3), ("Hello", 2.0, 2.4), ("all", 2.5, 2.9)])
-    kept, dropped = trim.trim_to_speech(t, regions(sb, [(2.0, 3.0)]), cfg(speech_cfg))
-    assert [w.text for w in dropped] == ["Thanks."]
-    assert kept.text == "Hello all"
+def test_words_before_the_first_speech_are_kept(sb: Any, speech_cfg: Any):
+    """E2 test part (ADR 0015): Whisper put the real first word "When" at 0.00-0.22 s while
+    speech started at 0.51 s. A start rule removed it, so words before speech now stay."""
+    t = sb.transcript([("When", 0.0, 0.22), ("I", 0.6, 0.7), ("moved", 0.75, 1.1)])
+    kept, dropped = trim.trim_to_speech(t, regions(sb, [(0.51, 1.2)]), cfg(speech_cfg))
+    assert dropped == () and kept.text == "When I moved"
 
 
 def test_no_speech_drops_every_word(sb: Any, speech_cfg: Any):
@@ -107,13 +108,13 @@ def test_offsets_are_rebuilt_and_segments_follow_kept_words(speech_cfg: Any, sb:
             Segment(start_s=9.0, end_s=9.0, words=w3, avg_logprob=-1.0, no_speech_prob=0.6),
         ),
     )  # fmt: skip
-    kept, dropped = trim.trim_to_speech(t, regions(sb, [(2.0, 3.0)]), cfg(speech_cfg))
-    assert [w.text for w in dropped] == ["Thanks.", "Bye."]
-    assert kept.text == "Hello all."
-    (seg,) = kept.segments
-    assert (seg.start_s, seg.end_s) == (2.0, 2.9)  # narrowed to the kept words
+    kept, dropped = trim.trim_to_speech(t, regions(sb, [(0.1, 2.5)]), cfg(speech_cfg))
+    assert [w.text for w in dropped] == ["Bye."]
+    assert kept.text == "Thanks. Hello all."
+    (seg,) = kept.segments  # the second segment held only the removed word
+    assert (seg.start_s, seg.end_s) == (0.0, 2.9)  # untouched: it lost no word
     assert (seg.avg_logprob, seg.no_speech_prob) == (-0.2, 0.1)
-    assert [(w.start_char, w.end_char) for w in kept.words] == [(0, 5), (6, 10)]
+    assert [(w.start_char, w.end_char) for w in kept.words] == [(0, 7), (8, 13), (14, 18)]
     for w in kept.words:
         assert kept.text[w.start_char : w.end_char] == w.text
 
@@ -143,3 +144,11 @@ def test_an_invented_word_never_appears_in_an_evidence_quote(sb: Any, speech_cfg
         assert q in kept.text
         for w in q.split():
             assert w not in TAIL, f"invented word {w!r} quoted"
+
+
+def test_a_segment_losing_its_last_words_is_narrowed(sb: Any, speech_cfg: Any):
+    t = sb.transcript([("all", 0.5, 0.9), ("Thank", 3.0, 3.2), ("you.", 3.2, 3.4)])
+    kept, dropped = trim.trim_to_speech(t, regions(sb, [(0.5, 1.0)]), cfg(speech_cfg))
+    assert [w.text for w in dropped] == ["Thank", "you."]
+    (seg,) = kept.segments
+    assert (seg.start_s, seg.end_s) == (0.5, 0.9)

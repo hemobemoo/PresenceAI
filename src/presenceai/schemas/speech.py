@@ -236,7 +236,7 @@ class SpeechReport(_Frozen):
     model: str = Field(min_length=1)  # key under `asr:` in configs/models.yaml
     transcript: Transcript  # words outside speech already removed (ADR 0015)
     asr_quality: AsrQuality
-    # Words Whisper wrote before the first or after the last speech: never measured or quoted.
+    # Words Whisper wrote after the last speech (or all, with no speech): never measured or quoted.
     words_outside_speech: tuple[Word, ...] = ()
     speech_regions: tuple[SpeechRegion, ...] = ()
     pauses: tuple[PauseEvent, ...] = ()

@@ -1,13 +1,15 @@
-"""Remove words Whisper invents before the first or after the last speech (ADR 0015).
+"""Remove words Whisper invents after the last speech (ADR 0015).
 
-Base Whisper sometimes writes text into silence, mostly at the end of a recording (C1 clip
-s10_r0: "Thank you very much for joining us. Thank you." after the last sentence). Such words
-would raise `rate.wpm` and could be quoted back as the user's own words (AGENTS.md rule 4).
+Base Whisper sometimes writes text into silence at the end of a recording (C1 clip s10_r0:
+"Thank you very much for joining us. Thank you." after the last sentence). Such words would
+raise `rate.wpm` and could be quoted back as the user's own words (AGENTS.md rule 4).
 
-Rule ("ends only"): a word is removed when it ends before the first VAD speech onset minus
-`edge_tolerance_s`, or starts after the last speech offset plus `edge_tolerance_s`. Words in
-pauses between speech regions are kept, because Whisper's word times often drift into pauses.
-With no speech regions at all, every word is removed.
+Rule ("end only"): a word is removed when it starts after the last VAD speech offset plus
+`end_tolerance_s`. Words before the first speech are kept: Whisper often squeezes the real first
+word into the start of the file (0.0-0.2 s) although speech starts later, and a start rule
+removed such real words in the E2 test part. Words in pauses between speech regions are kept,
+because Whisper's word times drift into pauses. With no speech regions at all, every word is
+removed.
 
 The kept words get a rebuilt `Transcript.text` and character offsets, so no evidence quote can
 contain a removed word. Removed words are returned with their original offsets, for the report.
@@ -22,19 +24,18 @@ from presenceai.settings import TranscriptSettings
 def trim_to_speech(
     transcript: Transcript, regions: tuple[SpeechRegion, ...], cfg: TranscriptSettings
 ) -> tuple[Transcript, tuple[Word, ...]]:
-    """(transcript without words outside speech, the removed words in transcript order)."""
+    """(transcript without words after the last speech, the removed words in order)."""
     if regions:
-        first = regions[0].start_s - cfg.edge_tolerance_s
-        last = regions[-1].end_s + cfg.edge_tolerance_s
+        last = regions[-1].end_s + cfg.end_tolerance_s
 
-        def inside(w: Word) -> bool:
-            return w.end_s >= first and w.start_s <= last
+        def keep(w: Word) -> bool:
+            return w.start_s <= last
     else:
 
-        def inside(w: Word) -> bool:
+        def keep(w: Word) -> bool:
             return False
 
-    dropped = tuple(w for w in transcript.words if not inside(w))
+    dropped = tuple(w for w in transcript.words if not keep(w))
     if not dropped:
         return transcript, ()
 
@@ -43,7 +44,7 @@ def trim_to_speech(
     for seg in transcript.segments:
         kept: list[Word] = []
         for w in seg.words:
-            if not inside(w):
+            if not keep(w):
                 continue
             if text:
                 text += " "

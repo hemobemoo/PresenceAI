@@ -5,7 +5,7 @@ speech rate, articulation rate and syllable pace (ADR 0011). Slice 3: pitch trac
 per recording), fillers (lexicon + acoustic candidates), discourse markers and repetitions
 (ADR 0012). Slice 4: relative loudness (clipping on the original samples, noise, browser
 processing, optional baseline) and pitch variation from the same pitch track (ADR 0013).
-Words Whisper invents before the first or after the last speech are removed right after VAD,
+Words Whisper invents after the last speech are removed right after VAD,
 before any measure or quote (ADR 0015).
 """
 
