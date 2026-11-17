@@ -94,6 +94,8 @@ def package_b64() -> str:
         for rel in PACKAGE_FILES:
             data = (REPO_ROOT / rel).read_bytes().replace(b"\r\n", b"\n")
             info = zipfile.ZipInfo(rel, date_time=(2026, 1, 1, 0, 0, 0))  # stable bytes
+            info.create_system = 3  # Unix on every machine (Windows would write 0)
+            info.external_attr = 0o644 << 16
             z.writestr(info, data)
     return base64.b64encode(buf.getvalue()).decode("ascii")
 
