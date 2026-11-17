@@ -63,6 +63,10 @@ Started 2026-11-17. Kept up to date as experiments report (FINAL_11 §6).
   - stray invented words in the middle of a recording (in s10_r0, a stray "and" and "I").
 
   These still count towards speech rate and can appear in quotes.
+- **Real first words can be removed.** Whisper sometimes squeezes the first word into the start
+  of the file (0.00–0.22 s) although speech starts later. The word then lies more than 0.2 s
+  before the first detected speech, and the rule removes it. In the E2 test part this happened
+  in 1 of 201 clean clips ("When") and in 3 of 201 clips at 20 dB noise (ADR 0015).
 - **The 0.2 s margin is provisional.** It rests on one example in synthetic speech. On real
   recordings, VAD can miss a quiet last word, and the rule would then remove a word that was
   really said. It is re-checked on the owner's recordings (B1).

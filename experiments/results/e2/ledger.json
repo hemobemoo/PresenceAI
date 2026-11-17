@@ -75,5 +75,49 @@
   "rerun_reason": null,
   "finished": "2026-11-17T21:44:34+00:00",
   "result": "f1_test_snr10_20261117-214434_summary.json"
+ },
+ {
+  "run": "f1",
+  "part": "dev",
+  "condition": "clean",
+  "config_hash": "35df562d1acd331a",
+  "passed": null,
+  "commit": "6d0eadaf4c9f43a2d1ccd00836ae04b3d6dedfc1",
+  "rerun_reason": null,
+  "finished": "2026-11-17T22:21:50+00:00",
+  "result": "f1_dev_clean_20261117-222150_summary.json"
+ },
+ {
+  "run": "f1",
+  "part": "test",
+  "condition": "clean",
+  "config_hash": "35df562d1acd331a",
+  "passed": true,
+  "commit": "6d0eadaf4c9f43a2d1ccd00836ae04b3d6dedfc1",
+  "rerun_reason": null,
+  "finished": "2026-11-17T22:22:32+00:00",
+  "result": "f1_test_clean_20261117-222232_summary.json"
+ },
+ {
+  "run": "f1",
+  "part": "test",
+  "condition": "snr20",
+  "config_hash": "35df562d1acd331a",
+  "passed": null,
+  "commit": "6d0eadaf4c9f43a2d1ccd00836ae04b3d6dedfc1",
+  "rerun_reason": null,
+  "finished": "2026-11-17T22:23:26+00:00",
+  "result": "f1_test_snr20_20261117-222326_summary.json"
+ },
+ {
+  "run": "f1",
+  "part": "test",
+  "condition": "snr10",
+  "config_hash": "35df562d1acd331a",
+  "passed": null,
+  "commit": "6d0eadaf4c9f43a2d1ccd00836ae04b3d6dedfc1",
+  "rerun_reason": null,
+  "finished": "2026-11-17T22:24:18+00:00",
+  "result": "f1_test_snr10_20261117-222418_summary.json"
  }
 ]

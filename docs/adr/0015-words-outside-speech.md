@@ -80,3 +80,18 @@ Baseline: 185 extra words, mean wpm error 1.070 %.
 - A live or streaming path that uses Whisper later must apply the same rule before quoting.
 - What would show this decision is wrong: B1 or TED-LIUM clips where a removed word is in the
   reference transcript.
+
+## Observed in the E2 test run (2026-11-18)
+
+Config `35df562d1acd331a`, results in `experiments/results/e2/f1_adr15_results.md`. The clean
+test part passes: wpm error 0.94 %, pause F1 0.970 / 0.982, duration error 0.076 s. The rule
+also works as intended at the end of a recording: s17_r0's invented "… see you in the next
+video." was removed.
+
+At the start of a recording, however, the rule removed real first words: "When" in s05_r4 in
+all three conditions, plus "A" and "We've" at 20 dB. Whisper sometimes squeezes the real first
+word into 0.00–0.22 s while speech starts at about 0.5 s. This did not happen on the
+development part, so the ADR's "0 real words" holds only there.
+
+How to change the rule is the owner's decision. A change made now would be informed by the
+test part (ADR 0014), so this is recorded here and the rule is unchanged.
