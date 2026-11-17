@@ -30,14 +30,16 @@ tokens". This ADR fixes how C1 is built, how truth is measured, and how E2 is sc
   1. before synthesis, every script word is looked up in misaki's own word lists (`us_gold`,
      `us_silver`, and `gb_*` for the British voices); a word missing from them stops the run;
   2. misaki's espeak fallback is replaced by a function that raises, so a call stops the run;
-  3. every generated token must have a word-list rating; the result is written to
-     `resources/c1/lexicon_check.json`, and a fast CI test fails if any script word is missing
-     from it or has no rating.
+  3. every word token must get phonemes; misaki 0.9.4 puts no rating on word tokens, so the
+     check records whether each word came from misaki's gold list, silver list or its rules
+     (e.g. -s, -ing). The result is written to `resources/c1/lexicon_check.json`, and a fast
+     CI test fails if any script word is missing from it.
 - Downloads (approved 2026-11-17), at revision `f3ff3571…`, each checked against the SHA-256 in
   the Hub's LFS metadata: `kokoro-v1_0.pth` and six voice files. `config.json` is not an LFS
   file and is checked by its git blob id. spaCy's `en_core_web_sm` 3.8.0 (MIT) comes from
   spaCy's own release page, which publishes no digest: its SHA-256 is recorded on the first
-  download and pinned in `c1.generator.spacy_model.sha256` for later runs.
+  download and pinned in `c1.generator.spacy_model.sha256` for later runs (recorded in Colab run
+  t1: `1932429d…`).
 
 ### 2. Scripts
 
@@ -123,7 +125,9 @@ reported next to it. Seed 20261117 per clip.
 
 ### 8. Where things run
 
-- Generation: Colab T4. The first run checks all 60 scripts against the word lists and times
+- Generation: Colab T4. Colab's kernel is Python 3.13 and kokoro 0.9.4 needs < 3.13, so the
+  generator runs in its own venv on the image's Ubuntu Python 3.12 (nothing extra downloaded).
+  The first run checks all 60 scripts against the word lists and times
   5 clips; the rest is generated only after the owner has seen that timing.
 - E2 and the noise runs need no GPU and no laptop-specific value; only E8 timing does. They can
   run on a Colab or Kaggle CPU with the app's pipeline (the whisper-small CTranslate2 int8 model

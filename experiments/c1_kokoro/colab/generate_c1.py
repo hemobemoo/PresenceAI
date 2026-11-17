@@ -161,8 +161,8 @@ class KokoroTTS:
         for r in pipe(text, voice=str(self.paths[f"voices/{voice}.pt"]), speed=speed,
                       split_pattern=None):  # fmt: skip
             for tk in r.tokens or []:
-                if tk.text.isalpha() and (tk._ is None or tk._.rating is None):
-                    raise RuntimeError(f"{tk.text!r} has no word-list rating; stopping")
+                if tk.text.isalpha() and not tk.phonemes:
+                    raise RuntimeError(f"{tk.text!r} got no phonemes; stopping")
             parts.append(r.audio.detach().cpu().numpy().astype(np.float32))
         if not parts:
             raise RuntimeError(f"no audio for {text!r}")
@@ -172,13 +172,25 @@ class KokoroTTS:
 # --- generation (also run locally in tests with a fake TTS) ----------------------------------
 
 
+def _source(g2p: Any, word: str) -> str:
+    """Which part of misaki covers a word: its gold list, its silver list, or its rules
+    (e.g. -s, -ed, -ing on a listed stem). misaki 0.9.4 puts no rating on word tokens."""
+    lex = getattr(g2p, "lexicon", None)
+    for name in ("golds", "silvers"):
+        table = getattr(lex, name, None) or {}
+        if word in table or word.capitalize() in table:
+            return name[:-1]
+    return "rule"
+
+
 def check_words(scripts: Any, cfg: Any, g2p_for: Any) -> dict[str, Any]:
-    """Run misaki's G2P over every phrase and filler; record each word's lowest rating."""
-    words: dict[str, dict[str, int | None]] = {}
+    """Run misaki's G2P over every phrase and filler. A word is known if it got phonemes and
+    the espeak guard was never asked for it; its source is recorded for the record."""
+    words: dict[str, dict[str, str | None]] = {}
     missing: dict[str, list[str]] = {}
     for code in sorted(set(cfg.voices.values())):
         g2p = g2p_for(code)
-        rated: dict[str, int | None] = {}
+        found: dict[str, str | None] = {}
         before = len(GuardFallback.calls)
         texts = [p.text for s in scripts if cfg.voices[s.voice] == code for p in s.phrases]
         texts += list(cfg.fillers.tokens)
@@ -187,16 +199,15 @@ def check_words(scripts: Any, cfg: Any, g2p_for: Any) -> dict[str, Any]:
             for tk in tokens:
                 if not tk.text.isalpha():
                     continue
-                r = tk._.rating if tk._ is not None else None
                 w = tk.text.lower()
-                old = rated.get(w, 99)
-                rated[w] = None if r is None or old is None else min(int(r), int(old))
+                ok = bool(tk.phonemes) and found.get(w, "") is not None
+                found[w] = _source(g2p, w) if ok else None
         needed = {w.lower() for t in texts for w in re.findall(r"[A-Za-z]+", t)}
-        for w in needed - set(rated):
-            rated[w] = None
+        for w in needed - set(found):
+            found[w] = None
         fell_back = {w.lower() for w in GuardFallback.calls[before:]}
-        missing[code] = sorted({w for w, r in rated.items() if r is None} | fell_back)
-        words[code] = {w: (None if w in fell_back else r) for w, r in sorted(rated.items())}
+        words[code] = {w: (None if w in fell_back else v) for w, v in sorted(found.items())}
+        missing[code] = sorted(w for w, v in words[code].items() if v is None)
     return {"words": words, "missing": missing}
 
 

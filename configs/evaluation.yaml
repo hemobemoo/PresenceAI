@@ -51,7 +51,7 @@ c1:                                  # ADR 0014: synthetic English speech for E2
     pip: ["kokoro==0.9.4", "misaki[en]==0.9.4", "soundfile"]  # Colab only, never in pyproject
     spacy_model:                     # misaki's tokenizer; official wheel, MIT
       url: https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl
-      sha256: null                   # no published digest: recorded on the first download, then pinned here
+      sha256: 1932429db727d4bff3deed6b34cfc05df17794f4a52eeb26cf8928f7c1a0fb85  # recorded on the first download (Colab run t1, 2026-11-17)
   voices:                            # 10 scripts each; misaki lang code a = American, b = British
     af_heart: a
     af_bella: a

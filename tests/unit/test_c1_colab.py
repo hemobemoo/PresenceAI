@@ -74,17 +74,22 @@ def test_the_generator_reads_no_secret_and_pins_every_download():
 @dataclass
 class Tok:
     text: str
-    _: Any = None
+    phonemes: str | None = None
 
 
 @dataclass
-class Rating:
-    rating: int | None
+class FakeLexicon:
+    golds: dict[str, str] = field(default_factory=lambda: {"um": "ʌm"})
+    silvers: dict[str, str] = field(default_factory=dict)
 
 
 @dataclass
 class FakeG2P:
+    """Like misaki 0.9.4: word tokens carry phonemes but no rating; unknown words go to the
+    fallback (here the guard) and get no phonemes."""
+
     unknown: set[str] = field(default_factory=set)
+    lexicon: FakeLexicon = field(default_factory=FakeLexicon)
 
     def __call__(self, text: str) -> tuple[str, list[Tok]]:
         import re
@@ -93,9 +98,9 @@ class FakeG2P:
         for w in re.findall(r"[A-Za-z]+|[,.?!]", text):
             if w.lower() in self.unknown:
                 gen.GuardFallback(british=False)(Tok(w))  # what misaki would do
-                toks.append(Tok(w, Rating(None)))
+                toks.append(Tok(w, None))
             else:
-                toks.append(Tok(w, Rating(4)))
+                toks.append(Tok(w, "x"))
         return "", toks
 
 
@@ -108,7 +113,8 @@ def test_word_check_lists_words_the_word_lists_miss():
     )
     assert check["missing"]["a"] == ["morning"]
     assert check["missing"]["b"] == []
-    assert check["words"]["a"]["morning"] is None and check["words"]["b"]["um"] == 4
+    assert check["words"]["a"]["morning"] is None
+    assert check["words"]["b"]["um"] == "gold" and check["words"]["b"]["the"] == "rule"
 
 
 def test_guard_stops_synthesis_when_strict():
