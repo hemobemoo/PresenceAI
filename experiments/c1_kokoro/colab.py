@@ -117,6 +117,11 @@ def notebook(run_id: str, mode: str, body: str) -> dict[str, Any]:
         "                     capture_output=True, text=True).stdout.strip()\n"
         "print('GPU:', gpu or 'none')\n"
         "assert gpu, 'Choose Runtime > Change runtime type > T4 GPU'\n"
+        "import sys\n"
+        "print('Python', sys.version.split()[0])\n"
+        "# kokoro 0.9.4 and misaki 0.9.4 require Python < 3.13 (PyPI metadata)\n"
+        "assert sys.version_info < (3, 13), ('kokoro needs Python 3.12 or older: Runtime > '\n"
+        "    'Change runtime type > Runtime version: pick one with Python 3.12 or 3.11')\n"
     )
     integrity = (
         "# The script in Colab must be byte-identical to the build (SHA-256, LF line endings).\n"
