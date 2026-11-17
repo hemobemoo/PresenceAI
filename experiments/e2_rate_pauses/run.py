@@ -356,6 +356,12 @@ def versions() -> dict[str, str]:
     import importlib.metadata as md
 
     out = {"python": platform.python_version(), "cpu": platform.processor() or platform.machine()}
+    try:
+        import ctranslate2
+
+        out["cuda_devices"] = str(ctranslate2.get_cuda_device_count())
+    except ImportError:
+        pass
     for pkg in ("faster-whisper", "ctranslate2", "onnxruntime", "numpy", "librosa"):
         try:
             out[pkg] = md.version(pkg)
@@ -373,6 +379,10 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--model", default=None, help="ASR model (default: asr.model)")
     ap.add_argument("--rerun-reason", default=None)
     ap.add_argument(
+        "--device", choices=["cpu", "cuda"], default=None,
+        help="ASR device (default: asr.device in configs/default.yaml); compute type unchanged",
+    )  # fmt: skip
+    ap.add_argument(
         "--dev-min-speech-ms", type=int, default=None,
         help="development part only: try another VAD min_speech_duration_ms (ADR 0011 re-check)",
     )  # fmt: skip
@@ -389,7 +399,10 @@ def main(argv: list[str] | None = None) -> int:
 
     settings = get_settings()
     speech = settings.speech
-    model_name = args.model or settings.asr.model
+    asr_opts = settings.asr
+    if args.device is not None:  # e.g. a Colab T4: same int8 model, recorded in the results
+        asr_opts = asr_opts.model_copy(update={"device": args.device})
+    model_name = args.model or asr_opts.model
     part: Part = args.part
     if part == "dev" and args.condition != "clean":
         raise SystemExit("noise conditions are run on the test part only (ADR 0014 §7)")
@@ -398,17 +411,18 @@ def main(argv: list[str] | None = None) -> int:
             raise SystemExit("--dev-min-speech-ms is for tuning on the development part only")
         vad_cfg = speech.vad.model_copy(update={"min_speech_duration_ms": args.dev_min_speech_ms})
         speech = speech.model_copy(update={"vad": vad_cfg})
-    cfg_hash = config_hash(ev, speech, settings.asr, model_name)
+    cfg_hash = config_hash(ev, speech, asr_opts, model_name)
     check_ledger(paths, part, args.condition, cfg_hash, args.rerun_reason)
     scores, extras, meta = evaluate(
         paths, part, args.condition,
-        transcribe=cached_transcriber(paths, model_name, settings.asr),
+        transcribe=cached_transcriber(paths, model_name, asr_opts),
         vad=lambda x: vad_mod.detect_speech(x, speech.vad),
         ev=ev, speech=speech,
     )  # fmt: skip
     summary = e2.summarise(scores, ev)
     meta |= {"run": args.run, "part": part, "condition": args.condition, "model": model_name,
              "config_hash": cfg_hash, "vad": speech.vad.model_dump(mode="json"),
+             "asr": asr_opts.model_dump(mode="json"),
              "rerun_reason": args.rerun_reason, "versions": versions(), **_git()}  # fmt: skip
     out = write_results(paths, part, args.condition, scores, extras, summary, meta)
     record(paths, {"run": args.run, "part": part, "condition": args.condition,
