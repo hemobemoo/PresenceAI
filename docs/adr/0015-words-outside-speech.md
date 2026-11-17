@@ -118,3 +118,7 @@ test part (ADR 0014), so this is recorded here and the rule is unchanged.
   rule is right.
 - **The independent check is B1** (the owner's real recordings). Count real words removed by
   the end rule. Count the invented words left at the start and after the end, for description.
+- **Result of the amended config** (`7358b999f775ea05`, test-informed,
+  `experiments/results/e2/f1_adr15_results.md`): the clean test part passes with wpm error
+  0.93 %, F1 0.970 / 0.982 and duration error 0.076 s. No real first word is removed; the 9
+  words removed (s17_r0) are invented.

@@ -15,9 +15,9 @@ Every measure is a `Measurement(value, unit, confidence, method, evidence[], lan
 
 | Measure | Live? | Definition | Notes |
 |---|---|---|---|
-| Speech rate (wpm) | Post | Words ÷ speaking time; 10 s sliding windows | Targets are relative to the user's own baseline band, never one absolute norm |
+| Speech rate (wpm) | Post | Words ÷ speaking time (first speech onset to last offset); 10 s sliding windows. Words Whisper writes after the last detected speech are removed first (ADR 0015) | Targets are relative to the user's own baseline band, never one absolute norm |
 | Pace estimate (syll/s) | **Live** | Syllable nuclei from intensity peaks in voiced regions, 5 s window | No ASR needed; works for Arabic |
-| Articulation rate | Post | Words ÷ voiced time | — |
+| Articulation rate | Post | Words ÷ time inside VAD speech regions (ADR 0011) | — |
 | Pauses | Live (timer) + Post | Gaps ≥ 0.25 / 1.0 / 2.0 s from VAD; count, mean, p90, longest, position (mid-sentence vs boundary) | Boundary pauses are not penalised |
 | Fillers per 100 words | Post | Fusion of (a) hesitation lexicon on the transcript (T1 verbatim once available), (b) acoustic candidates (voiced, no aligned word, low pitch variance; provisional values); confidence high if both agree. Discourse markers ("like", "you know", "يعني", "طيب") are counted separately as information only, as upper bounds (ADR 0012) | With base Whisper: "at least N per 100 words" (lower bound), confidence capped medium (EN) / low (AR); acoustic-only candidates shown separately as extra, low-confidence candidates, no range. With T1 (verbatim): a range, lexicon to lexicon + acoustic-only (ADR 0012) |
 | Repetitions / false starts | Post | Repeated 1–3-grams within 2 s (same normalisation as fillers, incl. Arabic; hesitations skipped); false starts from T1 transcript marks, **not measured until T1 (P4)** | Lower bound with base Whisper (ADR 0012) |
