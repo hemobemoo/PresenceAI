@@ -1,0 +1,183 @@
+{
+ "clip_id": "s14_r2",
+ "script_id": "s14",
+ "voice": "af_bella",
+ "render": 2,
+ "sample_rate": 24000,
+ "duration_s": 41.776625,
+ "words": 109,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 41.276625,
+ "speech_spans": [
+  [
+   0.5,
+   2.6435416666666667
+  ],
+  [
+   2.8065416666666665,
+   4.467791666666667
+  ],
+  [
+   4.779791666666667,
+   5.391541666666667
+  ],
+  [
+   5.527541666666667,
+   7.005041666666667
+  ],
+  [
+   8.333041666666666,
+   9.399208333333334
+  ],
+  [
+   10.190208333333333,
+   11.602416666666667
+  ],
+  [
+   12.528416666666667,
+   15.2555
+  ],
+  [
+   16.0125,
+   17.652125
+  ],
+  [
+   17.779125,
+   18.410166666666665
+  ],
+  [
+   19.684166666666666,
+   21.241208333333333
+  ],
+  [
+   21.339208333333332,
+   22.273541666666667
+  ],
+  [
+   22.771541666666668,
+   24.030916666666666
+  ],
+  [
+   26.058916666666665,
+   27.438541666666666
+  ],
+  [
+   28.736541666666668,
+   30.346833333333333
+  ],
+  [
+   31.299833333333332,
+   32.44108333333333
+  ],
+  [
+   32.78808333333333,
+   34.061458333333334
+  ],
+  [
+   34.174458333333334,
+   35.19345833333333
+  ],
+  [
+   38.094458333333336,
+   39.30354166666667
+  ],
+  [
+   39.893541666666664,
+   41.276625
+  ]
+ ],
+ "wpm": 160.38600546268847,
+ "articulation_wpm": 250.22358472067455,
+ "target_wpm": 155.0,
+ "speed": 1.0062990495964388,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 4.467791666666667,
+   "end_s": 4.779791666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 7.005041666666667,
+   "end_s": 8.333041666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 9.399208333333334,
+   "end_s": 10.190208333333333,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 11.602416666666667,
+   "end_s": 12.528416666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 15.2555,
+   "end_s": 16.0125,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 18.410166666666665,
+   "end_s": 19.684166666666666,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 22.273541666666667,
+   "end_s": 22.771541666666668,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 24.030916666666666,
+   "end_s": 26.058916666666665,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 27.438541666666666,
+   "end_s": 28.736541666666668,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 30.346833333333333,
+   "end_s": 31.299833333333332,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 32.44108333333333,
+   "end_s": 32.78808333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 35.19345833333333,
+   "end_s": 38.094458333333336,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 39.30354166666667,
+   "end_s": 39.893541666666664,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 6,
+   "start_s": 13.900166666666667,
+   "end_s": 14.065833333333334
+  }
+ ],
+ "text": "Many of us work for hours without a break. We think it helps us finish faster. In fact, the opposite is often true. After a long stretch, our attention starts to drift. We look at the same line twice and make small errors. A short break can reset the mind. Stand up, stretch and look out of a window. Walk to the kitchen and pour a glass of water. Five minutes is often enough. Some people work for fifty minutes and then rest for ten. Find a rhythm that suits you. Your work will be better, and your day will feel lighter. Try it for a week and compare."
+}

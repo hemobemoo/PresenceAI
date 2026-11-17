@@ -1,0 +1,153 @@
+{
+ "clip_id": "s36_r4",
+ "script_id": "s36",
+ "voice": "am_fenrir",
+ "render": 4,
+ "sample_rate": 24000,
+ "duration_s": 36.042833333333334,
+ "words": 111,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 35.542833333333334,
+ "speech_spans": [
+  [
+   0.5,
+   2.09825
+  ],
+  [
+   2.24425,
+   2.7879583333333335
+  ],
+  [
+   3.2649583333333334,
+   4.000333333333334
+  ],
+  [
+   4.081333333333333,
+   5.9580416666666665
+  ],
+  [
+   6.078041666666667,
+   6.973083333333333
+  ],
+  [
+   7.109083333333333,
+   8.182208333333334
+  ],
+  [
+   10.269208333333333,
+   12.525291666666666
+  ],
+  [
+   13.259291666666666,
+   13.955125
+  ],
+  [
+   14.735125,
+   15.469458333333334
+  ],
+  [
+   15.638458333333332,
+   16.765541666666667
+  ],
+  [
+   16.913541666666667,
+   17.832083333333333
+  ],
+  [
+   17.902083333333334,
+   19.61825
+  ],
+  [
+   22.42225,
+   23.206416666666666
+  ],
+  [
+   23.356416666666668,
+   24.233541666666667
+  ],
+  [
+   26.503541666666667,
+   27.06525
+  ],
+  [
+   27.18425,
+   28.313125
+  ],
+  [
+   28.681125,
+   29.399041666666665
+  ],
+  [
+   30.044041666666665,
+   31.192291666666666
+  ],
+  [
+   31.937291666666667,
+   35.542833333333334
+  ]
+ ],
+ "wpm": 190.05312546074566,
+ "articulation_wpm": 289.64287526365763,
+ "target_wpm": 191.0,
+ "speed": 1.3043846100575505,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 2.7879583333333335,
+   "end_s": 3.2649583333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 8.182208333333334,
+   "end_s": 10.269208333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 12.525291666666666,
+   "end_s": 13.259291666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 13.955125,
+   "end_s": 14.735125,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 19.61825,
+   "end_s": 22.42225,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 24.233541666666667,
+   "end_s": 26.503541666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 28.313125,
+   "end_s": 28.681125,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 29.399041666666665,
+   "end_s": 30.044041666666665,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 31.192291666666666,
+   "end_s": 31.937291666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [],
+ "text": "Our attention is pulled in many directions every day. Messages arrive, alarms ring and tabs multiply on the screen. To do focused work, I protect blocks of time. I choose one task and set a timer for forty minutes. During that time, I shut my email and put my phone in another room. If a new idea appears, I write it on a note and return to the task. When the timer ends, I take a short break. Most days, I manage three of these blocks. That is often enough to finish the work that matters. Protecting your attention is one of the most useful skills you can build at work."
+}

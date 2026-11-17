@@ -1,0 +1,161 @@
+{
+ "clip_id": "s41_r1",
+ "script_id": "s41",
+ "voice": "bf_emma",
+ "render": 1,
+ "sample_rate": 24000,
+ "duration_s": 48.561416666666666,
+ "words": 116,
+ "fillers": 1,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 48.061416666666666,
+ "speech_spans": [
+  [
+   0.5,
+   1.5735833333333333
+  ],
+  [
+   1.7505833333333334,
+   3.1399583333333334
+  ],
+  [
+   3.5259583333333335,
+   5.562666666666667
+  ],
+  [
+   7.237666666666667,
+   8.487375
+  ],
+  [
+   8.654375,
+   10.627833333333333
+  ],
+  [
+   10.794833333333333,
+   12.094541666666666
+  ],
+  [
+   13.350541666666667,
+   15.398791666666666
+  ],
+  [
+   15.581791666666666,
+   16.838708333333333
+  ],
+  [
+   17.943708333333333,
+   20.538333333333334
+  ],
+  [
+   20.874333333333333,
+   24.636
+  ],
+  [
+   25.118,
+   27.529791666666668
+  ],
+  [
+   27.681791666666665,
+   29.432708333333334
+  ],
+  [
+   31.767708333333335,
+   33.336625
+  ],
+  [
+   33.440625,
+   34.940333333333335
+  ],
+  [
+   35.70933333333333,
+   36.223416666666665
+  ],
+  [
+   36.357416666666666,
+   38.077416666666664
+  ],
+  [
+   38.436416666666666,
+   40.05825
+  ],
+  [
+   40.21225,
+   41.586333333333336
+  ],
+  [
+   41.714333333333336,
+   43.62408333333333
+  ],
+  [
+   43.72408333333333,
+   45.617916666666666
+  ],
+  [
+   45.758916666666664,
+   48.061416666666666
+  ]
+ ],
+ "wpm": 146.33710448069777,
+ "articulation_wpm": 186.83853186791555,
+ "target_wpm": 137.0,
+ "speed": 0.8711056932575174,
+ "attempts": 3,
+ "pauses": [
+  {
+   "start_s": 3.1399583333333334,
+   "end_s": 3.5259583333333335,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 5.562666666666667,
+   "end_s": 7.237666666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 12.094541666666666,
+   "end_s": 13.350541666666667,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 16.838708333333333,
+   "end_s": 17.943708333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 20.538333333333334,
+   "end_s": 20.874333333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 24.636,
+   "end_s": 25.118,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 29.432708333333334,
+   "end_s": 31.767708333333335,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 34.940333333333335,
+   "end_s": 35.70933333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 38.077416666666664,
+   "end_s": 38.436416666666666,
+   "position": "clause_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [],
+ "text": "Every month, I spend one day walking in the hills near my town. I leave early, before the paths become busy. I pack water, a sandwich and a warm jacket, even in summer. The weather in the hills can change very quickly. I follow marked paths and carry a paper map as well as my phone. Walking for several hours clears my head in a way nothing else can. I come home tired, but with a clear head. If you have never tried it, start with a short route. Choose a clear day, and tell someone where you are going. The hills will always be there, ready for your next walk and your next view."
+}

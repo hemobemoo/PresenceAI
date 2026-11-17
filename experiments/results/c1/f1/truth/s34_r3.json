@@ -1,0 +1,189 @@
+{
+ "clip_id": "s34_r3",
+ "script_id": "s34",
+ "voice": "am_fenrir",
+ "render": 3,
+ "sample_rate": 24000,
+ "duration_s": 41.986333333333334,
+ "words": 115,
+ "fillers": 2,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 41.486333333333334,
+ "speech_spans": [
+  [
+   0.5,
+   1.399375
+  ],
+  [
+   1.460375,
+   2.531375
+  ],
+  [
+   4.142375,
+   4.978083333333333
+  ],
+  [
+   5.057083333333333,
+   5.950708333333333
+  ],
+  [
+   6.013708333333334,
+   6.381375
+  ],
+  [
+   7.961375,
+   9.516916666666667
+  ],
+  [
+   11.982916666666666,
+   12.848125
+  ],
+  [
+   15.653125,
+   16.881916666666665
+  ],
+  [
+   17.42791666666667,
+   18.03654166666667
+  ],
+  [
+   18.127541666666666,
+   18.942833333333333
+  ],
+  [
+   21.106833333333334,
+   21.82075
+  ],
+  [
+   22.83375,
+   23.166166666666665
+  ],
+  [
+   23.255166666666668,
+   23.632083333333334
+  ],
+  [
+   24.07208333333333,
+   25.595458333333333
+  ],
+  [
+   27.370458333333332,
+   29.292208333333335
+  ],
+  [
+   29.802208333333333,
+   30.134833333333333
+  ],
+  [
+   30.306833333333334,
+   31.483041666666665
+  ],
+  [
+   31.857041666666667,
+   32.595625
+  ],
+  [
+   33.926625,
+   34.645583333333335
+  ],
+  [
+   34.828583333333334,
+   35.988125
+  ],
+  [
+   37.576125,
+   38.74395833333333
+  ],
+  [
+   38.879958333333335,
+   41.486333333333334
+  ]
+ ],
+ "wpm": 168.348799193227,
+ "articulation_wpm": 314.93427458617333,
+ "target_wpm": 173.0,
+ "speed": 1.321174457110557,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 2.531375,
+   "end_s": 4.142375,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 6.381375,
+   "end_s": 7.961375,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 9.516916666666667,
+   "end_s": 11.982916666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 12.848125,
+   "end_s": 15.653125,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 16.881916666666665,
+   "end_s": 17.42791666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 18.942833333333333,
+   "end_s": 21.106833333333334,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 21.82075,
+   "end_s": 22.83375,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 23.632083333333334,
+   "end_s": 24.07208333333333,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 25.595458333333333,
+   "end_s": 27.370458333333332,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 29.292208333333335,
+   "end_s": 29.802208333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 31.483041666666665,
+   "end_s": 31.857041666666667,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 32.595625,
+   "end_s": 33.926625,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 35.988125,
+   "end_s": 37.576125,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [],
+ "text": "Some decisions are easy, and some keep us awake at night. For the difficult ones, I follow a short method. First, I write the question at the top of a page. Then I list the options, even the ones that seem unlikely. For each option, I note the main benefit and the main risk. Next, I ask what I would advise a friend to do. This simple question often makes the answer clear. If the answer is still not clear, I wait one more day. A good night of sleep can change how a problem looks. Most decisions are not final, and it is usually possible to adjust the plan later if needed."
+}

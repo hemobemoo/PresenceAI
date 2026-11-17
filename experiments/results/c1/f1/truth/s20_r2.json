@@ -1,0 +1,169 @@
+{
+ "clip_id": "s20_r2",
+ "script_id": "s20",
+ "voice": "af_bella",
+ "render": 2,
+ "sample_rate": 24000,
+ "duration_s": 43.11570833333333,
+ "words": 110,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 42.61570833333333,
+ "speech_spans": [
+  [
+   0.5,
+   2.795541666666667
+  ],
+  [
+   2.904541666666667,
+   4.934166666666667
+  ],
+  [
+   5.080166666666667,
+   7.167416666666667
+  ],
+  [
+   7.293416666666666,
+   8.387166666666667
+  ],
+  [
+   8.882166666666667,
+   10.351708333333333
+  ],
+  [
+   10.509708333333334,
+   12.108708333333333
+  ],
+  [
+   12.443708333333333,
+   15.161041666666666
+  ],
+  [
+   15.244041666666666,
+   17.00075
+  ],
+  [
+   17.58675,
+   20.116583333333335
+  ],
+  [
+   22.674583333333334,
+   25.787958333333332
+  ],
+  [
+   26.201958333333334,
+   27.296583333333334
+  ],
+  [
+   27.870583333333332,
+   29.510083333333334
+  ],
+  [
+   30.027083333333334,
+   33.16891666666667
+  ],
+  [
+   33.304916666666664,
+   33.954208333333334
+  ],
+  [
+   34.06520833333333,
+   35.44833333333333
+  ],
+  [
+   35.827333333333335,
+   37.280208333333334
+  ],
+  [
+   37.46720833333333,
+   38.67908333333333
+  ],
+  [
+   38.77308333333333,
+   40.126875
+  ],
+  [
+   40.325875,
+   42.61570833333333
+  ]
+ ],
+ "wpm": 156.71112421434205,
+ "articulation_wpm": 190.8946620598064,
+ "target_wpm": 155.0,
+ "speed": 0.8452264374247226,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 8.387166666666667,
+   "end_s": 8.882166666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 12.108708333333333,
+   "end_s": 12.443708333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 17.00075,
+   "end_s": 17.58675,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 20.116583333333335,
+   "end_s": 22.674583333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 23.677666666666667,
+   "end_s": 24.012333333333334,
+   "position": "mid_sentence",
+   "source": "kokoro"
+  },
+  {
+   "start_s": 25.787958333333332,
+   "end_s": 26.201958333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 27.296583333333334,
+   "end_s": 27.870583333333332,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 29.510083333333334,
+   "end_s": 30.027083333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 35.44833333333333,
+   "end_s": 35.827333333333335,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 6,
+   "start_s": 13.292375,
+   "end_s": 13.538416666666667
+  },
+  {
+   "phrase": 9,
+   "start_s": 23.677666666666667,
+   "end_s": 24.012333333333334
+  },
+  {
+   "phrase": 12,
+   "start_s": 30.979708333333335,
+   "end_s": 31.200791666666667
+  }
+ ],
+ "text": "Good teamwork never happens by chance. It grows from a few simple habits. The first habit is to agree on the goal at the very start. When everyone knows the goal, decisions become easier. The next habit is to share updates often, even when there is little to say. A short message can prevent a long delay. The third habit is to listen before you answer. In a busy meeting, it is tempting to speak first. But listening helps you understand the whole picture. Finally, thank people for their help. Small thanks keep a team working well together. These habits are simple, but they make a team strong and reliable."
+}

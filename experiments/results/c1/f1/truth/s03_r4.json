@@ -1,0 +1,177 @@
+{
+ "clip_id": "s03_r4",
+ "script_id": "s03",
+ "voice": "af_heart",
+ "render": 4,
+ "sample_rate": 24000,
+ "duration_s": 35.594541666666665,
+ "words": 110,
+ "fillers": 1,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 35.094541666666665,
+ "speech_spans": [
+  [
+   0.5,
+   1.1359166666666667
+  ],
+  [
+   1.2729166666666667,
+   2.17125
+  ],
+  [
+   2.33125,
+   2.643125
+  ],
+  [
+   2.744125,
+   3.40375
+  ],
+  [
+   3.52175,
+   4.324833333333333
+  ],
+  [
+   6.454833333333333,
+   7.477291666666667
+  ],
+  [
+   7.615291666666667,
+   8.642916666666666
+  ],
+  [
+   9.900916666666667,
+   10.954291666666666
+  ],
+  [
+   11.271291666666666,
+   11.919333333333332
+  ],
+  [
+   12.062333333333333,
+   13.675041666666667
+  ],
+  [
+   13.793041666666667,
+   14.376666666666667
+  ],
+  [
+   14.575666666666667,
+   15.653708333333332
+  ],
+  [
+   16.947708333333335,
+   17.600791666666666
+  ],
+  [
+   17.668791666666667,
+   18.673791666666666
+  ],
+  [
+   19.372791666666668,
+   19.956083333333332
+  ],
+  [
+   20.043083333333332,
+   20.918625
+  ],
+  [
+   21.089625,
+   21.648291666666665
+  ],
+  [
+   22.045291666666667,
+   23.119083333333332
+  ],
+  [
+   23.202083333333334,
+   23.763
+  ],
+  [
+   23.83,
+   24.816375
+  ],
+  [
+   27.662375,
+   28.937666666666665
+  ],
+  [
+   29.018666666666668,
+   29.816833333333335
+  ],
+  [
+   30.007833333333334,
+   30.902833333333334
+  ],
+  [
+   32.04783333333334,
+   32.78870833333333
+  ],
+  [
+   34.299708333333335,
+   35.094541666666665
+  ]
+ ],
+ "wpm": 190.78154188582255,
+ "articulation_wpm": 312.2702083575652,
+ "target_wpm": 191.0,
+ "speed": 1.387000780550144,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 4.324833333333333,
+   "end_s": 6.454833333333333,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 8.642916666666666,
+   "end_s": 9.900916666666667,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 10.954291666666666,
+   "end_s": 11.271291666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 15.653708333333332,
+   "end_s": 16.947708333333335,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 18.673791666666666,
+   "end_s": 19.372791666666668,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 21.648291666666665,
+   "end_s": 22.045291666666667,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 24.816375,
+   "end_s": 27.662375,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 30.902833333333334,
+   "end_s": 32.04783333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 32.78870833333333,
+   "end_s": 34.299708333333335,
+   "position": "clause_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [],
+ "text": "Last spring, I started a small garden on my balcony. I had no experience, and I had very little space. So I began with three pots, some soil and a few seeds. I chose herbs, because they grow quickly and they smell wonderful. Every evening, I checked the soil with my finger. If it felt dry, I gave the plants some water. Within a month, the first leaves appeared. By summer, I was cooking with my own basil and mint. The garden taught me patience. It also taught me that small efforts, repeated every day, can bring real results. If you have a window, you have room to start."
+}

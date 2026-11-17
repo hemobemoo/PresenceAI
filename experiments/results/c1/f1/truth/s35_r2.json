@@ -1,0 +1,171 @@
+{
+ "clip_id": "s35_r2",
+ "script_id": "s35",
+ "voice": "am_fenrir",
+ "render": 2,
+ "sample_rate": 24000,
+ "duration_s": 44.201708333333336,
+ "words": 110,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 43.701708333333336,
+ "speech_spans": [
+  [
+   0.5,
+   1.883125
+  ],
+  [
+   1.943125,
+   3.588416666666667
+  ],
+  [
+   4.479416666666666,
+   8.279083333333332
+  ],
+  [
+   8.659083333333333,
+   9.844458333333334
+  ],
+  [
+   9.921458333333334,
+   10.551083333333333
+  ],
+  [
+   10.728083333333334,
+   12.414333333333333
+  ],
+  [
+   15.135333333333334,
+   15.901291666666667
+  ],
+  [
+   16.833291666666668,
+   17.36225
+  ],
+  [
+   17.55525,
+   19.05
+  ],
+  [
+   19.634,
+   20.5925
+  ],
+  [
+   22.2205,
+   24.746333333333332
+  ],
+  [
+   24.902333333333335,
+   26.073083333333333
+  ],
+  [
+   26.224083333333333,
+   27.383041666666667
+  ],
+  [
+   27.926041666666666,
+   29.121208333333332
+  ],
+  [
+   29.263208333333335,
+   29.751
+  ],
+  [
+   29.88,
+   30.802791666666668
+  ],
+  [
+   30.894791666666666,
+   33.242375
+  ],
+  [
+   33.632375,
+   34.45875
+  ],
+  [
+   34.53275,
+   35.55433333333333
+  ],
+  [
+   36.812333333333335,
+   37.67975
+  ],
+  [
+   39.28875,
+   41.414208333333335
+  ],
+  [
+   41.514208333333336,
+   43.701708333333336
+  ]
+ ],
+ "wpm": 152.771736457181,
+ "articulation_wpm": 213.49061193903117,
+ "target_wpm": 155.0,
+ "speed": 1.0248531190386243,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 3.588416666666667,
+   "end_s": 4.479416666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 8.279083333333332,
+   "end_s": 8.659083333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 12.414333333333333,
+   "end_s": 15.135333333333334,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 15.901291666666667,
+   "end_s": 16.833291666666668,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 19.05,
+   "end_s": 19.634,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 20.5925,
+   "end_s": 22.2205,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 27.383041666666667,
+   "end_s": 27.926041666666666,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 33.242375,
+   "end_s": 33.632375,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 35.55433333333333,
+   "end_s": 36.812333333333335,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 37.67975,
+   "end_s": 39.28875,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [],
+ "text": "The wheel seems simple to us, but it took a long time to invent. People made pottery on turning wheels before they put wheels on carts. The first carts were heavy and slow. Their wheels were solid pieces of wood joined together. Later, builders made wheels with spokes, which were much lighter. Light wheels allowed faster travel and better trade. Over thousands of years, the wheel changed farming, war and everyday life. Today, wheels are everywhere, from bicycles to tiny parts inside a watch. A small idea, improved over time, changed the world. Next time you ride a bicycle or push a cart, remember how long that simple circle took."
+}

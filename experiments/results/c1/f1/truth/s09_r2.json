@@ -1,0 +1,157 @@
+{
+ "clip_id": "s09_r2",
+ "script_id": "s09",
+ "voice": "af_heart",
+ "render": 2,
+ "sample_rate": 24000,
+ "duration_s": 43.331208333333336,
+ "words": 111,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 42.831208333333336,
+ "speech_spans": [
+  [
+   0.5,
+   1.3438333333333334
+  ],
+  [
+   2.7928333333333333,
+   3.8255416666666666
+  ],
+  [
+   4.672541666666667,
+   5.766291666666667
+  ],
+  [
+   6.238291666666667,
+   8.148291666666667
+  ],
+  [
+   8.346291666666668,
+   10.331083333333334
+  ],
+  [
+   10.472083333333334,
+   11.961083333333333
+  ],
+  [
+   14.811083333333332,
+   15.817166666666667
+  ],
+  [
+   16.013166666666667,
+   17.127958333333332
+  ],
+  [
+   18.558958333333333,
+   19.986166666666666
+  ],
+  [
+   20.894166666666667,
+   21.72525
+  ],
+  [
+   21.81725,
+   22.96216666666667
+  ],
+  [
+   23.077166666666667,
+   25.20125
+  ],
+  [
+   25.25425,
+   27.852958333333333
+  ],
+  [
+   29.782958333333333,
+   30.712416666666666
+  ],
+  [
+   30.80441666666667,
+   32.01416666666667
+  ],
+  [
+   33.53616666666667,
+   34.834916666666665
+  ],
+  [
+   34.97591666666667,
+   37.104
+  ],
+  [
+   37.297,
+   38.546708333333335
+  ],
+  [
+   38.74270833333333,
+   39.78220833333334
+  ],
+  [
+   40.73620833333333,
+   42.831208333333336
+  ]
+ ],
+ "wpm": 157.3307321528935,
+ "articulation_wpm": 233.26508364357025,
+ "target_wpm": 155.0,
+ "speed": 1.0074057822530609,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 1.3438333333333334,
+   "end_s": 2.7928333333333333,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 3.8255416666666666,
+   "end_s": 4.672541666666667,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 5.766291666666667,
+   "end_s": 6.238291666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 11.961083333333333,
+   "end_s": 14.811083333333332,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 17.127958333333332,
+   "end_s": 18.558958333333333,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 19.986166666666666,
+   "end_s": 20.894166666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 27.852958333333333,
+   "end_s": 29.782958333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 32.01416666666667,
+   "end_s": 33.53616666666667,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 39.78220833333334,
+   "end_s": 40.73620833333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [],
+ "text": "Two years ago, I sold my car and bought a bicycle. Many friends thought I had made a mistake. The ride to work takes about twenty minutes, and the road is mostly level. In the first week, my legs were tired, and I arrived a little late. After a month, the ride felt easy. I now save money on fuel and parking. I also get exercise without visiting a gym. On rainy days, I wear a light jacket and leave a little earlier. The bicycle is not right for everyone. But if your trip is short, it is worth a try. You may even start to look forward to the ride."
+}

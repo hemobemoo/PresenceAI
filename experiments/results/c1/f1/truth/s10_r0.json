@@ -1,0 +1,163 @@
+{
+ "clip_id": "s10_r0",
+ "script_id": "s10",
+ "voice": "af_heart",
+ "render": 0,
+ "sample_rate": 24000,
+ "duration_s": 56.46183333333333,
+ "words": 111,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 55.96183333333333,
+ "speech_spans": [
+  [
+   0.5,
+   1.8030416666666667
+  ],
+  [
+   1.9980416666666667,
+   3.552
+  ],
+  [
+   3.602,
+   4.95525
+  ],
+  [
+   5.37125,
+   7.53575
+  ],
+  [
+   7.65775,
+   10.155666666666667
+  ],
+  [
+   11.416666666666666,
+   15.168
+  ],
+  [
+   15.627,
+   17.306583333333332
+  ],
+  [
+   17.414583333333333,
+   19.38425
+  ],
+  [
+   21.22525,
+   23.499541666666666
+  ],
+  [
+   23.658541666666668,
+   26.082833333333333
+  ],
+  [
+   26.260833333333334,
+   28.516916666666667
+  ],
+  [
+   28.622916666666665,
+   30.547916666666666
+  ],
+  [
+   30.699916666666667,
+   32.009125
+  ],
+  [
+   34.983125,
+   36.663125
+  ],
+  [
+   37.699125,
+   41.4475
+  ],
+  [
+   43.7345,
+   44.918791666666664
+  ],
+  [
+   44.99079166666667,
+   46.353
+  ],
+  [
+   48.672,
+   50.45275
+  ],
+  [
+   50.81875,
+   53.66195833333333
+  ],
+  [
+   53.812958333333334,
+   55.96183333333333
+  ]
+ ],
+ "wpm": 120.08257931129816,
+ "articulation_wpm": 161.61191301428866,
+ "target_wpm": 119.0,
+ "speed": 0.7961988603024069,
+ "attempts": 2,
+ "pauses": [
+  {
+   "start_s": 4.95525,
+   "end_s": 5.37125,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 10.155666666666667,
+   "end_s": 11.416666666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 15.168,
+   "end_s": 15.627,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 19.38425,
+   "end_s": 21.22525,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 32.009125,
+   "end_s": 34.983125,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 36.663125,
+   "end_s": 37.699125,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 41.4475,
+   "end_s": 43.7345,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 46.353,
+   "end_s": 48.672,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 50.45275,
+   "end_s": 50.81875,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 18,
+   "start_s": 52.171958333333336,
+   "end_s": 52.28720833333333
+  }
+ ],
+ "text": "In every meeting, someone has a question but never asks it. Sometimes that person is me. We worry that the question is too simple. Yet simple questions are often the most useful ones. They help everyone check that they understand the same thing. A good question is short and clear. It asks about one idea at a time. It also shows that you were listening. If you are not sure how to start, try this phrase. Could you give an example? Examples turn general ideas into something real. So next time, ask your question. Someone else will thank you. Good questions make every meeting shorter, clearer and more useful for all."
+}

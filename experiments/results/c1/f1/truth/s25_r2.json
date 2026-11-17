@@ -1,0 +1,153 @@
+{
+ "clip_id": "s25_r2",
+ "script_id": "s25",
+ "voice": "am_michael",
+ "render": 2,
+ "sample_rate": 24000,
+ "duration_s": 45.84354166666667,
+ "words": 112,
+ "fillers": 1,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 45.34354166666667,
+ "speech_spans": [
+  [
+   0.5,
+   2.3255416666666666
+  ],
+  [
+   2.4535416666666667,
+   3.752625
+  ],
+  [
+   4.902625,
+   6.027416666666666
+  ],
+  [
+   6.2084166666666665,
+   8.01825
+  ],
+  [
+   8.10825,
+   9.95175
+  ],
+  [
+   12.78175,
+   14.461625
+  ],
+  [
+   16.020625,
+   17.502625
+  ],
+  [
+   18.691625,
+   20.075916666666668
+  ],
+  [
+   20.254916666666666,
+   22.289708333333333
+  ],
+  [
+   22.356708333333334,
+   23.219375
+  ],
+  [
+   23.276375,
+   25.594833333333334
+  ],
+  [
+   27.166833333333333,
+   27.514708333333335
+  ],
+  [
+   27.667708333333334,
+   28.217416666666665
+  ],
+  [
+   29.901416666666666,
+   31.794
+  ],
+  [
+   31.953,
+   32.912791666666664
+  ],
+  [
+   33.506791666666665,
+   35.474041666666665
+  ],
+  [
+   37.40004166666667,
+   39.29975
+  ],
+  [
+   39.43675,
+   40.593333333333334
+  ],
+  [
+   41.70733333333333,
+   45.34354166666667
+  ]
+ ],
+ "wpm": 149.85435472406377,
+ "articulation_wpm": 223.44480173568732,
+ "target_wpm": 155.0,
+ "speed": 1.1742843280433617,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 3.752625,
+   "end_s": 4.902625,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 9.95175,
+   "end_s": 12.78175,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 14.461625,
+   "end_s": 16.020625,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 17.502625,
+   "end_s": 18.691625,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 25.594833333333334,
+   "end_s": 27.166833333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 28.217416666666665,
+   "end_s": 29.901416666666666,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 32.912791666666664,
+   "end_s": 33.506791666666665,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 35.474041666666665,
+   "end_s": 37.40004166666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 40.593333333333334,
+   "end_s": 41.70733333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [],
+ "text": "Today we carry maps in our pockets, but it was not always so. For most of history, maps were rare and very valuable. Sailors and traders kept them safe, because a good map could save a ship. Early maps were often wrong. Coasts were in the wrong place, and some islands did not exist at all. Over time, careful measurement made maps more accurate. Today, satellites help us draw the whole planet in great detail. Yet the basic idea has not changed. A map helps us understand where we are and where we want to go. Every map is also a story about the people who made it and their time."
+}

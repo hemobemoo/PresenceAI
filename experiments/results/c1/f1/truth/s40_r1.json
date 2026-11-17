@@ -1,0 +1,153 @@
+{
+ "clip_id": "s40_r1",
+ "script_id": "s40",
+ "voice": "am_fenrir",
+ "render": 1,
+ "sample_rate": 24000,
+ "duration_s": 46.40675,
+ "words": 110,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 45.90675,
+ "speech_spans": [
+  [
+   0.5,
+   1.5450833333333334
+  ],
+  [
+   1.6860833333333334,
+   3.3589583333333333
+  ],
+  [
+   4.1269583333333335,
+   6.1395
+  ],
+  [
+   6.4755,
+   10.213583333333334
+  ],
+  [
+   11.490583333333333,
+   13.673083333333333
+  ],
+  [
+   13.742083333333333,
+   15.853791666666666
+  ],
+  [
+   17.049791666666668,
+   18.481875
+  ],
+  [
+   18.602875,
+   19.693458333333332
+  ],
+  [
+   19.773458333333334,
+   21.449666666666666
+  ],
+  [
+   23.691666666666666,
+   24.675708333333333
+  ],
+  [
+   26.507708333333333,
+   27.223583333333334
+  ],
+  [
+   29.062583333333333,
+   30.547458333333335
+  ],
+  [
+   30.694458333333333,
+   32.06195833333334
+  ],
+  [
+   32.13195833333333,
+   33.79145833333333
+  ],
+  [
+   33.920458333333336,
+   35.6535
+  ],
+  [
+   35.7095,
+   37.94325
+  ],
+  [
+   38.08825,
+   38.989875
+  ],
+  [
+   40.241875,
+   41.98825
+  ],
+  [
+   43.57025,
+   45.90675
+  ]
+ ],
+ "wpm": 145.35283850969293,
+ "articulation_wpm": 205.44906964256532,
+ "target_wpm": 137.0,
+ "speed": 0.916531810305346,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 3.3589583333333333,
+   "end_s": 4.1269583333333335,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 6.1395,
+   "end_s": 6.4755,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 10.213583333333334,
+   "end_s": 11.490583333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 15.853791666666666,
+   "end_s": 17.049791666666668,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 21.449666666666666,
+   "end_s": 23.691666666666666,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 24.675708333333333,
+   "end_s": 26.507708333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 27.223583333333334,
+   "end_s": 29.062583333333333,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 38.989875,
+   "end_s": 40.241875,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 41.98825,
+   "end_s": 43.57025,
+   "position": "clause_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [],
+ "text": "Speaking to a group is a common part of many jobs. A little preparation goes a long way. Start by deciding the one message that you want people to remember. Build everything else around that message. Choose short sentences and simple words. Give an example or a story for each main point. Practise out loud at least twice, and time yourself. On the day, arrive early and check the room. Look at people as you speak, and pause after important points. End by repeating your main message. Then thank the audience and invite questions. With practice, speaking to a group becomes easier, and your message reaches more people each time."
+}

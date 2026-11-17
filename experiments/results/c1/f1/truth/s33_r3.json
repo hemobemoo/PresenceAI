@@ -1,0 +1,167 @@
+{
+ "clip_id": "s33_r3",
+ "script_id": "s33",
+ "voice": "am_fenrir",
+ "render": 3,
+ "sample_rate": 24000,
+ "duration_s": 38.59975,
+ "words": 109,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 38.09975,
+ "speech_spans": [
+  [
+   0.5,
+   1.1125
+  ],
+  [
+   1.1905,
+   2.2601666666666667
+  ],
+  [
+   3.3081666666666667,
+   4.671958333333333
+  ],
+  [
+   5.959958333333334,
+   6.706375
+  ],
+  [
+   7.413375,
+   8.13175
+  ],
+  [
+   8.29075,
+   9.796208333333333
+  ],
+  [
+   9.877208333333334,
+   11.707416666666667
+  ],
+  [
+   11.798416666666666,
+   12.577708333333334
+  ],
+  [
+   15.153708333333332,
+   15.929291666666666
+  ],
+  [
+   16.026291666666665,
+   16.796416666666666
+  ],
+  [
+   17.824416666666668,
+   18.683041666666668
+  ],
+  [
+   19.982041666666667,
+   20.752875
+  ],
+  [
+   20.923875,
+   22.4075
+  ],
+  [
+   22.4635,
+   23.630625
+  ],
+  [
+   23.979625,
+   25.1845
+  ],
+  [
+   25.3645,
+   27.54525
+  ],
+  [
+   29.78925,
+   31.499166666666667
+  ],
+  [
+   31.847166666666666,
+   32.83583333333333
+  ],
+  [
+   33.154833333333336,
+   34.54208333333333
+  ],
+  [
+   34.656083333333335,
+   35.585458333333335
+  ],
+  [
+   35.74645833333334,
+   38.09975
+  ]
+ ],
+ "wpm": 173.93732671094887,
+ "articulation_wpm": 259.4646062902314,
+ "target_wpm": 173.0,
+ "speed": 1.2411613603493896,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 2.2601666666666667,
+   "end_s": 3.3081666666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 4.671958333333333,
+   "end_s": 5.959958333333334,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 6.706375,
+   "end_s": 7.413375,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 12.577708333333334,
+   "end_s": 15.153708333333332,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 16.796416666666666,
+   "end_s": 17.824416666666668,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 18.683041666666668,
+   "end_s": 19.982041666666667,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 23.630625,
+   "end_s": 23.979625,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 27.54525,
+   "end_s": 29.78925,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 31.499166666666667,
+   "end_s": 31.847166666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 32.83583333333333,
+   "end_s": 33.154833333333336,
+   "position": "clause_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [],
+ "text": "Bees are small, but their work is enormous. As they move from flower to flower, they carry pollen to new plants. This helps plants make fruit and seeds. Many of the foods we eat depend on this work, including apples, beans and almonds. In recent years, bee numbers have fallen in many places. The causes include loss of flowers, disease and certain chemicals. There are simple ways to help. Plant flowers that bloom at different times of the year. Leave a corner of the garden a little wild. Avoid strong chemicals, especially when plants are in flower. Every small garden, balcony or window box can help these tiny workers."
+}

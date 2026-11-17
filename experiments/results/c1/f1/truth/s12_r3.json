@@ -1,0 +1,177 @@
+{
+ "clip_id": "s12_r3",
+ "script_id": "s12",
+ "voice": "af_bella",
+ "render": 3,
+ "sample_rate": 24000,
+ "duration_s": 40.9865,
+ "words": 113,
+ "fillers": 2,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 40.4865,
+ "speech_spans": [
+  [
+   0.5,
+   2.215125
+  ],
+  [
+   3.166125,
+   4.3990833333333335
+  ],
+  [
+   4.522083333333334,
+   6.549166666666666
+  ],
+  [
+   7.589166666666666,
+   9.421666666666667
+  ],
+  [
+   9.738666666666667,
+   10.867375
+  ],
+  [
+   10.930375,
+   12.277833333333334
+  ],
+  [
+   12.371833333333333,
+   13.360291666666667
+  ],
+  [
+   14.749291666666666,
+   15.501666666666667
+  ],
+  [
+   17.273666666666667,
+   19.643916666666666
+  ],
+  [
+   19.772916666666667,
+   20.532208333333333
+  ],
+  [
+   20.588208333333334,
+   23.27775
+  ],
+  [
+   23.44775,
+   24.747541666666667
+  ],
+  [
+   24.899541666666668,
+   25.289416666666668
+  ],
+  [
+   25.353416666666668,
+   26.22975
+  ],
+  [
+   26.73675,
+   28.743
+  ],
+  [
+   29.806,
+   30.6545
+  ],
+  [
+   30.7935,
+   31.183375
+  ],
+  [
+   31.337375,
+   32.54558333333333
+  ],
+  [
+   33.75958333333333,
+   34.507125
+  ],
+  [
+   35.701125,
+   36.538375
+  ],
+  [
+   37.158375,
+   39.370958333333334
+  ],
+  [
+   39.43895833333333,
+   40.4865
+  ]
+ ],
+ "wpm": 169.55722556362772,
+ "articulation_wpm": 236.17521553600974,
+ "target_wpm": 173.0,
+ "speed": 0.9766595398082143,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 2.215125,
+   "end_s": 3.166125,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 6.549166666666666,
+   "end_s": 7.589166666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 9.421666666666667,
+   "end_s": 9.738666666666667,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 13.360291666666667,
+   "end_s": 14.749291666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 15.501666666666667,
+   "end_s": 17.273666666666667,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 26.22975,
+   "end_s": 26.73675,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 28.743,
+   "end_s": 29.806,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 32.54558333333333,
+   "end_s": 33.75958333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 34.507125,
+   "end_s": 35.701125,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 36.538375,
+   "end_s": 37.158375,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 10,
+   "start_s": 21.777916666666666,
+   "end_s": 21.938208333333332
+  }
+ ],
+ "text": "Learning a new language takes time, but it need not to be hard. The key is to make it part of every day. I learn ten new words each morning while I drink my coffee. I listen to short stories on the way to work. In the evening, I write three simple sentences about my day. Once a week, I talk with a partner who speaks the language well. I still make many mistakes, and that is fine. Mistakes show me what to practise next. Little by little, the words begin to stay. Start small, and keep going. Every short session builds on the last one, and the gains add up."
+}

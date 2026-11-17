@@ -1,0 +1,121 @@
+{
+ "clip_id": "s26_r3",
+ "script_id": "s26",
+ "voice": "am_michael",
+ "render": 3,
+ "sample_rate": 24000,
+ "duration_s": 40.229875,
+ "words": 111,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 39.729875,
+ "speech_spans": [
+  [
+   0.5,
+   1.725
+  ],
+  [
+   2.139,
+   4.009291666666667
+  ],
+  [
+   4.610291666666667,
+   6.03875
+  ],
+  [
+   6.19075,
+   8.058708333333334
+  ],
+  [
+   8.145708333333333,
+   10.620708333333333
+  ],
+  [
+   10.775708333333334,
+   12.688208333333334
+  ],
+  [
+   12.779208333333333,
+   14.168875
+  ],
+  [
+   14.253875,
+   15.161166666666666
+  ],
+  [
+   15.219166666666666,
+   16.27625
+  ],
+  [
+   16.41425,
+   18.967875
+  ],
+  [
+   19.090875,
+   21.408958333333334
+  ],
+  [
+   22.143958333333334,
+   24.206333333333333
+  ],
+  [
+   24.280333333333335,
+   25.718833333333333
+  ],
+  [
+   26.645833333333332,
+   28.594916666666666
+  ],
+  [
+   28.717916666666667,
+   29.629166666666666
+  ],
+  [
+   29.694166666666668,
+   32.17316666666667
+  ],
+  [
+   33.13816666666666,
+   39.729875
+  ]
+ ],
+ "wpm": 169.76857560723812,
+ "articulation_wpm": 193.39733933465217,
+ "target_wpm": 173.0,
+ "speed": 1.0484224468507393,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 1.725,
+   "end_s": 2.139,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 4.009291666666667,
+   "end_s": 4.610291666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 21.408958333333334,
+   "end_s": 22.143958333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 25.718833333333333,
+   "end_s": 26.645833333333332,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 32.17316666666667,
+   "end_s": 33.13816666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [],
+ "text": "When software grows, the code often becomes messy. Names stop making sense, and functions become very long. This makes every new change slower and riskier. A good habit is to tidy a little each time you touch the code. Give a variable a clearer name. Split a long function into two smaller ones. Remove lines that no one calls anymore. Run the tests after each small step, so you know nothing broke. These changes seem minor on their own. Over months, they keep the code healthy and easy to work with. Teams that tidy as they go spend less time fixing bugs and more time building useful features for their users."
+}

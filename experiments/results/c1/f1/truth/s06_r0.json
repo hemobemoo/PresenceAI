@@ -1,0 +1,172 @@
+{
+ "clip_id": "s06_r0",
+ "script_id": "s06",
+ "voice": "af_heart",
+ "render": 0,
+ "sample_rate": 24000,
+ "duration_s": 56.02945833333333,
+ "words": 111,
+ "fillers": 1,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 55.52945833333333,
+ "speech_spans": [
+  [
+   0.5,
+   1.953625
+  ],
+  [
+   3.345625,
+   5.91475
+  ],
+  [
+   6.77975,
+   7.865583333333333
+  ],
+  [
+   8.014583333333333,
+   8.68675
+  ],
+  [
+   8.85675,
+   12.262958333333334
+  ],
+  [
+   12.855958333333334,
+   14.205625
+  ],
+  [
+   14.292625,
+   16.757083333333334
+  ],
+  [
+   16.945083333333333,
+   19.714375
+  ],
+  [
+   19.877375,
+   21.312
+  ],
+  [
+   21.495,
+   23.183375
+  ],
+  [
+   23.328375,
+   25.227875
+  ],
+  [
+   25.323875,
+   27.302
+  ],
+  [
+   27.657,
+   29.936291666666666
+  ],
+  [
+   30.090291666666666,
+   31.49020833333333
+  ],
+  [
+   31.660208333333333,
+   33.23116666666667
+  ],
+  [
+   33.409166666666664,
+   35.187375
+  ],
+  [
+   35.553375,
+   37.23283333333333
+  ],
+  [
+   37.35583333333334,
+   39.985458333333334
+  ],
+  [
+   40.08145833333333,
+   43.776375
+  ],
+  [
+   43.829375,
+   46.138625
+  ],
+  [
+   46.292625,
+   47.922625
+  ],
+  [
+   47.983625,
+   49.9825
+  ],
+  [
+   50.8205,
+   52.549375
+  ],
+  [
+   52.932375,
+   55.52945833333333
+  ]
+ ],
+ "wpm": 121.02608678533544,
+ "articulation_wpm": 138.55527691551544,
+ "target_wpm": 119.0,
+ "speed": 0.6969539841945556,
+ "attempts": 2,
+ "pauses": [
+  {
+   "start_s": 1.953625,
+   "end_s": 3.345625,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 5.91475,
+   "end_s": 6.77975,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 12.262958333333334,
+   "end_s": 12.855958333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 27.302,
+   "end_s": 27.657,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 35.187375,
+   "end_s": 35.553375,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 49.9825,
+   "end_s": 50.8205,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 52.549375,
+   "end_s": 52.932375,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 6,
+   "start_s": 18.139333333333333,
+   "end_s": 18.24025
+  },
+  {
+   "phrase": 17,
+   "start_s": 41.80104166666667,
+   "end_s": 41.96154166666667
+  }
+ ],
+ "text": "Good afternoon. My topic today is note taking. In class, many students try to write down every word. That is tiring, and it often misses the main point. A better method is to listen first and write after. Write short phrases, not full sentences. Leave space on the page, so you can add ideas later. After class, spend five minutes looking over your notes. Mark the key terms, and write one question you still have. This small review helps you remember much more. It also shows you what to ask in the next lesson. Good notes are not long. Good notes are clear. They help you learn with less effort."
+}

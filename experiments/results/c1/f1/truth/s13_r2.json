@@ -1,0 +1,162 @@
+{
+ "clip_id": "s13_r2",
+ "script_id": "s13",
+ "voice": "af_bella",
+ "render": 2,
+ "sample_rate": 24000,
+ "duration_s": 43.294625,
+ "words": 112,
+ "fillers": 2,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 42.794625,
+ "speech_spans": [
+  [
+   0.5,
+   2.685375
+  ],
+  [
+   2.814375,
+   3.8294166666666665
+  ],
+  [
+   3.9944166666666665,
+   4.909375
+  ],
+  [
+   7.325375,
+   8.985708333333333
+  ],
+  [
+   11.454708333333333,
+   12.573291666666666
+  ],
+  [
+   12.650291666666666,
+   13.535
+  ],
+  [
+   13.597,
+   16.343416666666666
+  ],
+  [
+   17.036416666666668,
+   17.404041666666668
+  ],
+  [
+   17.529041666666668,
+   19.452333333333332
+  ],
+  [
+   19.641333333333332,
+   21.207375
+  ],
+  [
+   23.213375,
+   24.122083333333332
+  ],
+  [
+   25.547083333333333,
+   27.405
+  ],
+  [
+   28.182,
+   29.3085
+  ],
+  [
+   29.3855,
+   30.611791666666665
+  ],
+  [
+   32.942791666666665,
+   35.908875
+  ],
+  [
+   36.072875,
+   37.16379166666667
+  ],
+  [
+   37.26479166666667,
+   38.37345833333333
+  ],
+  [
+   38.45045833333333,
+   38.78783333333333
+  ],
+  [
+   38.86983333333333,
+   39.50833333333333
+  ],
+  [
+   39.663333333333334,
+   42.794625
+  ]
+ ],
+ "wpm": 158.88543757037684,
+ "articulation_wpm": 235.689202400733,
+ "target_wpm": 155.0,
+ "speed": 1.0409776018627974,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 4.909375,
+   "end_s": 7.325375,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 8.985708333333333,
+   "end_s": 11.454708333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 16.343416666666666,
+   "end_s": 17.036416666666668,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 21.207375,
+   "end_s": 23.213375,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 24.122083333333332,
+   "end_s": 25.547083333333333,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 27.405,
+   "end_s": 28.182,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 30.611791666666665,
+   "end_s": 32.942791666666665,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 34.09891666666667,
+   "end_s": 34.36141666666666,
+   "position": "mid_sentence",
+   "source": "kokoro"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 13,
+   "start_s": 34.09891666666667,
+   "end_s": 34.36141666666666
+  },
+  {
+   "phrase": 17,
+   "start_s": 41.285916666666665,
+   "end_s": 41.47658333333333
+  }
+ ],
+ "text": "Our office produced a lot of waste last year. Much of it was paper, plastic and food. So a small team decided to act. We placed clear bins in every kitchen. Each bin had a picture that showed what belongs inside. We also stopped buying plastic cups and asked everyone to bring a mug. In the first month, the amount of waste fell by almost half. The changes were simple, and they cost very little. The most important step was making the right choice easy. When the bin is right there, people put things in it. Next year, we hope to add bins for glass and old batteries as well."
+}

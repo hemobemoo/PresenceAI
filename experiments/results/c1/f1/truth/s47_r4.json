@@ -1,0 +1,135 @@
+{
+ "clip_id": "s47_r4",
+ "script_id": "s47",
+ "voice": "bf_emma",
+ "render": 4,
+ "sample_rate": 24000,
+ "duration_s": 35.8125,
+ "words": 110,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 35.3125,
+ "speech_spans": [
+  [
+   0.5,
+   1.7221666666666666
+  ],
+  [
+   2.1811666666666665,
+   3.5839583333333334
+  ],
+  [
+   4.334958333333334,
+   5.18975
+  ],
+  [
+   5.30275,
+   7.761458333333334
+  ],
+  [
+   9.833458333333333,
+   11.3715
+  ],
+  [
+   11.5685,
+   13.296375
+  ],
+  [
+   13.700375,
+   15.697833333333334
+  ],
+  [
+   15.886833333333334,
+   16.880791666666667
+  ],
+  [
+   18.653791666666667,
+   20.27825
+  ],
+  [
+   20.88125,
+   22.269208333333335
+  ],
+  [
+   22.394208333333335,
+   24.6175
+  ],
+  [
+   24.7095,
+   26.574208333333335
+  ],
+  [
+   27.270208333333333,
+   28.354375
+  ],
+  [
+   28.515375,
+   30.422666666666668
+  ],
+  [
+   30.597666666666665,
+   32.6025
+  ],
+  [
+   34.3725,
+   35.3125
+  ]
+ ],
+ "wpm": 189.5870736086176,
+ "articulation_wpm": 261.5674229664123,
+ "target_wpm": 191.0,
+ "speed": 1.3183573073873145,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 1.7221666666666666,
+   "end_s": 2.1811666666666665,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 3.5839583333333334,
+   "end_s": 4.334958333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 7.761458333333334,
+   "end_s": 9.833458333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 13.296375,
+   "end_s": 13.700375,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 16.880791666666667,
+   "end_s": 18.653791666666667,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 20.27825,
+   "end_s": 20.88125,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 26.574208333333335,
+   "end_s": 27.270208333333333,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 32.6025,
+   "end_s": 34.3725,
+   "position": "clause_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [],
+ "text": "People have told stories for as long as we have had language. Before writing, stories carried knowledge from one generation to the next. They explained where food could be found, which plants were safe and how to behave. Stories are easier to remember than lists of facts. When we hear a story, we picture the people and the places. We want to know what happens next. This is why good teachers often begin with a story. A short example can make a difficult idea feel simple and real. So when you need to explain something important, think about a story that shows the idea in action, and tell it simply."
+}

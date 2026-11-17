@@ -1,0 +1,184 @@
+{
+ "clip_id": "s13_r3",
+ "script_id": "s13",
+ "voice": "af_bella",
+ "render": 3,
+ "sample_rate": 24000,
+ "duration_s": 39.847791666666666,
+ "words": 110,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 39.347791666666666,
+ "speech_spans": [
+  [
+   0.5,
+   2.4877083333333334
+  ],
+  [
+   3.038708333333333,
+   3.9675416666666665
+  ],
+  [
+   4.333541666666667,
+   5.203916666666666
+  ],
+  [
+   5.757916666666667,
+   7.15675
+  ],
+  [
+   8.70375,
+   9.769708333333334
+  ],
+  [
+   11.319708333333333,
+   12.178916666666666
+  ],
+  [
+   12.349916666666667,
+   14.665833333333333
+  ],
+  [
+   16.911833333333334,
+   18.571291666666667
+  ],
+  [
+   18.723291666666668,
+   20.132583333333333
+  ],
+  [
+   20.740583333333333,
+   21.564625
+  ],
+  [
+   23.452625,
+   25.19175
+  ],
+  [
+   25.59975,
+   26.548916666666667
+  ],
+  [
+   26.913916666666665,
+   28.0325
+  ],
+  [
+   29.7575,
+   32.412375
+  ],
+  [
+   32.747375,
+   33.73708333333333
+  ],
+  [
+   33.86208333333333,
+   34.80779166666667
+  ],
+  [
+   34.862791666666666,
+   35.450625
+  ],
+  [
+   36.492625,
+   39.347791666666666
+  ]
+ ],
+ "wpm": 169.89382708369308,
+ "articulation_wpm": 262.32331680011924,
+ "target_wpm": 173.0,
+ "speed": 1.2026205679114093,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 2.4877083333333334,
+   "end_s": 3.038708333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 3.9675416666666665,
+   "end_s": 4.333541666666667,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 5.203916666666666,
+   "end_s": 5.757916666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 7.15675,
+   "end_s": 8.70375,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 9.769708333333334,
+   "end_s": 11.319708333333333,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 14.665833333333333,
+   "end_s": 16.911833333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 20.132583333333333,
+   "end_s": 20.740583333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 21.564625,
+   "end_s": 23.452625,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 25.19175,
+   "end_s": 25.59975,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 26.548916666666667,
+   "end_s": 26.913916666666665,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 28.0325,
+   "end_s": 29.7575,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 32.412375,
+   "end_s": 32.747375,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 35.450625,
+   "end_s": 36.492625,
+   "position": "clause_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 13,
+   "start_s": 30.799416666666666,
+   "end_s": 31.025291666666668
+  },
+  {
+   "phrase": 17,
+   "start_s": 37.973375,
+   "end_s": 38.135041666666666
+  }
+ ],
+ "text": "Our office produced a lot of waste last year. Much of it was paper, plastic and food. So a small team decided to act. We placed clear bins in every kitchen. Each bin had a picture that showed what belongs inside. We also stopped buying plastic cups and asked everyone to bring a mug. In the first month, the amount of waste fell by almost half. The changes were simple, and they cost very little. The most important step was making the right choice easy. When the bin is right there, people put things in it. Next year, we hope to add bins for glass and old batteries as well."
+}

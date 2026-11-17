@@ -1,0 +1,164 @@
+{
+ "clip_id": "s16_r0",
+ "script_id": "s16",
+ "voice": "af_bella",
+ "render": 0,
+ "sample_rate": 24000,
+ "duration_s": 54.253,
+ "words": 110,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 53.753,
+ "speech_spans": [
+  [
+   0.5,
+   3.0450833333333334
+  ],
+  [
+   3.1290833333333334,
+   5.31675
+  ],
+  [
+   5.41875,
+   7.8815
+  ],
+  [
+   7.9975,
+   11.016375
+  ],
+  [
+   11.398375,
+   15.96325
+  ],
+  [
+   16.26625,
+   19.081333333333333
+  ],
+  [
+   19.412333333333333,
+   21.136916666666668
+  ],
+  [
+   22.022916666666667,
+   26.303416666666667
+  ],
+  [
+   26.467416666666665,
+   32.06941666666667
+  ],
+  [
+   32.123416666666664,
+   34.103125
+  ],
+  [
+   34.486125,
+   36.891041666666666
+  ],
+  [
+   36.94504166666667,
+   40.777833333333334
+  ],
+  [
+   41.39183333333333,
+   43.8435
+  ],
+  [
+   43.9555,
+   46.05345833333333
+  ],
+  [
+   46.110458333333334,
+   47.34395833333333
+  ],
+  [
+   47.68895833333333,
+   49.196125
+  ],
+  [
+   49.393125,
+   50.82725
+  ],
+  [
+   50.89325,
+   53.753
+  ]
+ ],
+ "wpm": 123.93667962368318,
+ "articulation_wpm": 135.58149826115016,
+ "target_wpm": 119.0,
+ "speed": 0.6383157788722279,
+ "attempts": 2,
+ "pauses": [
+  {
+   "start_s": 11.016375,
+   "end_s": 11.398375,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 13.124875,
+   "end_s": 13.448666666666666,
+   "position": "mid_sentence",
+   "source": "kokoro"
+  },
+  {
+   "start_s": 15.96325,
+   "end_s": 16.26625,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 19.081333333333333,
+   "end_s": 19.412333333333333,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 21.136916666666668,
+   "end_s": 22.022916666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 34.103125,
+   "end_s": 34.486125,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 40.777833333333334,
+   "end_s": 41.39183333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 47.34395833333333,
+   "end_s": 47.68895833333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 2,
+   "start_s": 7.159875,
+   "end_s": 7.274541666666667
+  },
+  {
+   "phrase": 4,
+   "start_s": 13.124875,
+   "end_s": 13.448666666666666
+  },
+  {
+   "phrase": 7,
+   "start_s": 23.737208333333335,
+   "end_s": 23.915166666666668
+  },
+  {
+   "phrase": 8,
+   "start_s": 27.303083333333333,
+   "end_s": 27.422375
+  }
+ ],
+ "text": "Trees do much more for a city than most people realise. They give shade on hot days, which keeps streets and buildings cooler. They clean the air and reduce noise from traffic. Their roots help the ground hold water after heavy rain. Birds and insects find homes in their branches. Studies also suggest that people walk more on streets with trees. Planting a tree is cheap, but caring for it takes time. Young trees need water for the first few years. If your street has a young tree, give it a bucket of water in the summer. A single tree, cared for well, can shade a street for many decades."
+}

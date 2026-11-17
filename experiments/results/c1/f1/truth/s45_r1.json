@@ -1,0 +1,161 @@
+{
+ "clip_id": "s45_r1",
+ "script_id": "s45",
+ "voice": "bf_emma",
+ "render": 1,
+ "sample_rate": 24000,
+ "duration_s": 50.31183333333333,
+ "words": 112,
+ "fillers": 2,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 49.81183333333333,
+ "speech_spans": [
+  [
+   0.5,
+   1.8148333333333333
+  ],
+  [
+   1.8708333333333333,
+   3.7555833333333335
+  ],
+  [
+   5.652583333333333,
+   7.007208333333334
+  ],
+  [
+   7.1262083333333335,
+   8.740875
+  ],
+  [
+   9.422875,
+   9.791625
+  ],
+  [
+   9.858625,
+   12.745916666666666
+  ],
+  [
+   13.305916666666667,
+   15.007708333333333
+  ],
+  [
+   15.180708333333333,
+   16.721708333333332
+  ],
+  [
+   17.279708333333332,
+   19.564041666666668
+  ],
+  [
+   19.669041666666665,
+   21.1115
+  ],
+  [
+   21.2005,
+   23.485375
+  ],
+  [
+   23.674375,
+   26.381625
+  ],
+  [
+   26.489625,
+   27.93825
+  ],
+  [
+   28.50625,
+   30.728166666666667
+  ],
+  [
+   33.56516666666667,
+   36.249833333333335
+  ],
+  [
+   36.31783333333333,
+   38.12716666666667
+  ],
+  [
+   38.290166666666664,
+   38.806125
+  ],
+  [
+   38.906125,
+   40.454208333333334
+  ],
+  [
+   40.56520833333333,
+   42.743125
+  ],
+  [
+   43.500125,
+   45.512791666666665
+  ],
+  [
+   45.591791666666666,
+   49.81183333333333
+  ]
+ ],
+ "wpm": 136.27560659882178,
+ "articulation_wpm": 169.20186197584718,
+ "target_wpm": 137.0,
+ "speed": 0.8295167271001784,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 3.7555833333333335,
+   "end_s": 5.652583333333333,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 8.740875,
+   "end_s": 9.422875,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 12.745916666666666,
+   "end_s": 13.305916666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 16.721708333333332,
+   "end_s": 17.279708333333332,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 27.93825,
+   "end_s": 28.50625,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 30.728166666666667,
+   "end_s": 33.56516666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 42.743125,
+   "end_s": 43.500125,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 47.13708333333334,
+   "end_s": 47.447041666666664,
+   "position": "mid_sentence",
+   "source": "kokoro"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 18,
+   "start_s": 47.13708333333334,
+   "end_s": 47.447041666666664
+  }
+ ],
+ "text": "Every Saturday, our town holds a market in the main square. Farmers bring fruit, vegetables and eggs from nearby villages. There are stalls with bread, cheese and flowers. I like the market for many reasons. The food is fresh, and I can talk to the people who grew it. I often learn new ways to cook a vegetable. Prices are fair, especially near the end of the morning. The market also brings neighbours together. I usually meet a friend and stop for a coffee. It is the best part of my week. If your town has a market, visit it this weekend and buy something you have never cooked before."
+}

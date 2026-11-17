@@ -1,0 +1,180 @@
+{
+ "clip_id": "s19_r4",
+ "script_id": "s19",
+ "voice": "af_bella",
+ "render": 4,
+ "sample_rate": 24000,
+ "duration_s": 35.75508333333333,
+ "words": 109,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 35.25508333333333,
+ "speech_spans": [
+  [
+   0.5,
+   1.877125
+  ],
+  [
+   4.808125,
+   6.013833333333333
+  ],
+  [
+   7.6738333333333335,
+   9.087375
+  ],
+  [
+   9.563375,
+   10.735833333333334
+  ],
+  [
+   10.926833333333333,
+   12.316416666666667
+  ],
+  [
+   12.923416666666666,
+   13.767708333333333
+  ],
+  [
+   14.145708333333333,
+   16.038375
+  ],
+  [
+   16.840375,
+   19.715833333333332
+  ],
+  [
+   20.179833333333335,
+   21.05625
+  ],
+  [
+   21.19225,
+   22.036833333333334
+  ],
+  [
+   22.837833333333332,
+   24.106125
+  ],
+  [
+   24.650125,
+   25.454
+  ],
+  [
+   25.567,
+   26.305458333333334
+  ],
+  [
+   27.811458333333334,
+   29.46675
+  ],
+  [
+   29.62475,
+   30.643833333333333
+  ],
+  [
+   30.782833333333333,
+   31.412541666666666
+  ],
+  [
+   31.496541666666666,
+   32.299875
+  ],
+  [
+   33.164875,
+   33.52695833333333
+  ],
+  [
+   33.604958333333336,
+   34.110416666666666
+  ],
+  [
+   34.21241666666667,
+   35.25508333333333
+  ]
+ ],
+ "wpm": 188.17391220948494,
+ "articulation_wpm": 287.8510568843277,
+ "target_wpm": 191.0,
+ "speed": 1.2728111783229645,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 1.877125,
+   "end_s": 4.808125,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 6.013833333333333,
+   "end_s": 7.6738333333333335,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 9.087375,
+   "end_s": 9.563375,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 12.316416666666667,
+   "end_s": 12.923416666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 13.767708333333333,
+   "end_s": 14.145708333333333,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 16.038375,
+   "end_s": 16.840375,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 19.715833333333332,
+   "end_s": 20.179833333333335,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 22.036833333333334,
+   "end_s": 22.837833333333332,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 24.106125,
+   "end_s": 24.650125,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 26.305458333333334,
+   "end_s": 27.811458333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 32.299875,
+   "end_s": 33.164875,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 6,
+   "start_s": 15.038791666666667,
+   "end_s": 15.169208333333334
+  },
+  {
+   "phrase": 7,
+   "start_s": 18.566291666666668,
+   "end_s": 18.721375
+  }
+ ],
+ "text": "Some people dislike rainy days, but I have learned to enjoy them. Rain changes the sound of the city. The streets become quieter, and the air smells fresh and clean. On a rainy weekend, I make a pot of tea and open a good book. I also take the time for small jobs that I usually avoid. I sort old papers, fix a loose button or clean the windows from inside. When the rain stops, I go for a walk. The light after rain is often beautiful. So the next time it rains, try to see it as a gift of time. Rain, after all, keeps the gardens green."
+}

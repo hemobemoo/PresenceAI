@@ -1,0 +1,213 @@
+{
+ "clip_id": "s05_r0",
+ "script_id": "s05",
+ "voice": "af_heart",
+ "render": 0,
+ "sample_rate": 24000,
+ "duration_s": 54.161875,
+ "words": 112,
+ "fillers": 2,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 53.661875,
+ "speech_spans": [
+  [
+   0.5,
+   2.349083333333333
+  ],
+  [
+   2.9310833333333335,
+   4.441416666666667
+  ],
+  [
+   5.429416666666667,
+   6.044125
+  ],
+  [
+   6.128125,
+   7.8895
+  ],
+  [
+   8.4175,
+   9.782375
+  ],
+  [
+   11.456375,
+   12.734166666666667
+  ],
+  [
+   13.209166666666667,
+   14.43425
+  ],
+  [
+   14.56125,
+   15.5975
+  ],
+  [
+   16.0015,
+   17.643
+  ],
+  [
+   18.181,
+   19.609208333333335
+  ],
+  [
+   20.000208333333333,
+   21.698583333333332
+  ],
+  [
+   21.888583333333333,
+   23.14966666666667
+  ],
+  [
+   25.479666666666667,
+   27.258416666666665
+  ],
+  [
+   27.407416666666666,
+   28.021833333333333
+  ],
+  [
+   28.107833333333332,
+   29.407125
+  ],
+  [
+   29.533125,
+   30.714208333333332
+  ],
+  [
+   31.349208333333333,
+   32.33233333333333
+  ],
+  [
+   32.50233333333333,
+   34.161625
+  ],
+  [
+   36.778625,
+   38.91266666666667
+  ],
+  [
+   39.428666666666665,
+   40.743291666666664
+  ],
+  [
+   40.874291666666664,
+   42.431583333333336
+  ],
+  [
+   43.13758333333333,
+   44.64625
+  ],
+  [
+   44.70325,
+   45.986916666666666
+  ],
+  [
+   48.85391666666667,
+   50.862541666666665
+  ],
+  [
+   52.04054166666667,
+   53.661875
+  ]
+ ],
+ "wpm": 126.4063767502557,
+ "articulation_wpm": 188.6958017290095,
+ "target_wpm": 119.0,
+ "speed": 0.8148062344946777,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 2.349083333333333,
+   "end_s": 2.9310833333333335,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 4.441416666666667,
+   "end_s": 5.429416666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 7.8895,
+   "end_s": 8.4175,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 9.782375,
+   "end_s": 11.456375,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 12.734166666666667,
+   "end_s": 13.209166666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 15.5975,
+   "end_s": 16.0015,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 17.643,
+   "end_s": 18.181,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 19.609208333333335,
+   "end_s": 20.000208333333333,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 23.14966666666667,
+   "end_s": 25.479666666666667,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 30.714208333333332,
+   "end_s": 31.349208333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 34.161625,
+   "end_s": 36.778625,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 38.91266666666667,
+   "end_s": 39.428666666666665,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 42.431583333333336,
+   "end_s": 43.13758333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 45.986916666666666,
+   "end_s": 48.85391666666667,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 50.862541666666665,
+   "end_s": 52.04054166666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [],
+ "text": "When I moved into my first home, I could not cook at all. I ate the same simple meals, and I spent too much on takeaway food. So I made a plan. Every Sunday, I would learn one new dish. I started with soup, because it is hard to get wrong. Then I tried rice, eggs and baked vegetables. Some meals were good, and some were not. But each week, I became a little faster and a little more relaxed in the kitchen. After a few months, I could cook for friends. My advice is simple. Start with one dish, and give yourself time to practise. Cooking soon becomes fun."
+}

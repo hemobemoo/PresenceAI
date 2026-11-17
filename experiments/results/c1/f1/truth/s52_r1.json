@@ -1,0 +1,204 @@
+{
+ "clip_id": "s52_r1",
+ "script_id": "s52",
+ "voice": "bm_george",
+ "render": 1,
+ "sample_rate": 24000,
+ "duration_s": 50.482166666666664,
+ "words": 111,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 49.982166666666664,
+ "speech_spans": [
+  [
+   0.5,
+   1.7903333333333333
+  ],
+  [
+   2.973333333333333,
+   5.733083333333333
+  ],
+  [
+   6.1650833333333335,
+   8.719041666666667
+  ],
+  [
+   11.253041666666666,
+   13.995583333333334
+  ],
+  [
+   15.674583333333333,
+   18.018625
+  ],
+  [
+   18.853625,
+   19.903
+  ],
+  [
+   19.987,
+   21.710041666666665
+  ],
+  [
+   24.364041666666665,
+   25.418041666666667
+  ],
+  [
+   25.736041666666665,
+   29.099625
+  ],
+  [
+   29.206625,
+   31.403458333333333
+  ],
+  [
+   31.474458333333335,
+   32.302625
+  ],
+  [
+   32.730625,
+   34.3185
+  ],
+  [
+   34.7475,
+   37.805375
+  ],
+  [
+   37.923375,
+   40.57395833333333
+  ],
+  [
+   41.21995833333333,
+   42.859833333333334
+  ],
+  [
+   43.73083333333334,
+   45.054541666666665
+  ],
+  [
+   45.41954166666667,
+   49.982166666666664
+  ]
+ ],
+ "wpm": 134.59394461977885,
+ "articulation_wpm": 181.33222004909948,
+ "target_wpm": 137.0,
+ "speed": 1.0696848560326606,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 1.7903333333333333,
+   "end_s": 2.973333333333333,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 5.733083333333333,
+   "end_s": 6.1650833333333335,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 8.719041666666667,
+   "end_s": 11.253041666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 13.995583333333334,
+   "end_s": 15.674583333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 18.018625,
+   "end_s": 18.853625,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 21.710041666666665,
+   "end_s": 24.364041666666665,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 25.418041666666667,
+   "end_s": 25.736041666666665,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 32.302625,
+   "end_s": 32.730625,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 34.3185,
+   "end_s": 34.7475,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 40.57395833333333,
+   "end_s": 41.21995833333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 42.859833333333334,
+   "end_s": 43.73083333333334,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 45.054541666666665,
+   "end_s": 45.41954166666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 1,
+   "start_s": 3.8153333333333332,
+   "end_s": 4.013416666666667
+  },
+  {
+   "phrase": 3,
+   "start_s": 12.887166666666667,
+   "end_s": 13.032291666666667
+  },
+  {
+   "phrase": 4,
+   "start_s": 16.569125,
+   "end_s": 16.727291666666666
+  },
+  {
+   "phrase": 8,
+   "start_s": 27.392166666666668,
+   "end_s": 27.527958333333334
+  },
+  {
+   "phrase": 8,
+   "start_s": 28.106125,
+   "end_s": 28.229875
+  },
+  {
+   "phrase": 12,
+   "start_s": 36.493291666666664,
+   "end_s": 36.594833333333334
+  },
+  {
+   "phrase": 16,
+   "start_s": 47.636583333333334,
+   "end_s": 47.76833333333333
+  },
+  {
+   "phrase": 16,
+   "start_s": 49.05945833333333,
+   "end_s": 49.27070833333333
+  }
+ ],
+ "text": "When something breaks, our first thought is often to buy a new one. Yet many common problems are easy to fix. A loose chair can be tightened with a screwdriver. A dripping tap often needs only a new washer. A torn bag can be sewn in a few minutes. There are clear guides and videos for almost every repair. I keep a small box of tools at home, with glue, tape and spare screws. Fixing things saves money and reduces waste. It also gives a quiet sense of achievement. Start with something small, and build from there. Each repair teaches a new skill that will be useful again in the future."
+}

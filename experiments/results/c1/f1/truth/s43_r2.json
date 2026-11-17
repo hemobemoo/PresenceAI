@@ -1,0 +1,168 @@
+{
+ "clip_id": "s43_r2",
+ "script_id": "s43",
+ "voice": "bf_emma",
+ "render": 2,
+ "sample_rate": 24000,
+ "duration_s": 43.50895833333333,
+ "words": 113,
+ "fillers": 2,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 43.00895833333333,
+ "speech_spans": [
+  [
+   0.5,
+   2.0593333333333335
+  ],
+  [
+   2.1903333333333332,
+   3.792125
+  ],
+  [
+   5.190125,
+   7.663083333333334
+  ],
+  [
+   7.758083333333333,
+   9.987666666666666
+  ],
+  [
+   10.167666666666667,
+   10.512333333333334
+  ],
+  [
+   10.667333333333334,
+   11.61675
+  ],
+  [
+   12.28275,
+   13.0945
+  ],
+  [
+   13.2385,
+   13.582958333333334
+  ],
+  [
+   13.738958333333333,
+   14.87725
+  ],
+  [
+   14.95225,
+   16.101375
+  ],
+  [
+   16.176375,
+   18.131333333333334
+  ],
+  [
+   20.016333333333332,
+   22.703458333333334
+  ],
+  [
+   22.854458333333334,
+   23.869083333333332
+  ],
+  [
+   26.215083333333332,
+   27.554458333333333
+  ],
+  [
+   28.008458333333333,
+   29.567708333333332
+  ],
+  [
+   30.656708333333334,
+   32.54904166666667
+  ],
+  [
+   32.702041666666666,
+   34.141666666666666
+  ],
+  [
+   35.06366666666667,
+   37.478125
+  ],
+  [
+   38.098125,
+   38.784875
+  ],
+  [
+   39.200875,
+   43.00895833333333
+  ]
+ ],
+ "wpm": 159.49579255353038,
+ "articulation_wpm": 215.93760740812502,
+ "target_wpm": 155.0,
+ "speed": 1.0089194233777998,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 3.792125,
+   "end_s": 5.190125,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 11.61675,
+   "end_s": 12.28275,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 18.131333333333334,
+   "end_s": 20.016333333333332,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 23.869083333333332,
+   "end_s": 26.215083333333332,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 27.554458333333333,
+   "end_s": 28.008458333333333,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 29.567708333333332,
+   "end_s": 30.656708333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 34.141666666666666,
+   "end_s": 35.06366666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 37.478125,
+   "end_s": 38.098125,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 38.784875,
+   "end_s": 39.200875,
+   "position": "clause_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 5,
+   "start_s": 12.934916666666666,
+   "end_s": 13.085375
+  },
+  {
+   "phrase": 16,
+   "start_s": 38.639541666666666,
+   "end_s": 38.769666666666666
+  }
+ ],
+ "text": "There is nothing quite like the smell of fresh bread in the kitchen. Many people think baking bread is difficult, but a simple loaf needs only four things. You need flour, water, salt and yeast. Mix them together, then knead the dough for about ten minutes. Leave it in a warm place until it doubles in size. Shape the loaf, let it rise once more and bake it in a hot oven. The first attempt may not be ideal. That is part of the fun. Each loaf teaches you something new about the dough. Soon, you will find that your own bread tastes far better than most loaves from a shop."
+}

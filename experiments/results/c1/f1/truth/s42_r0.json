@@ -1,0 +1,135 @@
+{
+ "clip_id": "s42_r0",
+ "script_id": "s42",
+ "voice": "bf_emma",
+ "render": 0,
+ "sample_rate": 24000,
+ "duration_s": 56.95033333333333,
+ "words": 111,
+ "fillers": 1,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 56.45033333333333,
+ "speech_spans": [
+  [
+   0.5,
+   3.9319166666666665
+  ],
+  [
+   5.761916666666667,
+   9.54325
+  ],
+  [
+   10.25825,
+   10.712541666666667
+  ],
+  [
+   10.881541666666667,
+   12.714625
+  ],
+  [
+   14.116625,
+   16.748541666666668
+  ],
+  [
+   16.838541666666668,
+   20.522041666666667
+  ],
+  [
+   20.606041666666666,
+   23.086125
+  ],
+  [
+   23.141125,
+   26.610708333333335
+  ],
+  [
+   26.756708333333332,
+   28.251458333333332
+  ],
+  [
+   28.403458333333333,
+   30.371791666666667
+  ],
+  [
+   30.552791666666668,
+   32.007125
+  ],
+  [
+   32.062125,
+   34.49
+  ],
+  [
+   34.629,
+   37.292791666666666
+  ],
+  [
+   37.597791666666666,
+   40.32545833333333
+  ],
+  [
+   41.15645833333333,
+   43.55016666666667
+  ],
+  [
+   43.646166666666666,
+   46.558083333333336
+  ],
+  [
+   46.72408333333333,
+   48.748333333333335
+  ],
+  [
+   50.37833333333333,
+   53.53870833333333
+  ],
+  [
+   53.650708333333334,
+   56.45033333333333
+  ]
+ ],
+ "wpm": 119.03414337716188,
+ "articulation_wpm": 139.35289481576544,
+ "target_wpm": 119.0,
+ "speed": 0.7201435800311651,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 3.9319166666666665,
+   "end_s": 5.761916666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 9.54325,
+   "end_s": 10.25825,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 12.714625,
+   "end_s": 14.116625,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 37.292791666666666,
+   "end_s": 37.597791666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 40.32545833333333,
+   "end_s": 41.15645833333333,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 48.748333333333335,
+   "end_s": 50.37833333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [],
+ "text": "Most of us type far more than we write by hand. Yet writing by hand still has real benefits. When we write slowly, we think more about each word. Some studies suggest that students remember more when they take notes by hand. I keep a small notebook for ideas and plans. Each evening, I write a few lines about the day. It takes only five minutes, but it helps me notice patterns. A notebook never needs charging, and it never sends alerts. Try writing by hand for one week, and see how it feels. You may find that your thoughts become slower, clearer and more your own on the page."
+}

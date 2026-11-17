@@ -1,0 +1,152 @@
+{
+ "clip_id": "s15_r2",
+ "script_id": "s15",
+ "voice": "af_bella",
+ "render": 2,
+ "sample_rate": 24000,
+ "duration_s": 43.827875,
+ "words": 110,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 43.327875,
+ "speech_spans": [
+  [
+   0.5,
+   2.548
+  ],
+  [
+   2.598,
+   3.4604166666666667
+  ],
+  [
+   3.5284166666666668,
+   5.444625
+  ],
+  [
+   5.554625,
+   6.9126666666666665
+  ],
+  [
+   7.100666666666666,
+   8.34775
+  ],
+  [
+   8.42275,
+   10.771625
+  ],
+  [
+   11.803625,
+   12.785833333333333
+  ],
+  [
+   12.970833333333333,
+   13.823791666666667
+  ],
+  [
+   13.959791666666666,
+   16.46291666666667
+  ],
+  [
+   16.945916666666665,
+   19.054708333333334
+  ],
+  [
+   22.040708333333335,
+   23.383916666666668
+  ],
+  [
+   25.925916666666666,
+   27.198083333333333
+  ],
+  [
+   27.371083333333335,
+   28.660333333333334
+  ],
+  [
+   28.721333333333334,
+   31.317333333333334
+  ],
+  [
+   31.955333333333332,
+   33.07716666666666
+  ],
+  [
+   33.192166666666665,
+   34.366125
+  ],
+  [
+   34.491125,
+   38.86995833333334
+  ],
+  [
+   40.050958333333334,
+   43.327875
+  ]
+ ],
+ "wpm": 154.10524103752522,
+ "articulation_wpm": 201.95915682052026,
+ "target_wpm": 155.0,
+ "speed": 0.8230774047994661,
+ "attempts": 2,
+ "pauses": [
+  {
+   "start_s": 10.771625,
+   "end_s": 11.803625,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 16.46291666666667,
+   "end_s": 16.945916666666665,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 19.054708333333334,
+   "end_s": 22.040708333333335,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 23.383916666666668,
+   "end_s": 25.925916666666666,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 31.317333333333334,
+   "end_s": 31.955333333333332,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 38.86995833333334,
+   "end_s": 40.050958333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 13,
+   "start_s": 30.457416666666667,
+   "end_s": 30.647458333333333
+  },
+  {
+   "phrase": 16,
+   "start_s": 35.605666666666664,
+   "end_s": 35.785583333333335
+  },
+  {
+   "phrase": 16,
+   "start_s": 37.99579166666667,
+   "end_s": 38.161541666666665
+  },
+  {
+   "phrase": 17,
+   "start_s": 42.09325,
+   "end_s": 42.29875
+  }
+ ],
+ "text": "We all send many emails each day. Some are clear, and some leave people confused. Here is a simple method that I follow at work. Start with the main point in the first line. Say what you need and by when. Then give the details in short paragraphs. Keep one paragraph for each idea. If you ask a question, put it on its own line, so it is easy to see. End with a friendly closing and your name. Before you send it, look at it once more. Ask yourself whether a busy person could understand it in a moment. Clear writing saves time for you and for every reader."
+}

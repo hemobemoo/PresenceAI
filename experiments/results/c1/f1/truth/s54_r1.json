@@ -1,0 +1,188 @@
+{
+ "clip_id": "s54_r1",
+ "script_id": "s54",
+ "voice": "bm_george",
+ "render": 1,
+ "sample_rate": 24000,
+ "duration_s": 48.133291666666665,
+ "words": 109,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 47.633291666666665,
+ "speech_spans": [
+  [
+   0.5,
+   1.4697083333333334
+  ],
+  [
+   1.5427083333333333,
+   4.063958333333333
+  ],
+  [
+   4.858958333333334,
+   6.212791666666667
+  ],
+  [
+   6.635791666666667,
+   7.973208333333333
+  ],
+  [
+   8.053208333333334,
+   8.890666666666666
+  ],
+  [
+   9.056666666666667,
+   11.337041666666666
+  ],
+  [
+   12.272041666666667,
+   14.910625
+  ],
+  [
+   14.981625,
+   19.084333333333333
+  ],
+  [
+   19.170333333333332,
+   21.619458333333334
+  ],
+  [
+   21.804458333333333,
+   24.41025
+  ],
+  [
+   26.68225,
+   27.246541666666666
+  ],
+  [
+   27.899541666666668,
+   31.425708333333333
+  ],
+  [
+   31.605708333333332,
+   33.88816666666666
+  ],
+  [
+   33.945166666666665,
+   34.97808333333333
+  ],
+  [
+   35.891083333333334,
+   37.29366666666667
+  ],
+  [
+   37.47966666666667,
+   39.73320833333333
+  ],
+  [
+   40.84020833333334,
+   43.967333333333336
+  ],
+  [
+   44.07833333333333,
+   47.633291666666665
+  ]
+ ],
+ "wpm": 138.75542676399112,
+ "articulation_wpm": 168.38184574223288,
+ "target_wpm": 137.0,
+ "speed": 1.0374281041974067,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 4.063958333333333,
+   "end_s": 4.858958333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 6.212791666666667,
+   "end_s": 6.635791666666667,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 11.337041666666666,
+   "end_s": 12.272041666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 24.41025,
+   "end_s": 26.68225,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 27.246541666666666,
+   "end_s": 27.899541666666668,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 34.97808333333333,
+   "end_s": 35.891083333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 39.73320833333333,
+   "end_s": 40.84020833333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 1,
+   "start_s": 2.751916666666667,
+   "end_s": 2.898791666666667
+  },
+  {
+   "phrase": 5,
+   "start_s": 10.469583333333333,
+   "end_s": 10.61875
+  },
+  {
+   "phrase": 6,
+   "start_s": 13.58175,
+   "end_s": 13.726333333333333
+  },
+  {
+   "phrase": 7,
+   "start_s": 15.710083333333333,
+   "end_s": 15.818
+  },
+  {
+   "phrase": 7,
+   "start_s": 17.435125,
+   "end_s": 17.666791666666665
+  },
+  {
+   "phrase": 9,
+   "start_s": 23.389958333333333,
+   "end_s": 23.523041666666668
+  },
+  {
+   "phrase": 11,
+   "start_s": 28.953625,
+   "end_s": 29.161708333333333
+  },
+  {
+   "phrase": 12,
+   "start_s": 32.81775,
+   "end_s": 32.95733333333333
+  },
+  {
+   "phrase": 16,
+   "start_s": 42.04933333333334,
+   "end_s": 42.275416666666665
+  },
+  {
+   "phrase": 17,
+   "start_s": 46.18933333333333,
+   "end_s": 46.3875
+  }
+ ],
+ "text": "Last year, I finally started learning the piano. I had wanted to play since I was a boy. At first, my fingers felt stiff and slow. Even a simple tune took me a whole week. My teacher gave me one piece of advice that changed everything. Practise for fifteen minutes every day, rather than for two hours once a week. Short, regular practice helps the hands and the mind remember. I now play a little every evening after dinner. I am still a beginner, but I can play several short pieces. Learning an instrument as an adult takes patience, but every small step forward feels like a real reward."
+}

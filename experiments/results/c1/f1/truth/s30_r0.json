@@ -1,0 +1,207 @@
+{
+ "clip_id": "s30_r0",
+ "script_id": "s30",
+ "voice": "am_michael",
+ "render": 0,
+ "sample_rate": 24000,
+ "duration_s": 60.4755,
+ "words": 110,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 59.9755,
+ "speech_spans": [
+  [
+   0.5,
+   2.3282083333333334
+  ],
+  [
+   3.9172083333333334,
+   5.21925
+  ],
+  [
+   7.25625,
+   8.974875
+  ],
+  [
+   9.882875,
+   11.770541666666666
+  ],
+  [
+   12.234541666666667,
+   12.972416666666666
+  ],
+  [
+   13.097416666666666,
+   14.591583333333332
+  ],
+  [
+   16.337583333333335,
+   18.298666666666666
+  ],
+  [
+   18.434666666666665,
+   19.209666666666667
+  ],
+  [
+   19.955666666666666,
+   21.655916666666666
+  ],
+  [
+   21.816916666666668,
+   23.44225
+  ],
+  [
+   23.50725,
+   24.245166666666666
+  ],
+  [
+   24.835166666666666,
+   27.024416666666667
+  ],
+  [
+   29.167416666666668,
+   30.632708333333333
+  ],
+  [
+   30.745708333333333,
+   31.917208333333335
+  ],
+  [
+   32.579208333333334,
+   33.890125
+  ],
+  [
+   33.988125,
+   35.33779166666667
+  ],
+  [
+   36.046791666666664,
+   37.479875
+  ],
+  [
+   37.650875,
+   38.497708333333335
+  ],
+  [
+   38.62770833333333,
+   40.693666666666665
+  ],
+  [
+   42.730666666666664,
+   44.89983333333333
+  ],
+  [
+   44.96383333333333,
+   47.203
+  ],
+  [
+   47.833,
+   48.897375
+  ],
+  [
+   50.278375,
+   52.398833333333336
+  ],
+  [
+   52.560833333333335,
+   53.96025
+  ],
+  [
+   56.17925,
+   59.9755
+  ]
+ ],
+ "wpm": 110.97006330337703,
+ "articulation_wpm": 163.4088067443271,
+ "target_wpm": 119.0,
+ "speed": 0.888671715746882,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 2.3282083333333334,
+   "end_s": 3.9172083333333334,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 5.21925,
+   "end_s": 7.25625,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 8.974875,
+   "end_s": 9.882875,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 11.770541666666666,
+   "end_s": 12.234541666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 14.591583333333332,
+   "end_s": 16.337583333333335,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 19.209666666666667,
+   "end_s": 19.955666666666666,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 24.245166666666666,
+   "end_s": 24.835166666666666,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 27.024416666666667,
+   "end_s": 29.167416666666668,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 31.917208333333335,
+   "end_s": 32.579208333333334,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 35.33779166666667,
+   "end_s": 36.046791666666664,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 40.693666666666665,
+   "end_s": 42.730666666666664,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 47.203,
+   "end_s": 47.833,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 48.897375,
+   "end_s": 50.278375,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 53.96025,
+   "end_s": 56.17925,
+   "position": "clause_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [],
+ "text": "Giving feedback is a skill, and like any skill, it improves with practice. I follow a simple pattern. First, describe what you saw, in clear and specific terms. Next, explain the effect it had on the work or the team. Third, suggest one change for next time. Keep the feedback short, and give it soon after the event. Talk about actions, not about the person. Finally, ask what the other person thinks. They may know something that you do not. Good feedback is a conversation, not a speech. When feedback is given with care, people tend to listen, ask questions and try the change in their next piece of work."
+}

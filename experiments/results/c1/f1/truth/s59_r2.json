@@ -1,0 +1,187 @@
+{
+ "clip_id": "s59_r2",
+ "script_id": "s59",
+ "voice": "bm_george",
+ "render": 2,
+ "sample_rate": 24000,
+ "duration_s": 43.99304166666667,
+ "words": 110,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 43.49304166666667,
+ "speech_spans": [
+  [
+   0.5,
+   2.060625
+  ],
+  [
+   2.405625,
+   3.6224166666666666
+  ],
+  [
+   4.715416666666667,
+   5.795041666666667
+  ],
+  [
+   5.916041666666667,
+   7.957333333333334
+  ],
+  [
+   9.117333333333333,
+   10.812166666666666
+  ],
+  [
+   10.986166666666668,
+   12.098166666666666
+  ],
+  [
+   12.963166666666666,
+   14.300458333333333
+  ],
+  [
+   14.410458333333333,
+   16.802041666666668
+  ],
+  [
+   17.463041666666665,
+   18.326125
+  ],
+  [
+   20.784125,
+   22.472375
+  ],
+  [
+   24.032375,
+   25.1625
+  ],
+  [
+   25.5995,
+   26.88329166666667
+  ],
+  [
+   27.07229166666667,
+   28.240833333333335
+  ],
+  [
+   30.068833333333334,
+   32.617875
+  ],
+  [
+   32.917875,
+   33.62379166666667
+  ],
+  [
+   33.71179166666667,
+   35.97983333333333
+  ],
+  [
+   37.76383333333333,
+   39.577958333333335
+  ],
+  [
+   39.775958333333335,
+   43.49304166666667
+  ]
+ ],
+ "wpm": 153.51321386309604,
+ "articulation_wpm": 222.80705949539265,
+ "target_wpm": 155.0,
+ "speed": 1.3256765059752988,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 2.060625,
+   "end_s": 2.405625,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 3.6224166666666666,
+   "end_s": 4.715416666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 7.957333333333334,
+   "end_s": 9.117333333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 12.098166666666666,
+   "end_s": 12.963166666666666,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 16.802041666666668,
+   "end_s": 17.463041666666665,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 18.326125,
+   "end_s": 20.784125,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 22.472375,
+   "end_s": 24.032375,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 25.1625,
+   "end_s": 25.5995,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 28.240833333333335,
+   "end_s": 30.068833333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 32.617875,
+   "end_s": 32.917875,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 35.97983333333333,
+   "end_s": 37.76383333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 3,
+   "start_s": 7.349833333333334,
+   "end_s": 7.466125
+  },
+  {
+   "phrase": 7,
+   "start_s": 15.004916666666666,
+   "end_s": 15.169625
+  },
+  {
+   "phrase": 13,
+   "start_s": 31.457958333333334,
+   "end_s": 31.603416666666668
+  },
+  {
+   "phrase": 15,
+   "start_s": 34.742666666666665,
+   "end_s": 34.857
+  },
+  {
+   "phrase": 17,
+   "start_s": 40.51145833333333,
+   "end_s": 40.706833333333336
+  }
+ ],
+ "text": "Many people stay indoors during the winter months. The days are short, and the weather is often cold and grey. Yet a winter walk can be wonderful. The air is crisp, and the paths are quiet. Bare trees let you see further across the fields. To enjoy it, dress in several thin layers and wear a warm hat. Walk in the middle of the day, when the light is best. Even twenty minutes outside can lift your energy. Afterwards, a hot drink tastes even better than usual. Winter has its own quiet beauty, and a short walk is the best way to see it before spring returns to the fields."
+}

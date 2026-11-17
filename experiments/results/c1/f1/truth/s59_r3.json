@@ -1,0 +1,154 @@
+{
+ "clip_id": "s59_r3",
+ "script_id": "s59",
+ "voice": "bm_george",
+ "render": 3,
+ "sample_rate": 24000,
+ "duration_s": 37.439375,
+ "words": 110,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 36.939375,
+ "speech_spans": [
+  [
+   0.5,
+   1.7920833333333333
+  ],
+  [
+   1.9680833333333334,
+   3.0338333333333334
+  ],
+  [
+   3.930833333333333,
+   4.911958333333334
+  ],
+  [
+   5.255958333333333,
+   7.082208333333333
+  ],
+  [
+   8.801208333333333,
+   10.324666666666667
+  ],
+  [
+   10.451666666666666,
+   11.509625
+  ],
+  [
+   12.478625,
+   13.696041666666666
+  ],
+  [
+   13.838041666666667,
+   15.950666666666667
+  ],
+  [
+   16.047666666666668,
+   16.85033333333333
+  ],
+  [
+   16.953333333333333,
+   18.393041666666665
+  ],
+  [
+   19.485041666666667,
+   20.511666666666667
+  ],
+  [
+   21.654666666666667,
+   22.838416666666667
+  ],
+  [
+   22.994416666666666,
+   24.021166666666666
+  ],
+  [
+   25.465166666666665,
+   27.594166666666666
+  ],
+  [
+   27.710166666666666,
+   28.362916666666667
+  ],
+  [
+   28.553916666666666,
+   30.455125
+  ],
+  [
+   32.070125,
+   33.70475
+  ],
+  [
+   33.77075,
+   36.939375
+  ]
+ ],
+ "wpm": 181.1227552613073,
+ "articulation_wpm": 253.43310661949994,
+ "target_wpm": 173.0,
+ "speed": 1.4149402138242013,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 3.0338333333333334,
+   "end_s": 3.930833333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 4.911958333333334,
+   "end_s": 5.255958333333333,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 7.082208333333333,
+   "end_s": 8.801208333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 11.509625,
+   "end_s": 12.478625,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 18.393041666666665,
+   "end_s": 19.485041666666667,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 20.511666666666667,
+   "end_s": 21.654666666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 24.021166666666666,
+   "end_s": 25.465166666666665,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 30.455125,
+   "end_s": 32.070125,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 7,
+   "start_s": 14.389458333333334,
+   "end_s": 14.527208333333334
+  },
+  {
+   "phrase": 17,
+   "start_s": 34.42058333333333,
+   "end_s": 34.57041666666667
+  }
+ ],
+ "text": "Many people stay indoors during the winter months. The days are short, and the weather is often cold and grey. Yet a winter walk can be wonderful. The air is crisp, and the paths are quiet. Bare trees let you see further across the fields. To enjoy it, dress in several thin layers and wear a warm hat. Walk in the middle of the day, when the light is best. Even twenty minutes outside can lift your energy. Afterwards, a hot drink tastes even better than usual. Winter has its own quiet beauty, and a short walk is the best way to see it before spring returns to the fields."
+}

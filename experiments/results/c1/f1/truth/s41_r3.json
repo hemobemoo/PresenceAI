@@ -1,0 +1,215 @@
+{
+ "clip_id": "s41_r3",
+ "script_id": "s41",
+ "voice": "bf_emma",
+ "render": 3,
+ "sample_rate": 24000,
+ "duration_s": 42.51208333333334,
+ "words": 115,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 42.01208333333334,
+ "speech_spans": [
+  [
+   0.5,
+   1.5055
+  ],
+  [
+   3.6495,
+   4.567708333333333
+  ],
+  [
+   5.3617083333333335,
+   6.753291666666667
+  ],
+  [
+   8.490291666666666,
+   9.645791666666666
+  ],
+  [
+   9.746791666666667,
+   11.117458333333333
+  ],
+  [
+   12.209458333333334,
+   13.069083333333333
+  ],
+  [
+   13.742083333333333,
+   15.14125
+  ],
+  [
+   15.53925,
+   16.710708333333333
+  ],
+  [
+   17.568708333333333,
+   19.414125
+  ],
+  [
+   19.480125,
+   21.9
+  ],
+  [
+   24.746,
+   26.431041666666665
+  ],
+  [
+   26.512041666666665,
+   27.661041666666666
+  ],
+  [
+   27.835041666666665,
+   28.775916666666667
+  ],
+  [
+   29.130916666666668,
+   30.07475
+  ],
+  [
+   30.64175,
+   31.78425
+  ],
+  [
+   32.18625,
+   33.26583333333333
+  ],
+  [
+   33.377833333333335,
+   34.302625
+  ],
+  [
+   35.889625,
+   37.22875
+  ],
+  [
+   38.74175,
+   39.96933333333333
+  ],
+  [
+   40.443333333333335,
+   42.01208333333334
+  ]
+ ],
+ "wpm": 166.21666382278252,
+ "articulation_wpm": 276.73473071003514,
+ "target_wpm": 173.0,
+ "speed": 1.3341723442300988,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 1.5055,
+   "end_s": 3.6495,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 4.567708333333333,
+   "end_s": 5.3617083333333335,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 6.753291666666667,
+   "end_s": 8.490291666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 9.306375,
+   "end_s": 9.577666666666667,
+   "position": "mid_sentence",
+   "source": "kokoro"
+  },
+  {
+   "start_s": 11.117458333333333,
+   "end_s": 12.209458333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 13.069083333333333,
+   "end_s": 13.742083333333333,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 15.14125,
+   "end_s": 15.53925,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 16.371875,
+   "end_s": 16.705041666666666,
+   "position": "mid_sentence",
+   "source": "kokoro"
+  },
+  {
+   "start_s": 16.710708333333333,
+   "end_s": 17.568708333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 21.9,
+   "end_s": 24.746,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 28.775916666666667,
+   "end_s": 29.130916666666668,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 30.07475,
+   "end_s": 30.64175,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 31.78425,
+   "end_s": 32.18625,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 34.302625,
+   "end_s": 35.889625,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 37.22875,
+   "end_s": 38.74175,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 39.96933333333333,
+   "end_s": 40.443333333333335,
+   "position": "clause_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 0,
+   "start_s": 1.236125,
+   "end_s": 1.4468333333333334
+  },
+  {
+   "phrase": 3,
+   "start_s": 9.306375,
+   "end_s": 9.577666666666667
+  },
+  {
+   "phrase": 7,
+   "start_s": 16.371875,
+   "end_s": 16.705041666666666
+  }
+ ],
+ "text": "Every month, I spend one day walking in the hills near my town. I leave early, before the paths become busy. I pack water, a sandwich and a warm jacket, even in summer. The weather in the hills can change very quickly. I follow marked paths and carry a paper map as well as my phone. Walking for several hours clears my head in a way nothing else can. I come home tired, but with a clear head. If you have never tried it, start with a short route. Choose a clear day, and tell someone where you are going. The hills will always be there, ready for your next walk and your next view."
+}

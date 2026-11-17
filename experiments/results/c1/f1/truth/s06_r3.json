@@ -1,0 +1,237 @@
+{
+ "clip_id": "s06_r3",
+ "script_id": "s06",
+ "voice": "af_heart",
+ "render": 3,
+ "sample_rate": 24000,
+ "duration_s": 41.692458333333335,
+ "words": 112,
+ "fillers": 2,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 41.192458333333335,
+ "speech_spans": [
+  [
+   0.5,
+   1.0180416666666667
+  ],
+  [
+   1.3480416666666666,
+   2.2863333333333333
+  ],
+  [
+   2.9683333333333333,
+   3.4114166666666668
+  ],
+  [
+   3.8964166666666666,
+   5.172833333333333
+  ],
+  [
+   5.342833333333333,
+   5.926666666666667
+  ],
+  [
+   7.853666666666666,
+   8.918166666666666
+  ],
+  [
+   10.454166666666667,
+   11.533166666666666
+  ],
+  [
+   11.710166666666666,
+   11.997125
+  ],
+  [
+   12.116125,
+   12.659541666666666
+  ],
+  [
+   12.745541666666666,
+   13.417125
+  ],
+  [
+   14.829125,
+   15.51275
+  ],
+  [
+   15.91075,
+   16.702375
+  ],
+  [
+   18.431375,
+   19.325
+  ],
+  [
+   19.698,
+   20.205708333333334
+  ],
+  [
+   20.943708333333333,
+   21.561583333333335
+  ],
+  [
+   22.054583333333333,
+   22.738125
+  ],
+  [
+   23.203125,
+   23.490083333333335
+  ],
+  [
+   23.672083333333333,
+   24.33416666666667
+  ],
+  [
+   24.722166666666666,
+   25.774375
+  ],
+  [
+   26.250375,
+   27.683541666666667
+  ],
+  [
+   29.421541666666666,
+   30.397458333333333
+  ],
+  [
+   32.457458333333335,
+   33.11441666666666
+  ],
+  [
+   35.997416666666666,
+   36.76470833333333
+  ],
+  [
+   38.79570833333333,
+   39.44220833333333
+  ],
+  [
+   40.274208333333334,
+   41.192458333333335
+  ]
+ ],
+ "wpm": 165.14116559272347,
+ "articulation_wpm": 354.0110496752484,
+ "target_wpm": 173.0,
+ "speed": 1.8860903251989454,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 1.0180416666666667,
+   "end_s": 1.3480416666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 2.2863333333333333,
+   "end_s": 2.9683333333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 3.4114166666666668,
+   "end_s": 3.8964166666666666,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 5.926666666666667,
+   "end_s": 7.853666666666666,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 8.918166666666666,
+   "end_s": 10.454166666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 13.417125,
+   "end_s": 14.829125,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 15.51275,
+   "end_s": 15.91075,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 16.702375,
+   "end_s": 18.431375,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 19.325,
+   "end_s": 19.698,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 20.205708333333334,
+   "end_s": 20.943708333333333,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 21.561583333333335,
+   "end_s": 22.054583333333333,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 22.738125,
+   "end_s": 23.203125,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 24.33416666666667,
+   "end_s": 24.722166666666666,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 25.774375,
+   "end_s": 26.250375,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 27.683541666666667,
+   "end_s": 29.421541666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 30.397458333333333,
+   "end_s": 32.457458333333335,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 33.11441666666666,
+   "end_s": 35.997416666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 36.76470833333333,
+   "end_s": 38.79570833333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 39.44220833333333,
+   "end_s": 40.274208333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [],
+ "text": "Good afternoon. My topic today is note taking. In class, many students try to write down every word. That is tiring, and it often misses the main point. A better method is to listen first and write after. Write short phrases, not full sentences. Leave space on the page, so you can add ideas later. After class, spend five minutes looking over your notes. Mark the key terms, and write one question you still have. This small review helps you remember much more. It also shows you what to ask in the next lesson. Good notes are not long. Good notes are clear. They help you learn with less effort."
+}

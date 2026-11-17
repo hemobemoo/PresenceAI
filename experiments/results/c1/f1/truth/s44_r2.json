@@ -1,0 +1,165 @@
+{
+ "clip_id": "s44_r2",
+ "script_id": "s44",
+ "voice": "bf_emma",
+ "render": 2,
+ "sample_rate": 24000,
+ "duration_s": 44.11141666666666,
+ "words": 109,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 43.61141666666666,
+ "speech_spans": [
+  [
+   0.5,
+   2.0820416666666666
+  ],
+  [
+   2.261041666666667,
+   3.4711666666666665
+  ],
+  [
+   3.5921666666666665,
+   5.3105416666666665
+  ],
+  [
+   5.4195416666666665,
+   8.5975
+  ],
+  [
+   10.8365,
+   12.39575
+  ],
+  [
+   12.90075,
+   14.216916666666666
+  ],
+  [
+   15.149916666666666,
+   16.753041666666668
+  ],
+  [
+   16.890041666666665,
+   18.110458333333334
+  ],
+  [
+   18.205458333333333,
+   20.147333333333332
+  ],
+  [
+   20.616333333333333,
+   22.569875
+  ],
+  [
+   23.272875,
+   25.201791666666665
+  ],
+  [
+   26.206791666666668,
+   27.187541666666668
+  ],
+  [
+   28.444541666666666,
+   30.634458333333335
+  ],
+  [
+   30.820458333333335,
+   31.762916666666666
+  ],
+  [
+   31.827916666666667,
+   33.620875
+  ],
+  [
+   34.582875,
+   36.717625
+  ],
+  [
+   37.086625,
+   38.73220833333333
+  ],
+  [
+   39.268208333333334,
+   41.32479166666667
+  ],
+  [
+   41.38579166666667,
+   43.61141666666666
+  ]
+ ],
+ "wpm": 151.69995573484982,
+ "articulation_wpm": 197.10421558901461,
+ "target_wpm": 155.0,
+ "speed": 0.9818533381395359,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 8.5975,
+   "end_s": 10.8365,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 12.39575,
+   "end_s": 12.90075,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 14.216916666666666,
+   "end_s": 15.149916666666666,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 20.147333333333332,
+   "end_s": 20.616333333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 22.569875,
+   "end_s": 23.272875,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 25.201791666666665,
+   "end_s": 26.206791666666668,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 27.187541666666668,
+   "end_s": 28.444541666666666,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 33.620875,
+   "end_s": 34.582875,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 36.717625,
+   "end_s": 37.086625,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 38.73220833333333,
+   "end_s": 39.268208333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 13,
+   "start_s": 31.513166666666667,
+   "end_s": 31.755458333333333
+  }
+ ],
+ "text": "Many of us look at screens for most of the day. Our eyes were not made for this. They work hardest when they focus on something near for a long time. A simple rule can help. Every twenty minutes, look at something far away for twenty seconds. This lets the eye muscles relax. Make sure the screen is not too bright, and sit at a comfortable distance. Blink often, because we blink less when we concentrate. Finally, have your eyes checked regularly. Good vision makes every task easier, so it deserves a little care. Your eyes work hard for you every day, so give them regular rest and attention."
+}

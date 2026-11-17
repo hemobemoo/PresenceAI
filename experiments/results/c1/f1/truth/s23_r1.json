@@ -1,0 +1,189 @@
+{
+ "clip_id": "s23_r1",
+ "script_id": "s23",
+ "voice": "am_michael",
+ "render": 1,
+ "sample_rate": 24000,
+ "duration_s": 50.129416666666664,
+ "words": 111,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 49.629416666666664,
+ "speech_spans": [
+  [
+   0.5,
+   2.0515416666666666
+  ],
+  [
+   2.9175416666666667,
+   6.132041666666667
+  ],
+  [
+   8.104041666666667,
+   8.732625
+  ],
+  [
+   10.054625,
+   10.889333333333333
+  ],
+  [
+   11.057333333333334,
+   12.107166666666666
+  ],
+  [
+   12.235166666666666,
+   14.302
+  ],
+  [
+   15.45,
+   16.078
+  ],
+  [
+   17.211,
+   19.175541666666668
+  ],
+  [
+   20.351541666666666,
+   21.604416666666665
+  ],
+  [
+   22.435416666666665,
+   23.473291666666668
+  ],
+  [
+   26.386291666666665,
+   27.008875
+  ],
+  [
+   27.971875,
+   30.287666666666667
+  ],
+  [
+   30.393666666666668,
+   31.8725
+  ],
+  [
+   32.0405,
+   33.594541666666665
+  ],
+  [
+   33.65354166666667,
+   34.84854166666667
+  ],
+  [
+   35.32154166666667,
+   37.17466666666667
+  ],
+  [
+   37.74466666666667,
+   38.42545833333333
+  ],
+  [
+   38.51945833333333,
+   39.99641666666667
+  ],
+  [
+   40.107416666666666,
+   41.92691666666666
+  ],
+  [
+   43.721916666666665,
+   44.925375
+  ],
+  [
+   46.066375,
+   47.22
+  ],
+  [
+   47.341,
+   49.629416666666664
+  ]
+ ],
+ "wpm": 135.56033130185074,
+ "articulation_wpm": 208.96466792345285,
+ "target_wpm": 137.0,
+ "speed": 1.0955201302469655,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 2.0515416666666666,
+   "end_s": 2.9175416666666667,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 6.132041666666667,
+   "end_s": 8.104041666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 8.732625,
+   "end_s": 10.054625,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 14.302,
+   "end_s": 15.45,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 16.078,
+   "end_s": 17.211,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 19.175541666666668,
+   "end_s": 20.351541666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 21.604416666666665,
+   "end_s": 22.435416666666665,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 23.473291666666668,
+   "end_s": 26.386291666666665,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 27.008875,
+   "end_s": 27.971875,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 34.84854166666667,
+   "end_s": 35.32154166666667,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 37.17466666666667,
+   "end_s": 37.74466666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 41.92691666666666,
+   "end_s": 43.721916666666665,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 44.925375,
+   "end_s": 46.066375,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [],
+ "text": "If your computer feels slow, there are a few simple things to try before buying a new one. First, restart it. This clears memory and often solves the problem at once. Next, quit programs that you are not using. Many of them keep running in the background. Third, check how much free space is left on the disk. When the disk is almost full, the whole system slows down. Delete old files, or move them to an external drive. Finally, keep the software up to date. These steps take only a few minutes, and they often help. If none of this helps, ask a friend or a repair shop for advice."
+}

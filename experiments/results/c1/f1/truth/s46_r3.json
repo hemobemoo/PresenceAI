@@ -1,0 +1,178 @@
+{
+ "clip_id": "s46_r3",
+ "script_id": "s46",
+ "voice": "bf_emma",
+ "render": 3,
+ "sample_rate": 24000,
+ "duration_s": 40.405458333333335,
+ "words": 109,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 39.905458333333335,
+ "speech_spans": [
+  [
+   0.5,
+   1.9490833333333333
+  ],
+  [
+   2.5930833333333334,
+   3.4124583333333334
+  ],
+  [
+   3.841458333333333,
+   4.976083333333333
+  ],
+  [
+   5.0960833333333335,
+   7.35225
+  ],
+  [
+   7.41225,
+   8.370166666666666
+  ],
+  [
+   8.523166666666667,
+   9.787291666666667
+  ],
+  [
+   10.189291666666668,
+   11.452833333333333
+  ],
+  [
+   11.629833333333334,
+   12.955958333333333
+  ],
+  [
+   15.353958333333333,
+   16.60108333333333
+  ],
+  [
+   16.69408333333333,
+   18.177083333333332
+  ],
+  [
+   18.871083333333335,
+   20.327333333333332
+  ],
+  [
+   21.161333333333335,
+   23.251041666666666
+  ],
+  [
+   23.627041666666667,
+   25.908916666666666
+  ],
+  [
+   28.444916666666668,
+   29.689875
+  ],
+  [
+   30.233875,
+   31.868
+  ],
+  [
+   32.287,
+   33.81679166666667
+  ],
+  [
+   33.99579166666667,
+   36.272
+  ],
+  [
+   36.657,
+   39.905458333333335
+  ]
+ ],
+ "wpm": 165.96685526857001,
+ "articulation_wpm": 228.39781031457082,
+ "target_wpm": 173.0,
+ "speed": 1.1101670648361293,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 1.9490833333333333,
+   "end_s": 2.5930833333333334,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 3.4124583333333334,
+   "end_s": 3.841458333333333,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 9.787291666666667,
+   "end_s": 10.189291666666668,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 12.955958333333333,
+   "end_s": 15.353958333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 18.177083333333332,
+   "end_s": 18.871083333333335,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 20.327333333333332,
+   "end_s": 21.161333333333335,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 23.251041666666666,
+   "end_s": 23.627041666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 25.908916666666666,
+   "end_s": 28.444916666666668,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 29.311958333333333,
+   "end_s": 29.640166666666666,
+   "position": "mid_sentence",
+   "source": "kokoro"
+  },
+  {
+   "start_s": 29.689875,
+   "end_s": 30.233875,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 31.868,
+   "end_s": 32.287,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 36.272,
+   "end_s": 36.657,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 4,
+   "start_s": 8.11075,
+   "end_s": 8.329
+  },
+  {
+   "phrase": 13,
+   "start_s": 29.311958333333333,
+   "end_s": 29.640166666666666
+  }
+ ],
+ "text": "My desk was once covered in papers, cups and cables. I told myself that I knew where everything was. In truth, I lost time searching for things every day. So I made a few rules. At the end of each day, I clear the desk completely. Papers go into one tray, and anything I do not need goes in the bin. Cables are tied together and kept out of sight. In the morning, I start with an empty surface. It sounds like a small change, but it helps me begin work quickly and calmly. A tidy space at the start of the day makes it easier to think clearly."
+}

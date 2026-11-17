@@ -1,0 +1,172 @@
+{
+ "clip_id": "s48_r4",
+ "script_id": "s48",
+ "voice": "bf_emma",
+ "render": 4,
+ "sample_rate": 24000,
+ "duration_s": 38.16133333333333,
+ "words": 112,
+ "fillers": 1,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 37.66133333333333,
+ "speech_spans": [
+  [
+   0.5,
+   2.2927916666666666
+  ],
+  [
+   2.6887916666666665,
+   3.6274166666666665
+  ],
+  [
+   3.8124166666666666,
+   4.975958333333334
+  ],
+  [
+   5.170958333333333,
+   6.995458333333334
+  ],
+  [
+   7.552458333333333,
+   9.573541666666667
+  ],
+  [
+   11.105541666666667,
+   12.1175
+  ],
+  [
+   12.2855,
+   13.330541666666667
+  ],
+  [
+   13.906541666666667,
+   15.598
+  ],
+  [
+   16.641,
+   17.688583333333334
+  ],
+  [
+   17.793583333333334,
+   20.018208333333334
+  ],
+  [
+   21.502208333333332,
+   22.65975
+  ],
+  [
+   23.87975,
+   24.253375
+  ],
+  [
+   24.326375,
+   26.295958333333335
+  ],
+  [
+   26.432958333333332,
+   27.624416666666665
+  ],
+  [
+   27.987416666666668,
+   29.327291666666667
+  ],
+  [
+   30.231291666666667,
+   31.830958333333335
+  ],
+  [
+   32.845958333333336,
+   36.2135
+  ],
+  [
+   36.4065,
+   37.66133333333333
+  ]
+ ],
+ "wpm": 180.8331240357361,
+ "articulation_wpm": 251.77694136600854,
+ "target_wpm": 191.0,
+ "speed": 1.2424250952223743,
+ "attempts": 3,
+ "pauses": [
+  {
+   "start_s": 2.2927916666666666,
+   "end_s": 2.6887916666666665,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 4.632291666666666,
+   "end_s": 4.957333333333334,
+   "position": "mid_sentence",
+   "source": "kokoro"
+  },
+  {
+   "start_s": 6.995458333333334,
+   "end_s": 7.552458333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 9.573541666666667,
+   "end_s": 11.105541666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 13.330541666666667,
+   "end_s": 13.906541666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 15.598,
+   "end_s": 16.641,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 20.018208333333334,
+   "end_s": 21.502208333333332,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 22.65975,
+   "end_s": 23.87975,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 27.624416666666665,
+   "end_s": 27.987416666666668,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 29.327291666666667,
+   "end_s": 30.231291666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 31.830958333333335,
+   "end_s": 32.845958333333336,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 2,
+   "start_s": 4.632291666666666,
+   "end_s": 4.957333333333334
+  },
+  {
+   "phrase": 15,
+   "start_s": 35.07333333333333,
+   "end_s": 35.203583333333334
+  }
+ ],
+ "text": "Tomatoes are one of the easiest plants to grow at home. They need sun, water and a large pot with good soil. Plant them after the last cold night of spring. Water them deeply, but not every day. Too much water makes the fruit split. As the plants grow, tie the stems to a stick so they do not fall over. Remove the small shoots that appear between the main stem and the leaves. After about two months, the first fruit will turn red. Pick them when they are firm and bright. Fresh tomatoes from your own pot taste sweeter than most that you can buy, and they cost very little."
+}

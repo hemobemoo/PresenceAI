@@ -1,0 +1,195 @@
+{
+ "clip_id": "s57_r1",
+ "script_id": "s57",
+ "voice": "bm_george",
+ "render": 1,
+ "sample_rate": 24000,
+ "duration_s": 49.91075,
+ "words": 109,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 49.41075,
+ "speech_spans": [
+  [
+   0.5,
+   2.8787083333333334
+  ],
+  [
+   3.3467083333333334,
+   5.1630416666666665
+  ],
+  [
+   5.356041666666667,
+   7.634166666666666
+  ],
+  [
+   10.208166666666667,
+   11.325416666666667
+  ],
+  [
+   12.033416666666668,
+   16.125958333333333
+  ],
+  [
+   16.204958333333334,
+   17.390041666666665
+  ],
+  [
+   20.249041666666667,
+   21.794833333333333
+  ],
+  [
+   22.50883333333333,
+   23.71325
+  ],
+  [
+   25.14625,
+   27.016125
+  ],
+  [
+   27.177125,
+   28.866208333333333
+  ],
+  [
+   29.033208333333334,
+   29.876208333333334
+  ],
+  [
+   30.499208333333332,
+   32.8815
+  ],
+  [
+   32.9915,
+   35.386125
+  ],
+  [
+   35.448125,
+   36.756708333333336
+  ],
+  [
+   36.832708333333336,
+   38.02404166666667
+  ],
+  [
+   39.693041666666666,
+   42.30325
+  ],
+  [
+   43.43425,
+   47.291
+  ],
+  [
+   47.402,
+   49.41075
+  ]
+ ],
+ "wpm": 133.7129363176807,
+ "articulation_wpm": 182.82072247730463,
+ "target_wpm": 137.0,
+ "speed": 1.146312500988439,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 2.8787083333333334,
+   "end_s": 3.3467083333333334,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 7.634166666666666,
+   "end_s": 10.208166666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 11.325416666666667,
+   "end_s": 12.033416666666668,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 17.390041666666665,
+   "end_s": 20.249041666666667,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 21.794833333333333,
+   "end_s": 22.50883333333333,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 23.71325,
+   "end_s": 25.14625,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 29.876208333333334,
+   "end_s": 30.499208333333332,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 38.02404166666667,
+   "end_s": 39.693041666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 42.30325,
+   "end_s": 43.43425,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 0,
+   "start_s": 1.6635416666666667,
+   "end_s": 1.8114166666666667
+  },
+  {
+   "phrase": 2,
+   "start_s": 6.59575,
+   "end_s": 6.6974583333333335
+  },
+  {
+   "phrase": 4,
+   "start_s": 14.302083333333334,
+   "end_s": 14.484708333333334
+  },
+  {
+   "phrase": 4,
+   "start_s": 15.344708333333333,
+   "end_s": 15.516541666666667
+  },
+  {
+   "phrase": 11,
+   "start_s": 31.296,
+   "end_s": 31.417333333333332
+  },
+  {
+   "phrase": 15,
+   "start_s": 40.37370833333333,
+   "end_s": 40.4895
+  },
+  {
+   "phrase": 16,
+   "start_s": 44.065625,
+   "end_s": 44.17525
+  },
+  {
+   "phrase": 16,
+   "start_s": 45.741083333333336,
+   "end_s": 45.9705
+  },
+  {
+   "phrase": 17,
+   "start_s": 48.425291666666666,
+   "end_s": 48.571083333333334
+  }
+ ],
+ "text": "Choosing a bicycle can be confusing, because there are so many types. Start by thinking about where you will ride. For city streets, a simple bicycle with upright handlebars is comfortable and safe. For rough paths, you need wider tyres and stronger brakes. Size matters more than price. Your feet should reach the ground when you stop, and your arms should not stretch too far. Always try a bicycle before you buy it. Ride it around the block, and test the brakes. A good fit makes every ride more pleasant. Many shops also sell good bicycles that have been carefully checked, which can save you a lot of money."
+}

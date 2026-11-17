@@ -1,0 +1,193 @@
+{
+ "clip_id": "s05_r1",
+ "script_id": "s05",
+ "voice": "af_heart",
+ "render": 1,
+ "sample_rate": 24000,
+ "duration_s": 50.974375,
+ "words": 110,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 50.474375,
+ "speech_spans": [
+  [
+   0.5,
+   2.5145
+  ],
+  [
+   2.6015,
+   4.210541666666667
+  ],
+  [
+   4.511541666666667,
+   6.464333333333333
+  ],
+  [
+   6.592333333333333,
+   8.103333333333333
+  ],
+  [
+   8.268333333333333,
+   9.757958333333333
+  ],
+  [
+   10.883958333333334,
+   12.127125
+  ],
+  [
+   12.302125,
+   13.527875
+  ],
+  [
+   13.696875,
+   15.583041666666666
+  ],
+  [
+   15.938041666666667,
+   17.44575
+  ],
+  [
+   18.58075,
+   20.501541666666668
+  ],
+  [
+   20.645541666666666,
+   22.013
+  ],
+  [
+   22.173,
+   24.196958333333335
+  ],
+  [
+   26.739958333333334,
+   28.192916666666665
+  ],
+  [
+   29.840916666666665,
+   31.035916666666665
+  ],
+  [
+   31.381916666666665,
+   32.424458333333334
+  ],
+  [
+   32.54045833333333,
+   34.28545833333333
+  ],
+  [
+   34.77645833333333,
+   37.18595833333333
+  ],
+  [
+   37.717958333333335,
+   39.144625
+  ],
+  [
+   39.502625,
+   41.16725
+  ],
+  [
+   41.93425,
+   43.618541666666665
+  ],
+  [
+   44.01654166666667,
+   45.439375
+  ],
+  [
+   45.496375,
+   47.722625
+  ],
+  [
+   48.667625,
+   50.474375
+  ]
+ ],
+ "wpm": 132.0676846884028,
+ "articulation_wpm": 174.4722050577113,
+ "target_wpm": 137.0,
+ "speed": 0.7910093795959265,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 4.210541666666667,
+   "end_s": 4.511541666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 9.757958333333333,
+   "end_s": 10.883958333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 15.583041666666666,
+   "end_s": 15.938041666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 17.44575,
+   "end_s": 18.58075,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 24.196958333333335,
+   "end_s": 26.739958333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 28.192916666666665,
+   "end_s": 29.840916666666665,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 31.035916666666665,
+   "end_s": 31.381916666666665,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 34.28545833333333,
+   "end_s": 34.77645833333333,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 37.18595833333333,
+   "end_s": 37.717958333333335,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 39.144625,
+   "end_s": 39.502625,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 41.16725,
+   "end_s": 41.93425,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 43.618541666666665,
+   "end_s": 44.01654166666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 47.722625,
+   "end_s": 48.667625,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [],
+ "text": "When I moved into my first home, I could not cook at all. I ate the same simple meals, and I spent too much on takeaway food. So I made a plan. Every Sunday, I would learn one new dish. I started with soup, because it is hard to get wrong. Then I tried rice, eggs and baked vegetables. Some meals were good, and some were not. But each week, I became a little faster and a little more relaxed in the kitchen. After a few months, I could cook for friends. My advice is simple. Start with one dish, and give yourself time to practise. Cooking soon becomes fun."
+}

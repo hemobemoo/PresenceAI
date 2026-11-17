@@ -1,0 +1,163 @@
+{
+ "clip_id": "s38_r2",
+ "script_id": "s38",
+ "voice": "am_fenrir",
+ "render": 2,
+ "sample_rate": 24000,
+ "duration_s": 41.59429166666666,
+ "words": 110,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 41.09429166666666,
+ "speech_spans": [
+  [
+   0.5,
+   1.4447916666666667
+  ],
+  [
+   1.4987916666666667,
+   2.9114583333333335
+  ],
+  [
+   3.0804583333333335,
+   3.913291666666667
+  ],
+  [
+   3.9972916666666665,
+   5.187666666666667
+  ],
+  [
+   7.539666666666666,
+   9.749541666666667
+  ],
+  [
+   12.692541666666667,
+   13.447666666666667
+  ],
+  [
+   13.536666666666667,
+   14.827458333333333
+  ],
+  [
+   15.583458333333333,
+   17.835291666666667
+  ],
+  [
+   18.191291666666668,
+   19.344041666666666
+  ],
+  [
+   19.660041666666668,
+   20.758416666666665
+  ],
+  [
+   20.892416666666666,
+   23.466916666666666
+  ],
+  [
+   23.618916666666667,
+   24.640583333333332
+  ],
+  [
+   24.826583333333332,
+   26.107208333333332
+  ],
+  [
+   26.444208333333332,
+   27.423375
+  ],
+  [
+   28.589375,
+   29.705291666666668
+  ],
+  [
+   29.789291666666667,
+   31.255375
+  ],
+  [
+   32.232375,
+   34.277208333333334
+  ],
+  [
+   34.33320833333333,
+   35.54320833333333
+  ],
+  [
+   35.96820833333334,
+   36.493
+  ],
+  [
+   38.072,
+   41.09429166666666
+  ]
+ ],
+ "wpm": 162.58443561954013,
+ "articulation_wpm": 232.5639440730697,
+ "target_wpm": 155.0,
+ "speed": 0.9475591543526034,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 5.187666666666667,
+   "end_s": 7.539666666666666,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 9.749541666666667,
+   "end_s": 12.692541666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 14.827458333333333,
+   "end_s": 15.583458333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 17.835291666666667,
+   "end_s": 18.191291666666668,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 19.344041666666666,
+   "end_s": 19.660041666666668,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 26.107208333333332,
+   "end_s": 26.444208333333332,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 27.423375,
+   "end_s": 28.589375,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 31.255375,
+   "end_s": 32.232375,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 35.54320833333333,
+   "end_s": 35.96820833333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 36.493,
+   "end_s": 38.072,
+   "position": "clause_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [],
+ "text": "I learned to swim when I was thirty years old. As a child, I never had lessons, and I was always uneasy near deep water. One summer, I decided to change that. I joined a class for adults at the local pool. The teacher was patient, and the group was small. We started by simply floating and breathing slowly. After a few weeks, I could swim one length without stopping. By the end of the summer, I could swim for twenty minutes. It is never too late to learn a new skill. You only need to begin. Today, swimming is the way I relax after a long day at work."
+}

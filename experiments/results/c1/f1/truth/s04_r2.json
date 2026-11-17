@@ -1,0 +1,169 @@
+{
+ "clip_id": "s04_r2",
+ "script_id": "s04",
+ "voice": "af_heart",
+ "render": 2,
+ "sample_rate": 24000,
+ "duration_s": 43.76195833333333,
+ "words": 107,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 43.26195833333333,
+ "speech_spans": [
+  [
+   0.5,
+   1.7596666666666667
+  ],
+  [
+   1.8136666666666668,
+   4.064416666666666
+  ],
+  [
+   5.109416666666666,
+   5.71775
+  ],
+  [
+   5.90575,
+   7.512625
+  ],
+  [
+   10.135625,
+   11.134333333333334
+  ],
+  [
+   11.593333333333334,
+   13.267916666666666
+  ],
+  [
+   15.420916666666667,
+   15.999166666666667
+  ],
+  [
+   16.448166666666665,
+   17.927833333333332
+  ],
+  [
+   18.085833333333333,
+   19.018333333333334
+  ],
+  [
+   19.128333333333334,
+   22.073208333333334
+  ],
+  [
+   22.235208333333333,
+   22.799416666666666
+  ],
+  [
+   22.954416666666667,
+   24.590833333333332
+  ],
+  [
+   24.781833333333335,
+   25.971416666666666
+  ],
+  [
+   27.010416666666668,
+   29.549916666666668
+  ],
+  [
+   30.172916666666666,
+   31.702541666666665
+  ],
+  [
+   34.32454166666667,
+   35.78916666666667
+  ],
+  [
+   36.220166666666664,
+   36.82516666666667
+  ],
+  [
+   36.961166666666664,
+   38.73945833333333
+  ],
+  [
+   39.869458333333334,
+   41.11925
+  ],
+  [
+   41.82325,
+   43.26195833333333
+  ]
+ ],
+ "wpm": 150.13344220476338,
+ "articulation_wpm": 226.61522916700372,
+ "target_wpm": 155.0,
+ "speed": 1.0307333268912104,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 4.064416666666666,
+   "end_s": 5.109416666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 7.512625,
+   "end_s": 10.135625,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 11.134333333333334,
+   "end_s": 11.593333333333334,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 13.267916666666666,
+   "end_s": 15.420916666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 15.999166666666667,
+   "end_s": 16.448166666666665,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 25.971416666666666,
+   "end_s": 27.010416666666668,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 29.549916666666668,
+   "end_s": 30.172916666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 31.702541666666665,
+   "end_s": 34.32454166666667,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 35.78916666666667,
+   "end_s": 36.220166666666664,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 38.73945833333333,
+   "end_s": 39.869458333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 41.11925,
+   "end_s": 41.82325,
+   "position": "clause_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [],
+ "text": "Today I would like to share three easy ways to save energy at home. First, turn off lights when you leave a room. It sounds obvious, but it makes a difference over a year. Next, wash clothes in cold water whenever you can. Most of the energy in a wash goes into heating the water. Third, unplug chargers and devices that you are not using. Many of them draw power even when they sit idle. None of these steps costs money, and none of them takes much time. Together, they lower the bill and reduce waste. Pick one idea this week, and add the next one later."
+}

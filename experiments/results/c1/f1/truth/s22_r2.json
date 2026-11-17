@@ -1,0 +1,151 @@
+{
+ "clip_id": "s22_r2",
+ "script_id": "s22",
+ "voice": "am_michael",
+ "render": 2,
+ "sample_rate": 24000,
+ "duration_s": 44.9445,
+ "words": 112,
+ "fillers": 1,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 44.4445,
+ "speech_spans": [
+  [
+   0.5,
+   2.0646666666666667
+  ],
+  [
+   2.1496666666666666,
+   3.25775
+  ],
+  [
+   3.35575,
+   4.430166666666667
+  ],
+  [
+   4.611166666666667,
+   6.316375
+  ],
+  [
+   7.018375,
+   8.347375
+  ],
+  [
+   8.437375,
+   9.600041666666666
+  ],
+  [
+   10.054041666666667,
+   12.215
+  ],
+  [
+   12.535,
+   15.115541666666667
+  ],
+  [
+   15.307541666666667,
+   16.523416666666666
+  ],
+  [
+   16.642416666666666,
+   19.020791666666668
+  ],
+  [
+   19.117791666666665,
+   23.275125
+  ],
+  [
+   26.072125,
+   28.253375
+  ],
+  [
+   31.176375,
+   31.937125
+  ],
+  [
+   32.117125,
+   33.558791666666664
+  ],
+  [
+   34.90779166666667,
+   35.65233333333333
+  ],
+  [
+   36.348333333333336,
+   37.99433333333333
+  ],
+  [
+   38.699333333333335,
+   39.78183333333333
+  ],
+  [
+   39.975833333333334,
+   40.365833333333335
+  ],
+  [
+   40.548833333333334,
+   42.58391666666667
+  ],
+  [
+   42.712916666666665,
+   44.4445
+  ]
+ ],
+ "wpm": 152.9201606571926,
+ "articulation_wpm": 207.08463660036057,
+ "target_wpm": 155.0,
+ "speed": 1.0174585649063614,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 6.316375,
+   "end_s": 7.018375,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 9.600041666666666,
+   "end_s": 10.054041666666667,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 12.215,
+   "end_s": 12.535,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 23.275125,
+   "end_s": 26.072125,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 28.253375,
+   "end_s": 31.176375,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 33.558791666666664,
+   "end_s": 34.90779166666667,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 35.65233333333333,
+   "end_s": 36.348333333333336,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 37.99433333333333,
+   "end_s": 38.699333333333335,
+   "position": "clause_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [],
+ "text": "The first week in a new job can feel strange. There are new names, new systems and new rules. Here is what helped me. On the first day, I wrote down the name of everyone I met. I asked my manager what success would look like after three months. That one question gave me a clear direction. I also found one colleague who was willing to answer small questions. I tried not to change things too quickly. Instead, I watched how the team worked and why. By the end of the first month, I felt at home. Every new job is a chance to learn, so give yourself time to settle."
+}

@@ -1,0 +1,155 @@
+{
+ "clip_id": "s60_r4",
+ "script_id": "s60",
+ "voice": "bm_george",
+ "render": 4,
+ "sample_rate": 24000,
+ "duration_s": 36.099916666666665,
+ "words": 111,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 35.599916666666665,
+ "speech_spans": [
+  [
+   0.5,
+   2.3020833333333335
+  ],
+  [
+   2.3970833333333332,
+   3.7961666666666667
+  ],
+  [
+   3.9751666666666665,
+   5.179833333333334
+  ],
+  [
+   5.927833333333333,
+   7.438375
+  ],
+  [
+   8.165375,
+   8.621875
+  ],
+  [
+   10.553875,
+   11.650083333333333
+  ],
+  [
+   11.742083333333333,
+   12.926375
+  ],
+  [
+   13.261375,
+   13.77825
+  ],
+  [
+   13.86625,
+   15.763041666666666
+  ],
+  [
+   16.104041666666667,
+   17.258666666666667
+  ],
+  [
+   17.36766666666667,
+   18.863583333333334
+  ],
+  [
+   19.184583333333332,
+   19.646875
+  ],
+  [
+   19.731875,
+   21.047291666666666
+  ],
+  [
+   21.230291666666666,
+   21.974375
+  ],
+  [
+   22.165375,
+   23.53575
+  ],
+  [
+   25.85875,
+   27.787541666666666
+  ],
+  [
+   28.783541666666668,
+   29.768333333333334
+  ],
+  [
+   32.504333333333335,
+   35.599916666666665
+  ]
+ ],
+ "wpm": 189.74404022801573,
+ "articulation_wpm": 281.97736983420776,
+ "target_wpm": 191.0,
+ "speed": 1.5871720125902653,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 5.179833333333334,
+   "end_s": 5.927833333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 7.438375,
+   "end_s": 8.165375,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 8.621875,
+   "end_s": 10.553875,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 12.926375,
+   "end_s": 13.261375,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 15.763041666666666,
+   "end_s": 16.104041666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 18.863583333333334,
+   "end_s": 19.184583333333332,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 23.53575,
+   "end_s": 25.85875,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 27.787541666666666,
+   "end_s": 28.783541666666668,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 29.768333333333334,
+   "end_s": 32.504333333333335,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 17,
+   "start_s": 34.861125,
+   "end_s": 34.964708333333334
+  }
+ ],
+ "text": "The end of a talk is what people remember most. Yet many speakers simply stop when they run out of slides. A strong ending has three parts. First, sum up the main message in one or two sentences. Next, tell the audience what you would like them to do next. It might be to try an idea, visit a website or ask a question. Third, finish with a clear closing line, and then pause. Do not rush away from the stage. Give people a moment to take in what you have said. Then thank them warmly. A clear ending turns a good talk into one that people remember and act upon."
+}
