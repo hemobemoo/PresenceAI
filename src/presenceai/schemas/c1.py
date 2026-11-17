@@ -201,8 +201,11 @@ class E2Summary(_Frozen):
     duration_mae_s: float | None
     true_mid_share: float | None
     detected_mid_share: float | None
-    position_error_rate: float | None
+    position_error_rate: float | None  # any label mismatch; extra information (ADR 0014 §6)
     position_unknown_share: float | None
+    position_table: dict[str, dict[str, int]]  # matched pauses: true position -> detected label
+    mid_as_boundary_rate: float | None  # headline: true mid-sentence labelled as a boundary
+    boundary_as_mid_rate: float | None  # headline: true boundary labelled mid-sentence
     kokoro_pauses: int = Field(ge=0)
     passes: dict[str, bool | None]
     passed: bool | None

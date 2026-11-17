@@ -100,6 +100,8 @@ def test_evaluate_scores_only_the_requested_part(tmp_path: Path):
         f1_all = {t.threshold_s: (t.tp_all, t.fp_all, t.fn_all) for t in s.thresholds}
         assert f1_all[1.0][1] == 0 and f1_all[1.0][2] == 0  # every true pause found
     assert "syllable_rate_vs_wpm_true_r" in meta and len(extras) == 3
+    assert "syllable_rate_vs_articulation_true_r" in meta
+    assert all(x["articulation_wpm_true"] > 0 for x in extras)
 
 
 def test_noise_clips_are_written_once_at_the_requested_snr(tmp_path: Path):

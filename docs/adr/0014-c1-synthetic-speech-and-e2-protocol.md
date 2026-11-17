@@ -114,8 +114,25 @@ tokens". This ADR fixes how C1 is built, how truth is measured, and how E2 is sc
 - **Duration error:** mean absolute error over all matched pauses.
 - **wpm error: judged on all clips** (owner's point 6). The filler / no-filler breakdown is
   extra information. A clip without a measured rate counts as a 100 % error.
-- Also reported: per-clip values; the `mid_sentence` share against the truth and the position
-  error rate (ADR 0011); Kokoro's own pauses; the live syllable rate against post-analysis wpm.
+- **Pause position, headline measure** (owner, 2026-11-17, fixed on the development part
+  before the test run): boundary vs mid-sentence errors, reported separately in both
+  directions, as shares of the matched true pauses of each kind:
+  - true mid-sentence pauses labelled as a boundary (`mid_as_boundary_rate`);
+  - true boundary pauses (sentence or clause) labelled mid-sentence (`boundary_as_mid_rate`).
+
+  Sentence ↔ clause swaps are not errors here, because neither label counts against the
+  speaker (ADR 0011). `unknown` labels are left out of both rates and reported apart. The full
+  true × detected table is reported, and the overall share of any mismatch (`position_error_rate`)
+  is kept as extra information.
+- Also reported: per-clip values; the `mid_sentence` share against the truth (ADR 0011);
+  Kokoro's own pauses; the live syllable rate against post-analysis wpm and, descriptively,
+  against the true articulation rate (pauses removed).
+
+- **Development findings before the test run** (owner, 2026-11-17):
+  `experiments/results/e2/f1_dev_findings.md`. The three development clips above 5 % wpm error
+  are speech-recognition errors (an invented closing "thank you…", dropped function words at a
+  fast rate, merged words), not a counting bug, so the code is unchanged. VAD minimum speech
+  stays 250 ms.
 
 ### 7. Noise condition (descriptive, no target)
 

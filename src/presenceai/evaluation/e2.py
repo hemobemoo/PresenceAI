@@ -165,6 +165,30 @@ def _share(xs: Sequence[str], value: str) -> float | None:
     return sum(1 for x in xs if x == value) / len(xs) if xs else None
 
 
+BOUNDARY = {PausePosition.SENTENCE_BOUNDARY.value, PausePosition.CLAUSE_BOUNDARY.value}
+
+
+def position_table(pairs: Sequence[tuple[str, str]]) -> dict[str, dict[str, int]]:
+    """Matched pauses as true position x detected label."""
+    labels = [p.value for p in PausePosition]
+    table = {t: dict.fromkeys(labels, 0) for t in labels}
+    for t, d in pairs:
+        table[t][d] += 1
+    return table
+
+
+def boundary_mid_errors(pairs: Sequence[tuple[str, str]]) -> tuple[float | None, float | None]:
+    """The headline position measure (ADR 0014 §6): (true mid-sentence pauses labelled as a
+    boundary, true boundary pauses labelled mid-sentence), each as a share of the matched true
+    pauses of that kind with a known label. Sentence <-> clause swaps are not errors here;
+    `unknown` labels are left out and reported apart."""
+    mid = [d for t, d in pairs if t == MID and d != UNKNOWN]
+    bnd = [d for t, d in pairs if t in BOUNDARY and d != UNKNOWN]
+    mid_as_boundary = sum(1 for d in mid if d in BOUNDARY) / len(mid) if mid else None
+    boundary_as_mid = sum(1 for d in bnd if d == MID) / len(bnd) if bnd else None
+    return mid_as_boundary, boundary_as_mid
+
+
 def summarise(scores: Sequence[E2ClipScore], ev: EvaluationSettings) -> E2Summary:
     cfg = ev.e2
     parts: set[Part] = {s.part for s in scores}
@@ -223,6 +247,9 @@ def summarise(scores: Sequence[E2ClipScore], ev: EvaluationSettings) -> E2Summar
             sum(1 for t, d in positions if t != d) / len(positions) if positions else None
         ),
         position_unknown_share=_share([d for _, d in positions], UNKNOWN),
+        position_table=position_table(positions),
+        mid_as_boundary_rate=boundary_mid_errors(positions)[0],
+        boundary_as_mid_rate=boundary_mid_errors(positions)[1],
         kokoro_pauses=sum(s.kokoro_pauses for s in scores),
         passes=passes,
         passed=passed,

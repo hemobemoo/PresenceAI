@@ -20,5 +20,16 @@
   "rerun_reason": null,
   "finished": "2026-11-17T20:10:02+00:00",
   "result": "f1_dev_clean_20261117-201002_summary.json"
+ },
+ {
+  "run": "f1",
+  "part": "dev",
+  "condition": "clean",
+  "config_hash": "b2b493bd60be9db6",
+  "passed": null,
+  "commit": "92e7ee8debb6cf7d5b46a8ac02da1f2badb02052",
+  "rerun_reason": null,
+  "finished": "2026-11-17T20:48:53+00:00",
+  "result": "f1_dev_clean_20261117-204853_summary.json"
  }
 ]

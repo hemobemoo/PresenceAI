@@ -153,3 +153,26 @@ def test_kokoro_pauses_are_counted_in_the_summary():
     true = (tp(10.0, 1.0), tp(20.0, 0.3, "mid_sentence", "kokoro"))
     s = e2.score_clip(truth(true), (), 150.0, "test", "clean", EV)
     assert e2.summarise([s], EV).kokoro_pauses == 1
+
+
+def test_headline_position_measure_ignores_sentence_clause_swaps():
+    """ADR 0014 §6 (owner, before the test run): boundary vs mid-sentence errors, both ways."""
+    true = (
+        tp(10.0, 1.0, "sentence_boundary"), tp(20.0, 1.0, "clause_boundary"),
+        tp(30.0, 1.0, "mid_sentence"), tp(40.0, 1.0, "mid_sentence"),
+        tp(50.0, 1.0, "sentence_boundary"), tp(60.0, 1.0, "mid_sentence"),
+    )  # fmt: skip
+    det = (
+        dp(10.0, 1.0, "clause_boundary"),  # swap: not an error here
+        dp(20.0, 1.0, "mid_sentence"),  # boundary -> mid
+        dp(30.0, 1.0, "sentence_boundary"),  # mid -> boundary
+        dp(40.0, 1.0, "mid_sentence"),  # right
+        dp(50.0, 1.0, "sentence_boundary"),  # right
+        dp(60.0, 1.0, "unknown"),  # left out, reported apart
+    )  # fmt: skip
+    summ = e2.summarise([e2.score_clip(truth(true), det, 150.0, "test", "clean", EV)], EV)
+    assert summ.mid_as_boundary_rate == pytest.approx(1 / 2)
+    assert summ.boundary_as_mid_rate == pytest.approx(1 / 3)
+    assert summ.position_table["sentence_boundary"]["clause_boundary"] == 1
+    assert summ.position_table["mid_sentence"]["unknown"] == 1
+    assert summ.position_error_rate == pytest.approx(4 / 6)  # extra information

@@ -231,6 +231,7 @@ def evaluate(
             "syllables_per_s": m_pace["pace.syllables_per_s"].value
             if "pace.syllables_per_s" in m_pace else None,
             "snr_measured_db": snr_measured,
+            "articulation_wpm_true": round(truth.articulation_wpm, 2),
         })  # fmt: skip
         if k % 10 == 0 or k == len(truths):
             progress(f"{k}/{len(truths)} clips, {time.perf_counter() - t0:.0f} s")
@@ -243,6 +244,11 @@ def evaluate(
         "elapsed_s": round(time.perf_counter() - t0, 1),
         "syllable_rate_vs_wpm_measured_r": pearson([p[0] for p in pace], [p[1] for p in pace]),
         "syllable_rate_vs_wpm_true_r": pearson([p[0] for p in pace], [p[2] for p in pace]),
+        # descriptive (owner, 2026-11-17): against the true articulation rate, pauses removed
+        "syllable_rate_vs_articulation_true_r": pearson(
+            [x["syllables_per_s"] for x in extras if x["syllables_per_s"] is not None],
+            [x["articulation_wpm_true"] for x in extras if x["syllables_per_s"] is not None],
+        ),
     }
     snrs = [x["snr_measured_db"] for x in extras if x["snr_measured_db"] is not None]
     if snrs:
