@@ -176,6 +176,49 @@ class RepetitionEvent(_Frozen):
     end_s: float = Field(ge=0)
 
 
+ProcessingState = Literal["on", "off", "unknown"]
+
+
+class CaptureProcessing(_Frozen):
+    """Browser audio processing during capture (ADR 0013). Auto-gain flattens loudness variation
+    and makes baseline comparisons unreliable, so live capture (P6) turns all three off.
+    Uploaded files are "unknown"."""
+
+    auto_gain_control: ProcessingState = "unknown"
+    noise_suppression: ProcessingState = "unknown"
+    echo_cancellation: ProcessingState = "unknown"
+
+    @property
+    def all_off(self) -> bool:
+        return (self.auto_gain_control, self.noise_suppression, self.echo_cancellation) == (
+            "off",
+            "off",
+            "off",
+        )
+
+
+class LoudnessProfile(_Frozen):
+    """Recording conditions (ADR 0013). The absolute level is kept ONLY here, for baseline
+    comparisons; it is never a measurement and never feeds a score or the engine."""
+
+    median_speech_dbfs: float | None = None
+    noise_floor_dbfs: float | None = None
+    snr_db: float | None = None
+    native_sample_rate: int | None = Field(default=None, gt=0)
+    clipped_runs: int = Field(default=0, ge=0)
+
+
+class PitchDiagnostics(_Frozen):
+    """How the pitch track was cleaned (ADR 0013). Large counts show where the octave rule may
+    also have removed real large jumps."""
+
+    usable_frames: int = Field(ge=0)
+    usable_voiced_s: float = Field(ge=0)
+    octave_folded: int = Field(ge=0)
+    dropped: int = Field(ge=0)
+    at_limit_share: float = Field(ge=0, le=1)
+
+
 class AsrQuality(_Frozen):
     """FINAL_04 §2 'ASR confidence' inputs. None when there are no words / segments."""
 
@@ -187,7 +230,7 @@ class AsrQuality(_Frozen):
 class SpeechReport(_Frozen):
     """What `presenceai analyze` writes. Holds derived data only, never audio samples."""
 
-    schema_version: Literal[3] = 3
+    schema_version: Literal[4] = 4
     source_name: str = Field(min_length=1)  # file name only: no folders, no user names
     model: str = Field(min_length=1)  # key under `asr:` in configs/models.yaml
     transcript: Transcript
@@ -200,6 +243,10 @@ class SpeechReport(_Frozen):
     repetitions: tuple[RepetitionEvent, ...] = ()
     # Kept in memory for later stages (slice 4); left out of JSON to keep reports small.
     pitch: PitchTrack | None = Field(default=None, exclude=True)
+    capture: CaptureProcessing = CaptureProcessing()
+    loudness_profile: LoudnessProfile | None = None
+    pitch_diagnostics: PitchDiagnostics | None = None
+    baseline_source: str | None = None  # file name of the baseline report, if one was given
     measurements: dict[str, Measurement] = Field(default_factory=dict)
     # measure name -> reason; a measure that cannot be computed reliably is never a low score
     not_measurable: dict[str, str] = Field(default_factory=dict)

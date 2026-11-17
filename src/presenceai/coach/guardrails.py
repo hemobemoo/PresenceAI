@@ -76,23 +76,49 @@ def banned_terms(lang: Language) -> tuple[str, ...]:
     return tuple(terms)
 
 
-@cache
-def _term_token_seqs(lang: Language) -> tuple[tuple[str, ...], ...]:
-    seqs = {tuple(_tokens(term, lang)) for term in banned_terms(lang)}
+def _seqs(terms: tuple[str, ...], lang: Language) -> tuple[tuple[str, ...], ...]:
+    seqs = {tuple(_tokens(term, lang)) for term in terms}
     seqs.discard(())
     return tuple(sorted(seqs))
 
 
-def contains_banned_term(text: str, lang: Language) -> bool:
-    """True if `text` contains any banned emotion, mood or trait term for `lang`."""
-    lang = _check_lang(lang)
+@cache
+def _term_token_seqs(lang: Language) -> tuple[tuple[str, ...], ...]:
+    return _seqs(banned_terms(lang), lang)
+
+
+def _contains(text: str, lang: Language, seqs: tuple[tuple[str, ...], ...]) -> bool:
     cands = [_candidates(tok, lang) for tok in _tokens(text, lang)]
-    for seq in _term_token_seqs(lang):
+    for seq in seqs:
         n = len(seq)
         for i in range(len(cands) - n + 1):
             if all(seq[j] in cands[i + j] for j in range(n)):
                 return True
     return False
+
+
+def contains_banned_term(text: str, lang: Language) -> bool:
+    """True if `text` contains any banned emotion, mood or trait term for `lang`."""
+    lang = _check_lang(lang)
+    return _contains(text, lang, _term_token_seqs(lang))
+
+
+@cache
+def verdict_terms(lang: Language) -> tuple[str, ...]:
+    """Verdict words about the voice ("monotone", "رتيب", ...) that no report may use (ADR 0013)."""
+    data = load_pack_file(_check_lang(lang), "verdict_terms.yaml")
+    return tuple(str(t) for t in data["terms"])
+
+
+@cache
+def _verdict_seqs(lang: Language) -> tuple[tuple[str, ...], ...]:
+    return _seqs(verdict_terms(lang), lang)
+
+
+def contains_verdict_term(text: str, lang: Language) -> bool:
+    """True if `text` contains a verdict word for `lang` (same matching as banned terms)."""
+    lang = _check_lang(lang)
+    return _contains(text, lang, _verdict_seqs(lang))
 
 
 def latin_outside_transcript(quote: str, transcript: str) -> tuple[str, ...]:

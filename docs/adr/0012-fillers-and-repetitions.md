@@ -132,7 +132,7 @@ E3 measures how often this happens.
 ### 7. Pitch track (`speech.pitch`)
 
 - pYIN (librosa, ISC; `uv add librosa`; licence check 0 FAIL, 0 WARN) runs **once per
-  recording**, with a limited range of 65–400 Hz, a 1024-sample frame (64 ms) and a 160-sample
+  recording**, with a limited range of 65–400 Hz (raised to 600 Hz by ADR 0013), a 1024-sample frame (64 ms) and a 160-sample
   hop (10 ms).
 - Cost per 3 minutes of audio on the laptop (i7-1255U: 2 performance + 8 efficiency cores),
   single-threaded: 5 s when the machine was idle, 21–23 s with ~37 % background load

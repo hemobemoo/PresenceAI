@@ -1,0 +1,15 @@
+# كلمات حكم على الصوت أو الإلقاء لا يجوز أن تظهر في أي تقرير (ADR 0013).
+# Matched with the banned-term normalisation (diacritics, attached prefixes, alef forms).
+# Not listed: آلي ("robotic", also "automatic"), which normalises like the common word إلى.
+terms:
+  - رتيب
+  - رتيبا
+  - رتيبة
+  - رتابة
+  - ممل
+  - مملا
+  - مملة
+  - باهت
+  - باهتا
+  - باهتة
+  - على وتيرة واحدة

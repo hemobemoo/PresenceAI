@@ -55,9 +55,10 @@ speech:                         # ADR 0011 (P1 slice 2: pauses and rate); FINAL_
     medium: {min_word_probability: 0.70, min_speaking_time_s: 10.0}
   pitch:                        # ADR 0012: pYIN (librosa), run once per recording; reused in slice 4
     fmin_hz: 65.0               # limited range keeps pYIN fast (~5 s per 3 min on the laptop)
-    fmax_hz: 400.0
+    fmax_hz: 600.0               # owner 2026-11-17 (ADR 0013): 400 Hz cut off higher voices; not slower
     frame_length: 1024          # 64 ms at 16 kHz (>= 4 periods at 65 Hz)
     hop_length: 160             # 10 ms
+    limit_band: 0.02            # f0 within 2 % of fmin/fmax counts as "at the range limit"
   fillers:                      # ADR 0012
     # Base Whisper drops fillers: counts are lower bounds and confidence is capped until a
     # verbatim model (T1, `verbatim: true` in models.yaml) is used.
@@ -71,3 +72,28 @@ speech:                         # ADR 0011 (P1 slice 2: pauses and rate); FINAL_
   repetitions:                  # FINAL_04 §2
     max_ngram: 3
     window_s: 2.0               # second copy starts within this many seconds of the first's end
+  loudness:                     # ADR 0013: relative only; an absolute level never becomes a score
+    frame_ms: 20                # the one level function (frame_dbfs) shared with the live meter
+    window_s: 1.0               # FINAL_04 §2
+    min_speech_share: 0.5       # a 1 s window counts only if at least half of it is VAD speech
+    clip_level: 0.999           # |sample| >= this, on the ORIGINAL samples before resampling
+    clip_min_run: 3             # consecutive samples; single peaks are not clipping
+    # Lossy files (MP3, AAC) lower clipped peaks to ~0.97, so a second rule looks for a flat top:
+    # far more samples just under the file's own peak than in the band below it.
+    # PROVISIONAL (ADR 0013, owner to confirm): found on synthetic MP3s, 13-173 vs 2.3 unclipped.
+    clip_peak_min: 0.9          # pile-up rule only when the peak is near full scale
+    clip_pileup_band: 0.02      # top band = within 2 % of the peak; next band = 2-4 % below
+    clip_pileup_ratio: 4.0      # top-band samples / next-band samples at or above this = clipped
+    noise_percentile: 10        # noise floor = this percentile of non-speech 20 ms frames
+    snr_not_measurable_db: 10.0 # below: loudness and pitch "not measurable in this recording"
+    snr_low_db: 20.0            # 10-20 dB: low confidence
+    min_non_speech_s: 1.0       # less non-speech than this: noise unknown, confidence <= medium
+  pitch_variation:              # ADR 0013: semitones from the speaker's own median; information only
+    octave_limit_st: 9.0        # a frame this far from the running median is an octave suspect
+    fold_tolerance_st: 3.0      # folded by 12 st if that lands within this; otherwise dropped
+    running_median_s: 0.25      # each side
+    max_corrected_share: 0.2    # more folded + dropped frames than this -> low confidence
+    max_at_limit_share: 0.05    # more frames at the pitch range limit than this -> low confidence
+    filler_margin_s: 0.05       # filler stretches (slice 3) +/- this are left out
+    min_voiced_s: 5.0           # less usable voiced speech: "not measurable"
+    low_voiced_s: 15.0          # less than this: low confidence
