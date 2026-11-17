@@ -102,6 +102,14 @@ def whisper_parts() -> Any:
 
 
 @pytest.fixture
+def speech_cfg() -> Any:
+    """`speech:` settings exactly as in configs/default.yaml (ADR 0011); no .env is read."""
+    from presenceai.settings import Settings
+
+    return Settings(_env_file=None).speech  # pyright: ignore[reportCallIssue]
+
+
+@pytest.fixture
 def silent_wav(tmp_path: Path) -> Path:
     """A 0.5 s silent 16 kHz mono WAV (the fake model ignores the samples)."""
     path = tmp_path / "talk.wav"

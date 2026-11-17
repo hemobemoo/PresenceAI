@@ -38,9 +38,9 @@ FIELDS = ["n", "kind", "ok", "gpu_s", "load_s", "transcribe_s", "audio_s", "clie
 def client(space: str) -> Any:
     from gradio_client import Client
 
-    from presenceai.settings import Settings
+    from presenceai.settings import get_settings
 
-    token = Settings().hf_token
+    token = get_settings().hf_token
     if token is None:
         raise SystemExit("HF_TOKEN is not set")
     return Client(space, hf_token=token.get_secret_value(), verbose=False)

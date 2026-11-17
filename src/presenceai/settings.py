@@ -65,6 +65,54 @@ class AsrSettings(_Section):
     condition_on_previous_text: bool = False
 
 
+class VadSettings(_Section):
+    threshold: float = Field(gt=0, lt=1)
+    min_speech_duration_ms: int = Field(ge=0)
+    min_silence_duration_ms: int = Field(ge=0)
+    speech_pad_ms: int = Field(ge=0)
+
+
+class PauseSettings(_Section):
+    thresholds_s: tuple[float, ...] = Field(min_length=1)
+    sentence_marks: tuple[str, ...] = Field(min_length=1)
+    clause_marks: tuple[str, ...]
+    max_words_per_sentence_mark: float = Field(gt=0)
+
+
+class RateSettings(_Section):
+    window_s: float = Field(gt=0)
+    hop_s: float = Field(gt=0)
+    min_speaking_time_s: float = Field(ge=0)
+
+
+class SyllableSettings(_Section):
+    window_ms: int = Field(gt=0)
+    hop_ms: int = Field(gt=0)
+    reference_quantile: float = Field(gt=0, le=1)
+    silence_threshold_db: float = Field(le=0)
+    min_dip_db: float = Field(ge=0)
+
+
+class ConfidenceBand(_Section):
+    min_word_probability: float = Field(ge=0, le=1)
+    min_speaking_time_s: float = Field(ge=0)
+
+
+class ConfidenceSettings(_Section):
+    high: ConfidenceBand
+    medium: ConfidenceBand
+
+
+class SpeechSettings(_Section):
+    """ADR 0011 values. No defaults in code: thresholds live only in configs/ (AGENTS.md rule 7)."""
+
+    vad: VadSettings
+    pauses: PauseSettings
+    rate: RateSettings
+    syllables: SyllableSettings
+    confidence: ConfidenceSettings
+
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -83,6 +131,7 @@ class Settings(BaseSettings):
     retention: RetentionPolicy = RetentionPolicy()
     expressions: ExpressionThresholds = ExpressionThresholds()
     asr: AsrSettings = AsrSettings()
+    speech: SpeechSettings  # required: comes from configs/default.yaml
 
     openrouter_api_key: SecretStr | None = None
     # Optional overrides of configs/models.yaml `llm.openrouter` (ADR 0003). Not secrets.
@@ -113,7 +162,7 @@ class Settings(BaseSettings):
 
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:
-    return Settings()
+    return Settings()  # pyright: ignore[reportCallIssue]  (fields come from configs/ and the env)
 
 
 class OpenRouterModels(_Section):

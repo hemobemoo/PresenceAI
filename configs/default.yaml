@@ -28,3 +28,28 @@ asr:                            # FINAL_04 §2, FINAL_06 §1; decoding options a
   beam_size: 5
   temperature: 0.0
   condition_on_previous_text: false
+
+speech:                         # ADR 0011 (P1 slice 2: pauses and rate); FINAL_04 §2, §6
+  vad:                          # Silero VAD bundled with faster-whisper (MIT); tuned only on C1 dev
+    threshold: 0.5              # Silero default
+    min_speech_duration_ms: 250 # Silero default; owner 2026-11-17 (100 only if C1 dev shows better)
+    min_silence_duration_ms: 100  # below the smallest pause threshold, so 0.25 s pauses survive
+    speech_pad_ms: 0            # padding would shorten every pause by 2 x pad
+  pauses:
+    thresholds_s: [0.25, 1.0, 2.0]          # FINAL_04 §2
+    sentence_marks: [".", "!", "?", "؟", "…"] # pause after these = sentence_boundary
+    clause_marks: [",", "،", ";", "؛"]       # pause after these = clause_boundary (reported, not penalised)
+    max_words_per_sentence_mark: 30          # fewer marks than 1 per 30 words -> position unknown, low
+  rate:
+    window_s: 10.0              # FINAL_04 §2 sliding windows
+    hop_s: 5.0
+    min_speaking_time_s: 10.0   # below this, rate and pace are "not measurable"
+  syllables:                    # own implementation of de Jong & Wempe (2009); values from their v2 script (2010)
+    window_ms: 64               # intensity window (Praat, pitch floor 50 Hz: 3.2 / 50 s)
+    hop_ms: 16                  # Praat default time step at 50 Hz (0.8 / 50 s)
+    reference_quantile: 0.99    # "almost maximum" intensity
+    silence_threshold_db: -25.0 # peaks below reference + this are ignored
+    min_dip_db: 2.0             # a peak must rise this much above the preceding dip
+  confidence:                   # FINAL_04 §6 bands
+    high: {min_word_probability: 0.85, min_speaking_time_s: 30.0}
+    medium: {min_word_probability: 0.70, min_speaking_time_s: 10.0}
