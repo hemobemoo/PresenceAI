@@ -26,6 +26,9 @@ OK, WARN, FAIL = "OK  ", "WARN", "FAIL"
 results: list[tuple[str, str, str]] = []
 OPENROUTER_OPTIONAL = ["OPENROUTER_MODEL", "OPENROUTER_FALLBACK_MODELS"]
 OPENROUTER_KNOWN = {"OPENROUTER_API_KEY", *OPENROUTER_OPTIONAL}
+# Ordinary settings are read only with the PRESENCEAI_ prefix (src/presenceai/settings.py), so
+# that generic variables such as the Linux locale LANGUAGE=en_US are not taken as settings.
+UNPREFIXED_SETTINGS = {name: f"PRESENCEAI_{name}" for name in ["RUNTIME", "PROFILE", "LANGUAGE"]}
 
 
 def record(status: str, item: str, detail: str = "") -> None:
@@ -112,6 +115,10 @@ def check_files_and_env() -> dict[str, str]:
         record(WARN, f".env: {key}",
                f"unknown name; did you mean {hint}?" if hint
                else f"unknown name; expected one of {', '.join(sorted(OPENROUTER_KNOWN))}")
+
+    for key in sorted(k for k in env if k.upper() in UNPREFIXED_SETTINGS):
+        record(WARN, f".env: {key}",
+               f"ignored by PresenceAI; use {UNPREFIXED_SETTINGS[key.upper()]}")
 
     mk = env.get("MEDIA_KEY", "")
     if mk:
