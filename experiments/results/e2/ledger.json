@@ -1,0 +1,24 @@
+[
+ {
+  "run": "f1",
+  "part": "dev",
+  "condition": "clean",
+  "config_hash": "b2b493bd60be9db6",
+  "passed": null,
+  "commit": "7a69c8b633319d48e2c56a32bd7ebf6b8db7b6be",
+  "rerun_reason": null,
+  "finished": "2026-11-17T20:09:07+00:00",
+  "result": "f1_dev_clean_20261117-200907_summary.json"
+ },
+ {
+  "run": "f1",
+  "part": "dev",
+  "condition": "clean",
+  "config_hash": "e5b7a5a0ee9c8c97",
+  "passed": null,
+  "commit": "7a69c8b633319d48e2c56a32bd7ebf6b8db7b6be",
+  "rerun_reason": null,
+  "finished": "2026-11-17T20:10:02+00:00",
+  "result": "f1_dev_clean_20261117-201002_summary.json"
+ }
+]

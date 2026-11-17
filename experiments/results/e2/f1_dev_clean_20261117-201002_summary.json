@@ -1,0 +1,59 @@
+{
+ "summary": {
+  "part": "dev",
+  "condition": "clean",
+  "clips": 86,
+  "wpm_mape_pct": 1.0699817121656672,
+  "wpm_mape_fillers_pct": 1.254424553638307,
+  "wpm_mape_no_fillers_pct": 0.994390383693274,
+  "f1": {
+   "0.5": 0.9753521126760564,
+   "1.0": 0.9875862068965517
+  },
+  "f1_all": {
+   "0.5": 0.9367859862909368,
+   "1.0": 0.9686323713927227
+  },
+  "excluded": {
+   "0.5": 151,
+   "1.0": 64
+  },
+  "true_pauses": 828,
+  "detected_pauses": 1051,
+  "matched": 821,
+  "duration_mae_s": 0.07892295980511567,
+  "true_mid_share": 0.14855072463768115,
+  "detected_mid_share": 0.14843006660323502,
+  "position_error_rate": 0.2545676004872107,
+  "position_unknown_share": 0.012180267965895249,
+  "kokoro_pauses": 28,
+  "passes": {},
+  "passed": null
+ },
+ "elapsed_s": 11.5,
+ "syllable_rate_vs_wpm_measured_r": 0.485182579652596,
+ "syllable_rate_vs_wpm_true_r": 0.49105544777303267,
+ "run": "f1",
+ "part": "dev",
+ "condition": "clean",
+ "model": "whisper_small",
+ "config_hash": "e5b7a5a0ee9c8c97",
+ "vad": {
+  "threshold": 0.5,
+  "min_speech_duration_ms": 100,
+  "min_silence_duration_ms": 100,
+  "speech_pad_ms": 0
+ },
+ "rerun_reason": null,
+ "versions": {
+  "python": "3.12.15",
+  "cpu": "Intel64 Family 6 Model 154 Stepping 4, GenuineIntel",
+  "faster-whisper": "1.2.1",
+  "ctranslate2": "4.9.0",
+  "onnxruntime": "1.32.0",
+  "numpy": "2.5.4",
+  "librosa": "1.0.0"
+ },
+ "commit": "7a69c8b633319d48e2c56a32bd7ebf6b8db7b6be",
+ "dirty": true
+}
