@@ -1,0 +1,79 @@
+[
+ {
+  "run": "f1",
+  "part": "dev",
+  "condition": "clean",
+  "config_hash": "b2b493bd60be9db6",
+  "passed": null,
+  "commit": "7a69c8b633319d48e2c56a32bd7ebf6b8db7b6be",
+  "rerun_reason": null,
+  "finished": "2026-11-17T20:09:07+00:00",
+  "result": "f1_dev_clean_20261117-200907_summary.json"
+ },
+ {
+  "run": "f1",
+  "part": "dev",
+  "condition": "clean",
+  "config_hash": "e5b7a5a0ee9c8c97",
+  "passed": null,
+  "commit": "7a69c8b633319d48e2c56a32bd7ebf6b8db7b6be",
+  "rerun_reason": null,
+  "finished": "2026-11-17T20:10:02+00:00",
+  "result": "f1_dev_clean_20261117-201002_summary.json"
+ },
+ {
+  "run": "f1",
+  "part": "dev",
+  "condition": "clean",
+  "config_hash": "b2b493bd60be9db6",
+  "passed": null,
+  "commit": "92e7ee8debb6cf7d5b46a8ac02da1f2badb02052",
+  "rerun_reason": null,
+  "finished": "2026-11-17T20:48:53+00:00",
+  "result": "f1_dev_clean_20261117-204853_summary.json"
+ },
+ {
+  "run": "f1",
+  "part": "dev",
+  "condition": "clean",
+  "config_hash": "be073a2a540d4a3b",
+  "passed": null,
+  "commit": "e3f9190003394388b282d923434ffc914e345528",
+  "rerun_reason": null,
+  "finished": "2026-11-17T21:24:05+00:00",
+  "result": "f1_dev_clean_20261117-212405_summary.json"
+ },
+ {
+  "run": "f1",
+  "part": "test",
+  "condition": "clean",
+  "config_hash": "be073a2a540d4a3b",
+  "passed": true,
+  "commit": "e3f9190003394388b282d923434ffc914e345528",
+  "rerun_reason": null,
+  "finished": "2026-11-17T21:29:39+00:00",
+  "result": "f1_test_clean_20261117-212939_summary.json"
+ },
+ {
+  "run": "f1",
+  "part": "test",
+  "condition": "snr20",
+  "config_hash": "be073a2a540d4a3b",
+  "passed": true,
+  "commit": "e3f9190003394388b282d923434ffc914e345528",
+  "rerun_reason": null,
+  "finished": "2026-11-17T21:37:08+00:00",
+  "result": "f1_test_snr20_20261117-213708_summary.json"
+ },
+ {
+  "run": "f1",
+  "part": "test",
+  "condition": "snr10",
+  "config_hash": "be073a2a540d4a3b",
+  "passed": true,
+  "commit": "e3f9190003394388b282d923434ffc914e345528",
+  "rerun_reason": null,
+  "finished": "2026-11-17T21:44:34+00:00",
+  "result": "f1_test_snr10_20261117-214434_summary.json"
+ }
+]

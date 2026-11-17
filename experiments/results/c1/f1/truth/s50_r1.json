@@ -1,0 +1,175 @@
+{
+ "clip_id": "s50_r1",
+ "script_id": "s50",
+ "voice": "bf_emma",
+ "render": 1,
+ "sample_rate": 24000,
+ "duration_s": 49.48833333333334,
+ "words": 111,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 48.98833333333334,
+ "speech_spans": [
+  [
+   0.5,
+   2.384125
+  ],
+  [
+   2.535125,
+   4.575583333333333
+  ],
+  [
+   4.641583333333333,
+   6.900916666666666
+  ],
+  [
+   7.883916666666667,
+   8.572833333333334
+  ],
+  [
+   8.752833333333333,
+   11.310708333333332
+  ],
+  [
+   11.492708333333333,
+   12.628791666666666
+  ],
+  [
+   12.954791666666667,
+   13.795708333333334
+  ],
+  [
+   14.106708333333334,
+   16.040583333333334
+  ],
+  [
+   16.129583333333333,
+   17.659333333333333
+  ],
+  [
+   17.824333333333332,
+   20.184416666666667
+  ],
+  [
+   20.277416666666667,
+   21.966416666666667
+  ],
+  [
+   22.036416666666668,
+   22.875291666666666
+  ],
+  [
+   23.042291666666667,
+   24.966375
+  ],
+  [
+   26.381375,
+   27.907208333333333
+  ],
+  [
+   28.010208333333335,
+   29.92425
+  ],
+  [
+   30.66125,
+   32.315583333333336
+  ],
+  [
+   34.20558333333334,
+   34.995666666666665
+  ],
+  [
+   35.08866666666667,
+   37.283208333333334
+  ],
+  [
+   38.80620833333333,
+   41.932916666666664
+  ],
+  [
+   42.014916666666664,
+   44.139041666666664
+  ],
+  [
+   44.22804166666667,
+   46.15270833333334
+  ],
+  [
+   46.30670833333333,
+   48.98833333333334
+  ]
+ ],
+ "wpm": 137.3526277798783,
+ "articulation_wpm": 169.4221796358441,
+ "target_wpm": 137.0,
+ "speed": 0.849613639707537,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 6.900916666666666,
+   "end_s": 7.883916666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 12.313,
+   "end_s": 12.62225,
+   "position": "mid_sentence",
+   "source": "kokoro"
+  },
+  {
+   "start_s": 12.628791666666666,
+   "end_s": 12.954791666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 13.795708333333334,
+   "end_s": 14.106708333333334,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 24.966375,
+   "end_s": 26.381375,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 29.92425,
+   "end_s": 30.66125,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 32.315583333333336,
+   "end_s": 34.20558333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 37.283208333333334,
+   "end_s": 38.80620833333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 5,
+   "start_s": 12.313,
+   "end_s": 12.62225
+  },
+  {
+   "phrase": 6,
+   "start_s": 13.656833333333333,
+   "end_s": 13.790291666666667
+  },
+  {
+   "phrase": 11,
+   "start_s": 22.681958333333334,
+   "end_s": 22.870458333333332
+  }
+ ],
+ "text": "With so many books available, choosing the next one can be hard. I rely on a few simple methods. First, I ask friends what they enjoyed recently, and why. Next, I look at the first page in the shop before I decide. If the first page holds my attention, the rest usually will. Third, I mix different kinds of books. After a long novel, I often choose something short or something factual. Finally, I give myself permission to stop. If a book is not working for me after fifty pages, I put it aside without guilt. Reading should feel like a pleasure, so choose books that keep you turning the pages."
+}

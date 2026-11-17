@@ -1,0 +1,174 @@
+{
+ "clip_id": "s11_r3",
+ "script_id": "s11",
+ "voice": "af_bella",
+ "render": 3,
+ "sample_rate": 24000,
+ "duration_s": 38.08291666666667,
+ "words": 107,
+ "fillers": 1,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 37.58291666666667,
+ "speech_spans": [
+  [
+   0.5,
+   2.304875
+  ],
+  [
+   4.658875,
+   6.156458333333333
+  ],
+  [
+   6.5164583333333335,
+   6.961166666666666
+  ],
+  [
+   7.103166666666667,
+   7.943666666666667
+  ],
+  [
+   9.293666666666667,
+   10.033041666666668
+  ],
+  [
+   10.231041666666666,
+   10.643375
+  ],
+  [
+   10.830375,
+   12.974291666666666
+  ],
+  [
+   13.086291666666666,
+   13.514541666666666
+  ],
+  [
+   13.676541666666667,
+   16.10033333333333
+  ],
+  [
+   16.894333333333332,
+   17.786333333333335
+  ],
+  [
+   20.208333333333332,
+   22.480875
+  ],
+  [
+   22.587875,
+   22.917083333333334
+  ],
+  [
+   23.052083333333332,
+   23.55075
+  ],
+  [
+   23.64175,
+   24.321458333333332
+  ],
+  [
+   25.082458333333335,
+   26.151791666666668
+  ],
+  [
+   27.240791666666667,
+   28.188583333333334
+  ],
+  [
+   28.322583333333334,
+   29.054083333333335
+  ],
+  [
+   29.195083333333333,
+   30.212041666666668
+  ],
+  [
+   30.629041666666666,
+   31.711166666666667
+  ],
+  [
+   34.592166666666664,
+   37.58291666666667
+  ]
+ ],
+ "wpm": 173.12554073641274,
+ "articulation_wpm": 279.5817161396384,
+ "target_wpm": 173.0,
+ "speed": 1.2184808908461502,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 2.304875,
+   "end_s": 4.658875,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 6.156458333333333,
+   "end_s": 6.5164583333333335,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 7.943666666666667,
+   "end_s": 9.293666666666667,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 16.10033333333333,
+   "end_s": 16.894333333333332,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 17.786333333333335,
+   "end_s": 20.208333333333332,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 24.321458333333332,
+   "end_s": 25.082458333333335,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 26.151791666666668,
+   "end_s": 27.240791666666667,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 30.212041666666668,
+   "end_s": 30.629041666666666,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 31.711166666666667,
+   "end_s": 34.592166666666664,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 35.677958333333336,
+   "end_s": 35.961,
+   "position": "mid_sentence",
+   "source": "kokoro"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 8,
+   "start_s": 14.960166666666666,
+   "end_s": 15.120625
+  },
+  {
+   "phrase": 18,
+   "start_s": 35.677958333333336,
+   "end_s": 35.961
+  }
+ ],
+ "text": "Planning a trip can feel like a lot of work. I break it into four small steps. First, I choose the dates and set a budget. Next, I look for a place to stay near public transport. Third, I make a short list of things I really want to see. I keep that list short, because a full plan leaves no room for surprises. Finally, I pack light. One small bag is enough for almost any trip. On the first day, I simply walk around and get a feel for the place. The best moments of a trip are often the ones you did not plan."
+}

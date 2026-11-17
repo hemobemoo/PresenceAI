@@ -1,0 +1,137 @@
+{
+ "clip_id": "s37_r2",
+ "script_id": "s37",
+ "voice": "am_fenrir",
+ "render": 2,
+ "sample_rate": 24000,
+ "duration_s": 40.856791666666666,
+ "words": 111,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 40.356791666666666,
+ "speech_spans": [
+  [
+   0.5,
+   1.9531666666666667
+  ],
+  [
+   2.1401666666666666,
+   3.3120833333333333
+  ],
+  [
+   3.4730833333333333,
+   6.827208333333333
+  ],
+  [
+   7.003208333333333,
+   8.669041666666667
+  ],
+  [
+   8.813041666666667,
+   10.199166666666667
+  ],
+  [
+   10.534166666666666,
+   13.450333333333333
+  ],
+  [
+   13.522333333333334,
+   14.925333333333333
+  ],
+  [
+   15.109333333333334,
+   16.542208333333335
+  ],
+  [
+   16.954208333333334,
+   18.597541666666668
+  ],
+  [
+   18.69354166666667,
+   20.375166666666665
+  ],
+  [
+   20.926166666666667,
+   22.147625
+  ],
+  [
+   23.348625,
+   24.706041666666668
+  ],
+  [
+   24.902041666666666,
+   26.634291666666666
+  ],
+  [
+   26.725291666666667,
+   27.926166666666667
+  ],
+  [
+   29.051166666666667,
+   31.259375
+  ],
+  [
+   32.680375,
+   33.650125
+  ],
+  [
+   35.805125,
+   36.897416666666665
+  ],
+  [
+   36.98041666666666,
+   40.356791666666666
+  ]
+ ],
+ "wpm": 167.09824653472901,
+ "articulation_wpm": 213.00554502047567,
+ "target_wpm": 155.0,
+ "speed": 0.8681325021313505,
+ "attempts": 3,
+ "pauses": [
+  {
+   "start_s": 10.199166666666667,
+   "end_s": 10.534166666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 16.542208333333335,
+   "end_s": 16.954208333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 20.375166666666665,
+   "end_s": 20.926166666666667,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 22.147625,
+   "end_s": 23.348625,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 27.926166666666667,
+   "end_s": 29.051166666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 31.259375,
+   "end_s": 32.680375,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 33.650125,
+   "end_s": 35.805125,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [],
+ "text": "A lot of food goes to waste in the average home. Much of it is leftovers that sit in the fridge for too long. I now plan one meal each week made from whatever is left. Cooked rice becomes fried rice with a few vegetables. Old bread becomes toast, crumbs or a simple pudding. Soft vegetables go into soup. I also freeze small portions, so they do not spoil. This habit saves money, and it makes cooking more creative. Look in your fridge tonight. You may already have most of the ingredients for a good meal. With a little planning, leftovers become a quick and cheap meal for the whole family."
+}

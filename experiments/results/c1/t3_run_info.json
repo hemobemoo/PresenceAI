@@ -1,0 +1,189 @@
+{
+ "build": {
+  "run_id": "t3",
+  "mode": "timing",
+  "repo_commit": "db0692a2a49dd4c2ecbd66586220d8243b0ac780",
+  "repo_dirty": false
+ },
+ "mode": "timing",
+ "started_unix": 1794943303.1007369,
+ "spacy_model": {
+  "file": "en_core_web_sm-3.8.0-py3-none-any.whl",
+  "sha256": "1932429db727d4bff3deed6b34cfc05df17794f4a52eeb26cf8928f7c1a0fb85",
+  "pinned": "1932429db727d4bff3deed6b34cfc05df17794f4a52eeb26cf8928f7c1a0fb85"
+ },
+ "model_files_verified": {
+  "kokoro-v1_0.pth": "496dba118d1a58f5f3db2efc88dbdc216e0483fc89fe6e47ee1f2c53f18ad1e4",
+  "voices/af_heart.pt": "0ab5709b8ffab19bfd849cd11d98f75b60af7733253ad0d67b12382a102cb4ff",
+  "voices/af_bella.pt": "8cb64e02fcc8de0327a8e13817e49c76c945ecf0052ceac97d3081480e8e48d6",
+  "voices/am_michael.pt": "9a443b79a4b22489a5b0ab7c651a0bcd1a30bef675c28333f06971abbd47bd37",
+  "voices/am_fenrir.pt": "98e507eca1db08230ae3b6232d59c10aec9630022d19accac4f5d12fcec3c37a",
+  "voices/bf_emma.pt": "d0a423deabf4a52b4f49318c51742c54e21bb89bbbe9a12141e7758ddb5da701",
+  "voices/bm_george.pt": "f1bc812213dc59774769e5c80004b13eeb79bd78130b11b2d7f934542dab811b",
+  "config.json": "14a726edd3718279eac426630879ff743955b16a"
+ },
+ "setup_s": 3.3,
+ "versions": {
+  "python": "3.12.3",
+  "platform": "Linux-6.6.159+-x86_64-with-glibc2.39",
+  "kokoro": "0.9.4",
+  "misaki": "0.9.4",
+  "torch": "2.15.0",
+  "spacy": "3.8.18",
+  "en_core_web_sm": "3.8.0",
+  "numpy": "2.5.5",
+  "soundfile": "0.14.0",
+  "phonemizer-fork": "3.3.2",
+  "espeakng-loader": "0.2.4",
+  "pydantic": "2.14.3"
+ },
+ "model_load_s": 9.7,
+ "device": "cuda",
+ "gpu": "Tesla T4",
+ "generation": {
+  "clips": [
+   {
+    "clip_id": "s01_r0",
+    "voice": "af_heart",
+    "target_wpm": 119.0,
+    "wpm": 110.15,
+    "attempts": 2,
+    "speed": 0.6393,
+    "audio_s": 59.827,
+    "seconds": 9.223,
+    "phrases": 20,
+    "kokoro_pauses": 0,
+    "fillers": 0
+   },
+   {
+    "clip_id": "s11_r1",
+    "voice": "af_bella",
+    "target_wpm": 137.0,
+    "wpm": 144.04,
+    "attempts": 2,
+    "speed": 0.903,
+    "audio_s": 45.155,
+    "seconds": 4.341,
+    "phrases": 19,
+    "kokoro_pauses": 1,
+    "fillers": 0
+   },
+   {
+    "clip_id": "s21_r2",
+    "voice": "am_michael",
+    "target_wpm": 155.0,
+    "wpm": 146.43,
+    "attempts": 2,
+    "speed": 1.1118,
+    "audio_s": 47.301,
+    "seconds": 4.2,
+    "phrases": 23,
+    "kokoro_pauses": 0,
+    "fillers": 2
+   },
+   {
+    "clip_id": "s31_r3",
+    "voice": "am_fenrir",
+    "target_wpm": 173.0,
+    "wpm": 169.82,
+    "attempts": 3,
+    "speed": 1.0872,
+    "audio_s": 39.865,
+    "seconds": 5.053,
+    "phrases": 17,
+    "kokoro_pauses": 0,
+    "fillers": 0
+   },
+   {
+    "clip_id": "s41_r4",
+    "voice": "bf_emma",
+    "target_wpm": 191.0,
+    "wpm": 184.44,
+    "attempts": 2,
+    "speed": 1.2263,
+    "audio_s": 39.062,
+    "seconds": 4.135,
+    "phrases": 22,
+    "kokoro_pauses": 1,
+    "fillers": 2
+   }
+  ],
+  "dropped": [],
+  "generation_s": 26.95,
+  "audio_s": 231.21,
+  "projected_all_clips_s": 1617.1,
+  "trim": {
+   "threshold_db_below_peak": 55.0,
+   "lead_s_p50_p95": [
+    0.33,
+    0.43804166666666666
+   ],
+   "tail_s_p50_p95": [
+    0.5094166666666666,
+    0.65625
+   ],
+   "trimmed_level_db_re_peak_p50_p95_max": [
+    -69.54182223540695,
+    -66.09210422934707,
+    -63.93071993487659
+   ]
+  },
+  "internal_silences": {
+   "count": 5,
+   "at_or_above_join_s": 2,
+   "durations_s_p50_max": [
+    0.21116666666666717,
+    0.39433333333333564
+   ]
+  }
+ },
+ "espeak_guard_calls": 0,
+ "status": "ok",
+ "sha256": {
+  "clips/s01_r0.flac": {
+   "bytes": 1622511,
+   "sha256": "a81fdd1a5775af6694a7fe398133700e807585874a30dfd40409c7d3b0422d59"
+  },
+  "clips/s11_r1.flac": {
+   "bytes": 1199527,
+   "sha256": "f3e71aca0488695342dc7a003f86e189e39c304793e5755a3a6a35c5c147ff6f"
+  },
+  "clips/s21_r2.flac": {
+   "bytes": 1260773,
+   "sha256": "88390792008e794e9c2e3ddcf8de1427164ece1a0f5162098f115790caea2cd4"
+  },
+  "clips/s31_r3.flac": {
+   "bytes": 1120353,
+   "sha256": "96a543acf00d4201f546c70c886b41450c1ccb1f065a254fce2ff96594b9fc71"
+  },
+  "clips/s41_r4.flac": {
+   "bytes": 1152143,
+   "sha256": "ff5f6a3b81a4c6dd9bf870e1866c6993396a4eb119233977e4bf3a766b9115b5"
+  },
+  "lexicon_check.json": {
+   "bytes": 37635,
+   "sha256": "5236d788fee8458c030547d787ba620e97c0bb98b95ccdd891dcf0cd4049e8d1"
+  },
+  "truth/s01_r0.json": {
+   "bytes": 3622,
+   "sha256": "651772d342b799d63b205323e3325117bdad68951820ab59f45941a584ca1bc6"
+  },
+  "truth/s11_r1.json": {
+   "bytes": 3371,
+   "sha256": "d34a82294641a2a199ef727060c8ae3898417f9383721afdeab66f4e9a2bb456"
+  },
+  "truth/s21_r2.json": {
+   "bytes": 2980,
+   "sha256": "e47ddf246c1e07cfc612d923e52239d5eccda141b02cdaee4d3fbc7a7ea2a591"
+  },
+  "truth/s31_r3.json": {
+   "bytes": 2802,
+   "sha256": "13efe1c9ea0e300af77f5602d25e4883cf684a9afaa4eaa0eaba9ccbccde9893"
+  },
+  "truth/s41_r4.json": {
+   "bytes": 3096,
+   "sha256": "693e859c7337c308a35f597ca851398ab259344b663f78f5c0fecd484facfd85"
+  }
+ },
+ "finished_unix": 1794943347.1635642
+}

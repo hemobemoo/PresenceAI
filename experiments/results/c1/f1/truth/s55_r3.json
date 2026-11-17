@@ -1,0 +1,191 @@
+{
+ "clip_id": "s55_r3",
+ "script_id": "s55",
+ "voice": "bm_george",
+ "render": 3,
+ "sample_rate": 24000,
+ "duration_s": 39.37016666666667,
+ "words": 111,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 38.87016666666667,
+ "speech_spans": [
+  [
+   0.5,
+   1.4272083333333334
+  ],
+  [
+   1.5652083333333333,
+   3.423
+  ],
+  [
+   3.732,
+   4.323458333333333
+  ],
+  [
+   4.494458333333333,
+   6.323583333333334
+  ],
+  [
+   7.603583333333333,
+   8.680083333333334
+  ],
+  [
+   8.779083333333332,
+   9.863666666666667
+  ],
+  [
+   9.944666666666667,
+   11.104583333333334
+  ],
+  [
+   12.749583333333334,
+   13.924291666666667
+  ],
+  [
+   14.963291666666667,
+   16.066791666666667
+  ],
+  [
+   16.125791666666668,
+   17.564541666666667
+  ],
+  [
+   18.984541666666665,
+   20.351666666666667
+  ],
+  [
+   20.496666666666666,
+   21.467625
+  ],
+  [
+   23.090625,
+   24.543875
+  ],
+  [
+   24.644875,
+   25.623666666666665
+  ],
+  [
+   26.302666666666667,
+   26.982
+  ],
+  [
+   27.361,
+   28.656
+  ],
+  [
+   29.368,
+   32.22570833333333
+  ],
+  [
+   32.74370833333333,
+   33.82816666666667
+  ],
+  [
+   34.19916666666666,
+   35.2205
+  ],
+  [
+   35.6875,
+   38.87016666666667
+  ]
+ ],
+ "wpm": 173.57235004625988,
+ "articulation_wpm": 245.4470071557999,
+ "target_wpm": 173.0,
+ "speed": 1.3918688592336002,
+ "attempts": 2,
+ "pauses": [
+  {
+   "start_s": 3.423,
+   "end_s": 3.732,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 6.323583333333334,
+   "end_s": 7.603583333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 11.104583333333334,
+   "end_s": 12.749583333333334,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 13.924291666666667,
+   "end_s": 14.963291666666667,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 17.564541666666667,
+   "end_s": 18.984541666666665,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 21.467625,
+   "end_s": 23.090625,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 25.623666666666665,
+   "end_s": 26.302666666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 26.982,
+   "end_s": 27.361,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 28.656,
+   "end_s": 29.368,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 32.22570833333333,
+   "end_s": 32.74370833333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 33.82816666666667,
+   "end_s": 34.19916666666666,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 35.2205,
+   "end_s": 35.6875,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 2,
+   "start_s": 4.193833333333333,
+   "end_s": 4.307666666666667
+  },
+  {
+   "phrase": 16,
+   "start_s": 30.299291666666665,
+   "end_s": 30.459291666666665
+  },
+  {
+   "phrase": 19,
+   "start_s": 36.719625,
+   "end_s": 36.861666666666665
+  }
+ ],
+ "text": "As we get older, it becomes harder to stay in touch with friends. Work, family and distance all take our time. A few years ago, I made a simple plan. Every Sunday evening, I send a short message to one old friend. I ask a question about their life and share a small piece of news. It takes five minutes. Some friends reply at once, and some take days. Either way, the connection stays alive. Several of these messages have led to long phone calls and visits. Friendship needs care, but not a lot of time. A short message today can keep a friendship strong for many more years to come."
+}

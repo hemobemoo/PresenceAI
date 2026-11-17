@@ -1,0 +1,171 @@
+{
+ "clip_id": "s30_r3",
+ "script_id": "s30",
+ "voice": "am_michael",
+ "render": 3,
+ "sample_rate": 24000,
+ "duration_s": 36.9275,
+ "words": 110,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 36.4275,
+ "speech_spans": [
+  [
+   0.5,
+   1.5737083333333333
+  ],
+  [
+   1.6447083333333334,
+   2.5475833333333333
+  ],
+  [
+   2.7245833333333334,
+   3.754
+  ],
+  [
+   3.949,
+   5.112875
+  ],
+  [
+   5.278875,
+   5.7905
+  ],
+  [
+   5.9055,
+   6.823916666666666
+  ],
+  [
+   6.926916666666667,
+   8.136791666666667
+  ],
+  [
+   9.529791666666666,
+   10.080958333333333
+  ],
+  [
+   10.277958333333334,
+   11.3125
+  ],
+  [
+   12.4815,
+   13.534458333333333
+  ],
+  [
+   14.681458333333333,
+   15.250791666666666
+  ],
+  [
+   15.432791666666667,
+   16.839375
+  ],
+  [
+   16.996375,
+   17.845666666666666
+  ],
+  [
+   18.551666666666666,
+   19.329833333333333
+  ],
+  [
+   20.680833333333332,
+   21.493541666666665
+  ],
+  [
+   21.915541666666666,
+   22.785166666666665
+  ],
+  [
+   23.725166666666667,
+   24.617916666666666
+  ],
+  [
+   25.507916666666667,
+   26.097916666666666
+  ],
+  [
+   26.262916666666666,
+   27.581083333333332
+  ],
+  [
+   27.772083333333335,
+   29.029916666666665
+  ],
+  [
+   29.224916666666665,
+   30.562583333333333
+  ],
+  [
+   30.63458333333333,
+   31.384291666666666
+  ],
+  [
+   31.521291666666666,
+   32.80916666666667
+  ],
+  [
+   32.90416666666667,
+   33.79291666666666
+  ],
+  [
+   33.938916666666664,
+   36.4275
+  ]
+ ],
+ "wpm": 183.70329135063668,
+ "articulation_wpm": 258.3625296040398,
+ "target_wpm": 173.0,
+ "speed": 1.3466417710783298,
+ "attempts": 3,
+ "pauses": [
+  {
+   "start_s": 8.136791666666667,
+   "end_s": 9.529791666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 11.3125,
+   "end_s": 12.4815,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 13.534458333333333,
+   "end_s": 14.681458333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 17.845666666666666,
+   "end_s": 18.551666666666666,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 19.329833333333333,
+   "end_s": 20.680833333333332,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 21.493541666666665,
+   "end_s": 21.915541666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 22.785166666666665,
+   "end_s": 23.725166666666667,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 24.617916666666666,
+   "end_s": 25.507916666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [],
+ "text": "Giving feedback is a skill, and like any skill, it improves with practice. I follow a simple pattern. First, describe what you saw, in clear and specific terms. Next, explain the effect it had on the work or the team. Third, suggest one change for next time. Keep the feedback short, and give it soon after the event. Talk about actions, not about the person. Finally, ask what the other person thinks. They may know something that you do not. Good feedback is a conversation, not a speech. When feedback is given with care, people tend to listen, ask questions and try the change in their next piece of work."
+}

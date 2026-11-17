@@ -1,0 +1,133 @@
+{
+ "clip_id": "s26_r1",
+ "script_id": "s26",
+ "voice": "am_michael",
+ "render": 1,
+ "sample_rate": 24000,
+ "duration_s": 49.509458333333335,
+ "words": 111,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 49.009458333333335,
+ "speech_spans": [
+  [
+   0.5,
+   1.9631666666666667
+  ],
+  [
+   2.0761666666666665,
+   4.2011666666666665
+  ],
+  [
+   5.230166666666666,
+   6.950166666666667
+  ],
+  [
+   7.074166666666667,
+   9.243791666666667
+  ],
+  [
+   12.161791666666666,
+   14.961208333333333
+  ],
+  [
+   15.405208333333333,
+   17.607333333333333
+  ],
+  [
+   17.807333333333332,
+   19.560458333333333
+  ],
+  [
+   19.700458333333334,
+   20.927958333333333
+  ],
+  [
+   21.063958333333332,
+   22.245833333333334
+  ],
+  [
+   23.267833333333332,
+   26.1265
+  ],
+  [
+   26.4975,
+   29.186208333333333
+  ],
+  [
+   29.584208333333333,
+   31.977916666666665
+  ],
+  [
+   32.163916666666665,
+   33.77404166666667
+  ],
+  [
+   33.86504166666667,
+   36.172958333333334
+  ],
+  [
+   37.037958333333336,
+   38.08479166666667
+  ],
+  [
+   38.195791666666665,
+   41.22291666666667
+  ],
+  [
+   41.410916666666665,
+   49.009458333333335
+  ]
+ ],
+ "wpm": 137.29281317131452,
+ "articulation_wpm": 165.78109717962624,
+ "target_wpm": 137.0,
+ "speed": 0.8677606324617064,
+ "attempts": 2,
+ "pauses": [
+  {
+   "start_s": 4.2011666666666665,
+   "end_s": 5.230166666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 9.243791666666667,
+   "end_s": 12.161791666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 14.961208333333333,
+   "end_s": 15.405208333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 22.245833333333334,
+   "end_s": 23.267833333333332,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 26.1265,
+   "end_s": 26.4975,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 29.186208333333333,
+   "end_s": 29.584208333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 36.172958333333334,
+   "end_s": 37.037958333333336,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [],
+ "text": "When software grows, the code often becomes messy. Names stop making sense, and functions become very long. This makes every new change slower and riskier. A good habit is to tidy a little each time you touch the code. Give a variable a clearer name. Split a long function into two smaller ones. Remove lines that no one calls anymore. Run the tests after each small step, so you know nothing broke. These changes seem minor on their own. Over months, they keep the code healthy and easy to work with. Teams that tidy as they go spend less time fixing bugs and more time building useful features for their users."
+}

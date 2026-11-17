@@ -1,0 +1,175 @@
+{
+ "clip_id": "s01_r4",
+ "script_id": "s01",
+ "voice": "af_heart",
+ "render": 4,
+ "sample_rate": 24000,
+ "duration_s": 35.837583333333335,
+ "words": 108,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 35.337583333333335,
+ "speech_spans": [
+  [
+   0.5,
+   1.1403333333333334
+  ],
+  [
+   1.3343333333333334,
+   1.934625
+  ],
+  [
+   2.953625,
+   4.18925
+  ],
+  [
+   4.36725,
+   6.352291666666667
+  ],
+  [
+   9.260291666666667,
+   9.924458333333334
+  ],
+  [
+   10.441458333333333,
+   12.000083333333333
+  ],
+  [
+   12.470083333333333,
+   13.441333333333333
+  ],
+  [
+   14.017333333333333,
+   15.000916666666667
+  ],
+  [
+   15.446916666666667,
+   16.551083333333334
+  ],
+  [
+   17.783083333333334,
+   18.867791666666665
+  ],
+  [
+   19.556791666666665,
+   20.529041666666668
+  ],
+  [
+   20.689041666666668,
+   22.153958333333332
+  ],
+  [
+   22.306958333333334,
+   23.121708333333334
+  ],
+  [
+   23.197708333333335,
+   24.197458333333334
+  ],
+  [
+   24.625458333333334,
+   27.504083333333334
+  ],
+  [
+   27.589083333333335,
+   28.917416666666668
+  ],
+  [
+   29.345416666666665,
+   30.138416666666668
+  ],
+  [
+   31.081416666666666,
+   32.25933333333333
+  ],
+  [
+   33.17633333333333,
+   34.09675
+  ],
+  [
+   34.18275,
+   35.337583333333335
+  ]
+ ],
+ "wpm": 186.00601362034774,
+ "articulation_wpm": 277.7232125318314,
+ "target_wpm": 191.0,
+ "speed": 1.2036789259630412,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 1.934625,
+   "end_s": 2.953625,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 6.352291666666667,
+   "end_s": 9.260291666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 9.924458333333334,
+   "end_s": 10.441458333333333,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 12.000083333333333,
+   "end_s": 12.470083333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 13.441333333333333,
+   "end_s": 14.017333333333333,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 15.000916666666667,
+   "end_s": 15.446916666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 16.551083333333334,
+   "end_s": 17.783083333333334,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 18.867791666666665,
+   "end_s": 19.556791666666665,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 24.197458333333334,
+   "end_s": 24.625458333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 28.917416666666668,
+   "end_s": 29.345416666666665,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 30.138416666666668,
+   "end_s": 31.081416666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 32.25933333333333,
+   "end_s": 33.17633333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [],
+ "text": "Good morning, everyone. Today I want to talk about a simple habit that helps me every day. Each morning, I take a short walk before work. The walk is not long, and it is not fast. I leave my phone at home so that I can look around. I notice the trees, the birds and the light on the street. When I come back, my mind feels clear. I find it easier to plan the day and to start the first task. You do not need special shoes or a big park. A quiet street is enough. Try it for one week, and see what changes for you."
+}

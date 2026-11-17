@@ -1,0 +1,190 @@
+{
+ "clip_id": "s49_r0",
+ "script_id": "s49",
+ "voice": "bf_emma",
+ "render": 0,
+ "sample_rate": 24000,
+ "duration_s": 61.52945833333333,
+ "words": 112,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 61.02945833333333,
+ "speech_spans": [
+  [
+   0.5,
+   2.7819583333333333
+  ],
+  [
+   4.451958333333334,
+   6.73725
+  ],
+  [
+   7.13225,
+   8.791708333333334
+  ],
+  [
+   8.902708333333333,
+   11.162
+  ],
+  [
+   13.929,
+   17.534041666666667
+  ],
+  [
+   18.725041666666666,
+   21.067041666666668
+  ],
+  [
+   21.205041666666666,
+   23.182666666666666
+  ],
+  [
+   23.52466666666667,
+   27.457958333333334
+  ],
+  [
+   27.531958333333332,
+   30.260916666666667
+  ],
+  [
+   31.756916666666665,
+   35.694875
+  ],
+  [
+   35.887875,
+   37.592375
+  ],
+  [
+   37.658375,
+   39.86354166666667
+  ],
+  [
+   40.179541666666665,
+   41.96279166666667
+  ],
+  [
+   42.08079166666667,
+   43.88554166666667
+  ],
+  [
+   44.05554166666667,
+   46.765625
+  ],
+  [
+   47.698625,
+   49.688583333333334
+  ],
+  [
+   49.84458333333333,
+   51.631458333333335
+  ],
+  [
+   51.70845833333333,
+   54.082708333333336
+  ],
+  [
+   54.884708333333336,
+   56.26529166666667
+  ],
+  [
+   56.32129166666667,
+   61.02945833333333
+  ]
+ ],
+ "wpm": 111.0203227491848,
+ "articulation_wpm": 138.7033882052239,
+ "target_wpm": 119.0,
+ "speed": 0.7393134914610839,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 2.7819583333333333,
+   "end_s": 4.451958333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 6.73725,
+   "end_s": 7.13225,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 11.162,
+   "end_s": 13.929,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 17.534041666666667,
+   "end_s": 18.725041666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 23.182666666666666,
+   "end_s": 23.52466666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 30.260916666666667,
+   "end_s": 31.756916666666665,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 37.08725,
+   "end_s": 37.589625,
+   "position": "mid_sentence",
+   "source": "kokoro"
+  },
+  {
+   "start_s": 39.86354166666667,
+   "end_s": 40.179541666666665,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 43.36991666666667,
+   "end_s": 43.877291666666665,
+   "position": "mid_sentence",
+   "source": "kokoro"
+  },
+  {
+   "start_s": 46.765625,
+   "end_s": 47.698625,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 54.082708333333336,
+   "end_s": 54.884708333333336,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 9,
+   "start_s": 34.07058333333333,
+   "end_s": 34.187666666666665
+  },
+  {
+   "phrase": 10,
+   "start_s": 37.08725,
+   "end_s": 37.589625
+  },
+  {
+   "phrase": 13,
+   "start_s": 43.36991666666667,
+   "end_s": 43.877291666666665
+  },
+  {
+   "phrase": 19,
+   "start_s": 59.204125,
+   "end_s": 59.314791666666665
+  }
+ ],
+ "text": "Our days are full of sound. There is traffic outside, music in shops and alerts on our phones. Many of us rarely experience real quiet. Yet a few minutes of silence can be very restful. I try to sit quietly for ten minutes each afternoon. I do not try to empty my mind. I simply notice my breathing and the sounds around me. Some days, my thoughts wander a lot, and that is fine. Afterwards, I feel more patient and alert. You can do this anywhere, even on a train. All you need is a few minutes. Over time, these quiet minutes can become a quiet and steady part of the day."
+}

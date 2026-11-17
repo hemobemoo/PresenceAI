@@ -1,0 +1,161 @@
+{
+ "clip_id": "s56_r2",
+ "script_id": "s56",
+ "voice": "bm_george",
+ "render": 2,
+ "sample_rate": 24000,
+ "duration_s": 43.522708333333334,
+ "words": 110,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 43.022708333333334,
+ "speech_spans": [
+  [
+   0.5,
+   2.245125
+  ],
+  [
+   2.409125,
+   4.102708333333333
+  ],
+  [
+   4.552708333333333,
+   6.141166666666667
+  ],
+  [
+   6.300166666666667,
+   7.594541666666666
+  ],
+  [
+   8.059541666666666,
+   8.854166666666666
+  ],
+  [
+   8.944166666666666,
+   12.176541666666667
+  ],
+  [
+   12.363541666666666,
+   13.621125
+  ],
+  [
+   13.707125,
+   15.289541666666667
+  ],
+  [
+   15.440541666666666,
+   16.386416666666666
+  ],
+  [
+   18.378416666666666,
+   21.899625
+  ],
+  [
+   21.977625,
+   25.678208333333334
+  ],
+  [
+   25.766208333333335,
+   28.997083333333332
+  ],
+  [
+   29.56908333333333,
+   31.41825
+  ],
+  [
+   31.47525,
+   32.72779166666667
+  ],
+  [
+   33.59379166666667,
+   35.37025
+  ],
+  [
+   35.55225,
+   36.28879166666667
+  ],
+  [
+   36.38979166666667,
+   40.46820833333334
+  ],
+  [
+   40.54720833333333,
+   43.022708333333334
+  ]
+ ],
+ "wpm": 155.21118617993326,
+ "articulation_wpm": 179.56394528287558,
+ "target_wpm": 155.0,
+ "speed": 1.1520297833600883,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 4.102708333333333,
+   "end_s": 4.552708333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 7.594541666666666,
+   "end_s": 8.059541666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 16.386416666666666,
+   "end_s": 18.378416666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 28.997083333333332,
+   "end_s": 29.56908333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 32.72779166666667,
+   "end_s": 33.59379166666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 5,
+   "start_s": 10.409875,
+   "end_s": 10.569041666666667
+  },
+  {
+   "phrase": 9,
+   "start_s": 20.2235,
+   "end_s": 20.450458333333334
+  },
+  {
+   "phrase": 10,
+   "start_s": 24.90575,
+   "end_s": 25.071666666666665
+  },
+  {
+   "phrase": 11,
+   "start_s": 26.879916666666666,
+   "end_s": 27.049208333333333
+  },
+  {
+   "phrase": 16,
+   "start_s": 37.461333333333336,
+   "end_s": 37.664208333333335
+  },
+  {
+   "phrase": 16,
+   "start_s": 38.628166666666665,
+   "end_s": 38.738458333333334
+  },
+  {
+   "phrase": 17,
+   "start_s": 41.88104166666667,
+   "end_s": 42.05854166666666
+  }
+ ],
+ "text": "Students often sleep less when exams come closer. They stay up late to study, hoping to learn more. In fact, sleep is when the brain sorts and stores new information. Without enough sleep, it is harder to remember what you studied. It is also harder to concentrate during the exam itself. Most young adults need between seven and nine hours each night. A regular bedtime helps the body settle into a pattern. So during exam season, protect your sleep. It is one of the best study tools you have. Students who sleep well often find that they need fewer hours of study, because they remember more of what they learn."
+}

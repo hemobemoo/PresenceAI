@@ -1,0 +1,204 @@
+{
+ "clip_id": "s15_r0",
+ "script_id": "s15",
+ "voice": "af_bella",
+ "render": 0,
+ "sample_rate": 24000,
+ "duration_s": 60.225791666666666,
+ "words": 110,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 59.725791666666666,
+ "speech_spans": [
+  [
+   0.5,
+   3.480541666666667
+  ],
+  [
+   4.223541666666667,
+   5.529916666666667
+  ],
+  [
+   5.6939166666666665,
+   8.447791666666667
+  ],
+  [
+   8.750791666666666,
+   10.85225
+  ],
+  [
+   11.25025,
+   13.160083333333333
+  ],
+  [
+   13.323083333333333,
+   16.765958333333334
+  ],
+  [
+   16.848958333333332,
+   18.40525
+  ],
+  [
+   19.28325,
+   20.593083333333333
+  ],
+  [
+   23.561083333333332,
+   27.056208333333334
+  ],
+  [
+   27.229208333333332,
+   30.304375
+  ],
+  [
+   30.475375,
+   32.45525
+  ],
+  [
+   33.89825,
+   36.00279166666667
+  ],
+  [
+   37.485791666666664,
+   39.458666666666666
+  ],
+  [
+   40.43266666666667,
+   44.18479166666667
+  ],
+  [
+   44.28479166666666,
+   45.887708333333336
+  ],
+  [
+   46.73470833333333,
+   48.48945833333333
+  ],
+  [
+   48.804458333333336,
+   54.87595833333334
+  ],
+  [
+   55.068958333333335,
+   59.725791666666666
+  ]
+ ],
+ "wpm": 111.43793631575208,
+ "articulation_wpm": 140.6990718657816,
+ "target_wpm": 119.0,
+ "speed": 0.6296292804721587,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 3.480541666666667,
+   "end_s": 4.223541666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 8.447791666666667,
+   "end_s": 8.750791666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 10.85225,
+   "end_s": 11.25025,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 18.40525,
+   "end_s": 19.28325,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 20.593083333333333,
+   "end_s": 23.561083333333332,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 32.45525,
+   "end_s": 33.89825,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 36.00279166666667,
+   "end_s": 37.485791666666664,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 39.458666666666666,
+   "end_s": 40.43266666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 42.90508333333333,
+   "end_s": 43.17133333333334,
+   "position": "mid_sentence",
+   "source": "kokoro"
+  },
+  {
+   "start_s": 45.887708333333336,
+   "end_s": 46.73470833333333,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 48.48945833333333,
+   "end_s": 48.804458333333336,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 50.318375,
+   "end_s": 50.669,
+   "position": "mid_sentence",
+   "source": "kokoro"
+  },
+  {
+   "start_s": 57.93716666666667,
+   "end_s": 58.238458333333334,
+   "position": "mid_sentence",
+   "source": "kokoro"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 0,
+   "start_s": 0.6003333333333334,
+   "end_s": 0.71625
+  },
+  {
+   "phrase": 4,
+   "start_s": 12.96475,
+   "end_s": 13.074625
+  },
+  {
+   "phrase": 13,
+   "start_s": 42.90508333333333,
+   "end_s": 43.17133333333334
+  },
+  {
+   "phrase": 16,
+   "start_s": 50.318375,
+   "end_s": 50.669
+  },
+  {
+   "phrase": 16,
+   "start_s": 53.69175,
+   "end_s": 53.925333333333334
+  },
+  {
+   "phrase": 17,
+   "start_s": 57.93716666666667,
+   "end_s": 58.238458333333334
+  }
+ ],
+ "text": "We all send many emails each day. Some are clear, and some leave people confused. Here is a simple method that I follow at work. Start with the main point in the first line. Say what you need and by when. Then give the details in short paragraphs. Keep one paragraph for each idea. If you ask a question, put it on its own line, so it is easy to see. End with a friendly closing and your name. Before you send it, look at it once more. Ask yourself whether a busy person could understand it in a moment. Clear writing saves time for you and for every reader."
+}

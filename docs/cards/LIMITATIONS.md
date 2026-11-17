@@ -39,6 +39,19 @@ Started 2026-11-17. Kept up to date as experiments report (FINAL_11 §6).
 - Research-only and no-derivatives sources (TED, TED-LIUM 3, PodcastFillers, Columbia Gaze) are used
   for evaluation only, which limits training data.
 
+## Synthetic speech (C1, ADR 0014)
+
+- **E2's rate and pause targets are checked on synthetic English speech** from one TTS model
+  (Kokoro, six voices). Real speakers vary more; TED-LIUM 3 gives only an approximate check on
+  real speech, and Arabic E2 uses only the developer's own recordings.
+- **Mid-sentence pauses in C1 are built by joining separately generated phrases**, so the phrase
+  before such a pause may sound like a phrase end rather than a hesitation, and Whisper may put a
+  full stop there. E2's pause-position report shows how often this happens.
+- **C1 fillers are not used for filler detection (E3).** A TTS voice saying "um" on its own is
+  not a real hesitation; E3 uses DisfluencySpeech, AMI and PodcastFillers.
+- The noise condition uses synthetic pink noise, not real room or babble noise, and has no pass
+  target.
+
 ## Loudness and pitch
 
 - **Browser audio processing.** Auto-gain, noise suppression and echo cancellation flatten

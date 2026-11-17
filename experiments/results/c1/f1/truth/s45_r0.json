@@ -1,0 +1,193 @@
+{
+ "clip_id": "s45_r0",
+ "script_id": "s45",
+ "voice": "bf_emma",
+ "render": 0,
+ "sample_rate": 24000,
+ "duration_s": 53.95591666666667,
+ "words": 111,
+ "fillers": 1,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 53.45591666666667,
+ "speech_spans": [
+  [
+   0.5,
+   1.6689583333333333
+  ],
+  [
+   2.2119583333333335,
+   3.837125
+  ],
+  [
+   4.986125,
+   6.159125
+  ],
+  [
+   6.642125,
+   8.017541666666666
+  ],
+  [
+   10.463541666666666,
+   12.903333333333334
+  ],
+  [
+   13.533333333333333,
+   13.880958333333334
+  ],
+  [
+   14.002958333333334,
+   15.507291666666667
+  ],
+  [
+   16.815291666666667,
+   18.164583333333333
+  ],
+  [
+   19.00958333333333,
+   20.999041666666667
+  ],
+  [
+   21.551041666666666,
+   22.82725
+  ],
+  [
+   22.96825,
+   25.067291666666666
+  ],
+  [
+   25.473291666666668,
+   27.89025
+  ],
+  [
+   27.94225,
+   29.182083333333335
+  ],
+  [
+   29.272083333333335,
+   31.226708333333335
+  ],
+  [
+   34.10370833333333,
+   36.409333333333336
+  ],
+  [
+   37.583333333333336,
+   39.17733333333333
+  ],
+  [
+   39.37433333333333,
+   40.70791666666667
+  ],
+  [
+   43.56491666666667,
+   45.441625
+  ],
+  [
+   46.097625,
+   47.862291666666664
+  ],
+  [
+   49.752291666666665,
+   53.45591666666667
+  ]
+ ],
+ "wpm": 125.76498376794535,
+ "articulation_wpm": 192.8315498666924,
+ "target_wpm": 119.0,
+ "speed": 0.9465335013979421,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 1.6689583333333333,
+   "end_s": 2.2119583333333335,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 3.837125,
+   "end_s": 4.986125,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 6.159125,
+   "end_s": 6.642125,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 8.017541666666666,
+   "end_s": 10.463541666666666,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 12.903333333333334,
+   "end_s": 13.533333333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 15.507291666666667,
+   "end_s": 16.815291666666667,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 18.164583333333333,
+   "end_s": 19.00958333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 20.999041666666667,
+   "end_s": 21.551041666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 25.067291666666666,
+   "end_s": 25.473291666666668,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 31.226708333333335,
+   "end_s": 34.10370833333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 36.409333333333336,
+   "end_s": 37.583333333333336,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 40.70791666666667,
+   "end_s": 43.56491666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 45.441625,
+   "end_s": 46.097625,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 47.862291666666664,
+   "end_s": 49.752291666666665,
+   "position": "clause_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 18,
+   "start_s": 51.22195833333333,
+   "end_s": 51.357083333333335
+  }
+ ],
+ "text": "Every Saturday, our town holds a market in the main square. Farmers bring fruit, vegetables and eggs from nearby villages. There are stalls with bread, cheese and flowers. I like the market for many reasons. The food is fresh, and I can talk to the people who grew it. I often learn new ways to cook a vegetable. Prices are fair, especially near the end of the morning. The market also brings neighbours together. I usually meet a friend and stop for a coffee. It is the best part of my week. If your town has a market, visit it this weekend and buy something you have never cooked before."
+}

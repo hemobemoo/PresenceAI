@@ -1,0 +1,179 @@
+{
+ "clip_id": "s51_r4",
+ "script_id": "s51",
+ "voice": "bm_george",
+ "render": 4,
+ "sample_rate": 24000,
+ "duration_s": 38.593666666666664,
+ "words": 111,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 38.093666666666664,
+ "speech_spans": [
+  [
+   0.5,
+   1.211
+  ],
+  [
+   1.404,
+   2.8026666666666666
+  ],
+  [
+   3.413666666666667,
+   3.9075416666666665
+  ],
+  [
+   3.9755416666666665,
+   4.782291666666667
+  ],
+  [
+   6.384291666666667,
+   6.959
+  ],
+  [
+   7.043,
+   7.751166666666666
+  ],
+  [
+   9.997166666666667,
+   11.267208333333333
+  ],
+  [
+   11.466208333333332,
+   12.262291666666666
+  ],
+  [
+   13.038291666666666,
+   14.059333333333333
+  ],
+  [
+   14.430333333333333,
+   14.997
+  ],
+  [
+   16.729,
+   17.3915
+  ],
+  [
+   19.2595,
+   19.827125
+  ],
+  [
+   21.624125,
+   23.941833333333335
+  ],
+  [
+   24.042833333333334,
+   24.441291666666668
+  ],
+  [
+   24.499291666666668,
+   25.8545
+  ],
+  [
+   26.3935,
+   26.926583333333333
+  ],
+  [
+   26.97758333333333,
+   27.591208333333334
+  ],
+  [
+   27.672208333333334,
+   29.237708333333334
+  ],
+  [
+   31.320708333333332,
+   32.538291666666666
+  ],
+  [
+   35.100291666666664,
+   36.228208333333335
+  ],
+  [
+   36.29320833333333,
+   38.093666666666664
+  ]
+ ],
+ "wpm": 177.15749993349945,
+ "articulation_wpm": 324.7724317295188,
+ "target_wpm": 191.0,
+ "speed": 2.0,
+ "attempts": 3,
+ "pauses": [
+  {
+   "start_s": 2.8026666666666666,
+   "end_s": 3.413666666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 4.782291666666667,
+   "end_s": 6.384291666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 7.751166666666666,
+   "end_s": 9.997166666666667,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 12.262291666666666,
+   "end_s": 13.038291666666666,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 14.059333333333333,
+   "end_s": 14.430333333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 14.997,
+   "end_s": 16.729,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 17.3915,
+   "end_s": 19.2595,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 19.827125,
+   "end_s": 21.624125,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 25.8545,
+   "end_s": 26.3935,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 29.237708333333334,
+   "end_s": 31.320708333333332,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 32.538291666666666,
+   "end_s": 35.100291666666664,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 12,
+   "start_s": 23.282875,
+   "end_s": 23.410791666666668
+  }
+ ],
+ "text": "When I was a child, I walked to school every day with my brother. The walk took about fifteen minutes. On the way, we passed a bakery, a small park and an old church. We talked about games, teachers and the weekend. Some mornings, we raced each other to the corner. Those walks taught me to notice small changes in the street and the seasons. Today, many children travel to school by car. Walking, when it is safe, gives children exercise and a little freedom. It also gives them time to talk. When I think back to my school days, those quiet walks with my brother are what I remember most."
+}

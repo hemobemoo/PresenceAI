@@ -1,0 +1,152 @@
+{
+ "clip_id": "s58_r4",
+ "script_id": "s58",
+ "voice": "bm_george",
+ "render": 4,
+ "sample_rate": 24000,
+ "duration_s": 36.148125,
+ "words": 111,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 35.648125,
+ "speech_spans": [
+  [
+   0.5,
+   2.653625
+  ],
+  [
+   3.223625,
+   5.275875
+  ],
+  [
+   5.358875,
+   6.7949166666666665
+  ],
+  [
+   6.901916666666667,
+   8.654916666666667
+  ],
+  [
+   8.814916666666667,
+   10.373458333333334
+  ],
+  [
+   10.483458333333333,
+   12.586708333333334
+  ],
+  [
+   13.462708333333333,
+   14.5095
+  ],
+  [
+   16.5885,
+   17.38075
+  ],
+  [
+   17.43475,
+   18.348708333333335
+  ],
+  [
+   18.503708333333332,
+   19.581041666666668
+  ],
+  [
+   20.011041666666667,
+   20.72075
+  ],
+  [
+   20.83975,
+   23.742041666666665
+  ],
+  [
+   23.88404166666667,
+   26.334041666666668
+  ],
+  [
+   26.804041666666667,
+   28.613791666666668
+  ],
+  [
+   28.691791666666667,
+   30.921166666666668
+  ],
+  [
+   31.101166666666668,
+   32.53570833333333
+  ],
+  [
+   32.710708333333336,
+   35.648125
+  ]
+ ],
+ "wpm": 189.48379180966268,
+ "articulation_wpm": 226.8382712948259,
+ "target_wpm": 191.0,
+ "speed": 1.247521696231553,
+ "attempts": 2,
+ "pauses": [
+  {
+   "start_s": 2.653625,
+   "end_s": 3.223625,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 12.586708333333334,
+   "end_s": 13.462708333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 14.5095,
+   "end_s": 16.5885,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 19.581041666666668,
+   "end_s": 20.011041666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 26.334041666666668,
+   "end_s": 26.804041666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 0,
+   "start_s": 1.2530416666666666,
+   "end_s": 1.3607083333333334
+  },
+  {
+   "phrase": 3,
+   "start_s": 7.82925,
+   "end_s": 7.93825
+  },
+  {
+   "phrase": 5,
+   "start_s": 11.337958333333333,
+   "end_s": 11.463541666666666
+  },
+  {
+   "phrase": 11,
+   "start_s": 21.754541666666668,
+   "end_s": 21.949708333333334
+  },
+  {
+   "phrase": 12,
+   "start_s": 25.438625,
+   "end_s": 25.587208333333333
+  },
+  {
+   "phrase": 16,
+   "start_s": 34.393375,
+   "end_s": 34.58329166666667
+  }
+ ],
+ "text": "A shopping list sounds like a small thing, but it can save both money and time. Before I go to the shop, I look in the fridge and the cupboards. I write down what is missing and plan meals for the next few days. I group the list by area, such as fruit, dairy and bread. In the shop, I follow the list and avoid the aisles I do not need. This stops me from buying things on impulse. I also waste less food at home, because I only buy what I plan to cook. It takes only a few minutes, and the habit quickly pays for itself every single week."
+}

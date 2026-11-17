@@ -1,0 +1,213 @@
+{
+ "clip_id": "s58_r0",
+ "script_id": "s58",
+ "voice": "bm_george",
+ "render": 0,
+ "sample_rate": 24000,
+ "duration_s": 59.941291666666665,
+ "words": 111,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 59.441291666666665,
+ "speech_spans": [
+  [
+   0.5,
+   4.196125
+  ],
+  [
+   4.342125,
+   7.939208333333333
+  ],
+  [
+   9.416208333333334,
+   11.971625
+  ],
+  [
+   12.038625,
+   15.252416666666667
+  ],
+  [
+   15.369416666666666,
+   18.217333333333332
+  ],
+  [
+   18.296333333333333,
+   21.920625
+  ],
+  [
+   23.367625,
+   25.22479166666667
+  ],
+  [
+   25.637791666666665,
+   27.045083333333334
+  ],
+  [
+   27.235083333333332,
+   28.82079166666667
+  ],
+  [
+   28.97479166666667,
+   30.931083333333333
+  ],
+  [
+   31.426083333333334,
+   32.74395833333333
+  ],
+  [
+   32.93595833333333,
+   37.81004166666666
+  ],
+  [
+   38.388041666666666,
+   42.435541666666666
+  ],
+  [
+   42.60554166666667,
+   45.782666666666664
+  ],
+  [
+   45.92466666666667,
+   49.5755
+  ],
+  [
+   49.6595,
+   52.14225
+  ],
+  [
+   54.41925,
+   59.441291666666665
+  ]
+ ],
+ "wpm": 112.99379113821593,
+ "articulation_wpm": 134.98506499703157,
+ "target_wpm": 119.0,
+ "speed": 0.7321672033759337,
+ "attempts": 2,
+ "pauses": [
+  {
+   "start_s": 7.939208333333333,
+   "end_s": 9.416208333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 13.7145,
+   "end_s": 13.977041666666667,
+   "position": "mid_sentence",
+   "source": "kokoro"
+  },
+  {
+   "start_s": 19.810041666666667,
+   "end_s": 20.092833333333335,
+   "position": "mid_sentence",
+   "source": "kokoro"
+  },
+  {
+   "start_s": 21.920625,
+   "end_s": 23.367625,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 25.22479166666667,
+   "end_s": 25.637791666666665,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 30.931083333333333,
+   "end_s": 31.426083333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 34.447916666666664,
+   "end_s": 34.805875,
+   "position": "mid_sentence",
+   "source": "kokoro"
+  },
+  {
+   "start_s": 37.81004166666666,
+   "end_s": 38.388041666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 40.89875,
+   "end_s": 41.19,
+   "position": "mid_sentence",
+   "source": "kokoro"
+  },
+  {
+   "start_s": 52.14225,
+   "end_s": 54.41925,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 57.24216666666667,
+   "end_s": 57.622125,
+   "position": "mid_sentence",
+   "source": "kokoro"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 0,
+   "start_s": 1.8152916666666667,
+   "end_s": 2.0502083333333334
+  },
+  {
+   "phrase": 1,
+   "start_s": 5.570625,
+   "end_s": 5.703125
+  },
+  {
+   "phrase": 1,
+   "start_s": 6.704291666666666,
+   "end_s": 6.865916666666666
+  },
+  {
+   "phrase": 3,
+   "start_s": 13.7145,
+   "end_s": 13.977041666666667
+  },
+  {
+   "phrase": 4,
+   "start_s": 16.656541666666666,
+   "end_s": 16.848583333333334
+  },
+  {
+   "phrase": 5,
+   "start_s": 19.810041666666667,
+   "end_s": 20.092833333333335
+  },
+  {
+   "phrase": 11,
+   "start_s": 34.447916666666664,
+   "end_s": 34.805875
+  },
+  {
+   "phrase": 12,
+   "start_s": 40.89875,
+   "end_s": 41.19
+  },
+  {
+   "phrase": 13,
+   "start_s": 43.95158333333333,
+   "end_s": 44.10575
+  },
+  {
+   "phrase": 14,
+   "start_s": 47.863708333333335,
+   "end_s": 47.972208333333334
+  },
+  {
+   "phrase": 16,
+   "start_s": 57.24216666666667,
+   "end_s": 57.622125
+  }
+ ],
+ "text": "A shopping list sounds like a small thing, but it can save both money and time. Before I go to the shop, I look in the fridge and the cupboards. I write down what is missing and plan meals for the next few days. I group the list by area, such as fruit, dairy and bread. In the shop, I follow the list and avoid the aisles I do not need. This stops me from buying things on impulse. I also waste less food at home, because I only buy what I plan to cook. It takes only a few minutes, and the habit quickly pays for itself every single week."
+}

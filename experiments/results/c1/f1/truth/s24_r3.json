@@ -1,0 +1,163 @@
+{
+ "clip_id": "s24_r3",
+ "script_id": "s24",
+ "voice": "am_michael",
+ "render": 3,
+ "sample_rate": 24000,
+ "duration_s": 40.86754166666667,
+ "words": 110,
+ "fillers": 1,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 40.36754166666667,
+ "speech_spans": [
+  [
+   0.5,
+   1.8862916666666667
+  ],
+  [
+   3.6692916666666666,
+   4.594166666666666
+  ],
+  [
+   5.921166666666666,
+   6.805958333333334
+  ],
+  [
+   7.161958333333334,
+   8.618083333333333
+  ],
+  [
+   9.563083333333333,
+   11.77725
+  ],
+  [
+   11.95425,
+   12.97875
+  ],
+  [
+   13.39975,
+   15.78925
+  ],
+  [
+   16.14725,
+   16.844625
+  ],
+  [
+   16.948625,
+   18.006666666666668
+  ],
+  [
+   18.172666666666668,
+   18.725
+  ],
+  [
+   18.917,
+   21.145041666666668
+  ],
+  [
+   21.622041666666668,
+   23.414
+  ],
+  [
+   24.88,
+   25.90825
+  ],
+  [
+   26.04925,
+   26.811958333333333
+  ],
+  [
+   26.919958333333334,
+   27.2735
+  ],
+  [
+   27.3765,
+   28.914416666666668
+  ],
+  [
+   30.093416666666666,
+   31.736666666666668
+  ],
+  [
+   31.816666666666666,
+   33.530375
+  ],
+  [
+   35.315375,
+   36.69745833333333
+  ],
+  [
+   36.814458333333334,
+   40.36754166666667
+  ]
+ ],
+ "wpm": 165.54820598628166,
+ "articulation_wpm": 230.91018555907525,
+ "target_wpm": 173.0,
+ "speed": 1.2290362304490967,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 1.8862916666666667,
+   "end_s": 3.6692916666666666,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 4.594166666666666,
+   "end_s": 5.921166666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 6.805958333333334,
+   "end_s": 7.161958333333334,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 8.618083333333333,
+   "end_s": 9.563083333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 12.97875,
+   "end_s": 13.39975,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 15.78925,
+   "end_s": 16.14725,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 21.145041666666668,
+   "end_s": 21.622041666666668,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 23.414,
+   "end_s": 24.88,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 28.914416666666668,
+   "end_s": 30.093416666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 33.530375,
+   "end_s": 35.315375,
+   "position": "clause_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [],
+ "text": "Some of my best ideas come when I am walking. So last year, I tried something new at work. When a meeting involved only two or three people, we held it outside. We walked around the block for thirty minutes and talked. At first, few colleagues joined. Soon, they began to ask for walking meetings themselves. We found that people spoke more openly and kept to the point. Of course, this will not suit every meeting. You cannot share a screen on the street. But for planning and problem solving, a walk can work very well. Fresh air and movement seem to help people think in new ways together."
+}

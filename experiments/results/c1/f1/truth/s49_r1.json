@@ -1,0 +1,175 @@
+{
+ "clip_id": "s49_r1",
+ "script_id": "s49",
+ "voice": "bf_emma",
+ "render": 1,
+ "sample_rate": 24000,
+ "duration_s": 47.5555,
+ "words": 112,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 47.0555,
+ "speech_spans": [
+  [
+   0.5,
+   1.90925
+  ],
+  [
+   2.05525,
+   3.5475833333333333
+  ],
+  [
+   3.8925833333333335,
+   4.9779583333333335
+  ],
+  [
+   5.364958333333333,
+   6.724166666666667
+  ],
+  [
+   7.160166666666667,
+   9.526041666666666
+  ],
+  [
+   9.656041666666667,
+   11.120708333333333
+  ],
+  [
+   11.225708333333333,
+   12.435666666666666
+  ],
+  [
+   14.957666666666666,
+   17.565625
+  ],
+  [
+   19.548625,
+   21.3395
+  ],
+  [
+   21.6905,
+   24.293083333333332
+  ],
+  [
+   26.558083333333332,
+   27.32775
+  ],
+  [
+   29.53875,
+   30.957708333333333
+  ],
+  [
+   31.806708333333333,
+   32.89425
+  ],
+  [
+   32.95225,
+   33.78
+  ],
+  [
+   34.85,
+   36.566208333333336
+  ],
+  [
+   38.258208333333336,
+   39.574666666666666
+  ],
+  [
+   39.68266666666667,
+   40.771791666666665
+  ],
+  [
+   40.92979166666667,
+   42.39420833333333
+  ],
+  [
+   42.520208333333336,
+   43.403166666666664
+  ],
+  [
+   43.97416666666667,
+   47.0555
+  ]
+ ],
+ "wpm": 144.34384766568934,
+ "articulation_wpm": 216.47741000241604,
+ "target_wpm": 137.0,
+ "speed": 1.090261853932698,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 3.5475833333333333,
+   "end_s": 3.8925833333333335,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 4.9779583333333335,
+   "end_s": 5.364958333333333,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 6.724166666666667,
+   "end_s": 7.160166666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 12.435666666666666,
+   "end_s": 14.957666666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 17.565625,
+   "end_s": 19.548625,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 21.3395,
+   "end_s": 21.6905,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 24.293083333333332,
+   "end_s": 26.558083333333332,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 27.32775,
+   "end_s": 29.53875,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 30.957708333333333,
+   "end_s": 31.806708333333333,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 33.78,
+   "end_s": 34.85,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 36.566208333333336,
+   "end_s": 38.258208333333336,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 43.403166666666664,
+   "end_s": 43.97416666666667,
+   "position": "clause_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [],
+ "text": "Our days are full of sound. There is traffic outside, music in shops and alerts on our phones. Many of us rarely experience real quiet. Yet a few minutes of silence can be very restful. I try to sit quietly for ten minutes each afternoon. I do not try to empty my mind. I simply notice my breathing and the sounds around me. Some days, my thoughts wander a lot, and that is fine. Afterwards, I feel more patient and alert. You can do this anywhere, even on a train. All you need is a few minutes. Over time, these quiet minutes can become a quiet and steady part of the day."
+}

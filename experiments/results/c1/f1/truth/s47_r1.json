@@ -1,0 +1,123 @@
+{
+ "clip_id": "s47_r1",
+ "script_id": "s47",
+ "voice": "bf_emma",
+ "render": 1,
+ "sample_rate": 24000,
+ "duration_s": 49.708708333333334,
+ "words": 110,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 49.208708333333334,
+ "speech_spans": [
+  [
+   0.5,
+   2.344375
+  ],
+  [
+   4.949375,
+   7.149416666666666
+  ],
+  [
+   7.305416666666667,
+   8.70575
+  ],
+  [
+   8.83575,
+   12.275041666666667
+  ],
+  [
+   13.800041666666667,
+   16.278083333333335
+  ],
+  [
+   16.473083333333335,
+   19.140166666666666
+  ],
+  [
+   19.308166666666665,
+   22.439291666666666
+  ],
+  [
+   22.628291666666666,
+   24.279375
+  ],
+  [
+   24.475375,
+   26.939125
+  ],
+  [
+   27.394125,
+   29.677416666666666
+  ],
+  [
+   30.736416666666667,
+   34.0255
+  ],
+  [
+   34.1255,
+   37.117125
+  ],
+  [
+   37.189125,
+   38.99816666666667
+  ],
+  [
+   39.08316666666666,
+   42.123125
+  ],
+  [
+   42.974125,
+   46.247083333333336
+  ],
+  [
+   47.74008333333333,
+   49.208708333333334
+  ]
+ ],
+ "wpm": 135.49938452141942,
+ "articulation_wpm": 167.3864778355576,
+ "target_wpm": 137.0,
+ "speed": 0.8060822680256606,
+ "attempts": 2,
+ "pauses": [
+  {
+   "start_s": 2.344375,
+   "end_s": 4.949375,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 12.275041666666667,
+   "end_s": 13.800041666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 26.939125,
+   "end_s": 27.394125,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 29.677416666666666,
+   "end_s": 30.736416666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 42.123125,
+   "end_s": 42.974125,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 46.247083333333336,
+   "end_s": 47.74008333333333,
+   "position": "clause_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [],
+ "text": "People have told stories for as long as we have had language. Before writing, stories carried knowledge from one generation to the next. They explained where food could be found, which plants were safe and how to behave. Stories are easier to remember than lists of facts. When we hear a story, we picture the people and the places. We want to know what happens next. This is why good teachers often begin with a story. A short example can make a difficult idea feel simple and real. So when you need to explain something important, think about a story that shows the idea in action, and tell it simply."
+}

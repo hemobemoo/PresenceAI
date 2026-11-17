@@ -1,0 +1,155 @@
+{
+ "clip_id": "s32_r1",
+ "script_id": "s32",
+ "voice": "am_fenrir",
+ "render": 1,
+ "sample_rate": 24000,
+ "duration_s": 52.41458333333333,
+ "words": 110,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 51.91458333333333,
+ "speech_spans": [
+  [
+   0.5,
+   1.9795833333333333
+  ],
+  [
+   2.177583333333333,
+   3.9975
+  ],
+  [
+   6.5405,
+   8.793625
+  ],
+  [
+   11.523625,
+   13.361125
+  ],
+  [
+   13.860125,
+   15.302125
+  ],
+  [
+   15.626125,
+   17.379166666666666
+  ],
+  [
+   17.571166666666667,
+   19.066375
+  ],
+  [
+   20.355375,
+   23.43025
+  ],
+  [
+   23.55325,
+   24.531458333333333
+  ],
+  [
+   24.592458333333333,
+   28.426291666666668
+  ],
+  [
+   28.782291666666666,
+   30.429333333333332
+  ],
+  [
+   30.523333333333333,
+   32.36729166666667
+  ],
+  [
+   32.797291666666666,
+   35.914875
+  ],
+  [
+   36.780875,
+   39.43320833333333
+  ],
+  [
+   39.98020833333333,
+   42.134083333333336
+  ],
+  [
+   42.195083333333336,
+   44.08945833333333
+  ],
+  [
+   47.07845833333333,
+   48.44533333333333
+  ],
+  [
+   48.58133333333333,
+   51.91458333333333
+  ]
+ ],
+ "wpm": 128.36824830827828,
+ "articulation_wpm": 173.79130560718338,
+ "target_wpm": 137.0,
+ "speed": 0.7447210423511683,
+ "attempts": 2,
+ "pauses": [
+  {
+   "start_s": 3.9975,
+   "end_s": 6.5405,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 8.793625,
+   "end_s": 11.523625,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 13.361125,
+   "end_s": 13.860125,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 15.302125,
+   "end_s": 15.626125,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 19.066375,
+   "end_s": 20.355375,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 28.426291666666668,
+   "end_s": 28.782291666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 32.36729166666667,
+   "end_s": 32.797291666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 35.914875,
+   "end_s": 36.780875,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 39.43320833333333,
+   "end_s": 39.98020833333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 44.08945833333333,
+   "end_s": 47.07845833333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [],
+ "text": "How you start the morning often shapes the whole day. My routine is short and simple. I wake up at the same time, even on weekends. I drink a glass of water before anything else. Then I spend ten minutes stretching on the floor. After that, I write down the three most important tasks for the day. I do not check my phone until breakfast is over. This keeps the first hour quiet and focused. Your routine need not to look like mine. The point is to choose a few steps and repeat them every day. Over a few weeks, a quiet start can change how the whole week feels."
+}

@@ -1,0 +1,204 @@
+{
+ "clip_id": "s50_r0",
+ "script_id": "s50",
+ "voice": "bf_emma",
+ "render": 0,
+ "sample_rate": 24000,
+ "duration_s": 54.32604166666667,
+ "words": 111,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 53.82604166666667,
+ "speech_spans": [
+  [
+   0.5,
+   2.3445833333333335
+  ],
+  [
+   2.8705833333333333,
+   4.859166666666667
+  ],
+  [
+   6.3421666666666665,
+   8.519125
+  ],
+  [
+   11.129125,
+   11.964916666666667
+  ],
+  [
+   12.147916666666667,
+   14.680791666666666
+  ],
+  [
+   14.795791666666666,
+   15.932541666666667
+  ],
+  [
+   15.996541666666667,
+   16.830166666666667
+  ],
+  [
+   16.945166666666665,
+   18.868625
+  ],
+  [
+   19.285625,
+   20.797041666666665
+  ],
+  [
+   23.451041666666665,
+   25.796
+  ],
+  [
+   25.882,
+   27.546
+  ],
+  [
+   27.662,
+   28.500458333333334
+  ],
+  [
+   28.611458333333335,
+   30.495708333333333
+  ],
+  [
+   30.942708333333332,
+   32.42695833333333
+  ],
+  [
+   32.553958333333334,
+   34.423541666666665
+  ],
+  [
+   37.12354166666667,
+   38.65841666666667
+  ],
+  [
+   38.99341666666667,
+   39.755375
+  ],
+  [
+   40.542375,
+   42.721583333333335
+  ],
+  [
+   42.82358333333333,
+   45.861625
+  ],
+  [
+   45.981625,
+   48.1005
+  ],
+  [
+   48.6555,
+   50.53508333333333
+  ],
+  [
+   51.187083333333334,
+   53.82604166666667
+  ]
+ ],
+ "wpm": 124.89207508839098,
+ "articulation_wpm": 172.04060347676148,
+ "target_wpm": 119.0,
+ "speed": 0.8653577886161473,
+ "attempts": 2,
+ "pauses": [
+  {
+   "start_s": 2.3445833333333335,
+   "end_s": 2.8705833333333333,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 4.859166666666667,
+   "end_s": 6.3421666666666665,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 8.519125,
+   "end_s": 11.129125,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 15.615041666666666,
+   "end_s": 15.924291666666667,
+   "position": "mid_sentence",
+   "source": "kokoro"
+  },
+  {
+   "start_s": 18.868625,
+   "end_s": 19.285625,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 20.797041666666665,
+   "end_s": 23.451041666666665,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 30.495708333333333,
+   "end_s": 30.942708333333332,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 34.423541666666665,
+   "end_s": 37.12354166666667,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 38.65841666666667,
+   "end_s": 38.99341666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 39.755375,
+   "end_s": 40.542375,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 48.1005,
+   "end_s": 48.6555,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 50.53508333333333,
+   "end_s": 51.187083333333334,
+   "position": "clause_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 3,
+   "start_s": 11.803833333333333,
+   "end_s": 11.961625
+  },
+  {
+   "phrase": 5,
+   "start_s": 15.615041666666666,
+   "end_s": 15.924291666666667
+  },
+  {
+   "phrase": 6,
+   "start_s": 16.699958333333335,
+   "end_s": 16.824625
+  },
+  {
+   "phrase": 11,
+   "start_s": 28.306875,
+   "end_s": 28.495583333333332
+  }
+ ],
+ "text": "With so many books available, choosing the next one can be hard. I rely on a few simple methods. First, I ask friends what they enjoyed recently, and why. Next, I look at the first page in the shop before I decide. If the first page holds my attention, the rest usually will. Third, I mix different kinds of books. After a long novel, I often choose something short or something factual. Finally, I give myself permission to stop. If a book is not working for me after fifty pages, I put it aside without guilt. Reading should feel like a pleasure, so choose books that keep you turning the pages."
+}

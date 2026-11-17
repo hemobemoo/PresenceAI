@@ -1,0 +1,193 @@
+{
+ "clip_id": "s18_r3",
+ "script_id": "s18",
+ "voice": "af_bella",
+ "render": 3,
+ "sample_rate": 24000,
+ "duration_s": 40.806375,
+ "words": 109,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 40.306375,
+ "speech_spans": [
+  [
+   0.5,
+   2.0016666666666665
+  ],
+  [
+   2.0536666666666665,
+   3.586125
+  ],
+  [
+   4.201125,
+   5.7709166666666665
+  ],
+  [
+   6.166916666666666,
+   7.404708333333334
+  ],
+  [
+   7.874708333333333,
+   8.515208333333334
+  ],
+  [
+   9.194208333333334,
+   10.14175
+  ],
+  [
+   12.04775,
+   12.937541666666666
+  ],
+  [
+   13.045541666666667,
+   14.045125
+  ],
+  [
+   14.181125,
+   15.009333333333334
+  ],
+  [
+   15.128333333333334,
+   16.848583333333334
+  ],
+  [
+   18.575583333333334,
+   19.810166666666667
+  ],
+  [
+   19.99116666666667,
+   21.315083333333334
+  ],
+  [
+   23.375083333333333,
+   24.830708333333334
+  ],
+  [
+   26.536708333333333,
+   27.927125
+  ],
+  [
+   28.229125,
+   28.726333333333333
+  ],
+  [
+   28.898333333333333,
+   29.328875
+  ],
+  [
+   29.915875,
+   31.362
+  ],
+  [
+   31.885,
+   34.415875
+  ],
+  [
+   36.717875,
+   37.82329166666667
+  ],
+  [
+   38.33929166666667,
+   40.306375
+  ]
+ ],
+ "wpm": 164.29529189734055,
+ "articulation_wpm": 261.8430776570917,
+ "target_wpm": 173.0,
+ "speed": 1.1521873972952645,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 3.586125,
+   "end_s": 4.201125,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 5.7709166666666665,
+   "end_s": 6.166916666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 7.404708333333334,
+   "end_s": 7.874708333333333,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 8.515208333333334,
+   "end_s": 9.194208333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 10.14175,
+   "end_s": 12.04775,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 16.848583333333334,
+   "end_s": 18.575583333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 21.315083333333334,
+   "end_s": 23.375083333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 24.830708333333334,
+   "end_s": 26.536708333333333,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 27.927125,
+   "end_s": 28.229125,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 29.328875,
+   "end_s": 29.915875,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 31.362,
+   "end_s": 31.885,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 32.768375,
+   "end_s": 33.040958333333336,
+   "position": "mid_sentence",
+   "source": "kokoro"
+  },
+  {
+   "start_s": 34.415875,
+   "end_s": 36.717875,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 37.82329166666667,
+   "end_s": 38.33929166666667,
+   "position": "clause_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 17,
+   "start_s": 32.768375,
+   "end_s": 33.040958333333336
+  }
+ ],
+ "text": "Exams can feel overwhelming, but a clear plan makes them easier. Start at least two weeks before the date. Make a list of every topic you need to know. Then divide the list into small parts, one or two for each day. Study each part, and then test yourself without your notes. Write down anything you forget, and look at it again the next day. On the evening before the exam, do not try to learn new material. Instead, rest, eat well and go to bed early. A rested mind remembers more than a tired one. Trust the work you have done, and take each question slowly and carefully."
+}

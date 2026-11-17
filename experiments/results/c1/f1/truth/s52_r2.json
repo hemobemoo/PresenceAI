@@ -1,0 +1,160 @@
+{
+ "clip_id": "s52_r2",
+ "script_id": "s52",
+ "voice": "bm_george",
+ "render": 2,
+ "sample_rate": 24000,
+ "duration_s": 44.268541666666664,
+ "words": 112,
+ "fillers": 1,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 43.768541666666664,
+ "speech_spans": [
+  [
+   0.5,
+   1.8097083333333333
+  ],
+  [
+   1.9827083333333333,
+   4.861791666666667
+  ],
+  [
+   4.927791666666667,
+   7.514875
+  ],
+  [
+   7.683875,
+   10.443916666666667
+  ],
+  [
+   10.757916666666667,
+   13.208625
+  ],
+  [
+   13.388625,
+   14.468375
+  ],
+  [
+   14.635375,
+   16.445458333333335
+  ],
+  [
+   16.575458333333334,
+   17.68775
+  ],
+  [
+   18.17675,
+   21.707458333333335
+  ],
+  [
+   21.843458333333334,
+   24.08470833333333
+  ],
+  [
+   24.271708333333333,
+   25.158916666666666
+  ],
+  [
+   25.268916666666666,
+   26.869833333333332
+  ],
+  [
+   27.377833333333335,
+   30.566541666666666
+  ],
+  [
+   30.698541666666667,
+   31.2915
+  ],
+  [
+   31.3465,
+   34.054
+  ],
+  [
+   34.193,
+   35.967375
+  ],
+  [
+   36.105375,
+   37.45495833333333
+  ],
+  [
+   39.111958333333334,
+   43.768541666666664
+  ]
+ ],
+ "wpm": 155.30914010852766,
+ "articulation_wpm": 174.4614336169269,
+ "target_wpm": 155.0,
+ "speed": 1.026853291277015,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 10.443916666666667,
+   "end_s": 10.757916666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 17.68775,
+   "end_s": 18.17675,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 26.869833333333332,
+   "end_s": 27.377833333333335,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 37.45495833333333,
+   "end_s": 39.111958333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 1,
+   "start_s": 2.8245416666666667,
+   "end_s": 3.023125
+  },
+  {
+   "phrase": 3,
+   "start_s": 9.31675,
+   "end_s": 9.461875
+  },
+  {
+   "phrase": 4,
+   "start_s": 11.681208333333334,
+   "end_s": 11.858916666666667
+  },
+  {
+   "phrase": 8,
+   "start_s": 19.945416666666667,
+   "end_s": 20.106166666666667
+  },
+  {
+   "phrase": 8,
+   "start_s": 20.695416666666667,
+   "end_s": 20.834958333333333
+  },
+  {
+   "phrase": 12,
+   "start_s": 29.223166666666668,
+   "end_s": 29.348833333333335
+  },
+  {
+   "phrase": 16,
+   "start_s": 41.36275,
+   "end_s": 41.513333333333335
+  },
+  {
+   "phrase": 16,
+   "start_s": 42.83,
+   "end_s": 43.03641666666667
+  }
+ ],
+ "text": "When something breaks, our first thought is often to buy a new one. Yet many common problems are easy to fix. A loose chair can be tightened with a screwdriver. A dripping tap often needs only a new washer. A torn bag can be sewn in a few minutes. There are clear guides and videos for almost every repair. I keep a small box of tools at home, with glue, tape and spare screws. Fixing things saves money and reduces waste. It also gives a quiet sense of achievement. Start with something small, and build from there. Each repair teaches a new skill that will be useful again in the future."
+}

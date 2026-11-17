@@ -1,0 +1,203 @@
+{
+ "clip_id": "s49_r3",
+ "script_id": "s49",
+ "voice": "bf_emma",
+ "render": 3,
+ "sample_rate": 24000,
+ "duration_s": 39.36620833333333,
+ "words": 112,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 38.86620833333333,
+ "speech_spans": [
+  [
+   0.5,
+   1.58525
+  ],
+  [
+   2.45625,
+   3.4503333333333335
+  ],
+  [
+   3.7703333333333333,
+   4.54075
+  ],
+  [
+   4.71075,
+   5.737208333333333
+  ],
+  [
+   6.195208333333333,
+   7.780708333333333
+  ],
+  [
+   7.863708333333333,
+   8.948
+  ],
+  [
+   11.21,
+   12.0945
+  ],
+  [
+   12.4815,
+   14.184708333333333
+  ],
+  [
+   14.582708333333333,
+   15.792375
+  ],
+  [
+   15.843375,
+   17.645125
+  ],
+  [
+   19.117125,
+   19.896083333333333
+  ],
+  [
+   20.000083333333333,
+   20.973958333333332
+  ],
+  [
+   21.078958333333333,
+   21.872916666666665
+  ],
+  [
+   22.481916666666667,
+   23.36425
+  ],
+  [
+   23.51625,
+   24.766333333333332
+  ],
+  [
+   27.365333333333332,
+   28.29104166666667
+  ],
+  [
+   28.635041666666666,
+   29.768583333333332
+  ],
+  [
+   32.21458333333333,
+   33.331625
+  ],
+  [
+   34.799625,
+   35.472875
+  ],
+  [
+   36.641875,
+   38.86620833333333
+  ]
+ ],
+ "wpm": 175.15413411758828,
+ "articulation_wpm": 297.3796735240266,
+ "target_wpm": 173.0,
+ "speed": 1.4182473583980115,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 1.58525,
+   "end_s": 2.45625,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 3.4503333333333335,
+   "end_s": 3.7703333333333333,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 5.737208333333333,
+   "end_s": 6.195208333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 8.948,
+   "end_s": 11.21,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 12.0945,
+   "end_s": 12.4815,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 14.184708333333333,
+   "end_s": 14.582708333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 17.645125,
+   "end_s": 19.117125,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 21.872916666666665,
+   "end_s": 22.481916666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 24.766333333333332,
+   "end_s": 27.365333333333332,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 28.29104166666667,
+   "end_s": 28.635041666666666,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 29.45425,
+   "end_s": 29.755083333333335,
+   "position": "mid_sentence",
+   "source": "kokoro"
+  },
+  {
+   "start_s": 29.768583333333332,
+   "end_s": 32.21458333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 33.331625,
+   "end_s": 34.799625,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 35.472875,
+   "end_s": 36.641875,
+   "position": "clause_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 10,
+   "start_s": 19.691583333333334,
+   "end_s": 19.8735
+  },
+  {
+   "phrase": 13,
+   "start_s": 23.144833333333334,
+   "end_s": 23.351041666666667
+  },
+  {
+   "phrase": 16,
+   "start_s": 29.45425,
+   "end_s": 29.755083333333335
+  }
+ ],
+ "text": "Our days are full of sound. There is traffic outside, music in shops and alerts on our phones. Many of us rarely experience real quiet. Yet a few minutes of silence can be very restful. I try to sit quietly for ten minutes each afternoon. I do not try to empty my mind. I simply notice my breathing and the sounds around me. Some days, my thoughts wander a lot, and that is fine. Afterwards, I feel more patient and alert. You can do this anywhere, even on a train. All you need is a few minutes. Over time, these quiet minutes can become a quiet and steady part of the day."
+}

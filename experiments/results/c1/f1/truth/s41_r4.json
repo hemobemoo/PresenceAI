@@ -1,0 +1,193 @@
+{
+ "clip_id": "s41_r4",
+ "script_id": "s41",
+ "voice": "bf_emma",
+ "render": 4,
+ "sample_rate": 24000,
+ "duration_s": 39.03666666666667,
+ "words": 117,
+ "fillers": 2,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 38.53666666666667,
+ "speech_spans": [
+  [
+   0.5,
+   1.5460416666666668
+  ],
+  [
+   1.9360416666666667,
+   2.963125
+  ],
+  [
+   3.149125,
+   4.60425
+  ],
+  [
+   5.00125,
+   6.257291666666666
+  ],
+  [
+   6.352291666666667,
+   7.834208333333334
+  ],
+  [
+   7.936208333333333,
+   8.856416666666666
+  ],
+  [
+   8.932416666666667,
+   9.302041666666666
+  ],
+  [
+   9.366041666666666,
+   10.809458333333334
+  ],
+  [
+   10.915458333333333,
+   12.184041666666667
+  ],
+  [
+   12.309041666666667,
+   14.336041666666667
+  ],
+  [
+   14.927041666666666,
+   17.696583333333333
+  ],
+  [
+   18.144583333333333,
+   19.987375
+  ],
+  [
+   20.707375,
+   21.951958333333334
+  ],
+  [
+   22.119958333333333,
+   23.199583333333333
+  ],
+  [
+   23.315583333333333,
+   24.313041666666667
+  ],
+  [
+   25.425041666666665,
+   26.6345
+  ],
+  [
+   29.2475,
+   30.428583333333332
+  ],
+  [
+   30.566583333333334,
+   31.526166666666665
+  ],
+  [
+   31.715166666666665,
+   32.08479166666667
+  ],
+  [
+   32.17879166666667,
+   33.694875
+  ],
+  [
+   35.196875,
+   36.53658333333333
+  ],
+  [
+   36.697583333333334,
+   38.53666666666667
+  ]
+ ],
+ "wpm": 184.5587590921041,
+ "articulation_wpm": 253.91696457098763,
+ "target_wpm": 191.0,
+ "speed": 1.2669440974887223,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 1.257125,
+   "end_s": 1.5226666666666666,
+   "position": "mid_sentence",
+   "source": "kokoro"
+  },
+  {
+   "start_s": 1.5460416666666668,
+   "end_s": 1.9360416666666667,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 4.60425,
+   "end_s": 5.00125,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 5.883583333333333,
+   "end_s": 6.241458333333333,
+   "position": "mid_sentence",
+   "source": "kokoro"
+  },
+  {
+   "start_s": 11.804958333333333,
+   "end_s": 12.178375,
+   "position": "mid_sentence",
+   "source": "kokoro"
+  },
+  {
+   "start_s": 14.336041666666667,
+   "end_s": 14.927041666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 17.696583333333333,
+   "end_s": 18.144583333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 19.987375,
+   "end_s": 20.707375,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 24.313041666666667,
+   "end_s": 25.425041666666665,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 26.6345,
+   "end_s": 29.2475,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 33.694875,
+   "end_s": 35.196875,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 0,
+   "start_s": 1.257125,
+   "end_s": 1.5226666666666666
+  },
+  {
+   "phrase": 3,
+   "start_s": 5.883583333333333,
+   "end_s": 6.241458333333333
+  },
+  {
+   "phrase": 7,
+   "start_s": 11.804958333333333,
+   "end_s": 12.178375
+  }
+ ],
+ "text": "Every month, I spend one day walking in the hills near my town. I leave early, before the paths become busy. I pack water, a sandwich and a warm jacket, even in summer. The weather in the hills can change very quickly. I follow marked paths and carry a paper map as well as my phone. Walking for several hours clears my head in a way nothing else can. I come home tired, but with a clear head. If you have never tried it, start with a short route. Choose a clear day, and tell someone where you are going. The hills will always be there, ready for your next walk and your next view."
+}

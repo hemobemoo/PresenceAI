@@ -1,0 +1,151 @@
+{
+ "clip_id": "s17_r4",
+ "script_id": "s17",
+ "voice": "af_bella",
+ "render": 4,
+ "sample_rate": 24000,
+ "duration_s": 36.98804166666667,
+ "words": 111,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 36.48804166666667,
+ "speech_spans": [
+  [
+   0.5,
+   1.0702916666666666
+  ],
+  [
+   3.0872916666666668,
+   4.137416666666667
+  ],
+  [
+   4.215416666666667,
+   5.3468333333333335
+  ],
+  [
+   5.398833333333333,
+   7.731458333333333
+  ],
+  [
+   8.614458333333333,
+   10.768791666666667
+  ],
+  [
+   12.614791666666667,
+   13.425166666666666
+  ],
+  [
+   13.547166666666667,
+   14.353833333333334
+  ],
+  [
+   15.544833333333333,
+   17.355958333333334
+  ],
+  [
+   17.424958333333333,
+   18.250333333333334
+  ],
+  [
+   18.355333333333334,
+   19.016166666666667
+  ],
+  [
+   19.845166666666668,
+   22.106375
+  ],
+  [
+   24.573375,
+   26.029416666666666
+  ],
+  [
+   26.440416666666668,
+   27.717583333333334
+  ],
+  [
+   27.795583333333333,
+   28.577125
+  ],
+  [
+   28.761125,
+   29.937291666666667
+  ],
+  [
+   30.024291666666667,
+   30.984041666666666
+  ],
+  [
+   31.045041666666666,
+   31.909416666666665
+  ],
+  [
+   32.01741666666667,
+   32.942375
+  ],
+  [
+   33.021375,
+   34.353458333333336
+  ],
+  [
+   34.939458333333334,
+   36.48804166666667
+  ]
+ ],
+ "wpm": 185.06147296613574,
+ "articulation_wpm": 269.2536398260902,
+ "target_wpm": 191.0,
+ "speed": 1.1984870012154094,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 1.0702916666666666,
+   "end_s": 3.0872916666666668,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 7.731458333333333,
+   "end_s": 8.614458333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 10.768791666666667,
+   "end_s": 12.614791666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 14.353833333333334,
+   "end_s": 15.544833333333333,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 19.016166666666667,
+   "end_s": 19.845166666666668,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 22.106375,
+   "end_s": 24.573375,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 26.029416666666666,
+   "end_s": 26.440416666666668,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 34.353458333333336,
+   "end_s": 34.939458333333334,
+   "position": "clause_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [],
+ "text": "A year ago, I began volunteering at a food bank near my home. I go there every Saturday morning for three hours. My job is to sort the food that people donate. I check the dates, group the items and pack them into boxes for families. The work is simple, but it matters. Each box helps a family through a difficult week. I have also met many kind people who give their time in the same way. If you want to help, start with one morning a month. Small amounts of time, given regularly, make a real difference. You do not need special skills, only a little time and some patience."
+}

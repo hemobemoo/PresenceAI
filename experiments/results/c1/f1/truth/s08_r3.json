@@ -1,0 +1,185 @@
+{
+ "clip_id": "s08_r3",
+ "script_id": "s08",
+ "voice": "af_heart",
+ "render": 3,
+ "sample_rate": 24000,
+ "duration_s": 40.585875,
+ "words": 110,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 40.085875,
+ "speech_spans": [
+  [
+   0.5,
+   1.9478333333333333
+  ],
+  [
+   2.301833333333333,
+   2.910083333333333
+  ],
+  [
+   3.3790833333333334,
+   4.2385
+  ],
+  [
+   4.3855,
+   6.2523333333333335
+  ],
+  [
+   6.307333333333333,
+   7.315708333333333
+  ],
+  [
+   7.379708333333333,
+   8.86925
+  ],
+  [
+   10.42225,
+   11.920625
+  ],
+  [
+   11.981625,
+   13.484916666666667
+  ],
+  [
+   15.153916666666667,
+   16.062041666666666
+  ],
+  [
+   16.432041666666667,
+   17.448916666666666
+  ],
+  [
+   19.881916666666665,
+   20.716166666666666
+  ],
+  [
+   20.853166666666667,
+   22.88525
+  ],
+  [
+   23.55225,
+   24.5795
+  ],
+  [
+   25.0485,
+   26.2385
+  ],
+  [
+   26.8075,
+   27.603
+  ],
+  [
+   29.587,
+   30.445125
+  ],
+  [
+   30.541125,
+   32.330708333333334
+  ],
+  [
+   34.05170833333333,
+   34.68933333333333
+  ],
+  [
+   34.806333333333335,
+   35.604625
+  ],
+  [
+   36.044625,
+   37.21658333333333
+  ],
+  [
+   38.24758333333333,
+   40.085875
+  ]
+ ],
+ "wpm": 166.7261365322858,
+ "articulation_wpm": 262.1140891287189,
+ "target_wpm": 173.0,
+ "speed": 1.2375247250839965,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 1.9478333333333333,
+   "end_s": 2.301833333333333,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 2.910083333333333,
+   "end_s": 3.3790833333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 8.86925,
+   "end_s": 10.42225,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 13.484916666666667,
+   "end_s": 15.153916666666667,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 16.062041666666666,
+   "end_s": 16.432041666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 17.448916666666666,
+   "end_s": 19.881916666666665,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 22.88525,
+   "end_s": 23.55225,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 24.5795,
+   "end_s": 25.0485,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 26.2385,
+   "end_s": 26.8075,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 27.603,
+   "end_s": 29.587,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 32.330708333333334,
+   "end_s": 34.05170833333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 35.604625,
+   "end_s": 36.044625,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 37.21658333333333,
+   "end_s": 38.24758333333333,
+   "position": "clause_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [],
+ "text": "Sleep affects almost everything we do. When we sleep well, we think more clearly and we learn faster. When we sleep badly, even simple tasks feel hard. Here are a few ideas that helped me. Go to bed at the same time each night, even at the weekend. Keep the bedroom cool, dark and quiet. Put screens away about an hour before sleep. If your mind is busy, write a short list of tasks for the next day. Then let them go. These changes take a week or two to work. Be patient, and keep going. Sleep is not a luxury, and good habits make it much easier to get."
+}

@@ -1,0 +1,210 @@
+{
+ "clip_id": "s51_r1",
+ "script_id": "s51",
+ "voice": "bm_george",
+ "render": 1,
+ "sample_rate": 24000,
+ "duration_s": 50.48141666666667,
+ "words": 111,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 49.98141666666667,
+ "speech_spans": [
+  [
+   0.5,
+   1.721875
+  ],
+  [
+   1.875875,
+   4.530375
+  ],
+  [
+   6.508375,
+   7.360541666666666
+  ],
+  [
+   7.4835416666666665,
+   8.88525
+  ],
+  [
+   9.50325,
+   10.341375
+  ],
+  [
+   10.521375,
+   11.757708333333333
+  ],
+  [
+   12.708708333333334,
+   14.983166666666667
+  ],
+  [
+   15.729166666666666,
+   17.101416666666665
+  ],
+  [
+   17.255416666666665,
+   19.009166666666665
+  ],
+  [
+   20.289166666666667,
+   21.30591666666667
+  ],
+  [
+   21.446916666666667,
+   22.667916666666667
+  ],
+  [
+   22.860916666666668,
+   23.804
+  ],
+  [
+   25.852,
+   29.995166666666666
+  ],
+  [
+   30.146166666666666,
+   30.802083333333332
+  ],
+  [
+   30.856083333333334,
+   33.46058333333333
+  ],
+  [
+   33.54858333333333,
+   34.304
+  ],
+  [
+   34.722,
+   35.76083333333333
+  ],
+  [
+   36.536833333333334,
+   39.29004166666667
+  ],
+  [
+   39.37804166666667,
+   41.506541666666664
+  ],
+  [
+   43.91654166666667,
+   45.77854166666667
+  ],
+  [
+   46.61154166666667,
+   49.98141666666667
+  ]
+ ],
+ "wpm": 134.59598468785418,
+ "articulation_wpm": 187.22152204163288,
+ "target_wpm": 137.0,
+ "speed": 1.106044449380227,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 4.530375,
+   "end_s": 6.508375,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 8.88525,
+   "end_s": 9.50325,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 11.757708333333333,
+   "end_s": 12.708708333333334,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 14.983166666666667,
+   "end_s": 15.729166666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 19.009166666666665,
+   "end_s": 20.289166666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 23.804,
+   "end_s": 25.852,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 28.870166666666666,
+   "end_s": 29.140083333333333,
+   "position": "mid_sentence",
+   "source": "kokoro"
+  },
+  {
+   "start_s": 34.304,
+   "end_s": 34.722,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 35.76083333333333,
+   "end_s": 36.536833333333334,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 41.506541666666664,
+   "end_s": 43.91654166666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 45.77854166666667,
+   "end_s": 46.61154166666667,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 48.356625,
+   "end_s": 48.611291666666666,
+   "position": "mid_sentence",
+   "source": "kokoro"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 1,
+   "start_s": 2.9050833333333332,
+   "end_s": 3.08125
+  },
+  {
+   "phrase": 6,
+   "start_s": 13.669166666666667,
+   "end_s": 13.8145
+  },
+  {
+   "phrase": 12,
+   "start_s": 28.870166666666666,
+   "end_s": 29.140083333333333
+  },
+  {
+   "phrase": 14,
+   "start_s": 31.673625,
+   "end_s": 31.84125
+  },
+  {
+   "phrase": 17,
+   "start_s": 38.093041666666664,
+   "end_s": 38.281166666666664
+  },
+  {
+   "phrase": 20,
+   "start_s": 48.356625,
+   "end_s": 48.611291666666666
+  }
+ ],
+ "text": "When I was a child, I walked to school every day with my brother. The walk took about fifteen minutes. On the way, we passed a bakery, a small park and an old church. We talked about games, teachers and the weekend. Some mornings, we raced each other to the corner. Those walks taught me to notice small changes in the street and the seasons. Today, many children travel to school by car. Walking, when it is safe, gives children exercise and a little freedom. It also gives them time to talk. When I think back to my school days, those quiet walks with my brother are what I remember most."
+}

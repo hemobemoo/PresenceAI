@@ -1,0 +1,155 @@
+{
+ "clip_id": "s28_r3",
+ "script_id": "s28",
+ "voice": "am_michael",
+ "render": 3,
+ "sample_rate": 24000,
+ "duration_s": 40.08691666666667,
+ "words": 113,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 39.58691666666667,
+ "speech_spans": [
+  [
+   0.5,
+   1.6387083333333334
+  ],
+  [
+   2.3837083333333333,
+   3.670916666666667
+  ],
+  [
+   4.127916666666667,
+   5.086083333333334
+  ],
+  [
+   5.169083333333333,
+   6.531791666666667
+  ],
+  [
+   7.814791666666666,
+   8.957958333333334
+  ],
+  [
+   9.117958333333334,
+   9.865375
+  ],
+  [
+   10.955375,
+   11.927791666666666
+  ],
+  [
+   13.985791666666668,
+   15.53475
+  ],
+  [
+   16.11575,
+   17.287708333333335
+  ],
+  [
+   17.482708333333335,
+   18.468291666666666
+  ],
+  [
+   20.827291666666667,
+   21.680416666666666
+  ],
+  [
+   21.782416666666666,
+   23.235583333333334
+  ],
+  [
+   23.38158333333333,
+   24.174458333333334
+  ],
+  [
+   25.21045833333333,
+   26.973625
+  ],
+  [
+   27.082625,
+   28.215125
+  ],
+  [
+   28.343125,
+   29.501958333333334
+  ],
+  [
+   29.698958333333334,
+   31.306208333333334
+  ],
+  [
+   31.452208333333335,
+   32.238791666666664
+  ],
+  [
+   32.38679166666667,
+   35.30679166666667
+  ],
+  [
+   35.37379166666667,
+   37.452125
+  ],
+  [
+   37.603125,
+   39.58691666666667
+  ]
+ ],
+ "wpm": 173.4595762009027,
+ "articulation_wpm": 243.48273684651548,
+ "target_wpm": 173.0,
+ "speed": 1.3175285485227344,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 1.6387083333333334,
+   "end_s": 2.3837083333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 3.670916666666667,
+   "end_s": 4.127916666666667,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 6.531791666666667,
+   "end_s": 7.814791666666666,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 9.865375,
+   "end_s": 10.955375,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 11.927791666666666,
+   "end_s": 13.985791666666668,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 15.53475,
+   "end_s": 16.11575,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 18.468291666666666,
+   "end_s": 20.827291666666667,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 24.174458333333334,
+   "end_s": 25.21045833333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [],
+ "text": "Everyone makes mistakes. What matters is what we do after we make them. When something goes wrong at work, I ask three questions. What happened? Why did it happen? What will I do differently next time? I write the answers down, because writing makes my thinking clear. I try to focus on the process, not on blame. Most mistakes come from unclear steps, not from careless people. When I share what I learned, others can avoid the same problem. Over time, a team that talks openly about mistakes makes far fewer of them. Mistakes are a normal part of any real work, and each one carries a lesson if we look for it."
+}

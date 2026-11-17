@@ -1,0 +1,232 @@
+{
+ "clip_id": "s53_r0",
+ "script_id": "s53",
+ "voice": "bm_george",
+ "render": 0,
+ "sample_rate": 24000,
+ "duration_s": 57.980583333333335,
+ "words": 111,
+ "fillers": 2,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 57.480583333333335,
+ "speech_spans": [
+  [
+   0.5,
+   2.348875
+  ],
+  [
+   3.725875,
+   4.316958333333333
+  ],
+  [
+   4.4619583333333335,
+   5.920583333333333
+  ],
+  [
+   8.527583333333334,
+   10.891791666666666
+  ],
+  [
+   11.797791666666667,
+   14.940083333333334
+  ],
+  [
+   15.254083333333334,
+   16.59675
+  ],
+  [
+   16.76075,
+   20.332375
+  ],
+  [
+   22.751375,
+   25.553125
+  ],
+  [
+   25.709125,
+   27.943208333333335
+  ],
+  [
+   28.015208333333334,
+   31.274791666666665
+  ],
+  [
+   31.406791666666667,
+   33.0485
+  ],
+  [
+   33.6545,
+   35.71816666666667
+  ],
+  [
+   38.45516666666666,
+   39.757041666666666
+  ],
+  [
+   40.15504166666667,
+   42.073875
+  ],
+  [
+   42.153875,
+   45.52883333333333
+  ],
+  [
+   46.09883333333333,
+   48.40770833333333
+  ],
+  [
+   50.442708333333336,
+   52.51441666666667
+  ],
+  [
+   53.07341666666667,
+   53.66475
+  ],
+  [
+   53.81675,
+   57.480583333333335
+  ]
+ ],
+ "wpm": 116.8819203032612,
+ "articulation_wpm": 161.25777838758364,
+ "target_wpm": 119.0,
+ "speed": 1.0568195796233002,
+ "attempts": 2,
+ "pauses": [
+  {
+   "start_s": 2.348875,
+   "end_s": 3.725875,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 5.920583333333333,
+   "end_s": 8.527583333333334,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 10.891791666666666,
+   "end_s": 11.797791666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 14.940083333333334,
+   "end_s": 15.254083333333334,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 20.332375,
+   "end_s": 22.751375,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 33.0485,
+   "end_s": 33.6545,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 35.71816666666667,
+   "end_s": 38.45516666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 39.757041666666666,
+   "end_s": 40.15504166666667,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 45.52883333333333,
+   "end_s": 46.09883333333333,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 48.40770833333333,
+   "end_s": 50.442708333333336,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 52.51441666666667,
+   "end_s": 53.07341666666667,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 55.851083333333335,
+   "end_s": 56.102333333333334,
+   "position": "mid_sentence",
+   "source": "kokoro"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 2,
+   "start_s": 9.292333333333334,
+   "end_s": 9.414833333333334
+  },
+  {
+   "phrase": 3,
+   "start_s": 12.739666666666666,
+   "end_s": 12.984125
+  },
+  {
+   "phrase": 5,
+   "start_s": 18.094166666666666,
+   "end_s": 18.293666666666667
+  },
+  {
+   "phrase": 5,
+   "start_s": 18.58325,
+   "end_s": 18.697708333333335
+  },
+  {
+   "phrase": 6,
+   "start_s": 23.940875,
+   "end_s": 24.146875
+  },
+  {
+   "phrase": 7,
+   "start_s": 26.303291666666667,
+   "end_s": 26.435083333333335
+  },
+  {
+   "phrase": 8,
+   "start_s": 29.844666666666665,
+   "end_s": 30.070416666666667
+  },
+  {
+   "phrase": 10,
+   "start_s": 34.52954166666667,
+   "end_s": 34.669916666666666
+  },
+  {
+   "phrase": 12,
+   "start_s": 41.029875,
+   "end_s": 41.14570833333333
+  },
+  {
+   "phrase": 13,
+   "start_s": 43.62195833333333,
+   "end_s": 43.837291666666665
+  },
+  {
+   "phrase": 14,
+   "start_s": 47.675291666666666,
+   "end_s": 47.811458333333334
+  },
+  {
+   "phrase": 16,
+   "start_s": 55.851083333333335,
+   "end_s": 56.102333333333334
+  }
+ ],
+ "text": "We check the weather forecast almost every day, but few of us know how it is made. Weather stations around the world measure temperature, rain and pressure. Balloons and satellites collect data from high in the sky. Powerful computers then take this data to model how the air will move. The model is run many times with small changes. If most runs agree, the forecast is more certain. If they disagree, the forecast is less sure. That is why a forecast often gives a chance of rain, rather than a simple yes or no. Forecasts have improved greatly, and a forecast for three days ahead is now quite reliable."
+}

@@ -1,0 +1,167 @@
+{
+ "clip_id": "s39_r3",
+ "script_id": "s39",
+ "voice": "am_fenrir",
+ "render": 3,
+ "sample_rate": 24000,
+ "duration_s": 41.26329166666667,
+ "words": 114,
+ "fillers": 2,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 40.76329166666667,
+ "speech_spans": [
+  [
+   0.5,
+   2.1186666666666665
+  ],
+  [
+   2.5336666666666665,
+   3.8702083333333333
+  ],
+  [
+   3.947208333333333,
+   4.495958333333333
+  ],
+  [
+   7.302958333333334,
+   9.111208333333334
+  ],
+  [
+   10.325208333333334,
+   12.0855
+  ],
+  [
+   12.4475,
+   13.617833333333333
+  ],
+  [
+   13.694833333333333,
+   15.7185
+  ],
+  [
+   16.4305,
+   17.0495
+  ],
+  [
+   17.1165,
+   18.542375
+  ],
+  [
+   20.135375,
+   22.081958333333333
+  ],
+  [
+   23.855958333333334,
+   24.810833333333335
+  ],
+  [
+   26.076833333333333,
+   27.167208333333335
+  ],
+  [
+   27.27220833333333,
+   28.443583333333333
+  ],
+  [
+   29.139583333333334,
+   30.273458333333334
+  ],
+  [
+   30.400458333333333,
+   30.800208333333334
+  ],
+  [
+   30.872208333333333,
+   32.342125
+  ],
+  [
+   32.516125,
+   32.831208333333336
+  ],
+  [
+   32.920208333333335,
+   34.471833333333336
+  ],
+  [
+   34.81583333333333,
+   36.721583333333335
+  ],
+  [
+   36.82758333333334,
+   38.624375
+  ],
+  [
+   38.696375,
+   40.76329166666667
+  ]
+ ],
+ "wpm": 169.8817885191122,
+ "articulation_wpm": 243.29263141670236,
+ "target_wpm": 173.0,
+ "speed": 1.0562676640790383,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 2.1186666666666665,
+   "end_s": 2.5336666666666665,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 4.495958333333333,
+   "end_s": 7.302958333333334,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 9.111208333333334,
+   "end_s": 10.325208333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 12.0855,
+   "end_s": 12.4475,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 15.7185,
+   "end_s": 16.4305,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 18.542375,
+   "end_s": 20.135375,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 22.081958333333333,
+   "end_s": 23.855958333333334,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 24.810833333333335,
+   "end_s": 26.076833333333333,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 28.443583333333333,
+   "end_s": 29.139583333333334,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 34.471833333333336,
+   "end_s": 34.81583333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [],
+ "text": "We spend most of our time indoors, so the air inside matters. Cooking, cleaning and even breathing all affect it. The simplest step is to open a window for a few minutes each day. Fresh air replaces the stale air inside. When you cook, turn on the fan above the stove. Clean dust regularly with a damp cloth, which traps the dust instead of spreading it. Some people add plants, although their effect is small. If your home is near a busy road, open windows on the quieter side. Clean air helps you sleep and think better. These small steps cost almost nothing, and they make a home more pleasant every day."
+}

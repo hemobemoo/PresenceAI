@@ -1,0 +1,197 @@
+{
+ "clip_id": "s21_r0",
+ "script_id": "s21",
+ "voice": "am_michael",
+ "render": 0,
+ "sample_rate": 24000,
+ "duration_s": 55.64508333333333,
+ "words": 111,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 55.14508333333333,
+ "speech_spans": [
+  [
+   0.5,
+   2.755875
+  ],
+  [
+   2.943875,
+   4.695458333333334
+  ],
+  [
+   6.405458333333334,
+   7.207375
+  ],
+  [
+   7.344375,
+   9.877333333333333
+  ],
+  [
+   10.505333333333333,
+   11.8535
+  ],
+  [
+   11.9335,
+   13.5435
+  ],
+  [
+   13.9055,
+   15.038208333333333
+  ],
+  [
+   15.380208333333334,
+   16.860541666666666
+  ],
+  [
+   17.040541666666666,
+   18.685291666666668
+  ],
+  [
+   18.776291666666665,
+   19.75883333333333
+  ],
+  [
+   19.809833333333334,
+   21.424833333333332
+  ],
+  [
+   23.111833333333333,
+   24.881125
+  ],
+  [
+   25.241125,
+   26.504666666666665
+  ],
+  [
+   27.198666666666668,
+   28.245583333333332
+  ],
+  [
+   29.730583333333332,
+   31.855416666666667
+  ],
+  [
+   33.96341666666667,
+   36.17216666666667
+  ],
+  [
+   38.900166666666664,
+   40.814458333333334
+  ],
+  [
+   41.31245833333333,
+   44.232
+  ],
+  [
+   46.429,
+   48.71479166666666
+  ],
+  [
+   50.875791666666665,
+   52.569208333333336
+  ],
+  [
+   53.15120833333334,
+   55.14508333333333
+  ]
+ ],
+ "wpm": 121.87738756612748,
+ "articulation_wpm": 183.08733073241805,
+ "target_wpm": 119.0,
+ "speed": 0.9383542166993109,
+ "attempts": 2,
+ "pauses": [
+  {
+   "start_s": 4.695458333333334,
+   "end_s": 6.405458333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 9.877333333333333,
+   "end_s": 10.505333333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 13.5435,
+   "end_s": 13.9055,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 15.038208333333333,
+   "end_s": 15.380208333333334,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 21.424833333333332,
+   "end_s": 23.111833333333333,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 24.881125,
+   "end_s": 25.241125,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 26.504666666666665,
+   "end_s": 27.198666666666668,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 28.245583333333332,
+   "end_s": 29.730583333333332,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 31.855416666666667,
+   "end_s": 33.96341666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 36.17216666666667,
+   "end_s": 38.900166666666664,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 40.814458333333334,
+   "end_s": 41.31245833333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 44.232,
+   "end_s": 46.429,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 48.71479166666666,
+   "end_s": 50.875791666666665,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 52.569208333333336,
+   "end_s": 53.15120833333334,
+   "position": "clause_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 17,
+   "start_s": 41.934583333333336,
+   "end_s": 42.07658333333333
+  }
+ ],
+ "text": "Many people avoid making a budget, because it sounds complicated. In fact, a basic budget needs only three columns. In the first column, write what you earn each month. In the middle one, list your fixed costs, such as rent and travel. In the third, write what is left for food, savings and everything else. Look at this page once a week. You will quickly see where your money goes. Most people find one or two costs that they can cut without missing them. A budget is not about saying no to everything. It is about choosing what matters most. Review the budget each month, and adjust it as life changes."
+}

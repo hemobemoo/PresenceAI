@@ -1,0 +1,197 @@
+{
+ "clip_id": "s50_r3",
+ "script_id": "s50",
+ "voice": "bf_emma",
+ "render": 3,
+ "sample_rate": 24000,
+ "duration_s": 41.70183333333333,
+ "words": 113,
+ "fillers": 2,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 41.20183333333333,
+ "speech_spans": [
+  [
+   0.5,
+   1.3840416666666666
+  ],
+  [
+   1.4800416666666667,
+   1.6941666666666666
+  ],
+  [
+   1.8841666666666668,
+   2.9377916666666666
+  ],
+  [
+   4.584791666666667,
+   5.61825
+  ],
+  [
+   6.92925,
+   7.310041666666667
+  ],
+  [
+   8.914041666666666,
+   10.064208333333333
+  ],
+  [
+   10.253208333333333,
+   10.680416666666666
+  ],
+  [
+   10.744416666666666,
+   11.089375
+  ],
+  [
+   11.140375,
+   12.1635
+  ],
+  [
+   12.2185,
+   12.883375
+  ],
+  [
+   15.643375,
+   16.761916666666668
+  ],
+  [
+   18.494916666666665,
+   19.217541666666666
+  ],
+  [
+   19.351541666666666,
+   19.716541666666668
+  ],
+  [
+   21.498541666666668,
+   22.523375
+  ],
+  [
+   23.582375,
+   23.731666666666666
+  ],
+  [
+   23.918666666666667,
+   24.584208333333333
+  ],
+  [
+   24.644208333333335,
+   25.508958333333332
+  ],
+  [
+   25.828958333333333,
+   26.548791666666666
+  ],
+  [
+   29.465791666666668,
+   29.930208333333333
+  ],
+  [
+   30.847208333333334,
+   31.864083333333333
+  ],
+  [
+   33.729083333333335,
+   35.263375
+  ],
+  [
+   35.402375,
+   36.383583333333334
+  ],
+  [
+   38.499583333333334,
+   39.401625
+  ],
+  [
+   39.887625,
+   41.20183333333333
+  ]
+ ],
+ "wpm": 166.57726310444656,
+ "articulation_wpm": 356.47000061339475,
+ "target_wpm": 173.0,
+ "speed": 2.0,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 2.9377916666666666,
+   "end_s": 4.584791666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 5.61825,
+   "end_s": 6.92925,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 7.310041666666667,
+   "end_s": 8.914041666666666,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 12.883375,
+   "end_s": 15.643375,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 16.761916666666668,
+   "end_s": 18.494916666666665,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 19.716541666666668,
+   "end_s": 21.498541666666668,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 22.523375,
+   "end_s": 23.582375,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 25.508958333333332,
+   "end_s": 25.828958333333333,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 26.548791666666666,
+   "end_s": 29.465791666666668,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 29.930208333333333,
+   "end_s": 30.847208333333334,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 31.864083333333333,
+   "end_s": 33.729083333333335,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 36.383583333333334,
+   "end_s": 38.499583333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 39.401625,
+   "end_s": 39.887625,
+   "position": "clause_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [],
+ "text": "With so many books available, choosing the next one can be hard. I rely on a few simple methods. First, I ask friends what they enjoyed recently, and why. Next, I look at the first page in the shop before I decide. If the first page holds my attention, the rest usually will. Third, I mix different kinds of books. After a long novel, I often choose something short or something factual. Finally, I give myself permission to stop. If a book is not working for me after fifty pages, I put it aside without guilt. Reading should feel like a pleasure, so choose books that keep you turning the pages."
+}

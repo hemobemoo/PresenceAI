@@ -1,0 +1,88 @@
+{
+ "summary": {
+  "part": "dev",
+  "condition": "clean",
+  "clips": 86,
+  "wpm_mape_pct": 1.0699817121656672,
+  "wpm_mape_fillers_pct": 1.254424553638307,
+  "wpm_mape_no_fillers_pct": 0.994390383693274,
+  "f1": {
+   "0.5": 0.9727831431079894,
+   "1.0": 0.9862258953168044
+  },
+  "f1_all": {
+   "0.5": 0.9339407744874715,
+   "1.0": 0.9674185463659147
+  },
+  "excluded": {
+   "0.5": 151,
+   "1.0": 64
+  },
+  "true_pauses": 828,
+  "detected_pauses": 1051,
+  "matched": 821,
+  "duration_mae_s": 0.079933922046285,
+  "true_mid_share": 0.14855072463768115,
+  "detected_mid_share": 0.14843006660323502,
+  "position_error_rate": 0.2545676004872107,
+  "position_unknown_share": 0.012180267965895249,
+  "position_table": {
+   "sentence_boundary": {
+    "sentence_boundary": 455,
+    "clause_boundary": 17,
+    "mid_sentence": 14,
+    "unknown": 7
+   },
+   "clause_boundary": {
+    "sentence_boundary": 81,
+    "clause_boundary": 103,
+    "mid_sentence": 20,
+    "unknown": 1
+   },
+   "mid_sentence": {
+    "sentence_boundary": 56,
+    "clause_boundary": 11,
+    "mid_sentence": 54,
+    "unknown": 2
+   },
+   "unknown": {
+    "sentence_boundary": 0,
+    "clause_boundary": 0,
+    "mid_sentence": 0,
+    "unknown": 0
+   }
+  },
+  "mid_as_boundary_rate": 0.5537190082644629,
+  "boundary_as_mid_rate": 0.04927536231884058,
+  "kokoro_pauses": 28,
+  "passes": {},
+  "passed": null
+ },
+ "elapsed_s": 9.6,
+ "syllable_rate_vs_wpm_measured_r": 0.4843625525018736,
+ "syllable_rate_vs_wpm_true_r": 0.49125085255846956,
+ "syllable_rate_vs_articulation_true_r": 0.6485080252204737,
+ "run": "f1",
+ "part": "dev",
+ "condition": "clean",
+ "model": "whisper_small",
+ "config_hash": "b2b493bd60be9db6",
+ "vad": {
+  "threshold": 0.5,
+  "min_speech_duration_ms": 250,
+  "min_silence_duration_ms": 100,
+  "speech_pad_ms": 0
+ },
+ "rerun_reason": null,
+ "versions": {
+  "python": "3.12.15",
+  "cpu": "Intel64 Family 6 Model 154 Stepping 4, GenuineIntel",
+  "faster-whisper": "1.2.1",
+  "ctranslate2": "4.9.0",
+  "onnxruntime": "1.32.0",
+  "numpy": "2.5.4",
+  "librosa": "1.0.0"
+ },
+ "commit": "92e7ee8debb6cf7d5b46a8ac02da1f2badb02052",
+ "dirty": true
+}

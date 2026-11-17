@@ -1,0 +1,167 @@
+{
+ "clip_id": "s07_r2",
+ "script_id": "s07",
+ "voice": "af_heart",
+ "render": 2,
+ "sample_rate": 24000,
+ "duration_s": 44.64629166666667,
+ "words": 110,
+ "fillers": 2,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 44.14629166666667,
+ "speech_spans": [
+  [
+   0.5,
+   1.8487083333333334
+  ],
+  [
+   3.876708333333333,
+   4.239333333333334
+  ],
+  [
+   4.290333333333334,
+   5.355333333333333
+  ],
+  [
+   5.923333333333333,
+   9.347291666666667
+  ],
+  [
+   9.506291666666666,
+   10.59125
+  ],
+  [
+   10.75125,
+   11.391
+  ],
+  [
+   12.199,
+   13.258708333333333
+  ],
+  [
+   13.438708333333333,
+   14.880166666666666
+  ],
+  [
+   14.971166666666667,
+   16.896958333333334
+  ],
+  [
+   17.005958333333332,
+   18.31325
+  ],
+  [
+   21.08025,
+   22.324833333333334
+  ],
+  [
+   23.267833333333332,
+   26.572
+  ],
+  [
+   26.955,
+   27.436958333333333
+  ],
+  [
+   27.625958333333333,
+   28.622125
+  ],
+  [
+   29.143125,
+   30.736666666666668
+  ],
+  [
+   32.76566666666667,
+   34.370333333333335
+  ],
+  [
+   34.45433333333333,
+   36.641625
+  ],
+  [
+   36.752625,
+   37.581916666666665
+  ],
+  [
+   37.721916666666665,
+   38.773
+  ],
+  [
+   39.115,
+   40.59291666666667
+  ],
+  [
+   43.121916666666664,
+   44.14629166666667
+  ]
+ ],
+ "wpm": 151.21559582667865,
+ "articulation_wpm": 224.07600477010283,
+ "target_wpm": 155.0,
+ "speed": 1.1065675060835858,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 1.8487083333333334,
+   "end_s": 3.876708333333333,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 5.355333333333333,
+   "end_s": 5.923333333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 11.391,
+   "end_s": 12.199,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 18.31325,
+   "end_s": 21.08025,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 22.324833333333334,
+   "end_s": 23.267833333333332,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 26.572,
+   "end_s": 26.955,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 28.622125,
+   "end_s": 29.143125,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 30.736666666666668,
+   "end_s": 32.76566666666667,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 38.773,
+   "end_s": 39.115,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 40.59291666666667,
+   "end_s": 43.121916666666664,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [],
+ "text": "I want to tell you why I love the public library. It is one of the few places where you can stay all day without paying. You can borrow books, of course, but there is much more. Many libraries lend tools, games and even musical instruments. They offer free classes for children and adults. They give people a quiet place to study and a computer for work. For some families, the library is the only place with a fast internet connection. So the next time you pass your local library, step inside. Ask what it offers. You may find more than you expect. Most of it is free."
+}

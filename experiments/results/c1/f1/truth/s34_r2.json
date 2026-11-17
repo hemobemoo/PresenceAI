@@ -1,0 +1,145 @@
+{
+ "clip_id": "s34_r2",
+ "script_id": "s34",
+ "voice": "am_fenrir",
+ "render": 2,
+ "sample_rate": 24000,
+ "duration_s": 41.75879166666667,
+ "words": 113,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 41.25879166666667,
+ "speech_spans": [
+  [
+   0.5,
+   1.9844166666666667
+  ],
+  [
+   2.4774166666666666,
+   4.222791666666667
+  ],
+  [
+   5.581791666666667,
+   6.87475
+  ],
+  [
+   7.00175,
+   8.439041666666666
+  ],
+  [
+   8.549041666666668,
+   9.231833333333332
+  ],
+  [
+   9.422833333333333,
+   11.555166666666667
+  ],
+  [
+   11.930166666666667,
+   13.390083333333333
+  ],
+  [
+   13.578083333333334,
+   15.484125
+  ],
+  [
+   15.629125,
+   16.666125
+  ],
+  [
+   17.244125,
+   18.719333333333335
+  ],
+  [
+   20.777333333333335,
+   21.855041666666665
+  ],
+  [
+   22.662041666666667,
+   23.312083333333334
+  ],
+  [
+   23.440083333333334,
+   25.706541666666666
+  ],
+  [
+   25.788541666666667,
+   28.790791666666667
+  ],
+  [
+   28.870791666666666,
+   30.689833333333333
+  ],
+  [
+   30.835833333333333,
+   32.083625
+  ],
+  [
+   32.191625,
+   33.42570833333333
+  ],
+  [
+   33.534708333333334,
+   35.16291666666667
+  ],
+  [
+   35.752916666666664,
+   37.452875
+  ],
+  [
+   37.564875,
+   41.25879166666667
+  ]
+ ],
+ "wpm": 166.34447987192948,
+ "articulation_wpm": 205.624081471213,
+ "target_wpm": 155.0,
+ "speed": 0.8192241087270522,
+ "attempts": 3,
+ "pauses": [
+  {
+   "start_s": 1.9844166666666667,
+   "end_s": 2.4774166666666666,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 4.222791666666667,
+   "end_s": 5.581791666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 11.555166666666667,
+   "end_s": 11.930166666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 16.666125,
+   "end_s": 17.244125,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 18.719333333333335,
+   "end_s": 20.777333333333335,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 21.855041666666665,
+   "end_s": 22.662041666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 35.16291666666667,
+   "end_s": 35.752916666666664,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [],
+ "text": "Some decisions are easy, and some keep us awake at night. For the difficult ones, I follow a short method. First, I write the question at the top of a page. Then I list the options, even the ones that seem unlikely. For each option, I note the main benefit and the main risk. Next, I ask what I would advise a friend to do. This simple question often makes the answer clear. If the answer is still not clear, I wait one more day. A good night of sleep can change how a problem looks. Most decisions are not final, and it is usually possible to adjust the plan later if needed."
+}

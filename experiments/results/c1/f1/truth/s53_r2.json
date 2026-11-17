@@ -1,0 +1,178 @@
+{
+ "clip_id": "s53_r2",
+ "script_id": "s53",
+ "voice": "bm_george",
+ "render": 2,
+ "sample_rate": 24000,
+ "duration_s": 41.471916666666665,
+ "words": 111,
+ "fillers": 2,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 40.971916666666665,
+ "speech_spans": [
+  [
+   0.5,
+   1.8153333333333332
+  ],
+  [
+   1.9663333333333333,
+   3.0364166666666668
+  ],
+  [
+   4.138416666666667,
+   5.8245
+  ],
+  [
+   5.9325,
+   8.2065
+  ],
+  [
+   8.3985,
+   9.452791666666666
+  ],
+  [
+   10.996791666666667,
+   13.546875
+  ],
+  [
+   13.657875,
+   15.61575
+  ],
+  [
+   15.76475,
+   17.359625
+  ],
+  [
+   17.501625,
+   19.692875
+  ],
+  [
+   21.443875,
+   22.640708333333333
+  ],
+  [
+   24.257708333333333,
+   25.694666666666667
+  ],
+  [
+   25.852666666666668,
+   26.324208333333335
+  ],
+  [
+   26.437208333333334,
+   27.467458333333333
+  ],
+  [
+   27.655458333333332,
+   27.947166666666668
+  ],
+  [
+   28.044166666666666,
+   29.361333333333334
+  ],
+  [
+   29.983333333333334,
+   32.291291666666666
+  ],
+  [
+   32.70129166666667,
+   34.19079166666667
+  ],
+  [
+   35.88279166666667,
+   37.264625
+  ],
+  [
+   38.393625,
+   40.971916666666665
+  ]
+ ],
+ "wpm": 164.5585519176878,
+ "articulation_wpm": 228.11409129701357,
+ "target_wpm": 155.0,
+ "speed": 1.3887246124045596,
+ "attempts": 3,
+ "pauses": [
+  {
+   "start_s": 3.0364166666666668,
+   "end_s": 4.138416666666667,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 9.452791666666666,
+   "end_s": 10.996791666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 19.692875,
+   "end_s": 21.443875,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 22.640708333333333,
+   "end_s": 24.257708333333333,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 29.361333333333334,
+   "end_s": 29.983333333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 32.291291666666666,
+   "end_s": 32.70129166666667,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 34.19079166666667,
+   "end_s": 35.88279166666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 37.264625,
+   "end_s": 38.393625,
+   "position": "clause_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 3,
+   "start_s": 6.651416666666667,
+   "end_s": 6.8075
+  },
+  {
+   "phrase": 5,
+   "start_s": 11.987583333333333,
+   "end_s": 12.130291666666666
+  },
+  {
+   "phrase": 6,
+   "start_s": 14.54575,
+   "end_s": 14.676666666666666
+  },
+  {
+   "phrase": 8,
+   "start_s": 18.760291666666667,
+   "end_s": 18.8855
+  },
+  {
+   "phrase": 13,
+   "start_s": 30.979041666666667,
+   "end_s": 31.116958333333333
+  },
+  {
+   "phrase": 16,
+   "start_s": 39.84204166666667,
+   "end_s": 40.01979166666667
+  }
+ ],
+ "text": "We check the weather forecast almost every day, but few of us know how it is made. Weather stations around the world measure temperature, rain and pressure. Balloons and satellites collect data from high in the sky. Powerful computers then take this data to model how the air will move. The model is run many times with small changes. If most runs agree, the forecast is more certain. If they disagree, the forecast is less sure. That is why a forecast often gives a chance of rain, rather than a simple yes or no. Forecasts have improved greatly, and a forecast for three days ahead is now quite reliable."
+}

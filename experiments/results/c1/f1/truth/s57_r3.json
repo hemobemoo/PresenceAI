@@ -1,0 +1,161 @@
+{
+ "clip_id": "s57_r3",
+ "script_id": "s57",
+ "voice": "bm_george",
+ "render": 3,
+ "sample_rate": 24000,
+ "duration_s": 39.27283333333333,
+ "words": 109,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 38.77283333333333,
+ "speech_spans": [
+  [
+   0.5,
+   2.0778333333333334
+  ],
+  [
+   2.2608333333333333,
+   3.461625
+  ],
+  [
+   3.593625,
+   5.086333333333333
+  ],
+  [
+   7.615333333333333,
+   8.303916666666666
+  ],
+  [
+   8.372916666666667,
+   10.875958333333333
+  ],
+  [
+   12.705958333333333,
+   13.525166666666667
+  ],
+  [
+   16.437166666666666,
+   17.518
+  ],
+  [
+   18.43,
+   19.250208333333333
+  ],
+  [
+   19.612208333333335,
+   20.85775
+  ],
+  [
+   21.27275,
+   22.340166666666665
+  ],
+  [
+   24.504166666666666,
+   25.121833333333335
+  ],
+  [
+   25.209833333333332,
+   26.699416666666668
+  ],
+  [
+   28.350416666666668,
+   29.887125
+  ],
+  [
+   30.339125,
+   31.29775
+  ],
+  [
+   31.36675,
+   32.18266666666667
+  ],
+  [
+   32.29266666666667,
+   33.918416666666666
+  ],
+  [
+   34.76841666666667,
+   37.4255
+  ],
+  [
+   37.4905,
+   38.77283333333333
+  ]
+ ],
+ "wpm": 170.8783863227616,
+ "articulation_wpm": 278.536900460679,
+ "target_wpm": 173.0,
+ "speed": 1.6490483950965746,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 5.086333333333333,
+   "end_s": 7.615333333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 10.875958333333333,
+   "end_s": 12.705958333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 13.525166666666667,
+   "end_s": 16.437166666666666,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 17.518,
+   "end_s": 18.43,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 19.250208333333333,
+   "end_s": 19.612208333333335,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 20.85775,
+   "end_s": 21.27275,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 22.340166666666665,
+   "end_s": 24.504166666666666,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 26.699416666666668,
+   "end_s": 28.350416666666668,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 29.887125,
+   "end_s": 30.339125,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 33.918416666666666,
+   "end_s": 34.76841666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 16,
+   "start_s": 36.34045833333333,
+   "end_s": 36.46975
+  }
+ ],
+ "text": "Choosing a bicycle can be confusing, because there are so many types. Start by thinking about where you will ride. For city streets, a simple bicycle with upright handlebars is comfortable and safe. For rough paths, you need wider tyres and stronger brakes. Size matters more than price. Your feet should reach the ground when you stop, and your arms should not stretch too far. Always try a bicycle before you buy it. Ride it around the block, and test the brakes. A good fit makes every ride more pleasant. Many shops also sell good bicycles that have been carefully checked, which can save you a lot of money."
+}

@@ -1,0 +1,157 @@
+{
+ "clip_id": "s29_r2",
+ "script_id": "s29",
+ "voice": "am_michael",
+ "render": 2,
+ "sample_rate": 24000,
+ "duration_s": 44.878375,
+ "words": 113,
+ "fillers": 2,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 44.378375,
+ "speech_spans": [
+  [
+   0.5,
+   1.9392083333333334
+  ],
+  [
+   2.693208333333333,
+   3.7777083333333334
+  ],
+  [
+   3.828708333333333,
+   5.223208333333333
+  ],
+  [
+   6.136208333333333,
+   9.195625
+  ],
+  [
+   10.307625,
+   13.37075
+  ],
+  [
+   13.44275,
+   14.034166666666666
+  ],
+  [
+   14.201166666666667,
+   16.150166666666667
+  ],
+  [
+   16.235166666666668,
+   17.394583333333333
+  ],
+  [
+   18.184583333333332,
+   19.692875
+  ],
+  [
+   20.444875,
+   21.316375
+  ],
+  [
+   21.395375,
+   22.47458333333333
+  ],
+  [
+   23.037583333333334,
+   23.631625
+  ],
+  [
+   23.766625,
+   25.10108333333333
+  ],
+  [
+   25.280083333333334,
+   26.956708333333335
+  ],
+  [
+   27.070708333333332,
+   28.878083333333333
+  ],
+  [
+   29.077083333333334,
+   31.975458333333332
+  ],
+  [
+   32.546458333333334,
+   35.217
+  ],
+  [
+   36.3,
+   37.043625
+  ],
+  [
+   37.238625,
+   38.826458333333335
+  ],
+  [
+   38.89545833333333,
+   44.378375
+  ]
+ ],
+ "wpm": 154.5180285277201,
+ "articulation_wpm": 188.3575320440473,
+ "target_wpm": 155.0,
+ "speed": 0.9604398608003735,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 1.9392083333333334,
+   "end_s": 2.693208333333333,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 5.223208333333333,
+   "end_s": 6.136208333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 9.195625,
+   "end_s": 10.307625,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 17.394583333333333,
+   "end_s": 18.184583333333332,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 19.692875,
+   "end_s": 20.444875,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 22.47458333333333,
+   "end_s": 23.037583333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 31.975458333333332,
+   "end_s": 32.546458333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 35.217,
+   "end_s": 36.3,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 14,
+   "start_s": 33.64725,
+   "end_s": 33.762708333333336
+  }
+ ],
+ "text": "I have not owned a car for five years, and I do not miss it. Our city has a good network of buses and trains. A monthly pass costs less than parking for a week. I spend the travel time to think, to plan my day or to listen to music. Of course, there are delays. When a train is late, I simply take the next one. I also walk more than before, because the stops are a short distance from my home. Public transport is not right for everyone. For me, it has made life simpler. Many cities are also adding more bicycle lanes and night buses for late workers."
+}

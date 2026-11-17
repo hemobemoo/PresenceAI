@@ -1,0 +1,153 @@
+{
+ "clip_id": "s27_r0",
+ "script_id": "s27",
+ "voice": "am_michael",
+ "render": 0,
+ "sample_rate": 24000,
+ "duration_s": 54.2715,
+ "words": 112,
+ "fillers": 2,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 53.7715,
+ "speech_spans": [
+  [
+   0.5,
+   3.8219166666666666
+  ],
+  [
+   4.9599166666666665,
+   6.715625
+  ],
+  [
+   6.901625,
+   8.687416666666667
+  ],
+  [
+   9.021416666666667,
+   9.786041666666666
+  ],
+  [
+   9.871041666666667,
+   15.083458333333333
+  ],
+  [
+   15.481458333333334,
+   18.049708333333335
+  ],
+  [
+   18.224708333333332,
+   18.939583333333335
+  ],
+  [
+   18.993583333333333,
+   20.930458333333334
+  ],
+  [
+   21.412458333333333,
+   22.577458333333333
+  ],
+  [
+   23.476458333333333,
+   25.391458333333333
+  ],
+  [
+   26.638458333333332,
+   30.819666666666667
+  ],
+  [
+   30.949666666666666,
+   33.089666666666666
+  ],
+  [
+   33.212666666666664,
+   34.529875
+  ],
+  [
+   36.843875,
+   39.132958333333335
+  ],
+  [
+   39.30895833333334,
+   42.012625
+  ],
+  [
+   42.189625,
+   44.37316666666667
+  ],
+  [
+   44.461166666666664,
+   46.163833333333336
+  ],
+  [
+   47.04383333333333,
+   47.538833333333336
+  ],
+  [
+   47.594833333333334,
+   53.7715
+  ]
+ ],
+ "wpm": 126.14625080953229,
+ "articulation_wpm": 151.59205495211992,
+ "target_wpm": 119.0,
+ "speed": 0.8189177023071674,
+ "attempts": 2,
+ "pauses": [
+  {
+   "start_s": 3.8219166666666666,
+   "end_s": 4.9599166666666665,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 8.687416666666667,
+   "end_s": 9.021416666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 15.083458333333333,
+   "end_s": 15.481458333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 20.930458333333334,
+   "end_s": 21.412458333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 22.577458333333333,
+   "end_s": 23.476458333333333,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 25.391458333333333,
+   "end_s": 26.638458333333332,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 34.529875,
+   "end_s": 36.843875,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 46.163833333333336,
+   "end_s": 47.04383333333333,
+   "position": "clause_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 16,
+   "start_s": 50.47141666666667,
+   "end_s": 50.663875
+  }
+ ],
+ "text": "Solar panels turn sunlight into electricity. They have become much cheaper over the last ten years. Today, many families put panels on their roof to lower their energy bills. A typical system pays for itself in about eight to ten years. After that, the power is almost free. Panels work best when they face the sun and are not in shade. They still work on cloudy days, but they make less. Some homes also add a battery. The battery stores energy during the day, so the family has power at night. Before you buy a system, ask a local installer to check your roof and explain the likely savings clearly."
+}

@@ -1,0 +1,155 @@
+{
+ "clip_id": "s31_r0",
+ "script_id": "s31",
+ "voice": "am_fenrir",
+ "render": 0,
+ "sample_rate": 24000,
+ "duration_s": 61.38308333333333,
+ "words": 111,
+ "fillers": 1,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 60.88308333333333,
+ "speech_spans": [
+  [
+   0.5,
+   3.5949583333333335
+  ],
+  [
+   3.7849583333333334,
+   5.387458333333333
+  ],
+  [
+   5.748458333333334,
+   10.579833333333333
+  ],
+  [
+   12.115833333333333,
+   13.019125
+  ],
+  [
+   13.144125,
+   15.475
+  ],
+  [
+   15.667,
+   16.227291666666666
+  ],
+  [
+   16.423291666666668,
+   19.452875
+  ],
+  [
+   19.569875,
+   24.186708333333332
+  ],
+  [
+   24.290708333333335,
+   25.072541666666666
+  ],
+  [
+   26.124541666666666,
+   29.026833333333332
+  ],
+  [
+   29.753833333333333,
+   34.060125
+  ],
+  [
+   36.133125,
+   37.63125
+  ],
+  [
+   38.15225,
+   40.645
+  ],
+  [
+   40.816,
+   44.87766666666667
+  ],
+  [
+   45.794666666666664,
+   48.635875
+  ],
+  [
+   50.232875,
+   52.3855
+  ],
+  [
+   52.4515,
+   55.271375
+  ],
+  [
+   55.717375,
+   60.88308333333333
+  ]
+ ],
+ "wpm": 110.2957920057632,
+ "articulation_wpm": 133.2210933397788,
+ "target_wpm": 119.0,
+ "speed": 0.6494802339538991,
+ "attempts": 2,
+ "pauses": [
+  {
+   "start_s": 5.387458333333333,
+   "end_s": 5.748458333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 10.579833333333333,
+   "end_s": 12.115833333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 25.072541666666666,
+   "end_s": 26.124541666666666,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 29.026833333333332,
+   "end_s": 29.753833333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 34.060125,
+   "end_s": 36.133125,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 37.63125,
+   "end_s": 38.15225,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 44.87766666666667,
+   "end_s": 45.794666666666664,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 48.635875,
+   "end_s": 50.232875,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 55.271375,
+   "end_s": 55.717375,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 5,
+   "start_s": 17.674833333333332,
+   "end_s": 17.825166666666668
+  }
+ ],
+ "text": "Bridges are some of the oldest structures that people build. The first bridges were simply logs laid across a stream. Later, builders made stone arches, which spread the weight down into the ground. Some stone bridges have stood for many hundreds of years. Today, engineers choose steel and concrete. These materials allow bridges to cross wide rivers and deep valleys. A bridge must carry its own weight, the weight of traffic and the force of strong storms. Every design is a careful balance. When you next cross a bridge, take a moment to look at how it works. Each bridge is a quiet answer to a very old human problem."
+}

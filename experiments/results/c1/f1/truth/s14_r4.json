@@ -1,0 +1,169 @@
+{
+ "clip_id": "s14_r4",
+ "script_id": "s14",
+ "voice": "af_bella",
+ "render": 4,
+ "sample_rate": 24000,
+ "duration_s": 37.013708333333334,
+ "words": 110,
+ "fillers": 1,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 36.513708333333334,
+ "speech_spans": [
+  [
+   0.5,
+   2.2234583333333333
+  ],
+  [
+   2.5774583333333334,
+   3.95175
+  ],
+  [
+   4.06775,
+   4.546333333333333
+  ],
+  [
+   4.998333333333333,
+   6.077
+  ],
+  [
+   8.159,
+   9.035083333333333
+  ],
+  [
+   9.223083333333333,
+   10.367708333333333
+  ],
+  [
+   10.449708333333334,
+   12.568791666666666
+  ],
+  [
+   12.733791666666667,
+   14.045291666666667
+  ],
+  [
+   14.202291666666667,
+   14.687833333333334
+  ],
+  [
+   16.474833333333333,
+   17.727125
+  ],
+  [
+   18.181125,
+   18.869041666666668
+  ],
+  [
+   18.929041666666667,
+   19.994333333333334
+  ],
+  [
+   20.538333333333334,
+   21.596333333333334
+  ],
+  [
+   24.058333333333334,
+   25.292208333333335
+  ],
+  [
+   26.741208333333333,
+   27.605791666666665
+  ],
+  [
+   27.734791666666666,
+   28.711916666666667
+  ],
+  [
+   29.497916666666665,
+   29.776291666666665
+  ],
+  [
+   29.920291666666667,
+   30.803583333333332
+  ],
+  [
+   33.33658333333333,
+   34.3235
+  ],
+  [
+   35.4195,
+   36.513708333333334
+  ]
+ ],
+ "wpm": 183.26354894953195,
+ "articulation_wpm": 314.6796882605007,
+ "target_wpm": 191.0,
+ "speed": 1.3227737768911434,
+ "attempts": 3,
+ "pauses": [
+  {
+   "start_s": 2.2234583333333333,
+   "end_s": 2.5774583333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 4.546333333333333,
+   "end_s": 4.998333333333333,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 6.077,
+   "end_s": 8.159,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 14.687833333333334,
+   "end_s": 16.474833333333333,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 17.727125,
+   "end_s": 18.181125,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 19.994333333333334,
+   "end_s": 20.538333333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 21.596333333333334,
+   "end_s": 24.058333333333334,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 25.292208333333335,
+   "end_s": 26.741208333333333,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 28.711916666666667,
+   "end_s": 29.497916666666665,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 30.803583333333332,
+   "end_s": 33.33658333333333,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 34.3235,
+   "end_s": 35.4195,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [],
+ "text": "Many of us work for hours without a break. We think it helps us finish faster. In fact, the opposite is often true. After a long stretch, our attention starts to drift. We look at the same line twice and make small errors. A short break can reset the mind. Stand up, stretch and look out of a window. Walk to the kitchen and pour a glass of water. Five minutes is often enough. Some people work for fifty minutes and then rest for ten. Find a rhythm that suits you. Your work will be better, and your day will feel lighter. Try it for a week and compare."
+}

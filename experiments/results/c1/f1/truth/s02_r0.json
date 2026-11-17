@@ -1,0 +1,175 @@
+{
+ "clip_id": "s02_r0",
+ "script_id": "s02",
+ "voice": "af_heart",
+ "render": 0,
+ "sample_rate": 24000,
+ "duration_s": 59.685208333333335,
+ "words": 112,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 59.185208333333335,
+ "speech_spans": [
+  [
+   0.5,
+   3.04
+  ],
+  [
+   3.107,
+   5.386333333333333
+  ],
+  [
+   5.820333333333333,
+   8.399166666666666
+  ],
+  [
+   9.351166666666666,
+   12.725458333333334
+  ],
+  [
+   12.821458333333334,
+   15.91575
+  ],
+  [
+   16.91975,
+   19.159333333333333
+  ],
+  [
+   19.485333333333333,
+   21.845333333333333
+  ],
+  [
+   22.031333333333333,
+   24.281333333333333
+  ],
+  [
+   24.38233333333333,
+   26.066708333333334
+  ],
+  [
+   27.063708333333334,
+   28.5085
+  ],
+  [
+   29.9315,
+   32.444125
+  ],
+  [
+   32.571125,
+   35.281125
+  ],
+  [
+   36.010125,
+   40.469791666666666
+  ],
+  [
+   40.78579166666667,
+   44.89579166666667
+  ],
+  [
+   45.26679166666667,
+   47.34491666666667
+  ],
+  [
+   47.682916666666664,
+   51.241125
+  ],
+  [
+   51.437125,
+   53.32120833333333
+  ],
+  [
+   54.54420833333333,
+   55.729416666666665
+  ],
+  [
+   55.84741666666667,
+   56.98341666666666
+  ],
+  [
+   57.48741666666667,
+   59.185208333333335
+  ]
+ ],
+ "wpm": 114.50926376251823,
+ "articulation_wpm": 136.6486677009082,
+ "target_wpm": 119.0,
+ "speed": 0.6201770997145772,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 5.386333333333333,
+   "end_s": 5.820333333333333,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 8.399166666666666,
+   "end_s": 9.351166666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 15.91575,
+   "end_s": 16.91975,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 19.159333333333333,
+   "end_s": 19.485333333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 26.066708333333334,
+   "end_s": 27.063708333333334,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 28.5085,
+   "end_s": 29.9315,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 35.281125,
+   "end_s": 36.010125,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 40.469791666666666,
+   "end_s": 40.78579166666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 44.89579166666667,
+   "end_s": 45.26679166666667,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 47.34491666666667,
+   "end_s": 47.682916666666664,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 53.32120833333333,
+   "end_s": 54.54420833333333,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 56.98341666666666,
+   "end_s": 57.48741666666667,
+   "position": "clause_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [],
+ "text": "Let me begin with a question. How much water do you drink during a normal working day? Many people drink far less than they think. The body needs water to stay alert, and small gaps add up. A simple plan can help. Keep a bottle on your desk, and fill it twice before lunch. Drink a glass when you arrive, and another when you take a break. Some people set a quiet reminder on their computer. Others link the habit to a task they already do, such as checking mail. The goal is not to drink a lot at once. The goal is to drink a little, often, through the whole day."
+}

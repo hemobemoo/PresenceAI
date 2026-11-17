@@ -1,0 +1,198 @@
+{
+ "clip_id": "s20_r0",
+ "script_id": "s20",
+ "voice": "af_bella",
+ "render": 0,
+ "sample_rate": 24000,
+ "duration_s": 60.119166666666665,
+ "words": 110,
+ "fillers": 0,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 59.619166666666665,
+ "speech_spans": [
+  [
+   0.5,
+   3.4771666666666667
+  ],
+  [
+   3.5551666666666666,
+   6.247916666666667
+  ],
+  [
+   7.4969166666666665,
+   10.173916666666667
+  ],
+  [
+   10.343916666666667,
+   11.857291666666667
+  ],
+  [
+   12.669291666666666,
+   14.660125
+  ],
+  [
+   14.750125,
+   16.776208333333333
+  ],
+  [
+   16.842208333333332,
+   20.366458333333334
+  ],
+  [
+   20.438458333333333,
+   22.64475
+  ],
+  [
+   23.48175,
+   26.870583333333332
+  ],
+  [
+   27.493583333333333,
+   31.588083333333334
+  ],
+  [
+   31.718083333333333,
+   33.192
+  ],
+  [
+   33.269,
+   35.504666666666665
+  ],
+  [
+   35.629666666666665,
+   39.78966666666667
+  ],
+  [
+   40.81166666666667,
+   41.705666666666666
+  ],
+  [
+   44.038666666666664,
+   45.912
+  ],
+  [
+   46.925,
+   48.924875
+  ],
+  [
+   49.946875,
+   51.690083333333334
+  ],
+  [
+   54.384083333333336,
+   56.213
+  ],
+  [
+   56.627,
+   59.619166666666665
+  ]
+ ],
+ "wpm": 111.63892138759286,
+ "articulation_wpm": 145.69348812653257,
+ "target_wpm": 119.0,
+ "speed": 0.6844976121851165,
+ "attempts": 1,
+ "pauses": [
+  {
+   "start_s": 6.247916666666667,
+   "end_s": 7.4969166666666665,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 11.857291666666667,
+   "end_s": 12.669291666666666,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 18.05475,
+   "end_s": 18.3155,
+   "position": "mid_sentence",
+   "source": "kokoro"
+  },
+  {
+   "start_s": 22.64475,
+   "end_s": 23.48175,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 26.870583333333332,
+   "end_s": 27.493583333333333,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 28.812708333333333,
+   "end_s": 29.211,
+   "position": "mid_sentence",
+   "source": "kokoro"
+  },
+  {
+   "start_s": 36.92304166666667,
+   "end_s": 37.255583333333334,
+   "position": "mid_sentence",
+   "source": "kokoro"
+  },
+  {
+   "start_s": 39.78966666666667,
+   "end_s": 40.81166666666667,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 41.705666666666666,
+   "end_s": 44.038666666666664,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 45.912,
+   "end_s": 46.925,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 48.924875,
+   "end_s": 49.946875,
+   "position": "mid_sentence",
+   "source": "inserted"
+  },
+  {
+   "start_s": 51.690083333333334,
+   "end_s": 54.384083333333336,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 56.213,
+   "end_s": 56.627,
+   "position": "clause_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [
+  {
+   "phrase": 6,
+   "start_s": 18.05475,
+   "end_s": 18.3155
+  },
+  {
+   "phrase": 7,
+   "start_s": 20.936583333333335,
+   "end_s": 21.044083333333333
+  },
+  {
+   "phrase": 9,
+   "start_s": 28.812708333333333,
+   "end_s": 29.211
+  },
+  {
+   "phrase": 12,
+   "start_s": 36.92304166666667,
+   "end_s": 37.255583333333334
+  }
+ ],
+ "text": "Good teamwork never happens by chance. It grows from a few simple habits. The first habit is to agree on the goal at the very start. When everyone knows the goal, decisions become easier. The next habit is to share updates often, even when there is little to say. A short message can prevent a long delay. The third habit is to listen before you answer. In a busy meeting, it is tempting to speak first. But listening helps you understand the whole picture. Finally, thank people for their help. Small thanks keep a team working well together. These habits are simple, but they make a team strong and reliable."
+}
