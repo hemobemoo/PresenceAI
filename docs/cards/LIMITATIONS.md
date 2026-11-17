@@ -49,7 +49,7 @@ Started 2026-11-17. Kept up to date as experiments report (FINAL_11 §6).
 - **Octave errors.** The pitch tracker can report half or double the real pitch. Such frames are
   folded back or dropped; the same rule can also remove a real jump of more than 9 semitones
   within half a second. The report counts how many frames were changed.
-- **Clipping in compressed files** is found by a flat-top rule whose values come from synthetic
+- **Clipping in compressed files** is found by a plateau rule whose values come from synthetic
   signals and are provisional.
 - Pitch is tracked between 65 and 600 Hz. Very low or very high voices may reach the limits; the
   report gives the share of frames at a limit and lowers confidence when it is high.

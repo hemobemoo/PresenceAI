@@ -61,7 +61,7 @@ unreliable.
 - Rule 1 (approved): `|x| >= 0.999` in runs of at least 3 samples.
 - **Rule 2, pile-up (added, PROVISIONAL, owner to confirm).** The owner's MP3 test showed that
   LAME lowers clipped peaks to about 0.97, so rule 1 found nothing in a clipped MP3. A clipped
-  signal still has a flat top. When a channel's peak is at least 0.9 of full scale, and at least
+  signal still has a plateau. When a channel's peak is at least 0.9 of full scale, and at least
   4 times as many samples lie within 2 % of the peak as in the 2–4 % band below it, those
   top-band samples count as clipped (same 3-sample runs).
   - On synthetic signals, 2026-11-17: clipped MP3 sines gave a ratio of 13–173; an unclipped

@@ -67,7 +67,7 @@ def _clip_mask(native: np.ndarray, cfg: LoudnessSettings) -> np.ndarray:
 
     1. hard: |x| >= `clip_level` (lossless files; lossy overshoot above full scale);
     2. pile-up: the peak is near full scale and far more samples sit within `clip_pileup_band`
-       of it than in the band just below (a flat top that a lossy codec lowered to ~0.97).
+       of it than in the band just below (a plateau that a lossy codec lowered to ~0.97).
     """
     a = np.abs(native)
     mask = np.any(a >= cfg.clip_level, axis=0)
@@ -223,7 +223,7 @@ def summarise(
         min(1.0, clipped_s / total_speech) if total_speech else 0.0,
         "share of speech time",
         conf,
-        f"samples at or above {lc.clip_level:g} of full scale, or a flat top just under the"
+        f"samples at or above {lc.clip_level:g} of full scale, or a plateau just under the"
         f" peak (lossy files), in runs of >= {lc.clip_min_run}, on the original samples" + notes,
         clip_ev or (Evidence(time=span),),
     )
