@@ -1,0 +1,157 @@
+{
+ "clip_id": "s21_r2",
+ "script_id": "s21",
+ "voice": "am_michael",
+ "render": 2,
+ "sample_rate": 24000,
+ "duration_s": 47.301458333333336,
+ "words": 113,
+ "fillers": 2,
+ "speech_onset_s": 0.5,
+ "speech_offset_s": 46.801458333333336,
+ "speech_spans": [
+  [
+   0.5,
+   2.4381666666666666
+  ],
+  [
+   2.508166666666667,
+   4.040333333333334
+  ],
+  [
+   4.226333333333334,
+   4.890666666666666
+  ],
+  [
+   5.055666666666666,
+   7.403083333333333
+  ],
+  [
+   7.529083333333333,
+   8.023208333333333
+  ],
+  [
+   8.078208333333333,
+   9.161333333333333
+  ],
+  [
+   11.579333333333333,
+   13.059041666666667
+  ],
+  [
+   13.190041666666668,
+   14.120625
+  ],
+  [
+   16.128625,
+   17.40225
+  ],
+  [
+   17.47525,
+   18.95525
+  ],
+  [
+   19.12125,
+   19.924166666666668
+  ],
+  [
+   20.108166666666666,
+   21.529125
+  ],
+  [
+   21.709125,
+   23.297833333333333
+  ],
+  [
+   24.209833333333332,
+   25.286875
+  ],
+  [
+   25.399875,
+   26.270625
+  ],
+  [
+   28.267625,
+   30.100916666666667
+  ],
+  [
+   31.098916666666668,
+   33.011125
+  ],
+  [
+   33.093125,
+   33.47804166666667
+  ],
+  [
+   33.57904166666667,
+   35.348416666666665
+  ],
+  [
+   37.559416666666664,
+   40.06316666666667
+  ],
+  [
+   40.183166666666665,
+   42.16325
+  ],
+  [
+   43.31825,
+   44.84325
+  ],
+  [
+   45.03025,
+   46.801458333333336
+  ]
+ ],
+ "wpm": 146.43167286847515,
+ "articulation_wpm": 207.57140688562527,
+ "target_wpm": 155.0,
+ "speed": 1.111827553274114,
+ "attempts": 2,
+ "pauses": [
+  {
+   "start_s": 9.161333333333333,
+   "end_s": 11.579333333333333,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 14.120625,
+   "end_s": 16.128625,
+   "position": "clause_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 23.297833333333333,
+   "end_s": 24.209833333333332,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 26.270625,
+   "end_s": 28.267625,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 30.100916666666667,
+   "end_s": 31.098916666666668,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 35.348416666666665,
+   "end_s": 37.559416666666664,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  },
+  {
+   "start_s": 42.16325,
+   "end_s": 43.31825,
+   "position": "sentence_boundary",
+   "source": "inserted"
+  }
+ ],
+ "internal_silences": [],
+ "text": "Many people avoid making a budget, because it sounds complicated. In fact, a basic budget needs only three columns. In the first column, write what you earn each month. In the middle one, list your fixed costs, such as rent and travel. In the third, write what is left for food, savings and everything else. Look at this page once a week. You will quickly see where your money goes. Most people find one or two costs that they can cut without missing them. A budget is not about saying no to everything. It is about choosing what matters most. Review the budget each month, and adjust it as life changes."
+}
