@@ -99,6 +99,9 @@ script fall in the same part. The split uses a fixed seed:
   (110–200 wpm, FINAL_10 §2) and every Kokoro voice used. Scripts are grouped by the speaking-rate
   band and voice of their clips, and each group is split 30 / 70 with the same seed. The rate bands
   and the voice list are fixed in the C1 generation plan (slice 5) before the split runs.
+- **C1 as built (ADR 0014 §5):** each script has one voice and is rendered in every rate band, so
+  the split is stratified by voice (3 of each voice's 10 scripts to development) and every band
+  is covered by construction; the count check below confirms it.
 - **Check:** the split script prints the number of clips per part by rate band and by voice, and
   stops with an error if any band or voice is missing from either part.
 - VAD values (`speech.vad`) and the syllable values are tuned **only on the development part**.

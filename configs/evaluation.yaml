@@ -16,6 +16,81 @@ e2:                                  # ADR 0009 (accepted 2026-11-17); data: C1 
     print_counts: true               # per part, by rate band and voice; empty cell -> error
     tune_on: dev
     score_on: test                   # E2 pass/fail (targets above) uses the held-out test part only
+  # ADR 0014 (owner, 2026-11-17), all fixed before the first E2 run:
+  wpm_judged_on: all_clips           # filler / no-filler breakdown is extra information only
+  match:                             # a detected pause matches a true pause (one-to-one,
+    onset_tolerance_s: 0.20          # largest overlap first) if they overlap and their onsets
+    require_overlap: true            # differ by at most this
+  f1_exclusion_s: 0.10               # true pauses within +/- this of a threshold count neither
+                                     # way in the target F1; F1 without exclusion is also reported
+  min_pause_s: 0.25                  # true pauses and duration error use pauses >= this (ADR 0011)
+  pipeline: [asr, vad, pauses, rate] # the app's own functions; pYIN is not needed for E2
+  noise:                             # extra, descriptive condition: no pass target
+    part: test
+    snr_db: [20, 10]                 # speech power (true speech spans) over noise power
+    color: pink
+    seed: 20261117
+
+c1:                                  # ADR 0014: synthetic English speech for E2 (FINAL_07 §C)
+  seed: 7                            # FINAL_07: synth-speech --seed 7
+  scripts: resources/c1/scripts.yaml # 60 scripts written for PresenceAI (DATA_SOURCES.md)
+  generator:                         # runs on Colab only, in its own environment (ADR 0014 §1)
+    model_id: hexgrad/Kokoro-82M     # Apache-2.0
+    revision: f3ff3571791e39611d31c381e3a41a3af07b4987
+    sample_rate: 24000
+    files:                           # SHA-256 from the Hub's LFS metadata at this revision
+      kokoro-v1_0.pth: 496dba118d1a58f5f3db2efc88dbdc216e0483fc89fe6e47ee1f2c53f18ad1e4
+      voices/af_heart.pt: 0ab5709b8ffab19bfd849cd11d98f75b60af7733253ad0d67b12382a102cb4ff
+      voices/af_bella.pt: 8cb64e02fcc8de0327a8e13817e49c76c945ecf0052ceac97d3081480e8e48d6
+      voices/am_michael.pt: 9a443b79a4b22489a5b0ab7c651a0bcd1a30bef675c28333f06971abbd47bd37
+      voices/am_fenrir.pt: 98e507eca1db08230ae3b6232d59c10aec9630022d19accac4f5d12fcec3c37a
+      voices/bf_emma.pt: d0a423deabf4a52b4f49318c51742c54e21bb89bbbe9a12141e7758ddb5da701
+      voices/bm_george.pt: f1bc812213dc59774769e5c80004b13eeb79bd78130b11b2d7f934542dab811b
+    git_blob_sha1:                   # not an LFS file: checked by its git blob id
+      config.json: 14a726edd3718279eac426630879ff743955b16a
+    pip: ["kokoro==0.9.4", "misaki[en]==0.9.4", "soundfile"]  # Colab only, never in pyproject
+    spacy_model:                     # misaki's tokenizer; official wheel, MIT
+      url: https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl
+      sha256: null                   # no published digest: recorded on the first download, then pinned here
+  voices:                            # 10 scripts each; misaki lang code a = American, b = British
+    af_heart: a
+    af_bella: a
+    am_michael: a
+    am_fenrir: a
+    bf_emma: b
+    bm_george: b
+  scripts_per_voice: 10
+  renders_per_script: 5
+  target_wpm: [119, 137, 155, 173, 191]  # centres of five equal steps over 110-200 wpm
+  accept_within_wpm: 9               # a render outside target +/- this is re-rendered
+  max_rerenders: 2                   # then kept if inside wpm_range, else dropped and counted
+  wpm_range: [110, 200]              # FINAL_10 §2
+  rate_bands: [[110, 140], [140, 170], [170, 200]]  # split and reports use the MEASURED wpm
+  clip_s: [35, 75]
+  speed_range: [0.5, 2.0]            # Kokoro speed setting limits
+  words_per_script: [105, 125]
+  max_words_per_sentence_mark: 20    # well under ADR 0011's 30, so positions are never unknown
+  gaps:                              # silence inserted between separately generated phrases
+    short_s: [0.05, 0.20]            # not a pause (tests false alarms)
+    pause_s: [0.30, 3.00]            # a true pause
+    pause_distribution: log_uniform  # more short than long pauses
+    pause_probability:               # chance that a boundary gets a pause instead of a short gap
+      sentence_boundary: 0.6
+      clause_boundary: 0.4
+      mid_sentence: 0.5
+  fillers:                           # counted in the true wpm; never used for E3 (ADR 0014)
+    clip_share: 0.33
+    per_clip: [1, 2]
+    tokens: [um, uh]
+    after_s: [0.05, 0.20]            # short gap after the filler
+  edge_silence_s: 0.5               # silence before the first and after the last phrase
+  noise_floor_dbfs: -60              # white noise over the whole clip, added after joining
+  trim:                              # phrase edges on the clean Kokoro output (ADR 0014 §3)
+    frame_ms: 5
+    threshold_db_below_peak: 55      # a frame is speech if within 55 dB of the phrase's loudest frame
+    internal_min_silence_s: 0.10     # Kokoro's own silences inside a phrase, reported
+    internal_joins_truth_s: 0.25     # ... and added to the true pauses from this length
+  timing_run_clips: 5                # first Colab run: time 5 clips before generating the rest
 
 e3:                                  # ADR 0012; filler detection (FINAL_10 E3). Targets: none yet
   tuning:                            # acoustic filler values are tuned ONLY here, before E3 runs

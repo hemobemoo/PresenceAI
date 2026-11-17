@@ -174,3 +174,45 @@ def test_loudness_and_pitch_variation_values_match_adr_0013():
     assert (pv["min_voiced_s"], pv["low_voiced_s"]) == (5.0, 15.0)
     assert sp["pitch"]["fmax_hz"] == 600.0  # owner, 2026-11-17: fair to higher voices
     assert _load("engine.yaml")["opt_in"] == ["vocal_variety"]
+
+
+def test_e2_protocol_and_c1_values_match_adr_0014():
+    from presenceai.evalconfig import load_evaluation
+
+    ev = load_evaluation()
+    e2, c1 = ev.e2, ev.c1
+    assert e2.wpm_judged_on == "all_clips"
+    assert e2.match.onset_tolerance_s == 0.20 and e2.match.require_overlap
+    assert e2.f1_exclusion_s == 0.10 and e2.min_pause_s == 0.25
+    assert e2.thresholds == (0.5, 1.0)
+    assert e2.noise.snr_db == (20.0, 10.0) and e2.noise.part == "test"
+    assert set(c1.voices) == {
+        "af_heart",
+        "af_bella",
+        "am_michael",
+        "am_fenrir",
+        "bf_emma",
+        "bm_george",
+    }
+    assert (c1.scripts_per_voice, c1.renders_per_script) == (10, 5)
+    assert c1.clip_s == (35.0, 75.0) and c1.wpm_range == (110.0, 200.0)
+    assert c1.gaps.short_s == (0.05, 0.20) and c1.gaps.pause_s == (0.30, 3.00)
+    assert c1.noise_floor_dbfs == -60.0
+    assert c1.trim.threshold_db_below_peak == 55.0 and c1.trim.frame_ms == 5.0
+    assert c1.trim.internal_joins_truth_s == 0.25
+    assert 0.3 <= c1.fillers.clip_share <= 0.35
+    gen = c1.generator
+    assert gen["revision"] == "f3ff3571791e39611d31c381e3a41a3af07b4987"
+    files = gen["files"]
+    assert isinstance(files, dict) and len(files) == 7  # weights + six voices, each with SHA-256
+    assert all(len(str(v)) == 64 for v in files.values())
+
+
+def test_kokoro_never_enters_the_app_dependencies():
+    """ADR 0014 §1: kokoro pulls in GPL packages, so it runs only on Colab."""
+    from presenceai.settings import REPO_ROOT
+
+    for name in ("pyproject.toml", "uv.lock"):
+        text = (REPO_ROOT / name).read_text(encoding="utf-8").lower()
+        for pkg in ("kokoro", "misaki", "phonemizer", "espeak"):
+            assert f'name = "{pkg}' not in text and f'"{pkg}' not in text, (name, pkg)

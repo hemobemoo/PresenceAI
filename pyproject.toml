@@ -74,13 +74,16 @@ include = ["src", "tests", "scripts", "experiments"]
 exclude = [
     "experiments/s3_unsloth_whisper/colab",  # runs only on Colab (unsloth, torch)
     "experiments/s2_zerogpu/space",  # runs only on the ZeroGPU Space (spaces, torch)
+    "experiments/c1_kokoro/colab",  # runs only on Colab (kokoro, torch; ADR 0014)
 ]
+extraPaths = ["tests/fixtures"]
 venvPath = "."
 venv = ".venv"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "--strict-markers --import-mode=importlib"
+pythonpath = ["tests/fixtures"]  # fakes such as fake_tts.py import by module name
 markers = [
     "slow: long-running tests, skipped in the fast suite",
     "needs_models: needs downloaded model weights",

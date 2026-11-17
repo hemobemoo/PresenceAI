@@ -1,0 +1,657 @@
+# C1 scripts (ADR 0014 §2): written for PresenceAI, no third-party text, released with the code.
+# Rules (checked by tests/unit/test_c1_scripts.py): 105-125 words; letters and , . ? ! only;
+# no listed heteronyms; at least one sentence mark per 20 words; 10 scripts per voice.
+# "|" marks a mid-sentence split point: the phrase ends there and a pause may be inserted.
+scripts:
+  - id: s01
+    voice: af_heart
+    title: Morning walks
+    text: >-
+      Good morning, everyone. Today I want to talk about | a simple habit that helps me every day.
+      Each morning, I take a short walk before work. The walk is not long, and it is not fast. I
+      leave my phone at home | so that I can look around. I notice the trees, the birds and the
+      light on the street. When I come back, my mind feels clear. I find it easier to plan the day
+      and to start the first task. You do not need special shoes | or a big park. A quiet street is
+      enough. Try it for one week, and see what changes for you.
+  - id: s02
+    voice: af_heart
+    title: Water at work
+    text: >-
+      Let me begin with a question. How much water do you drink | during a normal working day? Many
+      people drink far less than they think. The body needs water to stay alert, and small gaps add
+      up. A simple plan can help. Keep a bottle on your desk, and fill it twice | before lunch.
+      Drink a glass when you arrive, and another when you take a break. Some people set a quiet
+      reminder on their computer. Others link the habit to a task they already do, such as checking
+      mail. The goal is not to drink a lot at once. The goal is to drink | a little, often, through
+      the whole day.
+  - id: s03
+    voice: af_heart
+    title: A small garden
+    text: >-
+      Last spring, I started a small garden | on my balcony. I had no experience, and I had very
+      little space. So I began with three pots, some soil and a few seeds. I chose herbs, because
+      they grow quickly and they smell wonderful. Every evening, I checked the soil with my finger.
+      If it felt dry, I gave the plants some water. Within a month, the first leaves appeared. By
+      summer, I was cooking with my own basil | and mint. The garden taught me patience. It also
+      taught me that small efforts, repeated every day, can bring real results. If you have a
+      window, you have room to start.
+  - id: s04
+    voice: af_heart
+    title: Saving energy at home
+    text: >-
+      Today I would like to share | three easy ways to save energy at home. First, turn off lights
+      when you leave a room. It sounds obvious, but it makes a difference over a year. Next, wash
+      clothes in cold water | whenever you can. Most of the energy in a wash goes into heating the
+      water. Third, unplug chargers and devices | that you are not using. Many of them draw power
+      even when they sit idle. None of these steps costs money, and none of them takes much time.
+      Together, they lower the bill and reduce waste. Pick one idea this week, and add the next one
+      later.
+  - id: s05
+    voice: af_heart
+    title: Learning to cook
+    text: >-
+      When I moved into my first home, I could not cook at all. I ate the same simple meals, and I
+      spent too much | on takeaway food. So I made a plan. Every Sunday, I would learn one new dish.
+      I started with soup, because it is hard to get wrong. Then I tried rice, eggs and baked
+      vegetables. Some meals were good, and some were not. But each week, I became a little faster |
+      and a little more relaxed in the kitchen. After a few months, I could cook for friends. My
+      advice is simple. Start with one dish, and give yourself time to practise. Cooking soon
+      becomes fun.
+  - id: s06
+    voice: af_heart
+    title: Taking notes
+    text: >-
+      Good afternoon. My topic today is note taking. In class, many students try to write down every
+      word. That is tiring, and it often misses the main point. A better method is to listen first |
+      and write after. Write short phrases, not full sentences. Leave space on the page, so you can
+      add ideas later. After class, spend five minutes | looking over your notes. Mark the key
+      terms, and write one question you still have. This small review helps you remember much more.
+      It also shows you what to ask | in the next lesson. Good notes are not long. Good notes are
+      clear. They help you learn with less effort.
+  - id: s07
+    voice: af_heart
+    title: Public libraries
+    text: >-
+      I want to tell you why I love | the public library. It is one of the few places where you can
+      stay all day without paying. You can borrow books, of course, but there is much more. Many
+      libraries lend tools, games and even musical instruments. They offer free classes | for
+      children and adults. They give people a quiet place to study and a computer for work. For some
+      families, the library is the only place | with a fast internet connection. So the next time
+      you pass your local library, step inside. Ask what it offers. You may find more than you
+      expect. Most of it is free.
+  - id: s08
+    voice: af_heart
+    title: Better sleep
+    text: >-
+      Sleep affects almost everything | we do. When we sleep well, we think more clearly and we
+      learn faster. When we sleep badly, even simple tasks feel hard. Here are a few ideas that
+      helped me. Go to bed at the same time each night, even at the weekend. Keep the bedroom cool,
+      dark and quiet. Put screens away about an hour before sleep. If your mind is busy, write a
+      short list of tasks | for the next day. Then let them go. These changes take a week or two to
+      work. Be patient, and keep going. Sleep is not a luxury, and good habits make it much easier
+      to get.
+  - id: s09
+    voice: af_heart
+    title: Riding a bicycle to work
+    text: >-
+      Two years ago, I sold my car | and bought a bicycle. Many friends thought I had made a
+      mistake. The ride to work takes about twenty minutes, and the road is mostly level. In the
+      first week, my legs were tired, and I arrived a little late. After a month, the ride felt
+      easy. I now save money on fuel and parking. I also get exercise without visiting a gym. On
+      rainy days, I wear a light jacket | and leave a little earlier. The bicycle is not right for
+      everyone. But if your trip is short, it is worth a try. You may even start to look forward to
+      the ride.
+  - id: s10
+    voice: af_heart
+    title: Asking good questions
+    text: >-
+      In every meeting, someone has a question | but never asks it. Sometimes that person is me. We
+      worry that the question is too simple. Yet simple questions are often the most useful ones.
+      They help everyone check | that they understand the same thing. A good question is short and
+      clear. It asks about one idea at a time. It also shows that you were listening. If you are not
+      sure how to start, try this phrase. Could you give an example? Examples turn general ideas
+      into something real. So next time, ask your question. Someone else will thank you. Good
+      questions make every meeting shorter, clearer and more useful for all.
+  - id: s11
+    voice: af_bella
+    title: Planning a trip
+    text: >-
+      Planning a trip can feel like a lot of work. I break it into four small steps. First, I choose
+      the dates | and set a budget. Next, I look for a place to stay near public transport. Third, I
+      make a short list of things I really want to see. I keep that list short, because a full plan
+      leaves no room for surprises. Finally, I pack light. One small bag is enough | for almost any
+      trip. On the first day, I simply walk around | and get a feel for the place. The best moments
+      of a trip are often the ones you did not plan.
+  - id: s12
+    voice: af_bella
+    title: Learning a new language
+    text: >-
+      Learning a new language takes time, but it need not to be hard. The key is to make it part of
+      every day. I learn ten new words each morning | while I drink my coffee. I listen to short
+      stories | on the way to work. In the evening, I write three simple sentences about my day.
+      Once a week, I talk with a partner who speaks the language well. I still make many mistakes,
+      and that is fine. Mistakes show me what to practise next. Little by little, the words begin to
+      stay. Start small, and keep going. Every short session builds on the last one, and the gains
+      add up.
+  - id: s13
+    voice: af_bella
+    title: Recycling at the office
+    text: >-
+      Our office produced a lot of waste last year. Much of it was paper, plastic and food. So a
+      small team decided to act. We placed clear bins | in every kitchen. Each bin had a picture
+      that showed what belongs inside. We also stopped buying plastic cups | and asked everyone to
+      bring a mug. In the first month, the amount of waste fell by almost half. The changes were
+      simple, and they cost very little. The most important step was making the right choice easy.
+      When the bin is right there, people put things in it. Next year, we hope to add bins for glass
+      and old batteries as well.
+  - id: s14
+    voice: af_bella
+    title: Taking breaks
+    text: >-
+      Many of us work for hours without a break. We think it helps us finish faster. In fact, the
+      opposite is often true. After a long stretch, our attention starts to drift. We look at the
+      same line twice and make small errors. A short break can reset the mind. Stand up, stretch and
+      look out of a window. Walk to the kitchen | and pour a glass of water. Five minutes is often
+      enough. Some people work for fifty minutes | and then rest for ten. Find a rhythm that suits
+      you. Your work will be better, and your day will feel lighter. Try it for a week and compare.
+  - id: s15
+    voice: af_bella
+    title: Writing a clear email
+    text: >-
+      We all send many emails each day. Some are clear, and some leave people confused. Here is a
+      simple method | that I follow at work. Start with the main point in the first line. Say what
+      you need | and by when. Then give the details in short paragraphs. Keep one paragraph for each
+      idea. If you ask a question, put it on its own line, so it is easy to see. End with a friendly
+      closing and your name. Before you send it, look at it once more. Ask yourself whether a busy
+      person could understand it in a moment. Clear writing saves time for you and for every reader.
+  - id: s16
+    voice: af_bella
+    title: Trees in the city
+    text: >-
+      Trees do much more for a city | than most people realise. They give shade on hot days, which
+      keeps streets and buildings cooler. They clean the air and reduce noise from traffic. Their
+      roots help the ground hold water | after heavy rain. Birds and insects find homes in their
+      branches. Studies also suggest that people walk more on streets with trees. Planting a tree is
+      cheap, but caring for it takes time. Young trees need water for the first few years. If your
+      street has a young tree, give it a bucket of water | in the summer. A single tree, cared for
+      well, can shade a street for many decades.
+  - id: s17
+    voice: af_bella
+    title: Volunteering
+    text: >-
+      A year ago, I began volunteering | at a food bank near my home. I go there every Saturday
+      morning for three hours. My job is to sort the food that people donate. I check the dates,
+      group the items | and pack them into boxes for families. The work is simple, but it matters.
+      Each box helps a family through a difficult week. I have also met many kind people | who give
+      their time in the same way. If you want to help, start with one morning a month. Small amounts
+      of time, given regularly, make a real difference. You do not need special skills, only a
+      little time and some patience.
+  - id: s18
+    voice: af_bella
+    title: Preparing for an exam
+    text: >-
+      Exams can feel overwhelming, but a clear plan makes them easier. Start at least two weeks
+      before the date. Make a list of every topic | you need to know. Then divide the list | into
+      small parts, one or two for each day. Study each part, and then test yourself without your
+      notes. Write down anything you forget, and look at it again the next day. On the evening
+      before the exam, do not try to learn new material. Instead, rest, eat well and go to bed
+      early. A rested mind remembers more than a tired one. Trust the work you have done, and take
+      each question slowly and carefully.
+  - id: s19
+    voice: af_bella
+    title: Rainy days
+    text: >-
+      Some people dislike rainy days, but I have learned to enjoy them. Rain changes the sound of
+      the city. The streets become quieter, and the air smells fresh and clean. On a rainy weekend,
+      I make a pot of tea and open a good book. I also take the time for small jobs that I usually
+      avoid. I sort old papers, fix a loose button | or clean the windows from inside. When the rain
+      stops, I go for a walk. The light after rain is often beautiful. So the next time it rains,
+      try to see it | as a gift of time. Rain, after all, keeps the gardens green.
+  - id: s20
+    voice: af_bella
+    title: Working in a team
+    text: >-
+      Good teamwork never happens by chance. It grows from a few simple habits. The first habit is
+      to agree on the goal | at the very start. When everyone knows the goal, decisions become
+      easier. The next habit is to share updates often, even when there is little to say. A short
+      message can prevent a long delay. The third habit is to listen before you answer. In a busy
+      meeting, it is tempting to speak first. But listening helps you understand the whole picture.
+      Finally, thank people for their help. Small thanks keep a team | working well together. These
+      habits are simple, but they make a team strong and reliable.
+  - id: s21
+    voice: am_michael
+    title: Keeping a budget
+    text: >-
+      Many people avoid making a budget, because it sounds complicated. In fact, a basic budget
+      needs only three columns. In the first column, write what you earn each month. In the middle
+      one, list your fixed costs, such as rent and travel. In the third, write what is left for
+      food, savings and everything else. Look at this page | once a week. You will quickly see where
+      your money goes. Most people find one or two costs | that they can cut without missing them. A
+      budget is not about saying no to everything. It is about choosing what matters most. Review
+      the budget each month, and adjust it as life changes.
+  - id: s22
+    voice: am_michael
+    title: Starting a new job
+    text: >-
+      The first week in a new job | can feel strange. There are new names, new systems and new
+      rules. Here is what helped me. On the first day, I wrote down the name of everyone I met. I
+      asked my manager what success would look like | after three months. That one question gave me
+      a clear direction. I also found one colleague who was willing to answer small questions. I
+      tried not to change things too quickly. Instead, I watched how the team worked | and why. By
+      the end of the first month, I felt at home. Every new job is a chance to learn, so give
+      yourself time to settle.
+  - id: s23
+    voice: am_michael
+    title: Fixing a slow computer
+    text: >-
+      If your computer feels slow, there are a few simple things to try before buying a new one.
+      First, restart it. This clears memory | and often solves the problem at once. Next, quit
+      programs that you are not using. Many of them keep running | in the background. Third, check
+      how much free space is left on the disk. When the disk is almost full, the whole system slows
+      down. Delete old files, or move them to an external drive. Finally, keep the software up to
+      date. These steps take only a few minutes, and they often help. If none of this helps, ask a
+      friend or a repair shop for advice.
+  - id: s24
+    voice: am_michael
+    title: Walking meetings
+    text: >-
+      Some of my best ideas come | when I am walking. So last year, I tried something new at work.
+      When a meeting involved only two or three people, we held it outside. We walked around the
+      block for thirty minutes and talked. At first, few colleagues joined. Soon, they began to ask
+      for walking meetings themselves. We found that people spoke more openly | and kept to the
+      point. Of course, this will not suit every meeting. You cannot share a screen on the street.
+      But for planning and problem solving, a walk can work very well. Fresh air and movement seem
+      to help people think in new ways together.
+  - id: s25
+    voice: am_michael
+    title: The value of maps
+    text: >-
+      Today we carry maps in our pockets, but it was not always so. For most of history, maps were
+      rare and very valuable. Sailors and traders kept them safe, because a good map could save a
+      ship. Early maps were often wrong. Coasts were in the wrong place, and some islands did not
+      exist at all. Over time, careful measurement made maps more accurate. Today, satellites help
+      us draw the whole planet | in great detail. Yet the basic idea has not changed. A map helps us
+      understand where we are | and where we want to go. Every map is also a story about the people
+      who made it and their time.
+  - id: s26
+    voice: am_michael
+    title: Cleaning up code
+    text: >-
+      When software grows, the code often becomes messy. Names stop making sense, and functions
+      become very long. This makes every new change slower and riskier. A good habit is to tidy a
+      little | each time you touch the code. Give a variable | a clearer name. Split a long function
+      into two smaller ones. Remove lines that no one calls anymore. Run the tests after each small
+      step, so you know nothing broke. These changes seem minor on their own. Over months, they keep
+      the code healthy and easy to work with. Teams that tidy as they go spend less time fixing bugs
+      and more time building useful features for their users.
+  - id: s27
+    voice: am_michael
+    title: Solar panels
+    text: >-
+      Solar panels turn sunlight into electricity. They have become much cheaper | over the last ten
+      years. Today, many families put panels on their roof to lower their energy bills. A typical
+      system pays for itself | in about eight to ten years. After that, the power is almost free.
+      Panels work best when they face the sun and are not in shade. They still work on cloudy days,
+      but they make less. Some homes also add a battery. The battery stores energy during the day,
+      so the family has power at night. Before you buy a system, ask a local installer to check your
+      roof and explain the likely savings clearly.
+  - id: s28
+    voice: am_michael
+    title: Learning from mistakes
+    text: >-
+      Everyone makes mistakes. What matters is what we do | after we make them. When something goes
+      wrong at work, I ask three questions. What happened? Why did it happen? What will I do
+      differently next time? I write the answers down, because writing makes | my thinking clear. I
+      try to focus on the process, not on blame. Most mistakes come from unclear steps, not from
+      careless people. When I share what I learned, others can avoid the same problem. Over time, a
+      team that talks openly about mistakes makes far fewer of them. Mistakes are a normal part of
+      any real work, and each one carries a lesson if we look for it.
+  - id: s29
+    voice: am_michael
+    title: Public transport
+    text: >-
+      I have not owned a car | for five years, and I do not miss it. Our city has a good network of
+      buses and trains. A monthly pass costs less than parking for a week. I spend the travel time
+      to think, to plan my day | or to listen to music. Of course, there are delays. When a train is
+      late, I simply take the next one. I also walk more than before, because the stops are a short
+      distance from my home. Public transport is not right for everyone. For me, it has made life
+      simpler. Many cities are also adding more bicycle lanes and night buses for late workers.
+  - id: s30
+    voice: am_michael
+    title: Giving feedback
+    text: >-
+      Giving feedback is a skill, and like any skill, it improves with practice. I follow a simple
+      pattern. First, describe what you saw, in clear and specific terms. Next, explain the effect
+      it had | on the work or the team. Third, suggest one change for next time. Keep the feedback
+      short, and give it soon | after the event. Talk about actions, not about the person. Finally,
+      ask what the other person thinks. They may know something that you do not. Good feedback is a
+      conversation, not a speech. When feedback is given with care, people tend to listen, ask
+      questions and try the change in their next piece of work.
+  - id: s31
+    voice: am_fenrir
+    title: Bridges
+    text: >-
+      Bridges are some of the oldest structures | that people build. The first bridges were simply
+      logs laid across a stream. Later, builders made stone arches, which spread the weight down
+      into the ground. Some stone bridges have stood for many hundreds of years. Today, engineers
+      choose steel and concrete. These materials allow bridges to cross wide rivers | and deep
+      valleys. A bridge must carry its own weight, the weight of traffic and the force of strong
+      storms. Every design is a careful balance. When you next cross a bridge, take a moment to look
+      at how it works. Each bridge is a quiet answer to a very old human problem.
+  - id: s32
+    voice: am_fenrir
+    title: Morning routines
+    text: >-
+      How you start the morning | often shapes the whole day. My routine is short and simple. I wake
+      up at the same time, even on weekends. I drink a glass of water | before anything else. Then I
+      spend ten minutes stretching on the floor. After that, I write down the three most important
+      tasks for the day. I do not check my phone | until breakfast is over. This keeps the first
+      hour quiet and focused. Your routine need not to look like mine. The point is to choose a few
+      steps | and repeat them every day. Over a few weeks, a quiet start can change how the whole
+      week feels.
+  - id: s33
+    voice: am_fenrir
+    title: Why we need bees
+    text: >-
+      Bees are small, but their work is enormous. As they move from flower to flower, they carry
+      pollen | to new plants. This helps plants make fruit and seeds. Many of the foods we eat
+      depend on this work, including apples, beans and almonds. In recent years, bee numbers have
+      fallen | in many places. The causes include loss of flowers, disease and certain chemicals.
+      There are simple ways to help. Plant flowers that bloom at different times of the year. Leave
+      a corner of the garden a little wild. Avoid strong chemicals, especially when plants are in
+      flower. Every small garden, balcony or window box can help these tiny workers.
+  - id: s34
+    voice: am_fenrir
+    title: Making decisions
+    text: >-
+      Some decisions are easy, and some keep us awake at night. For the difficult ones, I follow a
+      short method. First, I write the question at the top of a page. Then I list the options, even
+      the ones that seem unlikely. For each option, I note the main benefit | and the main risk.
+      Next, I ask what I would advise a friend to do. This simple question often makes the answer
+      clear. If the answer is still not clear, I wait one more day. A good night of sleep | can
+      change how a problem looks. Most decisions are not final, and it is usually possible to adjust
+      the plan later if needed.
+  - id: s35
+    voice: am_fenrir
+    title: The history of the wheel
+    text: >-
+      The wheel seems simple to us, but it took a long time to invent. People made pottery on
+      turning wheels before they put wheels on carts. The first carts were heavy | and slow. Their
+      wheels were solid pieces of wood | joined together. Later, builders made wheels with spokes,
+      which were much lighter. Light wheels allowed faster travel and better trade. Over thousands
+      of years, the wheel changed farming, war and everyday life. Today, wheels are everywhere, from
+      bicycles to tiny parts inside a watch. A small idea, improved over time, changed the world.
+      Next time you ride a bicycle or push a cart, remember how long that simple circle took.
+  - id: s36
+    voice: am_fenrir
+    title: Staying focused
+    text: >-
+      Our attention is pulled in many directions | every day. Messages arrive, alarms ring and tabs
+      multiply on the screen. To do focused work, I protect blocks of time. I choose one task and
+      set a timer for forty minutes. During that time, I shut my email | and put my phone in another
+      room. If a new idea appears, I write it on a note and return to the task. When the timer ends,
+      I take a short break. Most days, I manage three of these blocks. That is often enough | to
+      finish the work that matters. Protecting your attention is one of the most useful skills you
+      can build at work.
+  - id: s37
+    voice: am_fenrir
+    title: Cooking with leftovers
+    text: >-
+      A lot of food goes to waste | in the average home. Much of it is leftovers that sit in the
+      fridge for too long. I now plan one meal each week | made from whatever is left. Cooked rice
+      becomes fried rice with a few vegetables. Old bread becomes toast, crumbs or a simple pudding.
+      Soft vegetables go into soup. I also freeze small portions, so they do not spoil. This habit
+      saves money, and it makes cooking more creative. Look in your fridge tonight. You may already
+      have most of the ingredients | for a good meal. With a little planning, leftovers become a
+      quick and cheap meal for the whole family.
+  - id: s38
+    voice: am_fenrir
+    title: Learning to swim as an adult
+    text: >-
+      I learned to swim | when I was thirty years old. As a child, I never had lessons, and I was
+      always uneasy near deep water. One summer, I decided to change that. I joined a class for
+      adults at the local pool. The teacher was patient, and the group was small. We started by
+      simply floating and breathing slowly. After a few weeks, I could swim one length | without
+      stopping. By the end of the summer, I could swim for twenty minutes. It is never too late to
+      learn a new skill. You only need to begin. Today, swimming is the way I relax after a long day
+      at work.
+  - id: s39
+    voice: am_fenrir
+    title: Clean air indoors
+    text: >-
+      We spend most of our time indoors, so the air inside matters. Cooking, cleaning and even
+      breathing all affect it. The simplest step is to open a window | for a few minutes each day.
+      Fresh air replaces the stale air inside. When you cook, turn on the fan above the stove. Clean
+      dust regularly with a damp cloth, which traps the dust | instead of spreading it. Some people
+      add plants, although their effect is small. If your home is near a busy road, open windows on
+      the quieter side. Clean air helps you sleep and think better. These small steps cost almost
+      nothing, and they make a home more pleasant every day.
+  - id: s40
+    voice: am_fenrir
+    title: Speaking to a group
+    text: >-
+      Speaking to a group | is a common part of many jobs. A little preparation goes a long way.
+      Start by deciding the one message that you want people to remember. Build everything else
+      around that message. Choose short sentences and simple words. Give an example or a story | for
+      each main point. Practise out loud at least twice, and time yourself. On the day, arrive early
+      and check the room. Look at people as you speak, and pause after important points. End by
+      repeating your main message. Then thank the audience and invite questions. With practice,
+      speaking to a group becomes easier, and your message reaches more people each time.
+  - id: s41
+    voice: bf_emma
+    title: Walking in the hills
+    text: >-
+      Every month, I spend one day | walking in the hills near my town. I leave early, before the
+      paths become busy. I pack water, a sandwich and a warm jacket, even in summer. The weather in
+      the hills can change very quickly. I follow marked paths and carry a paper map as well as my
+      phone. Walking for several hours clears my head | in a way nothing else can. I come home
+      tired, but with a clear head. If you have never tried it, start with a short route. Choose a
+      clear day, and tell someone where you are going. The hills will always be there, ready for
+      your next walk and your next view.
+  - id: s42
+    voice: bf_emma
+    title: Writing by hand
+    text: >-
+      Most of us type far more than we write by hand. Yet writing by hand still has real benefits.
+      When we write slowly, we think more about each word. Some studies suggest that students
+      remember more | when they take notes by hand. I keep a small notebook for ideas and plans.
+      Each evening, I write a few lines | about the day. It takes only five minutes, but it helps me
+      notice patterns. A notebook never needs charging, and it never sends alerts. Try writing by
+      hand for one week, and see how it feels. You may find that your thoughts become slower,
+      clearer and more your own on the page.
+  - id: s43
+    voice: bf_emma
+    title: Fresh bread
+    text: >-
+      There is nothing quite like the smell | of fresh bread in the kitchen. Many people think
+      baking bread is difficult, but a simple loaf needs only four things. You need flour, water,
+      salt and yeast. Mix them together, then knead the dough for about ten minutes. Leave it in a
+      warm place until it doubles in size. Shape the loaf, let it rise once more | and bake it in a
+      hot oven. The first attempt may not be ideal. That is part of the fun. Each loaf teaches you
+      something new about the dough. Soon, you will find that homemade bread tastes far better than
+      most loaves from a shop.
+  - id: s44
+    voice: bf_emma
+    title: Looking after your eyes
+    text: >-
+      Many of us look at screens | for most of the day. Our eyes were not made for this. They work
+      hardest when they focus on something near for a long time. A simple rule can help. Every
+      twenty minutes, look at something far away | for twenty seconds. This lets the eye muscles
+      relax. Make sure the screen is not too bright, and sit at a comfortable distance. Blink often,
+      because we blink less when we concentrate. Finally, have your eyes checked regularly. Good
+      vision makes every task easier, so it deserves a little care. Your eyes work hard for you
+      every day, so give them regular rest and attention.
+  - id: s45
+    voice: bf_emma
+    title: The local market
+    text: >-
+      Every Saturday, our town holds a market | in the main square. Farmers bring fruit, vegetables
+      and eggs from nearby villages. There are stalls with bread, cheese and flowers. I like the
+      market for many reasons. The food is fresh, and I can talk to the people who grew it. I often
+      learn new ways to cook a vegetable. Prices are fair, especially near the end of the morning.
+      The market also brings neighbours together. I usually meet a friend | and stop for a coffee.
+      It is the best part of my week. If your town has a market, visit it this weekend and buy
+      something you have never cooked before.
+  - id: s46
+    voice: bf_emma
+    title: Tidy desk
+    text: >-
+      My desk was once covered | in papers, cups and cables. I told myself that I knew where
+      everything was. In truth, I lost time searching | for things every day. So I made a few rules.
+      At the end of each day, I clear the desk completely. Papers go into one tray, and anything I
+      do not need goes in the bin. Cables are tied together and kept out of sight. In the morning, I
+      start with an empty surface. It sounds like a small change, but it helps me begin work quickly
+      and calmly. A tidy space at the start of the day makes it easier to think clearly.
+  - id: s47
+    voice: bf_emma
+    title: Why we tell stories
+    text: >-
+      People have told stories | for as long as we have had language. Before writing, stories
+      carried knowledge from one generation to the next. They explained where food could be found,
+      which plants were safe and how to behave. Stories are easier to remember than lists of facts.
+      When we hear a story, we picture the people and the places. We want to know what happens next.
+      This is why good teachers often begin with a story. A short example can make a difficult idea
+      | feel simple and real. So when you need to explain something important, think about a story
+      that shows the idea in action, and tell it simply.
+  - id: s48
+    voice: bf_emma
+    title: Growing tomatoes
+    text: >-
+      Tomatoes are one of the easiest plants | to grow at home. They need sun, water and a large pot
+      with good soil. Plant them after the last cold night of spring. Water them deeply, but not
+      every day. Too much water makes the fruit split. As the plants grow, tie the stems to a stick
+      so they do not fall over. Remove the small shoots | that appear between the main stem and the
+      leaves. After about two months, the first fruit will turn red. Pick them when they are firm
+      and bright. Fresh tomatoes from your own pot taste sweeter than most that you can buy, and
+      they cost very little.
+  - id: s49
+    voice: bf_emma
+    title: Quiet time
+    text: >-
+      Our days are full of sound. There is traffic outside, music in shops | and alerts on our
+      phones. Many of us rarely experience real quiet. Yet a few minutes of silence | can be very
+      restful. I try to sit quietly for ten minutes each afternoon. I do not try to empty my mind. I
+      simply notice my breathing and the sounds around me. Some days, my thoughts wander a lot, and
+      that is fine. Afterwards, I feel more patient and alert. You can do this anywhere, even on a
+      train. All you need is a few minutes. Over time, these quiet minutes can become a quiet and
+      steady part of the day.
+  - id: s50
+    voice: bf_emma
+    title: Choosing a good book
+    text: >-
+      With so many books available, choosing the next one can be hard. I rely on a few simple
+      methods. First, I ask friends what they enjoyed recently, and why. Next, I look at the first
+      page in the shop | before I decide. If the first page holds my attention, the rest usually
+      will. Third, I mix different kinds of books. After a long novel, I often choose something
+      short | or something factual. Finally, I give myself permission to stop. If a book is not
+      working for me after fifty pages, I put it aside without guilt. Reading should feel like a
+      pleasure, so choose books that keep you turning the pages.
+  - id: s51
+    voice: bm_george
+    title: Walking to school
+    text: >-
+      When I was a child, I walked to school every day with my brother. The walk took | about
+      fifteen minutes. On the way, we passed a bakery, a small park and an old church. We talked
+      about games, teachers and the weekend. Some mornings, we raced each other | to the corner.
+      Those walks taught me to notice small changes in the street and the seasons. Today, many
+      children travel to school by car. Walking, when it is safe, gives children exercise and a
+      little freedom. It also gives them time to talk. When I think back to my school days, those
+      quiet walks with my brother are what I remember most.
+  - id: s52
+    voice: bm_george
+    title: Fixing things yourself
+    text: >-
+      When something breaks, our first thought is often to buy a new one. Yet many common problems
+      are easy to fix. A loose chair can be tightened with a screwdriver. A dripping tap often needs
+      only | a new washer. A torn bag can be sewn | in a few minutes. There are clear guides and
+      videos for almost every repair. I keep a small box of tools at home, with glue, tape and spare
+      screws. Fixing things saves money and reduces waste. It also gives a quiet sense of
+      achievement. Start with something small, and build from there. Each repair teaches a new skill
+      that will be useful again in the future.
+  - id: s53
+    voice: bm_george
+    title: The weather forecast
+    text: >-
+      We check the weather forecast | almost every day, but few of us know how it is made. Weather
+      stations around the world measure temperature, rain and pressure. Balloons and satellites
+      collect data from high in the sky. Powerful computers then take this data | to model how the
+      air will move. The model is run many times with small changes. If most runs agree, the
+      forecast is more certain. If they disagree, the forecast is less sure. That is why a forecast
+      often gives a chance of rain, rather than a simple yes or no. Forecasts have improved greatly,
+      and a forecast for three days ahead is now quite reliable.
+  - id: s54
+    voice: bm_george
+    title: Learning an instrument
+    text: >-
+      Last year, I finally started learning the piano. I had wanted to play | since I was a boy. At
+      first, my fingers felt stiff and slow. Even a simple tune took me a whole week. My teacher
+      gave me one piece of advice that changed everything. Practise for fifteen minutes every day,
+      rather than for two hours once a week. Short, regular practice helps the hands and the mind
+      remember. I now play a little every evening | after dinner. I am still a beginner, but I can
+      play several short pieces. Learning an instrument as an adult takes patience, but every small
+      step forward feels like a real reward.
+  - id: s55
+    voice: bm_george
+    title: Keeping in touch
+    text: >-
+      As we get older, it becomes harder to stay in touch with friends. Work, family and distance
+      all take our time. A few years ago, I made a simple plan. Every Sunday evening, I send a short
+      message | to one old friend. I ask a question about their life | and share a small piece of
+      news. It takes five minutes. Some friends reply at once, and some take days. Either way, the
+      connection stays alive. Several of these messages have led to long phone calls and visits.
+      Friendship needs care, but not a lot of time. A short message today can keep a friendship
+      strong for many more years to come.
+  - id: s56
+    voice: bm_george
+    title: The importance of sleep for students
+    text: >-
+      Students often sleep less | when exams come closer. They stay up late to study, hoping to
+      learn more. In fact, sleep is when the brain sorts and stores new information. Without enough
+      sleep, it is harder to remember | what you studied. It is also harder to concentrate during
+      the exam itself. Most young adults need between seven and nine hours each night. A regular
+      bedtime helps the body settle into a pattern. So during exam season, protect your sleep. It is
+      one of the best study tools | you have. Students who sleep well often find that they need
+      fewer hours of study, because they remember more of what they learn.
+  - id: s57
+    voice: bm_george
+    title: Choosing a bicycle
+    text: >-
+      Choosing a bicycle can be confusing, because there are so many types. Start by thinking about
+      where you will ride. For city streets, a simple bicycle with upright handlebars is comfortable
+      and safe. For rough paths, you need wider tyres | and stronger brakes. Size matters more than
+      price. Your feet should reach the ground | when you stop, and your arms should not stretch too
+      far. Always try a bicycle before you buy it. Ride it around the block, and test the brakes. A
+      good fit makes every ride more pleasant. Many shops also sell good bicycles that have been
+      carefully checked, which can save you a lot of money.
+  - id: s58
+    voice: bm_george
+    title: Making a shopping list
+    text: >-
+      A shopping list sounds like a small thing, but it can save both money and time. Before I go to
+      the shop, I look in the fridge and the cupboards. I write down what is missing | and plan
+      meals for the next few days. I group the list | by area, such as fruit, dairy and bread. In
+      the shop, I follow the list and avoid the aisles I do not need. This stops me from buying
+      things on impulse. I also waste less food at home, because I only buy what I plan to cook. It
+      takes only a few minutes, and the habit quickly pays for itself every single week.
+  - id: s59
+    voice: bm_george
+    title: Winter walks
+    text: >-
+      Many people stay indoors | during the winter months. The days are short, and the weather is
+      often cold and grey. Yet a winter walk can be wonderful. The air is crisp, and the paths are
+      quiet. Bare trees let you see further across the fields. To enjoy it, dress in several thin
+      layers | and wear a warm hat. Walk in the middle of the day, when the light is best. Even
+      twenty minutes outside can lift your energy. Afterwards, a hot drink tastes even better than
+      usual. Winter has its own quiet beauty, and a short walk is the best way to see it before
+      spring returns to the fields.
+  - id: s60
+    voice: bm_george
+    title: Ending a talk well
+    text: >-
+      The end of a talk is what people remember most. Yet many speakers simply stop | when they run
+      out of slides. A strong ending has three parts. First, sum up the main message | in one or two
+      sentences. Next, tell the audience what you would like them to do next. It might be to try an
+      idea, visit a website or ask a question. Third, finish with a clear closing line, and then
+      pause. Do not rush away from the stage. Give people a moment to take in what you have said.
+      Then thank them warmly. A clear ending turns a good talk into one that people remember and act
+      upon.
