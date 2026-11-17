@@ -150,6 +150,20 @@ reported next to it. Seed 20261117 per clip.
   run on a Colab or Kaggle CPU with the app's pipeline (the whisper-small CTranslate2 int8 model
   converted as in ADR 0008, and the C1 clips). The run records the CPU model and package
   versions, because int8 kernels can differ slightly between CPUs.
+- **As run (owner, 2026-11-18):** the test part and the noise conditions ran on a Colab T4
+  with the same int8 whisper_small (`--device cuda`). On the development part, the GPU gave the
+  same F1 and duration error as the laptop CPU, and a wpm error of 1.01 % against 1.07 %.
+
+## Results (run f1, 2026-11-17/18)
+
+- C1: 287 of 300 clips (13 dropped, all at the 191 wpm target); 86 development and 201 test.
+- **E2 passes on the clean test part, scored once:** wpm error 0.97 %, pause F1 0.970 at 0.5 s
+  and 0.982 at 1.0 s, duration error 0.076 s.
+- Position (headline): mid-sentence labelled as a boundary 58.9 %, boundary labelled
+  mid-sentence 5.1 %.
+- Noise, descriptive: at 20 dB / 10 dB, F1 0.960 / 0.959 at 0.5 s and duration error
+  0.090 / 0.087 s; wpm error stays about 1 %.
+- Details: `experiments/results/e2/f1_test_results.md`, `f1_dev_findings.md`.
 
 ## Consequences
 

@@ -176,3 +176,10 @@ def test_headline_position_measure_ignores_sentence_clause_swaps():
     assert summ.position_table["sentence_boundary"]["clause_boundary"] == 1
     assert summ.position_table["mid_sentence"]["unknown"] == 1
     assert summ.position_error_rate == pytest.approx(4 / 6)  # extra information
+
+
+def test_noise_conditions_get_no_verdict():
+    """ADR 0014 §7: the noise conditions are descriptive, with no pass target."""
+    s = e2.score_clip(truth(()), (), 150.0, "test", "snr10", EV)
+    summ = e2.summarise([s], EV)
+    assert summ.passed is None and summ.passes == {}

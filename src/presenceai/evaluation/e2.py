@@ -11,8 +11,8 @@ All rules here were fixed before the first E2 run:
 - duration error: mean absolute error over all matched pauses;
 - wpm error: mean absolute percentage error over **all clips**; a clip without a measured rate
   counts as a 100 % error. The filler / no-filler breakdown is extra information;
-- pass/fail against ADR 0009's targets only on the test part; the development part is for
-  tuning and gets no verdict.
+- pass/fail against ADR 0009's targets only on the clean test part; the development part is
+  for tuning and the noise conditions are descriptive, so neither gets a verdict.
 """
 
 from __future__ import annotations
@@ -215,7 +215,7 @@ def summarise(scores: Sequence[E2ClipScore], ev: EvaluationSettings) -> E2Summar
     positions = [p for s in scores for p in s.positions]
     wpm_all = wpm(scores)
     dur = _mean(durations)
-    if part == "test":
+    if part == "test" and condition == "clean":  # noise conditions are descriptive (§7)
         passes: dict[str, bool | None] = {
             "wpm": None if wpm_all is None else wpm_all <= cfg.wpm_error_pct_max,
             "duration": None if dur is None else dur <= cfg.duration_error_s_max,
