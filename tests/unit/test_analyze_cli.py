@@ -52,10 +52,11 @@ def test_analyze_file_builds_a_report(fake_whisper: Any, silent_wav: Path, speec
         report.not_measurable
     )
     assert "rate.wpm" not in report.measurements
-    # slice 3: no fillers in "Hello everyone. Today I will talk.", lower bound with base model
+    # slice 3: no fillers in "Hello everyone. Today I will talk."; base model: "at least", no range
     assert report.fillers == () and report.repetitions == ()
     assert report.measurements["fillers.count"].value == 0
-    assert "lower bound" in report.measurements["fillers.per_100_words"].method
+    assert report.measurements["fillers.per_100_words"].method.startswith("at least 0.0")
+    assert "fillers.per_100_words_upper" not in report.measurements
     assert report.pitch is not None and "pitch" not in report.model_dump()
 
 

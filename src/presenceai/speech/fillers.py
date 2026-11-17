@@ -12,9 +12,11 @@ Two detectors:
    values are PROVISIONAL (ADR 0012). Whisper word timings decide what counts as "no word": a
    word stretched over a hesitation hides it (see the test and LIMITATIONS.md).
 
-Base Whisper drops many fillers, so with a non-verbatim model the lexicon count is a **lower
-bound** and confidence is capped (English medium, Arabic low). The upper end of the range adds
-acoustic candidates that no lexicon filler explains.
+Base Whisper drops many fillers, so with a non-verbatim model the result is reported as **"at
+least N per 100 words"** with capped confidence (English medium, Arabic low), and acoustic
+candidates without a lexicon filler are shown only as extra, low-confidence candidates. No range
+is claimed: on a real clip, 0.86–1.54 per 100 words did not contain the true 3.0. Only with a
+verbatim model (T1) is the result a range (lexicon to lexicon + acoustic-only).
 """
 
 from __future__ import annotations
@@ -164,14 +166,7 @@ def summarise(
     *,
     verbatim: bool,
 ) -> tuple[dict[str, Measurement], dict[str, str]]:
-    keys = (
-        "fillers.count",
-        "fillers.per_100_words",
-        "fillers.per_100_words_upper",
-        "fillers.acoustic_candidates",
-        "discourse_markers.count",
-        "discourse_markers.per_100_words",
-    )
+    keys = tuple(k for k in _KEYS_ALL if verbatim or not k.endswith("_upper"))
     words = transcript.words
     hes = [e for e in lexical if e.kind == FillerKind.HESITATION]
     hes_words = sum(e.last_word - e.first_word + 1 for e in hes)
@@ -213,30 +208,50 @@ def summarise(
 
     acoustic_only = [c for c in acoustic if not c.agrees_with_lexicon]
     cand_ev = tuple(Evidence(time=TimeSpan(start_s=c.start_s, end_s=c.end_s)) for c in acoustic)
+    only_ev = tuple(
+        Evidence(time=TimeSpan(start_s=c.start_s, end_s=c.end_s)) for c in acoustic_only
+    )
     markers = [e for e in lexical if e.kind == FillerKind.DISCOURSE_MARKER]
     per100 = 100.0 / base_words
+    rate = len(hes) * per100
     upper_bound = (
         " (upper bound: every occurrence counted, including ordinary uses; information only)"
     )
-    m = {
+    m: dict[str, Measurement] = {
         "fillers.count": measure(len(hes), "count", conf, "lexicon hesitations" + bound, ev(hes)),
-        "fillers.per_100_words": measure(
-            len(hes) * per100,
-            "per 100 words",
-            conf,
-            "lexicon hesitations / non-filler words" + bound,
-            ev(hes),
-        ),
-        "fillers.per_100_words_upper": measure(
+    }
+    if verbatim:
+        # a verbatim transcript keeps fillers, so lexicon .. lexicon + acoustic-only is a range
+        m["fillers.per_100_words"] = measure(
+            rate, "per 100 words", conf, "lexicon hesitations / non-filler words", ev(hes)
+        )
+        m["fillers.per_100_words_upper"] = measure(
             (len(hes) + len(acoustic_only)) * per100,
             "per 100 words",
             Confidence.LOW,
-            "lexicon + acoustic candidates without a lexicon filler"
-            " (upper estimate; provisional detector)",
-            ev(hes)
-            + tuple(
-                Evidence(time=TimeSpan(start_s=c.start_s, end_s=c.end_s)) for c in acoustic_only
-            ),
+            "upper end of the range: lexicon + acoustic candidates without a lexicon filler"
+            " (provisional detector)",
+            ev(hes) + only_ev,
+        )
+    else:
+        # Base Whisper drops fillers: on a real clip the lexicon gave 0.86 and lexicon + acoustic
+        # 1.54 per 100 words against a true 3.0, so no range is claimed (ADR 0012).
+        m["fillers.per_100_words"] = measure(
+            rate,
+            "per 100 words (at least)",
+            conf,
+            f"at least {rate:.1f} per 100 words: lexicon hesitations / non-filler words"
+            f"{bound}; the true rate can be much higher",
+            ev(hes),
+        )
+    m |= {
+        "fillers.acoustic_only_candidates": measure(
+            len(acoustic_only),
+            "count",
+            Confidence.LOW,
+            "extra candidates, not counted as fillers: voiced, steady-pitch sound with no word"
+            " and no lexicon filler nearby (provisional detector)",
+            only_ev or (Evidence(time=span),),
         ),
         "fillers.acoustic_candidates": measure(
             len(acoustic),
@@ -261,3 +276,14 @@ def summarise(
         ),
     }
     return m, {}
+
+
+_KEYS_ALL = (
+    "fillers.count",
+    "fillers.per_100_words",
+    "fillers.per_100_words_upper",  # only with a verbatim model
+    "fillers.acoustic_only_candidates",
+    "fillers.acoustic_candidates",
+    "discourse_markers.count",
+    "discourse_markers.per_100_words",
+)

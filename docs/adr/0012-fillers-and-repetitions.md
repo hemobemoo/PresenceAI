@@ -66,8 +66,19 @@ steady pitch:
 | `max_unvoiced_gap_s` | 0.05 (short unvoiced dropouts merged inside one candidate) |
 | `agreement_tolerance_s` | 0.05 (a candidate this close to a lexicon hesitation agrees with it) |
 
-The report shows a **range**: the lower end is the lexicon count, and the upper end adds the
-acoustic candidates that no lexicon filler explains. The upper end always has low confidence.
+**How the result is reported** (changed by the owner on 2026-11-17, before merge):
+
+- **Base Whisper (`verbatim: false`):** "**at least N per 100 words**". The value is the
+  lexicon rate, the unit is `per 100 words (at least)`, the method text starts "at least N per
+  100 words", and the confidence is capped (§3). **No range is claimed.** On the real 3-minute
+  clip, the range 0.86–1.54 per 100 words did not contain the true rate of about 3.0 (18 uh/um in
+  609 reference words), so calling it a range would mislead. Acoustic candidates without a
+  lexicon filler are shown separately as `fillers.acoustic_only_candidates`: extra candidates,
+  low confidence, not counted as fillers.
+- **Verbatim model (T1, `verbatim: true`):** a **range**. The lower end is the lexicon rate
+  (`fillers.per_100_words`) and the upper end (`fillers.per_100_words_upper`, low confidence)
+  adds the acoustic-only candidates. Whether that range contains the true rate is checked in E3
+  before any wording relies on it.
 
 **Tuning is allowed only on:**
 - DisfluencySpeech **train and validation** splits (Apache-2.0; its test split is used only for
@@ -81,6 +92,18 @@ from the sorted disfluency-layer pool:
 
 - **development (tuning):** ES2005, IS1001, TS3005 (12 meetings);
 - **test (E3 scoring only):** ES2002, ES2006, ES2008, IS1003, IS1009, TS3006, TS3007.
+
+The session split is **approved by the owner (2026-11-17)**. Its speaker separation is still to be
+checked:
+
+- **Speaker check, to do after the AMI download (which needs the owner's approval):** read the
+  speaker (participant) list in the corpus metadata that comes with the annotation package and
+  confirm that **no speaker appears in both a development and a test session**. Grouping
+  meetings by session keeps each session's speakers together, but it does not prove that no
+  person took part in two sessions, so this is checked, not assumed.
+  - **Result:** _not yet checked; recorded here after the download._
+  - If any speaker is shared, the split is redrawn with the shared speaker's sessions on one side,
+    before any tuning, and this ADR records the new split.
 
 **PodcastFillers stays evaluation-only** and is never used for tuning or training. Downloads
 need the owner's approval first. AMI follows `docs/data/DATA_SOURCES.md` §4: official Edinburgh
@@ -111,8 +134,26 @@ E3 measures how often this happens.
 - pYIN (librosa, ISC; `uv add librosa`; licence check 0 FAIL, 0 WARN) runs **once per
   recording**, with a limited range of 65–400 Hz, a 1024-sample frame (64 ms) and a 160-sample
   hop (10 ms).
-- About 5 s per 3 minutes of audio on the laptop, plus about 20 s for numba to compile on the
-  first call of a run.
+- Cost per 3 minutes of audio on the laptop (i7-1255U: 2 performance + 8 efficiency cores),
+  single-threaded: 5 s when the machine was idle, 21–23 s with ~37 % background load
+  (browsers). The same code and file were used for both; the difference is which core Windows
+  runs pYIN on. Numba also compiles once per process, adding ~9–19 s to the first call.
+- **Per-stage breakdown** (3-minute public clip, one run, 2026-11-17, ~37 % background load):
+
+  | Stage | Time |
+  |---|---|
+  | ASR, whisper-small (incl. decode) | 58.0 s |
+  | pYIN, first call (incl. compile) | 31.7 s |
+  | VAD (Silero) | 1.4 s |
+  | imports + model load | 1.1 s |
+  | second audio decode | 0.25 s |
+  | pauses, rate, syllables, fillers, repetitions, report | ~0.2 s together |
+
+  Apart from ASR and pYIN, every stage together takes about 3 s, so nothing else needed fixing.
+  The 45 s → 99 s difference between the slice 2 and slice 3 smoke runs is pYIN plus slower ASR
+  under a busier machine. Options if pYIN becomes a problem: run it only over VAD speech regions,
+  or run it alongside ASR. Neither is done yet.
+- Tests that run real pYIN are marked `slow`, so the fast suite does not pay the compile cost.
 - The track is kept on the report object for slice 4 (pitch variation). It is not written to the
   JSON report.
 

@@ -41,9 +41,11 @@ Started 2026-11-17. Kept up to date as experiments report (FINAL_11 §6).
 
 ## Fillers and repetitions
 
-- **Until the verbatim model T1 exists (P4), filler and repetition counts are lower bounds.**
-  Base Whisper leaves out many fillers and repetitions. Confidence is capped at medium for
-  English and low for Arabic (ADR 0012).
+- **Until the verbatim model T1 exists (P4), filler and repetition counts are lower bounds**,
+  reported as "at least N per 100 words". Base Whisper leaves out many fillers and repetitions:
+  on a public 3-minute clip it found 0.86 fillers per 100 words against a true rate of about 3.0,
+  and even adding the acoustic candidates (1.54) stayed far below it. Confidence is capped at
+  medium for English and low for Arabic (ADR 0012).
 - **False starts (cut-off words) are not measured** until T1, because they need a verbatim
   transcript.
 - **Whisper's word timings can hide fillers from the acoustic detector.** A hesitation directly

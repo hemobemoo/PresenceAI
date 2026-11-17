@@ -118,6 +118,7 @@ def test_candidate_overlapping_a_lexicon_filler_agrees(sb: Any, speech_cfg: Any)
     assert c.agrees_with_lexicon is True
 
 
+@pytest.mark.slow  # real pYIN (numba compile)
 def test_real_pyin_finds_a_steady_tone_between_words(sb: Any, speech_cfg: Any):
     sr = 16_000
     x = np.zeros(int(1.5 * sr), dtype=np.float32)
@@ -169,6 +170,7 @@ def test_english_confidence_is_capped_at_medium_without_verbatim_model(sb: Any, 
     m_v, _ = _measure(sb, speech_cfg, LONG, verbatim=True)
     assert m_v["fillers.per_100_words"].confidence == Confidence.HIGH
     assert "lower bound" not in m_v["fillers.per_100_words"].method
+    assert "at least" not in m_v["fillers.per_100_words"].method
 
 
 def test_arabic_confidence_is_capped_at_low(sb: Any, speech_cfg: Any):
@@ -196,10 +198,32 @@ def test_acoustic_only_candidates_widen_the_range(sb: Any, speech_cfg: Any):
             agrees_with_lexicon=True,
         ),
     )
-    m, _ = _measure(sb, speech_cfg, LONG, acoustic=cands)
+    # verbatim model (T1): the result is a range, lexicon .. lexicon + acoustic-only
+    m, _ = _measure(sb, speech_cfg, LONG, acoustic=cands, verbatim=True)
     assert m["fillers.acoustic_candidates"].value == 2
     assert m["fillers.per_100_words_upper"].value == pytest.approx((2 + 1) / 78 * 100)
     assert m["fillers.per_100_words_upper"].confidence == Confidence.LOW
+    assert "range" in m["fillers.per_100_words_upper"].method
+
+
+def test_base_model_reports_at_least_n_and_no_range(sb: Any, speech_cfg: Any):
+    """Owner, 2026-11-17: on a real clip 0.86-1.54 per 100 words missed the true 3.0, so with
+    base Whisper the result is "at least N" and acoustic-only candidates are extra, not a range."""
+    from presenceai.schemas.speech import AcousticCandidate
+
+    cand = AcousticCandidate(
+        start_s=50.0, end_s=50.3, voiced_fraction=1.0, pitch_sd_semitones=0.2,
+        agrees_with_lexicon=False,
+    )  # fmt: skip
+    m, nm = _measure(sb, speech_cfg, LONG, acoustic=(cand,))
+    rate = m["fillers.per_100_words"]
+    assert rate.value == pytest.approx(2 / 78 * 100)
+    assert rate.unit == "per 100 words (at least)"
+    assert rate.method.startswith(f"at least {2 / 78 * 100:.1f} per 100 words")
+    assert "fillers.per_100_words_upper" not in m and "fillers.per_100_words_upper" not in nm
+    extra = m["fillers.acoustic_only_candidates"]
+    assert extra.value == 1 and extra.confidence == Confidence.LOW
+    assert "not counted as fillers" in extra.method
 
 
 def test_no_words_is_not_measurable(sb: Any, speech_cfg: Any):
