@@ -42,3 +42,21 @@ the cached transcripts on Colab, for description only; nothing was tuned on the 
   the test part.
 - s55_r0 at 10 dB: the error rose although the removed word was invented. The count was already
   below the truth, so removing one more word moved it further away.
+
+## Amended rule: end only (config `7358b999f775ea05`, **test-informed**)
+
+The owner amended ADR 0015 on 2026-11-18: words before the first speech are kept, and the 0.2 s
+margin after the last speech stays. The amendment came from looking at the test part above, so
+these runs are labelled `test-informed` in the ledger and in each `_summary.json`. They are not
+independent evidence for the rule; B1 is. Commit bb479e1, Colab T4, `--device cuda`, same CUDA
+transcript cache. The order was one clean test run, then 20 dB and 10 dB. No development run was
+needed, because on the development part the end rule removes the same words as before.
+
+| Run | wpm error | Pause F1 0.5 / 1.0 s | Duration error | Words removed |
+|---|---|---|---|---|
+| **Test part, clean (pass/fail, test-informed): passed** | **0.93 %** | **0.970 / 0.982** | **0.076 s** | 9 in s17_r0, invented |
+| Test part, 20 dB noise | 0.92 % | 0.960 / 0.975 | 0.090 s | 14 in s17_r0, invented |
+| Test part, 10 dB noise | 1.02 % | 0.959 / 0.973 | 0.087 s | 1 in s55_r0, invented |
+
+No real first words are removed any more. The noise runs are marked `dirty: true` only because
+the clean run's results were already written into the Colab checkout.
