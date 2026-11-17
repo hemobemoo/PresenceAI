@@ -172,6 +172,10 @@ reported next to it. Seed 20261117 per clip.
 - Noise, descriptive: at 20 dB / 10 dB, F1 0.960 / 0.959 at 0.5 s and duration error
   0.090 / 0.087 s; wpm error stays about 1 %.
 - Details: `experiments/results/e2/f1_test_results.md`, `f1_dev_findings.md`.
+- **Later config (ADR 0015, words after the last speech removed):** config `7358b999f775ea05`
+  passes on the clean test part with wpm error 0.93 %, F1 0.970 / 0.982 and duration error
+  0.076 s. That run is **test-informed** (ADR 0015 "Amendment"), so the numbers above remain
+  the independent result; details in `experiments/results/e2/f1_adr15_results.md`.
 
 ## Consequences
 

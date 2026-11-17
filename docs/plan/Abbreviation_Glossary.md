@@ -1,7 +1,7 @@
 # PresenceAI — Abbreviation Glossary
 
 Source: the final plan documents (FINAL_00–FINAL_13), the ADRs in `docs/adr/` and related project
-files. Checked against them on 2026-11-17, after ADR 0010 (no volunteer study) and ADR 0011.
+files. Checked against them on 2026-11-18, after ADR 0015 (words outside speech).
 
 Watch for labels that mean different things in different places: **S1/S2** (spike or scenario),
 **T1/T2** (training track, or a former study time point), **C1/C2** (contribution, or synthetic
@@ -46,7 +46,8 @@ data set) and **CI** (Continuous Integration or confidence interval). The contex
 | **wpm** | Words per minute (speaking rate) |
 | **F0 / pYIN** | Fundamental frequency (pitch) / probabilistic YIN pitch tracker (librosa) |
 | **RMS** | Root mean square (loudness) |
-| **SNR** | Signal-to-noise ratio: median speech level minus the noise floor (pre-recording check; loudness and pitch confidence, ADR 0013) |
+| **SNR** | Signal-to-noise ratio. In the app: median speech level minus the noise floor (pre-recording check; loudness and pitch confidence, ADR 0013). In E2's noise condition: speech power over the true speech spans divided by the added noise power (ADR 0014 §7) |
+| **Test-informed** | An E2 result from a config that was changed after looking at the C1 test part; labelled so in the ledger and not independent evidence (ADR 0015) |
 | **dBFS** | Decibels relative to full scale (0 dBFS = the loudest level a file can store) |
 | **AGC** | Automatic gain control (browser `autoGainControl`; turned off for live capture, ADR 0013) |
 | **TTS** | Text-to-speech (Kokoro, used to generate C1) |

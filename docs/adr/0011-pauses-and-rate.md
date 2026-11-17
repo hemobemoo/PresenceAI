@@ -26,7 +26,7 @@ download and no new dependency.
 | Key | Value | Why |
 |---|---|---|
 | `threshold` | 0.5 | Silero default |
-| `min_speech_duration_ms` | 250 | Silero default (owner). 100 ms is used only if the C1 development part shows it is better |
+| `min_speech_duration_ms` | 250 | Silero default (owner). 100 ms was to be used only if the C1 development part showed it better; it was marginally better there (F1 0.975 / 0.988 vs 0.973 / 0.986), and the owner kept 250 ms (2026-11-17, ADR 0014 §6) |
 | `min_silence_duration_ms` | 100 | Below the smallest pause threshold, so 0.25 s pauses are kept |
 | `speech_pad_ms` | 0 | Padding widens speech regions and would shorten every pause by twice the padding |
 
@@ -53,7 +53,8 @@ only here.
 
 ### Rate (`speech.rate`)
 
-- `rate.wpm` = words ÷ speaking time, from the first speech onset to the last offset. It is also
+- `rate.wpm` = words ÷ speaking time, from the first speech onset to the last offset. Words
+  that start after the last offset (plus a margin) are removed before counting (ADR 0015). It is also
   given in 10 s windows with a 5 s hop, counting words by their midpoint.
 - `rate.articulation_wpm` = words ÷ time inside speech regions.
 - Below 10 s of speech, rate and pace are reported as **"not measurable"**, never as a low score.
@@ -124,3 +125,5 @@ script fall in the same part. The split uses a fixed seed:
   It also reports how often a pause's position label is wrong.
 - Re-check `min_speech_duration_ms` (250 vs 100) and `max_words_per_sentence_mark` on the C1
   development part and on the owner's Arabic B1 clips. Any change needs an update to this ADR.
+  **C1 development part: done** (2026-11-17, `experiments/results/e2/f1_dev_findings.md`); 250 ms
+  kept, `max_words_per_sentence_mark` unchanged. **B1: still to do.**
