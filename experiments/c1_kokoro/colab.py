@@ -88,7 +88,9 @@ def repo_commit() -> dict[str, Any]:
 
 def package_b64() -> str:
     buf = io.BytesIO()
-    with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as z:
+    # stored, not deflated: compressed bytes differ between zlib versions (1.3 on Colab, 1.3.2
+    # locally), and the notebook checks the script's SHA-256 across machines
+    with zipfile.ZipFile(buf, "w", zipfile.ZIP_STORED) as z:
         for rel in PACKAGE_FILES:
             data = (REPO_ROOT / rel).read_bytes().replace(b"\r\n", b"\n")
             info = zipfile.ZipInfo(rel, date_time=(2026, 1, 1, 0, 0, 0))  # stable bytes
