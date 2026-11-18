@@ -15,6 +15,7 @@ With a non-verbatim model the counts are lower bounds, with the same confidence 
 
 from __future__ import annotations
 
+from presenceai.lang import text
 from presenceai.schemas.assessment import Confidence, Evidence, Measurement, TimeSpan
 from presenceai.schemas.speech import RepetitionEvent, SpeechRegion, Transcript
 from presenceai.settings import SpeechSettings
@@ -82,7 +83,7 @@ def summarise(
     keys = ("repetitions.count", "repetitions.per_100_words")
     words = transcript.words
     if not words or not regions:
-        return {}, dict.fromkeys(keys, "no recognised words")
+        return {}, dict.fromkeys(keys, text(transcript.language, "common.no_words"))
     lang = transcript.language
     span = TimeSpan(start_s=regions[0].start_s, end_s=regions[-1].end_s)
     mean_p = sum(w.probability for w in words) / len(words)
@@ -90,7 +91,7 @@ def summarise(
     bound = ""
     if not verbatim:
         conf = cap(conf, Confidence(cfg.fillers.confidence_cap_without_verbatim[lang]))
-        bound = " (lower bound: the base model drops repetitions)"
+        bound = text(lang, "repetitions.lower_bound")
     count = sum(e.copies - 1 for e in events)
     lexicon = load_lexicon(lang)
     base_words = sum(1 for w in words if not lexicon.is_hesitation(w.text)) or len(words)
@@ -101,8 +102,11 @@ def summarise(
         )
         for e in events
     ) or (Evidence(time=span),)
-    method = (
-        f"repeated 1-{cfg.repetitions.max_ngram}-word phrases within {cfg.repetitions.window_s:g} s"
+    method = text(
+        lang,
+        "repetitions.method",
+        max_ngram=cfg.repetitions.max_ngram,
+        window_s=cfg.repetitions.window_s,
     )
 
     def measure(value: float, unit: str, how: str) -> Measurement:
@@ -119,6 +123,8 @@ def summarise(
     return {
         "repetitions.count": measure(count, "count", method),
         "repetitions.per_100_words": measure(
-            count * 100.0 / base_words, "per 100 words", method + " / non-filler words"
+            count * 100.0 / base_words,
+            "per 100 words",
+            method + text(lang, "repetitions.per_100_suffix"),
         ),
     }, {}

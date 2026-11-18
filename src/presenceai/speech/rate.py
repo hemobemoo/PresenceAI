@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import numpy as np
 
+from presenceai.lang import text
 from presenceai.schemas.assessment import Confidence, Evidence, Measurement, TimeSpan
 from presenceai.schemas.speech import RateWindow, SpeechLanguage, SpeechRegion, Transcript
 from presenceai.settings import SpeechSettings, SyllableSettings
@@ -32,13 +33,14 @@ def word_rate(
     transcript: Transcript, regions: tuple[SpeechRegion, ...], cfg: SpeechSettings
 ) -> tuple[dict[str, Measurement], dict[str, str], tuple[RateWindow, ...]]:
     keys = ("rate.wpm", "rate.articulation_wpm")
+    lang = transcript.language
     if not regions:
-        return {}, dict.fromkeys(keys, "no speech detected"), ()
+        return {}, dict.fromkeys(keys, text(lang, "common.no_speech")), ()
     first, last = regions[0].start_s, regions[-1].end_s
     speaking = last - first
     minimum = cfg.rate.min_speaking_time_s
     if speaking < minimum:
-        reason = f"only {speaking:.1f} s of speech; at least {minimum:g} s needed"
+        reason = text(lang, "common.too_little_speech", speech_s=speaking, minimum=minimum)
         return {}, dict.fromkeys(keys, reason), ()
 
     words = transcript.words
@@ -55,14 +57,14 @@ def word_rate(
             confidence=conf,
             method=method,
             evidence=evidence,
-            language=transcript.language,
+            language=lang,
             live=False,
         )
 
     out = {
-        "rate.wpm": measure(n / speaking * 60, "words / speaking time (first to last speech)"),
+        "rate.wpm": measure(n / speaking * 60, text(lang, "rate.wpm")),
         "rate.articulation_wpm": measure(
-            n / _speech_time(regions) * 60, "words / time inside VAD speech regions"
+            n / _speech_time(regions) * 60, text(lang, "rate.articulation_wpm")
         ),
     }
     mids = np.array([(w.start_s + w.end_s) / 2 for w in words])
@@ -126,12 +128,13 @@ def syllable_rate(
     speech = _speech_time(regions)
     minimum = cfg.rate.min_speaking_time_s
     if speech < minimum:
-        return {}, {key: f"only {speech:.1f} s of speech; at least {minimum:g} s needed"}
+        reason = text(language, "common.too_little_speech", speech_s=speech, minimum=minimum)
+        return {}, {key: reason}
     nuclei = syllable_nuclei(samples, sr, regions, cfg.syllables)
-    method = "syllable nuclei (intensity peaks, de Jong & Wempe 2009) / speech time"
+    method = text(language, "rate.syllables")
     if language == "ar":
         conf = Confidence.LOW
-        method += "; information only (values validated on Dutch speech)"
+        method += text(language, "rate.syllables_info_only")
     else:
         conf = band(cfg.confidence, probability=None, speaking_time_s=speech)
     evidence = (Evidence(time=TimeSpan(start_s=regions[0].start_s, end_s=regions[-1].end_s)),)

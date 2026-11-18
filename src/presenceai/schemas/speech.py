@@ -15,7 +15,7 @@ from typing import Literal, Self
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from presenceai.schemas.assessment import Confidence, Measurement, TranscriptSpan
+from presenceai.schemas.assessment import Confidence, Measurement, TimeSpan, TranscriptSpan
 
 SpeechLanguage = Literal["en", "ar"]
 
@@ -228,14 +228,35 @@ class AsrQuality(_Frozen):
     mean_no_speech_prob: float | None = Field(default=None, ge=0, le=1)
 
 
+class LanguageCheck(_Frozen):
+    """Whisper language detection on the first speech (FINAL_04 §5, ADR 0016). A mismatch adds
+    a notice in the report language; the analysis still uses the chosen language and no score
+    changes."""
+
+    chosen: SpeechLanguage
+    detected: str = Field(min_length=1)  # Whisper language code, e.g. "en", "ar", "fr"
+    probability: float = Field(ge=0, le=1)  # of the detected language
+    chosen_probability: float | None = Field(default=None, ge=0, le=1)
+    window: TimeSpan  # the audio that was checked
+    mismatch: bool
+    notice: str | None = None  # set exactly when mismatch is True
+
+    @model_validator(mode="after")
+    def _notice_iff_mismatch(self) -> Self:
+        if self.mismatch != (self.notice is not None):
+            raise ValueError("a notice is given exactly when the languages do not match")
+        return self
+
+
 class SpeechReport(_Frozen):
     """What `presenceai analyze` writes. Holds derived data only, never audio samples."""
 
-    schema_version: Literal[5] = 5
+    schema_version: Literal[6] = 6
     source_name: str = Field(min_length=1)  # file name only: no folders, no user names
     model: str = Field(min_length=1)  # key under `asr:` in configs/models.yaml
     transcript: Transcript  # words outside speech already removed (ADR 0015)
     asr_quality: AsrQuality
+    language_check: LanguageCheck | None = None  # None when there is no speech to check
     # Words Whisper wrote after the last speech (or all, with no speech): never measured or quoted.
     words_outside_speech: tuple[Word, ...] = ()
     speech_regions: tuple[SpeechRegion, ...] = ()

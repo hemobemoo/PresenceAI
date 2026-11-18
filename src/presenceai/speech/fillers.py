@@ -26,7 +26,7 @@ from typing import cast
 
 import numpy as np
 
-from presenceai.lang import Language, load_pack_file
+from presenceai.lang import Language, load_pack_file, text
 from presenceai.schemas.assessment import Confidence, Evidence, Measurement, TimeSpan
 from presenceai.schemas.speech import (
     AcousticCandidate,
@@ -172,7 +172,7 @@ def summarise(
     hes_words = sum(e.last_word - e.first_word + 1 for e in hes)
     base_words = len(words) - hes_words
     if base_words <= 0 or not regions:
-        return {}, dict.fromkeys(keys, "no recognised words")
+        return {}, dict.fromkeys(keys, text(transcript.language, "common.no_words"))
 
     lang = transcript.language
     span = TimeSpan(start_s=regions[0].start_s, end_s=regions[-1].end_s)
@@ -181,7 +181,7 @@ def summarise(
     bound = ""
     if not verbatim:
         conf = cap(conf, Confidence(cfg.fillers.confidence_cap_without_verbatim[lang]))
-        bound = " (lower bound: the base model drops fillers)"
+        bound = text(lang, "fillers.lower_bound")
 
     def ev(events: list[FillerEvent]) -> tuple[Evidence, ...]:
         out = tuple(
@@ -214,23 +214,22 @@ def summarise(
     markers = [e for e in lexical if e.kind == FillerKind.DISCOURSE_MARKER]
     per100 = 100.0 / base_words
     rate = len(hes) * per100
-    upper_bound = (
-        " (upper bound: every occurrence counted, including ordinary uses; information only)"
-    )
+    upper_bound = text(lang, "fillers.markers_upper_bound")
     m: dict[str, Measurement] = {
-        "fillers.count": measure(len(hes), "count", conf, "lexicon hesitations" + bound, ev(hes)),
+        "fillers.count": measure(
+            len(hes), "count", conf, text(lang, "fillers.count") + bound, ev(hes)
+        ),
     }
     if verbatim:
         # a verbatim transcript keeps fillers, so lexicon .. lexicon + acoustic-only is a range
         m["fillers.per_100_words"] = measure(
-            rate, "per 100 words", conf, "lexicon hesitations / non-filler words", ev(hes)
+            rate, "per 100 words", conf, text(lang, "fillers.per_100"), ev(hes)
         )
         m["fillers.per_100_words_upper"] = measure(
             (len(hes) + len(acoustic_only)) * per100,
             "per 100 words",
             Confidence.LOW,
-            "upper end of the range: lexicon + acoustic candidates without a lexicon filler"
-            " (provisional detector)",
+            text(lang, "fillers.per_100_upper"),
             ev(hes) + only_ev,
         )
     else:
@@ -240,8 +239,7 @@ def summarise(
             rate,
             "per 100 words (at least)",
             conf,
-            f"at least {rate:.1f} per 100 words: lexicon hesitations / non-filler words"
-            f"{bound}; the true rate can be much higher",
+            text(lang, "fillers.per_100_at_least", rate=rate, bound=bound),
             ev(hes),
         )
     m |= {
@@ -249,29 +247,28 @@ def summarise(
             len(acoustic_only),
             "count",
             Confidence.LOW,
-            "extra candidates, not counted as fillers: voiced, steady-pitch sound with no word"
-            " and no lexicon filler nearby (provisional detector)",
+            text(lang, "fillers.acoustic_only"),
             only_ev or (Evidence(time=span),),
         ),
         "fillers.acoustic_candidates": measure(
             len(acoustic),
             "count",
             Confidence.LOW,
-            "voiced, steady-pitch sound with no word (provisional detector)",
+            text(lang, "fillers.acoustic"),
             cand_ev or (Evidence(time=span),),
         ),
         "discourse_markers.count": measure(
             len(markers),
             "count",
             Confidence.LOW,
-            "lexicon discourse markers" + upper_bound,
+            text(lang, "fillers.markers_count") + upper_bound,
             ev(markers),
         ),
         "discourse_markers.per_100_words": measure(
             len(markers) * per100,
             "per 100 words",
             Confidence.LOW,
-            "lexicon discourse markers / non-filler words" + upper_bound,
+            text(lang, "fillers.markers_per_100") + upper_bound,
             ev(markers),
         ),
     }
