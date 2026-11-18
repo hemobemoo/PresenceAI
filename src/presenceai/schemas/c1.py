@@ -16,7 +16,7 @@ from presenceai.schemas.speech import PausePosition
 
 Boundary = Literal["sentence_boundary", "clause_boundary", "mid_sentence", "end"]
 Part = Literal["dev", "test"]
-PauseSource = Literal["inserted", "kokoro"]
+PauseSource = Literal["inserted", "kokoro", "owner"]  # owner = hand-annotated B1 (ADR 0016)
 WORD = re.compile(r"[A-Za-z]+")
 
 
