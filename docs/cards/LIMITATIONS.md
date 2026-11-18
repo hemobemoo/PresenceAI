@@ -94,9 +94,20 @@ Started 2026-11-17. Kept up to date as experiments report (FINAL_11 §6).
 - **Clipping in compressed files** is found by a plateau rule whose values come from synthetic
   signals and are provisional. It is reported apart as "possible clipping", always low
   confidence. In synthetic tests, loud limited (mastered) audio stayed well below the rule's
-  ratio. This is not yet checked on real public clips.
+  ratio. This is not yet checked on real public clips. The first real-speech check runs on
+  the developer's B1 recordings, one laptop microphone only (ADR 0016).
 - Pitch is tracked between 65 and 600 Hz. Very low or very high voices may reach the limits; the
   report gives the share of frames at a limit and lowers confidence when it is high.
+
+## Language and Arabic text (ADR 0016)
+
+- The language check uses Whisper's detection on the first 30 s of speech. A notice appears
+  when another language is detected with probability ≥ 0.5; the value is provisional and is
+  re-checked on B1. Recordings that mix languages (English terms in Arabic) may give a false
+  notice. The notice never changes the analysis.
+- The Arabic report texts are a draft translation, not yet reviewed by a native speaker.
+- B1 has 20 clips of one speaker and one microphone (10 English, 10 Arabic), so its results
+  describe that speaker and are reported descriptively.
 
 ## Fillers and repetitions
 
