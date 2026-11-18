@@ -5,6 +5,7 @@ from typing import Any
 import numpy as np
 import pytest
 
+from presenceai.lang import text
 from presenceai.schemas.assessment import Confidence
 from presenceai.schemas.speech import Segment, SpeechRegion, Transcript, Word
 from presenceai.speech import rate
@@ -177,7 +178,8 @@ def test_syllable_rate_is_information_only_for_arabic(speech_cfg: Any):
     span = x.size / SR
     m, _ = rate.syllable_rate(x, SR, (_r(0.0, span),), "ar", speech_cfg)
     meas = m["pace.syllables_per_s"]
-    assert meas.confidence == Confidence.LOW and "information only" in meas.method
+    assert meas.confidence == Confidence.LOW
+    assert meas.method.endswith(text("ar", "rate.syllables_info_only"))  # written in Arabic
     assert meas.language == "ar"
 
 

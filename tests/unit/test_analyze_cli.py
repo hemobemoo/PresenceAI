@@ -38,7 +38,7 @@ def test_analyze_file_builds_a_report(fake_whisper: Any, silent_wav: Path, speec
         pitch_tracker=fake_pitch,
     )
     assert isinstance(report, SpeechReport)
-    assert report.schema_version == 5
+    assert report.schema_version == 6
     assert report.words_outside_speech == ()  # every word lies inside speech
     assert report.source_name == "talk.wav"
     assert report.model == "whisper_small"

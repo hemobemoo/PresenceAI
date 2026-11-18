@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import numpy as np
 
+from presenceai.lang import text
 from presenceai.schemas.assessment import Confidence, Evidence, Measurement, TimeSpan
 from presenceai.schemas.speech import (
     CaptureProcessing,
@@ -178,9 +179,9 @@ def summarise(
         possible_clipped_runs=possible_runs,
     )
     if not regions or median_speech is None:
-        return {}, dict.fromkeys(keys, "no speech detected"), profile
+        return {}, dict.fromkeys(keys, text(language, "common.no_speech")), profile
     if snr is not None and snr < lc.snr_not_measurable_db:
-        reason = f"not measurable in this recording: too noisy ({snr:.0f} dB signal-to-noise)"
+        reason = text(language, "common.too_noisy", snr=snr)
         return {}, dict.fromkeys(keys, reason), profile
 
     # 1 s windows that are mostly speech
@@ -199,16 +200,14 @@ def summarise(
     notes = ""
     if snr is None:
         conf = cap(conf, Confidence.MEDIUM)
-        notes += "; noise level unknown (too little non-speech)"
+        notes += text(language, "loudness.noise_unknown")
     elif snr < lc.snr_low_db:
         conf = Confidence.LOW
-        notes += f"; noisy recording ({snr:.0f} dB signal-to-noise)"
+        notes += text(language, "common.noisy_note", snr=snr)
     proc_conf, proc_note = conf, ""
     if not capture.all_off:
         proc_conf = Confidence.LOW
-        proc_note = (
-            "; browser auto-gain or noise processing was on or unknown, which flattens loudness"
-        )
+        proc_note = text(language, "loudness.processing")
 
     def measure(
         value: float, unit: str, c: Confidence, method: str, ev: tuple[Evidence, ...]
@@ -221,8 +220,11 @@ def summarise(
     out: dict[str, Measurement] = {}
     missing: dict[str, str] = {}
     if speech_s < cfg.rate.min_speaking_time_s:
-        reason = (
-            f"only {speech_s:.0f} s of speech; at least {cfg.rate.min_speaking_time_s:g} s needed"
+        reason = text(
+            language,
+            "common.too_little_speech_whole",
+            speech_s=speech_s,
+            minimum=cfg.rate.min_speaking_time_s,
         )
         missing |= {"loudness.variation_cv": reason, "loudness.spread_db": reason}
     else:
@@ -232,13 +234,12 @@ def summarise(
         ev = (Evidence(time=span),)
         out["loudness.variation_cv"] = measure(
             cv, "ratio", proc_conf,
-            "coefficient of variation of 1 s speech-window loudness (relative)" + notes + proc_note,
+            text(language, "loudness.variation_cv") + notes + proc_note,
             ev,
         )  # fmt: skip
         out["loudness.spread_db"] = measure(
             spread, "dB", proc_conf,
-            "loud minus quiet speech (p90 - p10 of 1 s windows); information only"
-            + notes + proc_note,
+            text(language, "loudness.spread_db") + notes + proc_note,
             ev,
         )  # fmt: skip
 
@@ -257,8 +258,7 @@ def summarise(
         share(clipped_s),
         "share of speech time",
         conf,
-        f"samples at or above {lc.clip_level:g} of full scale in runs of >= {lc.clip_min_run},"
-        " on the original samples" + notes,
+        text(language, "loudness.clipping", level=lc.clip_level, run=lc.clip_min_run) + notes,
         clip_evidence(_hard_mask(native_2d, lc)),
     )
     # Rule 2 is reported apart and is always low confidence (owner, 2026-11-17): a plateau just
@@ -268,26 +268,31 @@ def summarise(
         share(possible_s),
         "share of speech time",
         Confidence.LOW,
-        "possible clipping: a plateau just under the file's peak (within"
-        f" {lc.clip_pileup_band:.0%}, at least {lc.clip_pileup_ratio:g} times the band below),"
-        " typical of a clipped file after lossy compression; provisional rule, on the original"
-        " samples" + notes,
+        text(
+            language,
+            "loudness.possible_clipping",
+            band=lc.clip_pileup_band,
+            ratio=lc.clip_pileup_ratio,
+        )
+        + notes,
         clip_evidence(_plateau_mask(native_2d, lc)),
     )
 
     if baseline is not None:
         base, base_capture = baseline
         if base.median_speech_dbfs is None:
-            missing["loudness.change_from_baseline_db"] = "the baseline has no speech level"
+            missing["loudness.change_from_baseline_db"] = text(
+                language, "loudness.baseline_no_level"
+            )
         else:
             c = cap(conf, Confidence.MEDIUM)  # a different microphone or distance is invisible
-            note = "; a change of microphone or distance cannot be detected"
+            note = text(language, "loudness.baseline_device_note")
             if not (capture.all_off and base_capture.all_off):
                 c = Confidence.LOW
-                note += proc_note or "; browser processing in the baseline was on or unknown"
+                note += proc_note or text(language, "loudness.baseline_processing")
             out["loudness.change_from_baseline_db"] = measure(
                 median_speech - base.median_speech_dbfs, "dB", c,
-                "typical speech level compared with your own baseline recording" + notes + note,
+                text(language, "loudness.baseline") + notes + note,
                 (Evidence(time=span),),
             )  # fmt: skip
     return out, missing, profile

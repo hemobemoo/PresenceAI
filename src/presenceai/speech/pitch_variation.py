@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import numpy as np
 
+from presenceai.lang import text
 from presenceai.schemas.assessment import Confidence, Evidence, Measurement, TimeSpan
 from presenceai.schemas.speech import (
     AcousticCandidate,
@@ -28,8 +29,6 @@ from presenceai.schemas.speech import (
 )
 from presenceai.settings import PitchVariationSettings, SpeechSettings
 from presenceai.speech.confidence import band, cap
-
-INFO = "information only"
 
 
 def _usable(
@@ -93,10 +92,10 @@ def analyse(
     pv = cfg.pitch_variation
     keys = ("pitch.sd_semitones", "pitch.range_semitones")
     if snr_db is not None and snr_db < cfg.loudness.snr_not_measurable_db:
-        reason = f"not measurable in this recording: too noisy ({snr_db:.0f} dB signal-to-noise)"
+        reason = text(language, "common.too_noisy", snr=snr_db)
         return {}, dict.fromkeys(keys, reason), None
     if not track.voiced or not regions:
-        return {}, dict.fromkeys(keys, "no voiced speech"), None
+        return {}, dict.fromkeys(keys, text(language, "common.no_voiced")), None
 
     mask = _usable(track, regions, fillers, acoustic, pv.filler_margin_s)
     f0 = np.array(track.f0_hz, dtype=float)
@@ -110,8 +109,8 @@ def analyse(
             usable_frames=usable, usable_voiced_s=voiced_s, octave_folded=0, dropped=0,
             at_limit_share=at_limit_share,
         )  # fmt: skip
-        reason = (
-            f"only {voiced_s:.1f} s of usable voiced speech; at least {pv.min_voiced_s:g} s needed"
+        reason = text(
+            language, "pitch.too_little_voiced", voiced_s=voiced_s, minimum=pv.min_voiced_s
         )
         return {}, dict.fromkeys(keys, reason), diag
 
@@ -128,25 +127,22 @@ def analyse(
     notes = ""
     if voiced_s < pv.low_voiced_s:
         conf = Confidence.LOW
-        notes += f"; only {voiced_s:.0f} s of usable voiced speech"
+        notes += text(language, "pitch.low_voiced", voiced_s=voiced_s)
     if snr_db is None:
         conf = cap(conf, Confidence.MEDIUM)
-        notes += "; noise level unknown"
+        notes += text(language, "pitch.noise_unknown")
     elif snr_db < cfg.loudness.snr_low_db:
         conf = Confidence.LOW
-        notes += f"; noisy recording ({snr_db:.0f} dB signal-to-noise)"
+        notes += text(language, "common.noisy_note", snr=snr_db)
     if (folded + dropped) / usable > pv.max_corrected_share:
         conf = Confidence.LOW
-        notes += f"; {folded + dropped} of {usable} frames corrected for octave errors"
+        notes += text(language, "pitch.octave", corrected=folded + dropped, usable=usable)
     if at_limit_share > pv.max_at_limit_share:
         conf = Confidence.LOW
-        notes += f"; {at_limit_share:.0%} of frames at the pitch range limit"
+        notes += text(language, "pitch.at_limit", share=at_limit_share)
 
     span = TimeSpan(start_s=regions[0].start_s, end_s=regions[-1].end_s)
-    base = (
-        "semitones from your own typical pitch, voiced speech without fillers, "
-        f"octave errors corrected; {INFO}"
-    )
+    base = text(language, "pitch.base")
 
     def measure(value: float, method: str) -> Measurement:
         return Measurement(
@@ -156,10 +152,12 @@ def analyse(
 
     return (
         {
-            "pitch.sd_semitones": measure(float(np.std(final)), "spread (SD) of " + base),
+            "pitch.sd_semitones": measure(
+                float(np.std(final)), text(language, "pitch.sd", base=base)
+            ),
             "pitch.range_semitones": measure(
                 float(np.percentile(final, 90) - np.percentile(final, 10)),
-                "range (p90 - p10) of " + base,
+                text(language, "pitch.range", base=base),
             ),
         },
         {},

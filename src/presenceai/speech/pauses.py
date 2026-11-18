@@ -18,6 +18,7 @@ import itertools
 
 import numpy as np
 
+from presenceai.lang import text
 from presenceai.schemas.assessment import Confidence, Evidence, Measurement, TimeSpan
 from presenceai.schemas.speech import PauseEvent, PausePosition, SpeechRegion, Transcript, Word
 from presenceai.settings import PauseSettings, SpeechSettings
@@ -104,15 +105,15 @@ def summarise(
     keys_count = [f"pauses.count_ge_{_label(t)}s" for t in cfg.pauses.thresholds_s]
     keys_pos = [f"pauses.count.{p.value}" for p in PausePosition]
     keys_stats = ["pauses.mean_s", "pauses.p90_s", "pauses.longest_s"]
+    lang = transcript.language
     if not regions:
-        reason = "no speech detected"
+        reason = text(lang, "common.no_speech")
         return {}, dict.fromkeys(keys_count + keys_pos + keys_stats, reason)
 
     span = TimeSpan(start_s=regions[0].start_s, end_s=regions[-1].end_s)
     words = transcript.words
     mean_p = sum(w.probability for w in words) / len(words) if words else None
     conf = band(cfg.confidence, probability=mean_p, speaking_time_s=span.end_s - span.start_s)
-    lang = transcript.language
 
     def measure(value: float, unit: str, method: str, chosen: list[PauseEvent]) -> Measurement:
         evidence = tuple(_evidence(e, transcript) for e in chosen) or (Evidence(time=span),)
@@ -129,21 +130,30 @@ def summarise(
     out: dict[str, Measurement] = {}
     for t, key in zip(cfg.pauses.thresholds_s, keys_count, strict=True):
         chosen = [e for e in events if e.duration_s >= t - 1e-9]
-        out[key] = measure(len(chosen), "count", f"VAD gaps >= {_label(t)} s", chosen)
+        out[key] = measure(
+            len(chosen), "count", text(lang, "pauses.count_ge", threshold=_label(t)), chosen
+        )
     for p, key in zip(PausePosition, keys_pos, strict=True):
         chosen = [e for e in events if e.position == p]
-        out[key] = measure(len(chosen), "count", f"VAD gaps by position: {p.value}", chosen)
+        position = text(lang, f"positions.{p.value}")
+        out[key] = measure(
+            len(chosen), "count", text(lang, "pauses.by_position", position=position), chosen
+        )
 
     missing: dict[str, str] = {}
     if events:
         durations = np.array([e.duration_s for e in events])
         longest = max(events, key=lambda e: e.duration_s)
-        out["pauses.mean_s"] = measure(float(durations.mean()), "s", "mean pause", list(events))
-        out["pauses.p90_s"] = measure(
-            float(np.percentile(durations, 90)), "s", "90th percentile pause", list(events)
+        out["pauses.mean_s"] = measure(
+            float(durations.mean()), "s", text(lang, "pauses.mean"), list(events)
         )
-        out["pauses.longest_s"] = measure(longest.duration_s, "s", "longest pause", [longest])
+        out["pauses.p90_s"] = measure(
+            float(np.percentile(durations, 90)), "s", text(lang, "pauses.p90"), list(events)
+        )
+        out["pauses.longest_s"] = measure(
+            longest.duration_s, "s", text(lang, "pauses.longest"), [longest]
+        )
     else:
         shortest = _label(min(cfg.pauses.thresholds_s))
-        missing = dict.fromkeys(keys_stats, f"no pauses of at least {shortest} s")
+        missing = dict.fromkeys(keys_stats, text(lang, "pauses.no_pauses", shortest=shortest))
     return out, missing

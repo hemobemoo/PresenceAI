@@ -94,7 +94,7 @@ Used as **links** in the teaching library only (YouTube/TED/university channels)
 
 | Set | Size | Role |
 |---|---|---|
-| B1 Pilot presentations (owner only, ADR 0010) | 30–40 clips, EN and AR | Detector development, T1 hand-corrected verbatim data, fixtures |
+| B1 Pilot presentations (owner only, ADR 0010) | 20 clips: 10 EN + 10 AR, 2–3 min each (ADR 0016; was 30–40); plan and steps in `docs/data/B1_RECORDING_GUIDE.md` | Real-speech checks (E1 WER, E2 incl. Arabic E2, ADRs 0011, 0013, 0014, 0015, 0016), detector development, T1 hand-corrected verbatim data, fixtures |
 | B2 Gaze/robustness protocol | Owner only × ~16 conditions (ADR 0010) | T3 training and E7 |
 | B3 Annotations | 40 clips in Label Studio | Fillers, pauses, structure, supporting material, gaze spot checks |
 

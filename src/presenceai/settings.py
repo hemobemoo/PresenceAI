@@ -170,10 +170,18 @@ class TranscriptSettings(_Section):
     end_tolerance_s: float = Field(ge=0)
 
 
+class LanguageCheckSettings(_Section):
+    """ADR 0016: language detection on the first speech; a mismatch is a notice only."""
+
+    window_s: float = Field(gt=0)
+    mismatch_min_probability: float = Field(ge=0, le=1)
+
+
 class SpeechSettings(_Section):
     """ADR 0011-0013 values. No defaults in code: thresholds live only in configs/ (rule 7)."""
 
     vad: VadSettings
+    language_check: LanguageCheckSettings
     transcript: TranscriptSettings
     pauses: PauseSettings
     rate: RateSettings

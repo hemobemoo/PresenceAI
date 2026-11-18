@@ -5,6 +5,8 @@ speech rate, articulation rate and syllable pace (ADR 0011). Slice 3: pitch trac
 per recording), fillers (lexicon + acoustic candidates), discourse markers and repetitions
 (ADR 0012). Slice 4: relative loudness (clipping on the original samples, noise, browser
 processing, optional baseline) and pitch variation from the same pitch track (ADR 0013).
+Slice 6: all report texts come from lang/<lang>/report.yaml in the recording's language,
+and a language check on the first speech adds a notice on a mismatch (ADR 0016).
 Words Whisper invents after the last speech are removed right after VAD,
 before any measure or quote (ADR 0015).
 """
@@ -17,6 +19,7 @@ from typing import Any
 
 import numpy as np
 
+from presenceai.lang import text
 from presenceai.schemas.speech import (
     CaptureProcessing,
     LoudnessProfile,
@@ -29,6 +32,7 @@ from presenceai.speech import (
     asr,
     audio,
     fillers,
+    language_check,
     loudness,
     pauses,
     pitch_variation,
@@ -60,6 +64,7 @@ def analyze_file(
     samples = audio.load_audio(path)
     regions = vad(samples) if vad is not None else vad_mod.detect_speech(samples, speech.vad)
     transcript, outside = trim.trim_to_speech(transcript, regions, speech.transcript)
+    lang_check = language_check.check(model, samples, regions, language, speech.language_check)
     tracker = pitch_tracker or pitch_mod.track
     track = tracker(samples, audio.SAMPLE_RATE, speech.pitch)
     verbatim = asr.is_verbatim(model_name)
@@ -94,7 +99,7 @@ def analyze_file(
 
     measurements |= m_rate | m_pace | m_fill | m_rep | m_loud | m_pitch
     if not regions:
-        not_measurable["transcript"] = "no speech detected in this recording"
+        not_measurable["transcript"] = text(language, "common.no_speech_recording")
     not_measurable |= nm_rate | nm_pace | nm_fill | nm_rep | nm_loud | nm_pitch
 
     return SpeechReport(
@@ -102,6 +107,7 @@ def analyze_file(
         model=model_name,
         transcript=transcript,
         asr_quality=asr.quality(transcript),
+        language_check=lang_check,
         words_outside_speech=outside,
         speech_regions=regions,
         pauses=events,

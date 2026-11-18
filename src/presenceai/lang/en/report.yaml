@@ -1,0 +1,83 @@
+# Speech report texts (ADR 0016). Speech code uses these keys only, never its own wording.
+# Placeholders are Python format fields, e.g. {snr:.0f}; lang/ar/report.yaml must have the same
+# keys and the same placeholder names. Fragments that start with "; " or " (" are appended to a
+# method text. Wording rule (AGENTS.md): observable behaviour + number + location, no verdicts.
+common:
+  no_speech: "no speech detected"
+  no_speech_recording: "no speech detected in this recording"
+  no_words: "no recognised words"
+  no_voiced: "no voiced speech"
+  too_little_speech: "only {speech_s:.1f} s of speech; at least {minimum:g} s needed"
+  too_little_speech_whole: "only {speech_s:.0f} s of speech; at least {minimum:g} s needed"
+  too_noisy: "not measurable in this recording: too noisy ({snr:.0f} dB signal-to-noise)"
+  noisy_note: "; noisy recording ({snr:.0f} dB signal-to-noise)"
+pauses:
+  count_ge: "VAD gaps >= {threshold} s"
+  by_position: "VAD gaps by position: {position}"
+  mean: "mean pause"
+  p90: "90th percentile pause"
+  longest: "longest pause"
+  no_pauses: "no pauses of at least {shortest} s"
+positions:
+  sentence_boundary: "sentence_boundary"
+  clause_boundary: "clause_boundary"
+  mid_sentence: "mid_sentence"
+  unknown: "unknown"
+rate:
+  wpm: "words / speaking time (first to last speech)"
+  articulation_wpm: "words / time inside VAD speech regions"
+  syllables: "syllable nuclei (intensity peaks, de Jong & Wempe 2009) / speech time"
+  syllables_info_only: "; information only (values validated on Dutch speech)"
+fillers:
+  lower_bound: " (lower bound: the base model drops fillers)"
+  markers_upper_bound: " (upper bound: every occurrence counted, including ordinary uses; information only)"
+  count: "lexicon hesitations"
+  per_100: "lexicon hesitations / non-filler words"
+  per_100_upper: "upper end of the range: lexicon + acoustic candidates without a lexicon filler (provisional detector)"
+  per_100_at_least: "at least {rate:.1f} per 100 words: lexicon hesitations / non-filler words{bound}; the true rate can be much higher"
+  acoustic_only: "extra candidates, not counted as fillers: voiced, steady-pitch sound with no word and no lexicon filler nearby (provisional detector)"
+  acoustic: "voiced, steady-pitch sound with no word (provisional detector)"
+  markers_count: "lexicon discourse markers"
+  markers_per_100: "lexicon discourse markers / non-filler words"
+repetitions:
+  lower_bound: " (lower bound: the base model drops repetitions)"
+  method: "repeated 1-{max_ngram}-word phrases within {window_s:g} s"
+  per_100_suffix: " / non-filler words"
+loudness:
+  noise_unknown: "; noise level unknown (too little non-speech)"
+  processing: "; browser auto-gain or noise processing was on or unknown, which flattens loudness"
+  variation_cv: "coefficient of variation of 1 s speech-window loudness (relative)"
+  spread_db: "loud minus quiet speech (p90 - p10 of 1 s windows); information only"
+  clipping: "samples at or above {level:g} of full scale in runs of >= {run}, on the original samples"
+  possible_clipping: "possible clipping: a plateau just under the file's peak (within {band:.0%}, at least {ratio:g} times the band below), typical of a clipped file after lossy compression; provisional rule, on the original samples"
+  baseline_no_level: "the baseline has no speech level"
+  baseline: "typical speech level compared with your own baseline recording"
+  baseline_device_note: "; a change of microphone or distance cannot be detected"
+  baseline_processing: "; browser processing in the baseline was on or unknown"
+pitch:
+  too_little_voiced: "only {voiced_s:.1f} s of usable voiced speech; at least {minimum:g} s needed"
+  low_voiced: "; only {voiced_s:.0f} s of usable voiced speech"
+  noise_unknown: "; noise level unknown"
+  octave: "; {corrected} of {usable} frames corrected for octave errors"
+  at_limit: "; {share:.0%} of frames at the pitch range limit"
+  base: "semitones from your own typical pitch, voiced speech without fillers, octave errors corrected; information only"
+  sd: "spread (SD) of {base}"
+  range: "range (p90 - p10) of {base}"
+language_check:
+  # A notice only: the analysis always runs in the chosen language and no score changes.
+  notice: "The language detected in the first {window_s:g} s of speech is {detected} (probability {probability:.0%}), not {chosen}, which you chose. The analysis used {chosen}; if that is wrong, choose the right language and analyse again."
+language_names:
+  en: "English"
+  ar: "Arabic"
+  other: "another language (code {code})"
+units:
+  count: "count"
+  "words/min": "words/min"
+  "syllables/s": "syllables/s"
+  per 100 words: "per 100 words"
+  per 100 words (at least): "per 100 words (at least)"
+  ratio: "ratio"
+  dB: "dB"
+  share of speech time: "share of speech time"
+  semitones: "semitones"
+  s: "s"

@@ -66,6 +66,23 @@ def load_native(path: str | Path) -> tuple[np.ndarray, int]:
     return np.concatenate(chunks, axis=1).astype(np.float32, copy=False), rate
 
 
+class _LanguageDetector(Protocol):
+    def detect_language(self, audio: np.ndarray, /, **options: Any) -> tuple[str, float, Any]: ...
+
+
+def detect_language(
+    model: _LanguageDetector, samples: np.ndarray
+) -> tuple[str, float, list[tuple[str, float]]]:
+    """Whisper language detection on 16 kHz samples (one 30 s window, no VAD filter).
+
+    faster-whisper 1.2.1 `detect_language` returns (language, probability, all probabilities).
+    """
+    language, probability, all_probs = model.detect_language(
+        samples, vad_filter=False, language_detection_segments=1
+    )
+    return str(language), float(probability), [(str(c), float(p)) for c, p in all_probs]
+
+
 def transcribe(model: _WhisperModel, path: str | Path, **options: Any) -> tuple[list[Any], Any]:
     """Transcribe a file with a faster-whisper model; segments are fully decoded on return."""
     segments, info = model.transcribe(load_audio(path), **options)

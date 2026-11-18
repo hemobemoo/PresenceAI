@@ -48,6 +48,17 @@ class FakeWhisperModel:
     segments: Sequence[FakeSegment]
     info: FakeInfo
     calls: list[dict[str, Any]] = field(default_factory=list)
+    # what detect_language returns: (code, probability); default = the transcription language
+    detected: tuple[str, float] | None = None
+    detect_calls: list[np.ndarray] = field(default_factory=list)
+
+    def detect_language(
+        self, audio: np.ndarray, /, **options: Any
+    ) -> tuple[str, float, list[tuple[str, float]]]:
+        self.detect_calls.append(audio)
+        code, p = self.detected or (self.info.language, 1.0)
+        other = "ar" if code == "en" else "en"
+        return code, p, [(code, p), (other, round(1.0 - p, 6))]
 
     def transcribe(self, audio: np.ndarray, /, **options: Any) -> tuple[Iterator[Any], Any]:
         self.calls.append({"audio": audio, "options": options})

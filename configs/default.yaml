@@ -35,6 +35,10 @@ speech:                         # ADR 0011 (P1 slice 2: pauses and rate); FINAL_
     min_speech_duration_ms: 250 # Silero default; kept by the owner after C1 dev (2026-11-17, ADR 0011)
     min_silence_duration_ms: 100  # below the smallest pause threshold, so 0.25 s pauses survive
     speech_pad_ms: 0            # padding would shorten every pause by 2 x pad
+  language_check:               # ADR 0016; FINAL_04 §5: a notice only, never an error or a score change
+    window_s: 30.0              # detect on the first 30 s of speech (from the first VAD onset)
+    mismatch_min_probability: 0.5  # PROVISIONAL (owner 2026-11-18): notice when another language is detected
+                                   # with at least this probability; re-check on B1
   transcript:                   # ADR 0015: words Whisper invents in silence after the last speech
     end_tolerance_s: 0.2        # PROVISIONAL; test-informed (end only); re-check on B1 (real words removed)
   pauses:
