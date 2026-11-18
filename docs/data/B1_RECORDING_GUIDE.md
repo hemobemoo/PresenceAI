@@ -31,7 +31,10 @@ made on synthetic speech (C1):
 
 ## Where the files go
 
-Files stay **on your laptop only**: never GitHub, Google Drive, Kaggle, Colab or any other cloud.
+Files stay **on your laptop only**, as plain WAV files (ADR 0016, open item 3): never committed to
+GitHub, never synced to OneDrive or Google Drive, never uploaded to Kaggle, Colab, Hugging Face or
+any other cloud. The annotations and cached reports follow the same rule. Windows device
+encryption is optional.
 
 - Save the recordings in:
   `C:\BAU\4-The Fourth Year\Graduation_Project\PresenceAI\data\b1\audio\`

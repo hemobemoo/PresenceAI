@@ -32,7 +32,7 @@ Enforcement:
 | Item | Rule |
 |---|---|
 | Consent switches | The app's own user consent: (a) use the app, (b) camera, (c) keep encrypted raw recordings temporarily, (d) send transcript text to a hosted AI model (OpenRouter) for wording and follow-ups; the text is stored by the model provider and may be used to improve its models. The former study-only switches (e) blind rating of recordings and (f) release of de-identified derived metrics are **not applicable: no human-participant study** (ADR 0010) |
-| Encryption | Fernet key generated per installation (`MEDIA_KEY`); media encrypted at write time; in Stage B encrypted before upload to Supabase |
+| Encryption | Fernet key generated per installation (`MEDIA_KEY`); all media the app records is encrypted at write time; in Stage B encrypted before upload to Supabase. One exception, ADR 0016: the owner's B1 pilot clips, recorded outside the app, stay as plain WAV in the git-ignored `data/b1/` on the owner's laptop only, with their annotations; never committed, synced to OneDrive or uploaded to any cloud |
 | Retention | Raw media 30 days by default (the former study-media rule is not applicable: no human-participant study); user can delete any session at once; retention job runs at start-up and daily (Stage B) |
 | Derived metrics | Kept until the user deletes their profile |
 | Export | One zip: JSON, Parquet, decrypted media if still retained |

@@ -1,7 +1,9 @@
 # 0016 — Arabic basics: report language, language check and the B1 pilot set
 
 - Status: **accepted** by the owner on 2026-11-18 (decisions a–c as proposed, plus extra
-  instructions 1–4). `mismatch_min_probability` is **provisional** until the B1 re-check.
+  instructions 1–4). The same day the owner also accepted English unit codes with translated
+  labels and report schema 6, and decided open item 3 (B1 storage, option A).
+  `mismatch_min_probability` is **provisional** until the B1 re-check.
 - Date: 2026-11-18
 - Decider: project owner
 - Plan reference: FINAL_12 §2 (P1: "Arabic language pack basics", study "Record pilot set B1");
@@ -134,11 +136,18 @@ owner only. The clip plan, setup, file names and correcting steps are in
    clipping check (`loudness.clipping_share`, `possible_clipping_share` and the plateau ratio)
    runs on the B1 clips as the first real-speech check, **one microphone only**, and is reported
    as such.
-3. **Encryption of B1 at rest.** AGENTS.md rule 5 encrypts the media the app writes. The B1
-   recordings are written by Windows Sound Recorder, outside the app, and the app has no media
-   encryption module yet (`storage/` is empty). Until the owner decides, they are plain WAV files
-   in the git-ignored `data/b1/` on the laptop only. The pre-filled annotations contain the
-   transcript and stay in the same folder.
+3. **Encryption of B1 at rest: decided** (owner, 2026-11-18, option A).
+   - B1 holds only the owner's own voice, recorded outside the app with Windows Sound Recorder.
+   - The recordings stay as **plain WAV files** in the git-ignored `data/b1/` on the owner's
+     laptop only. They are never committed, never synced to OneDrive, and never uploaded to
+     Kaggle, Colab, Hugging Face or any other cloud.
+   - The pre-filled and corrected annotations (`data/b1/annotations/`) and the cached reports
+     (`data/b1/reports/`) contain the transcript, so the same rule applies to them.
+   - Encryption at write time (Fernet, `MEDIA_KEY`, FINAL_11 §2, AGENTS.md rule 5) still
+     applies to **all media the app itself records**. This exception covers only B1 files made
+     outside the app.
+   - The owner may turn on Windows device encryption if the Windows edition offers it. This is
+     optional and not part of the decision.
 4. A native-speaker review of `lang/ar/report.yaml` (with `lang/ar/ui.yaml`), before any user
    sees Arabic reports.
 5. The slow real-model Arabic test runs once the first B1 Arabic clip exists.
