@@ -1,4 +1,4 @@
-"""B1 annotation and scoring (ADR 0016): pre-filled files, Audacity labels, descriptive scores.
+"""B1 annotation and scoring (ADR 0016): pre-filled files, labels files, descriptive scores.
 
 No real recordings: reports come from the fake Whisper model and silent audio.
 """
@@ -60,7 +60,9 @@ def test_prefill_copies_whisper_text_and_pauses(fake_whisper: Any, silent_wav: P
     assert annotation.transcript == annotation.whisper_text == "Hello everyone. Today I will talk."
     assert (annotation.speech_start_s, annotation.speech_end_s) == (0.0, 3.6)
     pauses = b1.read_labels(labels)
-    assert [(p.start_s, p.end_s, p.label) for p in pauses] == [(1.2, 2.0, "sentence")]
+    # times as detected; labels wait for the owner's transcript (`run.py label`)
+    assert [(p.start_s, p.end_s, p.label) for p in pauses] == [(1.2, 2.0, "?")]
+    assert annotation.labels_method == "prefill" and not annotation.pause_edges_checked
 
 
 def test_arabic_flags_and_undecided_labels(fake_whisper: Any, silent_wav: Path, whisper_parts: Any):
@@ -81,7 +83,7 @@ def test_english_clips_carry_no_arabic_flags(fake_whisper: Any, silent_wav: Path
     assert not annotation.code_switching and not annotation.long_sentences
 
 
-def test_audacity_labels_round_trip_and_skip_frequency_lines():
+def test_labels_round_trip_and_skip_frequency_lines():
     items = [LabelledPause(start_s=1.5, end_s=2.25, label="mid")]
     text = b1.write_labels(items) + "\\\t100.0\t2000.0\n"
     assert b1.read_labels(text) == tuple(items)
@@ -115,6 +117,7 @@ def _corrected(fake_whisper: Any, silent_wav: Path) -> tuple[Any, Any]:
     fixed = annotation.model_copy(
         update={
             "status": "corrected",
+            "labels_method": "transcript_punctuation",
             "transcript": "Hello um everyone. Today I I will talk.",
             "speech_start_s": 0.0,
             "speech_end_s": 3.6,
@@ -131,13 +134,38 @@ def test_score_clip(fake_whisper: Any, silent_wav: Path):
     assert s.wpm_true == pytest.approx(8 / 3.6 * 60)
     assert s.wer == pytest.approx(2 / 8)  # "um" and the second "I" were dropped
     assert s.wer_no_hesitations == pytest.approx(1 / 7)
-    assert s.true_pauses == 1 and s.tp["0.5"] == 1 and s.fn["1.0"] == 0
-    assert s.positions == (("sentence_boundary", "sentence_boundary"),)
-    assert s.duration_abs_errors_s == (pytest.approx(0.05),)
+    assert s.true_pauses == 1
+    assert s.positions == (("sentence_boundary", "sentence_boundary"),)  # ADR 0014
+    # pause edges were not checked by ear: no pause F1 and no duration error
+    assert not s.pause_edges_checked
+    assert s.tp is None and s.fp is None and s.fn is None and s.duration_abs_errors_s is None
     assert s.pileup_ratio_max == 1.1 and s.language_mismatch is False
     summary = b1.summarise([s])
-    assert summary["pause_f1"]["0.5"] == 1.0 and summary["removed_real"] == 0
+    assert summary["pause_f1"] == {} and summary["duration_error_s_mean"] is None
+    assert summary["pause_edges_not_hand_checked"] == [s.clip]
+    assert summary["position_table"]["sentence_boundary"]["sentence_boundary"] == 1
+    assert summary["removed_real"] == 0
     json.dumps(summary)  # results are plain numbers
+
+
+def test_pause_f1_only_with_hand_checked_edges(fake_whisper: Any, silent_wav: Path):
+    report, fixed = _corrected(fake_whisper, silent_wav)
+    checked = fixed.model_copy(update={"pause_edges_checked": True})
+    labels = [LabelledPause(start_s=1.25, end_s=2.0, label="sentence")]
+    s = b1.score_clip(checked, labels, report, EV, SETTINGS.speech.pauses, pileup_ratio_max=None)
+    assert s.tp == {"0.5": 1, "1.0": 0} and s.fn == {"0.5": 0, "1.0": 0}
+    assert s.duration_abs_errors_s == (pytest.approx(0.05),)
+    summary = b1.summarise([s])
+    assert summary["pause_f1"]["0.5"] == 1.0 and summary["pause_edges_not_hand_checked"] == []
+
+
+def test_score_needs_labels_from_the_transcript(fake_whisper: Any, silent_wav: Path):
+    report, fixed = _corrected(fake_whisper, silent_wav)
+    with pytest.raises(ValueError, match=re.escape("run.py label")):
+        b1.score_clip(
+            fixed.model_copy(update={"labels_method": "prefill"}), [], report, EV,
+            SETTINGS.speech.pauses, pileup_ratio_max=None,
+        )  # fmt: skip
 
 
 def test_scores_hold_no_transcript_text(fake_whisper: Any, silent_wav: Path):

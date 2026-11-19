@@ -4,8 +4,9 @@ One clip has two annotation files, both pre-filled by the app and then corrected
 
 - `<clip>.yaml` -> `B1Annotation`: the verbatim transcript (Whisper's text to correct), the
   speech start and end, and the words ADR 0015 removed at the end (marked real or not);
-- `<clip>.labels.txt`: the pauses as an Audacity label track (`start<TAB>end<TAB>label`), so
-  they can be moved on the waveform. Labels: `sentence`, `clause`, `mid`; `?` = still to decide.
+- `<clip>.labels.txt`: the pauses the app detected, one `start<TAB>end<TAB>label` line each.
+  The times are never edited. The labels (`sentence`, `clause`, `mid`; `?` = still to decide)
+  are filled in by `run.py label` from the punctuation of the owner's corrected transcript.
 
 Results hold numbers only, never transcript text (`B1ClipScore`). This module imports only from
 `presenceai.schemas`.
@@ -21,6 +22,9 @@ from presenceai.schemas.speech import PausePosition, SpeechLanguage
 
 ClipType = Literal["normal", "defense", "slow", "fast", "fillers", "noise"]
 AnnotationStatus = Literal["prefilled", "corrected"]
+# "prefill": labels file as prefill wrote it (all "?"); "transcript_punctuation": written by
+# `run.py label` from the owner's corrected transcript (ADR 0016 amendment)
+LabelsMethod = Literal["prefill", "transcript_punctuation"]
 LABELS: dict[str, PausePosition] = {
     "sentence": PausePosition.SENTENCE_BOUNDARY,
     "clause": PausePosition.CLAUSE_BOUNDARY,
@@ -57,6 +61,8 @@ class B1Annotation(_Frozen):
     code_switching: bool = False  # Arabic clips with English terms mid-sentence
     long_sentences: bool = False  # Arabic clips with long sentences (ADR 0011)
     status: AnnotationStatus = "prefilled"
+    labels_method: LabelsMethod = "prefill"
+    pause_edges_checked: bool = False  # pause times are the app's; nobody moved them by ear
     prefill: Prefill
     speech_start_s: float = Field(ge=0)  # first and last speech you hear (VAD pre-filled)
     speech_end_s: float = Field(gt=0)
@@ -106,10 +112,12 @@ class B1ClipScore(_Frozen):
     wer_no_hesitations: float | None  # hesitations left out on both sides
     true_pauses: int
     detected_pauses: int
-    tp: dict[str, int]  # per F1 threshold ("0.5", "1.0"), with the E2 exclusion zone
-    fp: dict[str, int]
-    fn: dict[str, int]
-    duration_abs_errors_s: tuple[float, ...]
+    pause_edges_checked: bool
+    # Pause detection and duration need hand-checked pause edges; None otherwise (ADR 0016).
+    tp: dict[str, int] | None  # per F1 threshold ("0.5", "1.0"), with the E2 exclusion zone
+    fp: dict[str, int] | None
+    fn: dict[str, int] | None
+    duration_abs_errors_s: tuple[float, ...] | None
     positions: tuple[tuple[str, str], ...]  # (true, detected) for matched pauses
     detected_positions: tuple[str, ...]
     words_per_sentence_mark: float | None  # ADR 0011: positions unknown above the config value
