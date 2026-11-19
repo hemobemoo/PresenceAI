@@ -6,11 +6,11 @@ made on synthetic speech (C1):
 
 | Check | What B1 shows |
 |---|---|
-| E2 Arabic (FINAL_10 §2) | Rate and pause accuracy in Arabic. No public Arabic source has timing ground truth, so this is reported descriptively, for one speaker |
-| E2 English on real speech | The same measures in English, next to the C1 result |
+| E2 Arabic (FINAL_10 §2) | Rate and pause positions in Arabic, reported descriptively for one speaker. Pause detection and length are not checked (pause edges are not checked by ear, ADR 0016) |
+| E2 English on real speech | Rate and pause positions in English, next to the C1 result |
 | E1 | Word error rate on your 20 hand-corrected clips |
 | ADR 0015 | Whether the 0.2 s end margin removes real words, especially your quiet closing |
-| ADR 0014 | Whether mid-sentence pauses are labelled correctly in real speech |
+| ADR 0014 | Whether mid-sentence pauses are labelled correctly in real speech; the true position comes from your punctuation |
 | ADR 0011 | Arabic punctuation (positions become `unknown`), VAD minimum speech, long sentences |
 | ADR 0013 | Clipping and the plateau ratio on real speech, as a first check with one microphone |
 | ADR 0016 | Whether the language check gives false notices, also with English terms in Arabic |
@@ -23,8 +23,14 @@ made on synthetic speech (C1):
 - **How to speak:** from bullet notes, not a word-for-word script.
 - **Ending:** end every clip with a short closing, slightly quieter than the rest: "Thank you."
   in English, «شكراً» in Arabic. This is the ADR 0015 check.
-- **App:** Windows Sound Recorder (or any recorder). In its settings choose **WAV** as the
-  recording format (FLAC also works). Avoid M4A or MP3: lossy formats change the clipping check.
+- **App:** Windows Sound Recorder; nothing else to install. In its settings:
+  - set the recording format to **WAV**. Avoid M4A or MP3: lossy formats change the clipping
+    check;
+  - set the folder for recordings to `data\b1\audio\` (below). The default folder,
+    `Documents\Sound recordings`, may be synced by OneDrive. If the folder cannot be changed,
+    move each file to `data\b1\audio\` right after recording and delete it from
+    `Documents\Sound recordings`.
+  - Rename each recording to its name in the lists below (Sound Recorder or File Explorer).
 - **Length:** 2–3 minutes of speech per clip. Up to about 5 s of silence before you start is
   fine.
 - **Content:** your own topics. Leave out other people's names and personal details.
@@ -102,41 +108,62 @@ busy) and writes two files per clip into
 
 - `<clip>.yaml`: Whisper's transcript, the detected speech start and end, and the words that
   ADR 0015 removed at the end;
-- `<clip>.labels.txt`: every detected pause as an Audacity label track.
+- `<clip>.labels.txt`: every detected pause, one line each (`start<TAB>end<TAB>label`, times
+  in seconds). All labels start as `?`; `label` fills them from your transcript.
 
 `prefill` never overwrites a file you have corrected. You can record a few clips, pre-fill and
 correct them, then record the rest.
 
 ## Correcting one clip
 
-You only correct what the app pre-filled. **Aim for about 15–20 minutes per clip** (about 6–8
-minutes for the transcript, 6–10 for the pauses, a few for the rest). All 20 clips take about
-5–7 hours, best spread over several days. If a clip takes more than 30 minutes, stop, write why
-in `notes:` and tell me: the format may need to change.
+You correct the transcript by listening; the pause labels then come from your punctuation, so
+you never edit pause times. **Aim for about 15 minutes per clip**: about 8–10 minutes for the
+transcript and its punctuation, and a few minutes for the rest and any `?`. All 20 clips take
+about 5 hours, best spread over several days. If a clip takes more than 30 minutes, stop, write
+why in `notes:` and tell me: the format may need to change.
 
-1. **Transcript** (`<clip>.yaml`, field `transcript`). Listen at normal speed and change the text
-   to exactly what you said: add fillers Whisper dropped ("um", "uh", «امم», «اه»), add repeated
-   words, fix wrong words, and delete words you did not say. Keep `whisper_text` as it is.
-   Punctuation does not affect the word count.
-2. **Speech start and end** (`speech_start_s`, `speech_end_s`). The first and last speech you
-   hear, in seconds; the closing counts as speech. Only change them if they are off by more
-   than about 0.2 s.
-3. **Removed words** (`removed_at_end`). For each word, write `real: true` if you really said it
+1. **Transcript** (`<clip>.yaml`, field `transcript`). Play the clip in Sound Recorder and
+   change the text to exactly what you said:
+   - add fillers Whisper dropped ("um", "uh", «امم», «اه») and repeated words;
+   - fix wrong words, and delete words you did not say;
+   - keep `whisper_text` as it is.
+2. **Punctuation, by meaning.** Put `.` `?` `!` `؟` where a sentence really ends and `,` `،`
+   `;` `؛` where a clause really ends: where a reader needs them, **not where you paused**. A
+   pause inside a phrase ("the results … show") gets no mark. Punctuation does not change the
+   word count.
+3. **Speech start and end** (`speech_start_s`, `speech_end_s`). The first and last speech you
+   hear, in seconds (Sound Recorder shows the position); the closing counts as speech. Only
+   change them if they are off by more than about 0.2 s.
+4. **Removed words** (`removed_at_end`). For each word, write `real: true` if you really said it
    (for example your closing) or `real: false` if Whisper invented it.
-4. **Pauses** (`<clip>.labels.txt`). The easiest way is Audacity (free; a desktop tool, not a
-   project dependency): open the audio, then **File ▸ Import ▸ Labels…** and choose the labels
-   file. Each label spans one pause on the waveform.
-   - Drag the label edges to where the silence really starts and ends. A breath belongs to the
+5. **Pause labels.** Save the YAML file, then run:
+
+   ```powershell
+   uv run python experiments/b1_real_speech/run.py label b1_en_01_normal
+   ```
+
+   (your clip's name, or `--all` for every pre-filled clip). It reads your punctuation after
+   your last word before each pause and writes `sentence`, `clause` or `mid` into
+   `<clip>.labels.txt`. It never changes pause times and never adds or deletes pauses.
+   - When it cannot tell, it writes `?` and prints the pause number, its time and 3 words on
+     each side, for example `pause 7 at 01:12.40-01:13.30: ... the main result | امم is ...`.
+     This happens when a word you added (such as «امم») has no timing and sits right at the
      pause.
-   - Set each label to `sentence` (after a finished sentence), `clause` (between parts of a
-     sentence, where a comma would go) or `mid` (inside a phrase, e.g. "the results … show").
-     `?` means the app could not tell; replace every `?`.
-   - Delete labels that are not silence, and add pauses you hear that are missing, at least
-     those of about half a second or longer.
-   - Export with **File ▸ Export ▸ Export Labels…** over the same `<clip>.labels.txt` file.
-     Without Audacity you can edit the file in a text editor: one line per pause,
-     `start<TAB>end<TAB>label`, times in seconds.
-5. **Done:** set `status: corrected` in the YAML file and save.
+   - Listen to that pause (3 s before to 1 s after it):
+
+     ```powershell
+     uv run python experiments/b1_real_speech/run.py listen b1_en_01_normal 7
+     ```
+
+     Then either fix the punctuation in the transcript and run `label` again, or open
+     `<clip>.labels.txt` in Notepad and replace that `?` (line 7 is pause 7) with `sentence`,
+     `clause` or `mid`. Change only the label at the end of the line, never the two times.
+   - Once a file has no `?` left, `label` keeps it; `--force` redoes it from your punctuation.
+6. **Done:** set `status: corrected` in the YAML file and save. Comments you add to the YAML
+   file are not kept when `label` rewrites it, so put remarks in `notes:`.
+
+Pause edges are not checked by ear (`pause_edges_checked: false`), so B1 measures pause
+*positions* but not pause detection or pause length (ADR 0016, "Amendment").
 
 ## After correcting
 
@@ -146,7 +173,12 @@ uv run python experiments/b1_real_speech/run.py score
 
 - `score` compares every corrected clip with the app's analysis and writes per-clip and
   per-language numbers to `experiments/results/b1/`. Clips still `prefilled` are listed and
-  skipped.
+  skipped, and so is a clip whose labels were not made by `label`.
+- It reports rate, WER, pause positions, removed words, clipping and the language check. Pause
+  detection (F1) and pause length are left out and the clips are listed under
+  `pause_edges_not_hand_checked`, because nobody moved the pause edges by ear.
+- Clips you pre-filled before 2026-11-19 have labels taken from Whisper's punctuation. `label`
+  replaces those with labels from your transcript; you do not need `--force` for them.
 - Run it first after 2 English and 2 Arabic clips, so we can check the workflow before you do
   the rest. Then run it again when all 20 are corrected.
 - Tell me when a run is done. I summarise the numbers and propose updates to ADRs 0011, 0013,

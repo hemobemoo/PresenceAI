@@ -169,6 +169,13 @@ reported next to it. Seed 20261117 per clip.
   So the app rarely penalises a pause it should not, but it misses many real mid-sentence
   pauses. **The real check is on the owner's B1 recordings and annotated real speech**, not
   on C1.
+- **B1 position ground truth** (owner, 2026-11-19, ADR 0016 "Amendment"): the true position
+  of each detected pause comes from the punctuation of the owner's corrected transcript
+  (`. ? ! ؟` sentence, `، , ؛ ;` clause, none mid), aligned to Whisper's timed words. The
+  owner punctuates by meaning, not by where they paused. B1 reports the position table and
+  both headline errors above. It does **not** report pause F1 or duration error, because the
+  pause edges are the app's own and were not checked by ear. So pause timing on real speech,
+  and Arabic pause timing at all, has no check.
 - Noise, descriptive: at 20 dB / 10 dB, F1 0.960 / 0.959 at 0.5 s and duration error
   0.090 / 0.087 s; wpm error stays about 1 %.
 - Details: `experiments/results/e2/f1_test_results.md`, `f1_dev_findings.md`.
