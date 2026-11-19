@@ -164,3 +164,12 @@ def test_no_pauses_still_has_evidence_and_skips_mean(speech_cfg: Any):
 def test_no_speech_is_not_measurable(speech_cfg: Any):
     m, nm = pauses.summarise((), (), _transcript([]), speech_cfg)
     assert m == {} and "pauses.count_ge_0.25s" in nm
+
+
+def test_a_word_stretched_into_the_pause_is_skipped_by_the_midpoint_rule(speech_cfg: Any):
+    # ADR 0016 open item 6, checked on C1 dev and kept: "Two," runs 0.6 s into the pause
+    # (midpoint inside it), so the word before the pause is "One." and the position "sentence"
+    tokens = [("One.", 0.0, 0.5), ("Two,", 1.1, 2.1), ("three", 2.6, 3.0), ("four.", 3.1, 3.4)]
+    regions = (_r(0.0, 1.5), _r(2.5, 3.4))
+    (event,) = pauses.find_pauses(regions, _transcript(tokens), speech_cfg)
+    assert event.word_before == 0 and event.position == PausePosition.SENTENCE_BOUNDARY

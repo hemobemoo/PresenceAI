@@ -155,5 +155,16 @@
   "label": "test-informed",
   "finished": "2026-11-17T22:38:50+00:00",
   "result": "f1_test_snr10_20261117-223850_summary.json"
+ },
+ {
+  "run": "f1",
+  "part": "dev",
+  "condition": "clean",
+  "config_hash": "5857fc9d8221e197",
+  "passed": null,
+  "commit": "7354ccbdc59543bcb612ab99845f3e709b550b67",
+  "rerun_reason": null,
+  "finished": "2026-11-19T19:06:47+00:00",
+  "result": "f1_dev_clean_20261119-190647_summary.json"
  }
 ]

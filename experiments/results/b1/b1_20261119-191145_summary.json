@@ -1,0 +1,104 @@
+{
+  "config_hash": "36e2561db2a04161",
+  "model": "whisper_small",
+  "commit": "7354ccbdc59543bcb612ab99845f3e709b550b67",
+  "descriptive_only": true,
+  "by_language": {
+    "en": {
+      "clips": 2,
+      "wpm_error_pct_mean": 0.7098575552505839,
+      "wer_mean": 0.023508116038048366,
+      "wer_no_hesitations_mean": 0.021354723707664884,
+      "pause_f1": {},
+      "duration_error_s_mean": null,
+      "pause_edges_not_hand_checked": [
+        "b1_en_01_normal.wav",
+        "b1_en_05_defense.wav"
+      ],
+      "position_table": {
+        "sentence_boundary": {
+          "sentence_boundary": 24,
+          "clause_boundary": 0,
+          "mid_sentence": 1,
+          "unknown": 0
+        },
+        "clause_boundary": {
+          "sentence_boundary": 2,
+          "clause_boundary": 27,
+          "mid_sentence": 3,
+          "unknown": 0
+        },
+        "mid_sentence": {
+          "sentence_boundary": 1,
+          "clause_boundary": 2,
+          "mid_sentence": 94,
+          "unknown": 0
+        },
+        "unknown": {
+          "sentence_boundary": 0,
+          "clause_boundary": 0,
+          "mid_sentence": 0,
+          "unknown": 0
+        }
+      },
+      "mid_as_boundary": 0.030927835051546393,
+      "boundary_as_mid": 0.07017543859649122,
+      "unknown_share": 0.0,
+      "removed_at_end": 0,
+      "removed_real": 0,
+      "clips_with_clipping": 0,
+      "clips_with_possible_clipping": 0,
+      "pileup_ratio_max": null,
+      "language_mismatches": 1,
+      "language_probability_min": 0.5340197682380676
+    },
+    "ar": {
+      "clips": 2,
+      "wpm_error_pct_mean": 1.350762527233127,
+      "wer_mean": 0.1784313725490196,
+      "wer_no_hesitations_mean": 0.17267282010997642,
+      "pause_f1": {},
+      "duration_error_s_mean": null,
+      "pause_edges_not_hand_checked": [
+        "b1_ar_01_normal.wav",
+        "b1_ar_02_normal.wav"
+      ],
+      "position_table": {
+        "sentence_boundary": {
+          "sentence_boundary": 3,
+          "clause_boundary": 0,
+          "mid_sentence": 4,
+          "unknown": 5
+        },
+        "clause_boundary": {
+          "sentence_boundary": 1,
+          "clause_boundary": 0,
+          "mid_sentence": 6,
+          "unknown": 7
+        },
+        "mid_sentence": {
+          "sentence_boundary": 0,
+          "clause_boundary": 0,
+          "mid_sentence": 42,
+          "unknown": 57
+        },
+        "unknown": {
+          "sentence_boundary": 0,
+          "clause_boundary": 0,
+          "mid_sentence": 0,
+          "unknown": 0
+        }
+      },
+      "mid_as_boundary": 0.0,
+      "boundary_as_mid": 0.7142857142857143,
+      "unknown_share": 0.552,
+      "removed_at_end": 0,
+      "removed_real": 0,
+      "clips_with_clipping": 0,
+      "clips_with_possible_clipping": 0,
+      "pileup_ratio_max": null,
+      "language_mismatches": 0,
+      "language_probability_min": 0.9703050255775452
+    }
+  }
+}
