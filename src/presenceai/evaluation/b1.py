@@ -1,8 +1,11 @@
 """B1: the owner's annotated recordings as the real-speech check (ADR 0016).
 
-- `prefill` turns an app report into the two annotation files, so the owner only corrects:
-  the transcript and speech start/end in `<clip>.yaml`, the pauses in `<clip>.labels.txt`
-  (an Audacity label track);
+- `prefill` turns an app report into the two annotation files: `<clip>.yaml` (transcript and
+  speech start/end, corrected by the owner) and `<clip>.labels.txt` (the detected pauses, all
+  labelled `?`);
+- `label_pauses` fills the labels from the punctuation of the owner's corrected transcript,
+  aligned to Whisper's timed words. Pause times stay as the app detected them, so B1 checks
+  pause *positions* (ADR 0014) but not pause detection or duration (ADR 0016 amendment);
 - `score_clip` compares a corrected annotation with a report, using the E2 matching rules
   unchanged (`evaluation.e2`, ADR 0014 §6). B1 is descriptive: no pass/fail, no tuning target;
 - clip names and the clip plan follow `docs/data/B1_RECORDING_GUIDE.md`.
@@ -14,6 +17,7 @@ from __future__ import annotations
 
 import re
 from collections.abc import Sequence
+from dataclasses import dataclass
 from typing import Any
 
 import yaml
@@ -52,7 +56,6 @@ CLIP_PLAN: dict[int, tuple[ClipType, bool, bool]] = {
 LANGS: tuple[SpeechLanguage, ...] = ("en", "ar")
 AUDIO_SUFFIXES = (".wav", ".flac")
 _NAME = re.compile(r"^b1_(en|ar)_(\d{2})_([a-z]+)$")
-_LABEL_OF = {position: label for label, position in LABELS.items()}
 
 
 def clip_stem(language: SpeechLanguage, number: int) -> str:
@@ -81,14 +84,14 @@ def parse_stem(stem: str) -> tuple[SpeechLanguage, int]:
 
 
 def write_labels(items: Sequence[LabelledPause]) -> str:
-    """Audacity label track: one `start<TAB>end<TAB>label` line per pause."""
+    """One `start<TAB>end<TAB>label` line per pause."""
     return "".join(f"{p.start_s:.6f}\t{p.end_s:.6f}\t{p.label}\n" for p in items)
 
 
 def read_labels(content: str) -> tuple[LabelledPause, ...]:
     out: list[LabelledPause] = []
     for n, line in enumerate(content.splitlines(), start=1):
-        if not line.strip() or line.startswith("\\"):  # Audacity frequency lines start with "\"
+        if not line.strip() or line.startswith("\\"):  # frequency lines of other label tools
             continue
         parts = line.split("\t")
         if len(parts) != 3:
@@ -115,8 +118,12 @@ ANNOTATION_HEADER = """\
 #    Keep whisper_text as it is.
 # 2. speech_start_s / speech_end_s: the first and last speech you hear, in seconds.
 # 3. removed_at_end: for each word, real: true if you really said it, false if not.
-# 4. Pauses are in the .labels.txt file next to this one (open it in Audacity).
-# 5. When both files are done, set status: corrected.
+#    Punctuate by meaning: . ? ! ؟ where a sentence ends, , ، ; ؛ where a clause ends,
+#    not where you paused.
+# 4. Run `run.py label <clip>`: it fills the .labels.txt next to this file from your
+#    punctuation. Decide any "?" by ear with `run.py listen <clip> <pause-number>`.
+#    Never change pause times.
+# 5. Set status: corrected. Comments you add here are not kept; use notes: instead.
 """
 
 
@@ -132,7 +139,7 @@ def load_annotation(content: str) -> B1Annotation:
 
 
 def prefill(report: SpeechReport, stem: str, meta: Prefill) -> tuple[B1Annotation, str]:
-    """The report as an annotation to correct, plus its Audacity label track."""
+    """The report as an annotation to correct, plus its labels file (every label "?")."""
     language, number = parse_stem(stem)
     clip_type, code_switching, long_sentences = CLIP_PLAN[number]
     regions = report.speech_regions
@@ -156,14 +163,154 @@ def prefill(report: SpeechReport, stem: str, meta: Prefill) -> tuple[B1Annotatio
         ),
     )
     labels = write_labels(
-        [
-            LabelledPause(
-                start_s=p.start_s, end_s=p.end_s, label=_LABEL_OF.get(p.position, UNDECIDED)
-            )
-            for p in report.pauses
-        ]
+        [LabelledPause(start_s=p.start_s, end_s=p.end_s, label=UNDECIDED) for p in report.pauses]
     )
     return annotation, labels
+
+
+# --- pause labels from the owner's transcript (ADR 0016 amendment) ---------------------------
+
+# The owner's rule (2026-11-19): punctuation after the last word before the pause.
+SENTENCE_MARKS = frozenset(".?!؟")
+CLAUSE_MARKS = frozenset(",،;؛")
+_CLOSERS = "\"'”’»)]}"
+
+
+@dataclass(frozen=True)
+class Token:
+    raw: str  # as typed, punctuation included
+    norm: str  # normalised for alignment
+    start_s: float | None = None  # from the aligned Whisper word; None for added words
+    end_s: float | None = None
+
+    @property
+    def mid_s(self) -> float | None:
+        if self.start_s is None or self.end_s is None:
+            return None
+        return (self.start_s + self.end_s) / 2
+
+
+@dataclass(frozen=True)
+class PauseLabel:
+    number: int  # 1-based, in the labels file's order
+    pause: LabelledPause
+    label: str
+    reason: str | None = None  # why it is "?"
+    before: tuple[str, ...] = ()  # up to 3 of the owner's words before / after
+    after: tuple[str, ...] = ()
+
+
+def tokens(text: str, language: SpeechLanguage) -> list[Token]:
+    """Words of a transcript; a punctuation-only token ("word ،") joins the word before it."""
+    out: list[Token] = []
+    for raw in text.split():
+        norm = normalize_token(raw, language)
+        if norm:
+            out.append(Token(raw=raw, norm=norm))
+        elif out:
+            out[-1] = Token(raw=out[-1].raw + raw, norm=out[-1].norm)
+    return out
+
+
+def align(ref: Sequence[str], hyp: Sequence[str]) -> list[tuple[int | None, int | None]]:
+    """Word-level edit-distance alignment: (ref index, hyp index) pairs; None = inserted or
+    deleted. Substitutions pair up, so a misheard word keeps its position.
+
+    Among alignments with the fewest edits, the one with the most exact matches wins, so an
+    added «امم» is an insertion rather than the start of a chain of substitutions.
+    """
+    n, m = len(ref), len(hyp)
+    # cost = (edits, -exact matches), compared as tuples
+    d = [[(0, 0)] * (m + 1) for _ in range(n + 1)]
+    for i in range(n + 1):
+        d[i][0] = (i, 0)
+    for j in range(m + 1):
+        d[0][j] = (j, 0)
+
+    def diag(i: int, j: int) -> tuple[int, int]:
+        e, neg = d[i - 1][j - 1]
+        same = ref[i - 1] == hyp[j - 1]
+        return (e + (not same), neg - same)
+
+    for i in range(1, n + 1):
+        for j in range(1, m + 1):
+            up, left = d[i - 1][j], d[i][j - 1]
+            d[i][j] = min(diag(i, j), (up[0] + 1, up[1]), (left[0] + 1, left[1]))
+    pairs: list[tuple[int | None, int | None]] = []
+    i, j = n, m
+    while i or j:
+        if i and j and d[i][j] == diag(i, j):
+            pairs.append((i - 1, j - 1))
+            i, j = i - 1, j - 1
+        elif i and d[i][j] == (d[i - 1][j][0] + 1, d[i - 1][j][1]):
+            pairs.append((i - 1, None))  # a word the owner added (no timing)
+            i -= 1
+        else:
+            pairs.append((None, j - 1))  # a Whisper word the owner deleted
+            j -= 1
+    return pairs[::-1]
+
+
+def timed_tokens(text: str, report: SpeechReport, language: SpeechLanguage) -> list[Token]:
+    """The owner's words, each with the times of the Whisper word it aligns to."""
+    mine = tokens(text, language)
+    theirs = report.transcript.words
+    hyp = [normalize_token(w.text, language) for w in theirs]
+    out = list(mine)
+    for i, j in align([t.norm for t in mine], hyp):
+        if i is not None and j is not None:
+            w = theirs[j]
+            out[i] = Token(raw=mine[i].raw, norm=mine[i].norm, start_s=w.start_s, end_s=w.end_s)
+    return out
+
+
+def punctuation_label(raw: str) -> str:
+    stripped = raw.rstrip(_CLOSERS)
+    mark = stripped[-1:] if stripped else ""
+    if mark in SENTENCE_MARKS:
+        return "sentence"
+    if mark in CLAUSE_MARKS:
+        return "clause"
+    return "mid"
+
+
+def label_pauses(pauses_in: Sequence[LabelledPause], words_in: Sequence[Token]) -> list[PauseLabel]:
+    """Label each pause from the owner's punctuation after the last word before it.
+
+    A word is before the pause when its midpoint is at or before the pause start, and after it
+    when its midpoint is at or after the pause end (the app's own rule, `pauses.find_pauses`).
+    The label is "?" when there is no timed word on one side, or when anything sits between the
+    last word before and the first word after: words the owner added (no timing, so they could
+    be on either side) or a word Whisper placed inside the pause. Times are never changed.
+    """
+    timed = [(i, t.mid_s) for i, t in enumerate(words_in) if t.mid_s is not None]
+    out: list[PauseLabel] = []
+    for number, p in enumerate(pauses_in, start=1):
+        before = max((i for i, mid in timed if mid <= p.start_s + 1e-9), default=None)
+        after = min((i for i, mid in timed if mid >= p.end_s - 1e-9), default=None)
+        k = 0 if before is None else before + 1
+        reason = None
+        if before is None or after is None:
+            reason = "none of your words is timed on one side of the pause"
+        elif after != before + 1:
+            inside = [i for i, _ in timed if before < i < after]
+            reason = (
+                "a word sits inside the pause"
+                if inside
+                else "words you added (no timing) are next to the pause"
+            )
+        label = UNDECIDED if reason else punctuation_label(words_in[k - 1].raw)
+        out.append(
+            PauseLabel(
+                number=number,
+                pause=p,
+                label=label,
+                reason=reason,
+                before=tuple(t.raw for t in words_in[max(0, k - 3) : k]),
+                after=tuple(t.raw for t in words_in[k : k + 3]),
+            )
+        )
+    return out
 
 
 # --- scoring ----------------------------------------------------------------------------------
@@ -210,6 +357,8 @@ def score_clip(
 ) -> B1ClipScore:
     if a.status != "corrected":
         raise ValueError(f"{a.clip}: not corrected yet (status: {a.status})")
+    if a.labels_method != "transcript_punctuation":
+        raise ValueError(f"{a.clip}: run `run.py label` first (labels come from your transcript)")
     if any(p.label == UNDECIDED for p in labelled):
         raise ValueError(f"{a.clip}: a pause label is still '?'")
     lexicon = fillers.load_lexicon(a.language)
@@ -232,6 +381,7 @@ def score_clip(
     scores = [e2.threshold_score(true, det, matches, t, cfg.f1_exclusion_s) for t in cfg.thresholds]
     check = report.language_check
     profile = report.loudness_profile
+    edges = a.pause_edges_checked
     return B1ClipScore(
         clip=a.clip,
         language=a.language,
@@ -248,10 +398,12 @@ def score_clip(
         wer_no_hesitations=wer(ref_nh, hyp_nh),
         true_pauses=len(true),
         detected_pauses=len(det),
-        tp={str(s.threshold_s): s.tp for s in scores},  # "0.5", "1.0" as in evaluation.yaml
-        fp={str(s.threshold_s): s.fp for s in scores},
-        fn={str(s.threshold_s): s.fn for s in scores},
-        duration_abs_errors_s=tuple(abs(m.duration_error_s) for m in matches),
+        pause_edges_checked=edges,
+        # "0.5", "1.0" as in evaluation.yaml; only with hand-checked pause edges (ADR 0016)
+        tp={str(s.threshold_s): s.tp for s in scores} if edges else None,
+        fp={str(s.threshold_s): s.fp for s in scores} if edges else None,
+        fn={str(s.threshold_s): s.fn for s in scores} if edges else None,
+        duration_abs_errors_s=tuple(abs(m.duration_error_s) for m in matches) if edges else None,
         positions=tuple(
             (true[m.true_index].position.value, det[m.detected_index].position.value)
             for m in matches
@@ -276,11 +428,12 @@ def _mean(xs: Sequence[float]) -> float | None:
 
 def summarise(scores: Sequence[B1ClipScore]) -> dict[str, Any]:
     """Descriptive summary for one language (E2 Arabic is descriptive only, FINAL_10 §2)."""
-    keys = sorted({k for s in scores for k in s.tp})
+    checked = [s for s in scores if s.pause_edges_checked]
+    keys = sorted({k for s in checked for k in s.tp or {}})
     pairs = [p for s in scores for p in s.positions]
     mid_as_boundary, boundary_as_mid = e2.boundary_mid_errors(pairs)
     detected = [x for s in scores for x in s.detected_positions]
-    errors = [x for s in scores for x in s.duration_abs_errors_s]
+    errors = [x for s in checked for x in s.duration_abs_errors_s or ()]
     ratios = [s.pileup_ratio_max for s in scores if s.pileup_ratio_max is not None]
     return {
         "clips": len(scores),
@@ -289,15 +442,17 @@ def summarise(scores: Sequence[B1ClipScore]) -> dict[str, Any]:
         "wer_no_hesitations_mean": _mean(
             [s.wer_no_hesitations for s in scores if s.wer_no_hesitations is not None]
         ),
+        # pause detection and duration only for clips whose pause edges were checked by ear
         "pause_f1": {
             k: f1(
-                sum(s.tp[k] for s in scores),
-                sum(s.fp[k] for s in scores),
-                sum(s.fn[k] for s in scores),
+                sum((s.tp or {})[k] for s in checked),
+                sum((s.fp or {})[k] for s in checked),
+                sum((s.fn or {})[k] for s in checked),
             )
             for k in keys
         },
         "duration_error_s_mean": _mean(errors),
+        "pause_edges_not_hand_checked": [s.clip for s in scores if not s.pause_edges_checked],
         "position_table": e2.position_table(pairs),
         "mid_as_boundary": mid_as_boundary,
         "boundary_as_mid": boundary_as_mid,

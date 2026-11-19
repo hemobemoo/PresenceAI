@@ -1,8 +1,10 @@
 # 0016 — Arabic basics: report language, language check and the B1 pilot set
 
 - Status: **accepted** by the owner on 2026-11-18 (decisions a–c as proposed, plus extra
-  instructions 1–4). The same day the owner also accepted English unit codes with translated
-  labels and report schema 6, and decided open item 3 (B1 storage, option A).
+  instructions 1–4). Amended 2026-11-19: pause labels from the owner's transcript, no pause
+  F1 or duration on B1 (see "Amendment"). On 2026-11-18 the owner also accepted English unit
+  codes with translated labels and report schema 6, and decided open item 3 (B1 storage,
+  option A).
   `mismatch_min_probability` is **provisional** until the B1 re-check.
 - Date: 2026-11-18
 - Decider: project owner
@@ -49,8 +51,8 @@ After slice 5, three P1 pieces were missing:
 **d. Annotation format.**
 1. Annotate from scratch (word times, pauses). Many hours per clip.
 2. Pre-fill everything from the app and only correct (owner's instruction). The transcript goes
-   in a YAML file; pauses go in an Audacity label track, so they can be moved on the waveform.
-   *Chosen.*
+   in a YAML file; the detected pauses go in a labels file (`start<TAB>end<TAB>label`).
+   *Chosen.* Pause labels come from the owner's transcript punctuation (see "Amendment").
 
 ## Decision
 
@@ -104,16 +106,56 @@ owner only. The clip plan, setup, file names and correcting steps are in
 `experiments/b1_real_speech/run.py`):
 
 - `prefill` writes `<clip>.yaml` (Whisper transcript, VAD speech start and end, words removed by
-  ADR 0015) and `<clip>.labels.txt` (detected pauses with their position labels, `?` where the
-  position is unknown). The owner only corrects. A corrected file is never overwritten;
+  ADR 0015) and `<clip>.labels.txt` (the detected pauses, labelled by `label` from the
+  owner's punctuation; see "Amendment"). The owner only corrects. A corrected file is never
+  overwritten;
 - `score` uses the E2 matching and F1 rules unchanged (`evaluation.e2`, ADR 0014 §6) and writes
   numbers only, never transcript text, to `experiments/results/b1/`. Per clip and per language:
-  wpm error, WER (E1), pause F1 at 0.5 and 1.0 s, duration error, the position table and both
+  wpm error, WER (E1), pause F1 at 0.5 and 1.0 s and duration error (only with hand-checked
+  pause edges, so not on B1 as recorded; see "Amendment"), the position table and both
   position errors, words per sentence mark, removed words and how many were real, clipping
   share, possible clipping share, the plateau ratio, SNR, and the detected language and its
   probability;
 - B1 is **descriptive only**: no pass/fail, and no threshold is tuned on it. Arabic E2 is
   reported for one speaker.
+
+## Amendment (owner, 2026-11-19): pause labels from the owner's transcript
+
+The owner uses Windows Sound Recorder only and will not install Audacity, so pause edges are
+not moved by ear. The annotation workflow changes:
+
+- `prefill` writes every pause label as `?`. The pause times stay exactly as the app detected
+  them: `label` never changes them, adds pauses or deletes them.
+- `run.py label <clip>` (or `--all`) fills `<clip>.labels.txt` from the owner's corrected
+  `transcript`:
+  - The owner's words are aligned to Whisper's timed words (the report cached at pre-fill, in
+    `data/b1/reports/`) by a word-level edit-distance alignment on normalised tokens. A
+    misheard word still pairs up by position. Among equally short alignments, the one with
+    the most exact matches wins.
+  - Each pause takes the punctuation after the last of the owner's words before it, by word
+    midpoint, as in `pauses.find_pauses`: `. ? ! ؟` → `sentence`; `، , ؛ ;` → `clause`;
+    none → `mid`.
+  - Words the owner added (e.g. «امم») have no timing and sit between their aligned
+    neighbours. When such a word, or a word Whisper put inside the pause, sits at the pause,
+    or when none of the owner's words is timed on one side, the label is `?`. `label` prints
+    the pause number, its time and 3 words on each side.
+  - A labels file that `label` filled completely is kept unless `--force` is given. A file
+    from `prefill`, or one that still has a `?`, is relabelled.
+- `run.py listen <clip> <n>` plays 3 s before to 1 s after pause *n*, so a `?` can be decided
+  by ear. It uses the standard library only: `wave` and `winsound`, with a temporary WAV slice
+  that is deleted afterwards. A file `wave` cannot read (e.g. FLAC) is decoded by the app's
+  own PyAV loader. There is no new dependency.
+- The annotation records `labels_method: transcript_punctuation` and
+  `pause_edges_checked: false`.
+- `score` reports pause **positions** (ADR 0014 headline) from these labels. It does **not**
+  report pause F1 or pause duration error for clips with `pause_edges_checked: false`; it
+  lists them under `pause_edges_not_hand_checked`. Rate, WER, ADR 0015 removed words,
+  clipping and the language check are unchanged.
+- Consequence: **B1 does not measure pause detection (F1) or pause duration**, because the
+  pause edges are the app's own. Arabic pause timing therefore has **no real-speech check**:
+  no public Arabic source has timing ground truth (`DATA_SOURCES.md` §3). This is in
+  `docs/cards/LIMITATIONS.md`. Position ground truth is the owner's punctuation, which follows
+  meaning rather than where the owner paused.
 
 ## Consequences
 

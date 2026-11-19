@@ -52,7 +52,8 @@ Started 2026-11-17. Kept up to date as experiments report (FINAL_11 §6).
   The error is lenient: boundary pauses, which never count against the speaker, were labelled
   mid-sentence in only 5.1 % of cases, so the app rarely penalises a pause it should not, but it
   misses many real mid-sentence pauses. How well mid-sentence pauses are found in real speech
-  is checked only on the developer's B1 recordings and on annotated real data (ADR 0014).
+  is checked only on the developer's B1 recordings and on annotated real data (ADR 0014). On
+  B1 the true position comes from the developer's own punctuation, one speaker.
 - **C1 fillers are not used for filler detection (E3).** A TTS voice saying "um" on its own is
   not a real hesitation; E3 uses DisfluencySpeech, AMI and PodcastFillers.
 - The noise condition uses synthetic pink noise, not real room or babble noise, and has no pass
@@ -106,6 +107,11 @@ Started 2026-11-17. Kept up to date as experiments report (FINAL_11 §6).
   re-checked on B1. Recordings that mix languages (English terms in Arabic) may give a false
   notice. The notice never changes the analysis.
 - The Arabic report texts are a draft translation, not yet reviewed by a native speaker.
+- **Pause detection and duration have no real-speech check, and Arabic pause timing has no
+  check at all.** B1's pause times are the app's own; they were not moved by ear, so B1
+  reports pause positions (from the developer's transcript punctuation) but not pause F1 or
+  duration error. English pause timing is checked only on synthetic speech (C1), and no
+  public Arabic source has timing ground truth (ADR 0016 "Amendment").
 - B1 has 20 clips of one speaker and one microphone (10 English, 10 Arabic), so its results
   describe that speaker and are reported descriptively.
 
