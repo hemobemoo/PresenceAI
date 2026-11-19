@@ -148,7 +148,8 @@ why in `notes:` and tell me: the format may need to change.
    - When it cannot tell, it writes `?` and prints the pause number, its time and 3 words on
      each side, for example `pause 7 at 01:12.40-01:13.30: ... the main result | امم is ...`.
      This happens when a word you added (such as «امم») has no timing and sits right at the
-     pause.
+     pause, or when Whisper stretched one word across the pause about equally on both sides
+     (a word that runs mostly into one side of the pause is put on that side).
    - Listen to that pause (3 s before to 1 s after it):
 
      ```powershell

@@ -135,6 +135,24 @@ not moved by ear. The annotation workflow changes:
   - Each pause takes the punctuation after the last of the owner's words before it, by word
     midpoint, as in `pauses.find_pauses`: `. ? ! ؟` → `sentence`; `، , ؛ ;` → `clause`;
     none → `mid`.
+  - **Words that overlap a pause** (owner, 2026-11-19, second change). Whisper often stretches
+    a word into the silence next to it, so its midpoint falls inside the VAD pause. On the
+    first two Arabic clips this made every `?` (46 of 56 and 48 of 69 pauses). Such a word now
+    goes to the side where more of it lies **outside** the pause, if that part is longer by
+    more than `b1.labels.overlap_margin_s` (`configs/evaluation.yaml`, **0.10 s, provisional**).
+    A word about equally on both sides, or (almost) all inside the pause, still gives `?`.
+    Words whose midpoint is outside the pause keep the midpoint rule. The first clips gave these
+    `?` counts:
+
+    | Margin (s) | ar_01 (56 pauses) | ar_02 (69) | en_05 (87) |
+    |---|---|---|---|
+    | old rule (midpoint only) | 46 | 48 | 71 |
+    | 0.20 | 20 | 21 | 54 |
+    | **0.10** | **10** | **10** | **27** |
+    | 0.05 | 7 | 6 | 19 |
+
+    The margin was not chosen to reach a count. A remaining `?` is decided by ear with
+    `listen`.
   - Words the owner added (e.g. «امم») have no timing and sit between their aligned
     neighbours. When such a word, or a word Whisper put inside the pause, sits at the pause,
     or when none of the owner's words is timed on one side, the label is `?`. `label` prints
@@ -193,3 +211,7 @@ not moved by ear. The annotation workflow changes:
 4. A native-speaker review of `lang/ar/report.yaml` (with `lang/ar/ui.yaml`), before any user
    sees Arabic reports.
 5. The slow real-model Arabic test runs once the first B1 Arabic clip exists.
+6. **The app's own pause rule** (`pauses.find_pauses`) uses word midpoints only. When Whisper
+   stretches a word into a pause, the app skips that word and takes the word before it as
+   `word_before`, so a reported position can come from the wrong word. B1 `score` shows how
+   often this happens; any change to the app's rule needs its own ADR.

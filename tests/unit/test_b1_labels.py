@@ -13,7 +13,7 @@ from typing import Any
 import numpy as np
 import pytest
 
-from presenceai.evalconfig import REPO_ROOT
+from presenceai.evalconfig import REPO_ROOT, load_evaluation
 from presenceai.evaluation import b1
 from presenceai.schemas.assessment import Confidence
 from presenceai.schemas.b1 import LabelledPause, Prefill
@@ -35,6 +35,7 @@ WHISPER = [
     ("finally", 6.1, 6.6),
 ]  # fmt: skip
 PAUSES = [(1.9, 2.6), (3.9, 4.5), (5.6, 6.0)]
+MARGIN = load_evaluation().b1.labels.overlap_margin_s
 
 
 def _report(sb: Any, words: list[tuple[str, float, float]], language: str = "en") -> SpeechReport:
@@ -59,7 +60,7 @@ def _pauses() -> list[LabelledPause]:
 
 def _labels(sb: Any, text: str, language: Any = "en", words: Any = None) -> list[Any]:
     report = _report(sb, words or WHISPER, language)
-    return b1.label_pauses(_pauses(), b1.timed_tokens(text, report, language))
+    return b1.label_pauses(_pauses(), b1.timed_tokens(text, report, language), margin_s=MARGIN)
 
 
 def test_alignment_pairs_misheard_words_by_position():
@@ -113,6 +114,42 @@ def test_a_word_inside_the_pause_is_ambiguous(sb: Any):
         sb, "Today we discussed results. so then the method words well finally", words=words
     )
     assert labels[0].label == "?" and "inside" in (labels[0].reason or "")
+
+
+# Whisper's Arabic word times often run into the silence next to a word, so a word's midpoint
+# lands inside the VAD pause (B1 Arabic clips, 2026-11-19). Pauses: 1.9-2.6, 3.9-4.5, 5.6-6.0.
+AR_OVERLAP = [
+    ("ما", 0.0, 0.4),
+    ("النتيجة", 0.5, 2.4),  # ends 0.5 s inside pause 1 (1.4 s before it, 0 after): before
+    ("نبدأ", 2.5, 3.0),
+    ("الآن", 3.1, 3.5),
+    ("ثم", 3.9, 4.9),  # starts at pause 2's start (0 before, 0.4 after): after
+    ("نرى", 5.0, 5.4),
+    ("الفرق", 5.5, 6.1),  # 0.1 s outside the pause on each side: cannot tell
+    ("اليوم", 6.2, 6.6),
+]
+
+
+def test_word_overlapping_a_pause_goes_to_the_side_where_more_of_it_lies(sb: Any):
+    labels = _labels(sb, "ما النتيجة؟ نبدأ الآن، ثم نرى الفرق اليوم", "ar", AR_OVERLAP)
+    assert [x.label for x in labels] == ["sentence", "clause", "?"]
+    assert "both sides" in (labels[2].reason or "")
+    assert [(p.pause.start_s, p.pause.end_s) for p in labels] == PAUSES  # times untouched
+
+
+def test_side_of_a_pause_uses_the_margin():
+    pause = LabelledPause(start_s=2.0, end_s=3.0, label="?")
+
+    def side(a: float, b: float) -> str | None:
+        return b1.side_of_pause(b1.Token(raw="w", norm="w", start_s=a, end_s=b), pause, 0.1)
+
+    assert side(1.0, 1.9) == "before" and side(3.1, 3.5) == "after"  # no overlap
+    assert side(1.4, 2.5) == "before"  # midpoint 1.95: the midpoint rule decides
+    assert side(1.5, 2.9) == "before"  # midpoint inside; 0.5 s outside before, 0 after
+    assert side(2.05, 3.3) == "after"  # 0 before, 0.3 after
+    assert side(1.95, 3.2) == "after"  # 0.05 before, 0.2 after: 0.15 more after
+    assert side(1.95, 3.1) is None  # 0.05 vs 0.1: within the margin
+    assert side(2.2, 2.8) is None  # all inside the pause
 
 
 # --- the label command ------------------------------------------------------------------------
