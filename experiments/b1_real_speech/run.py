@@ -33,6 +33,7 @@ from __future__ import annotations
 import argparse
 import csv
 import hashlib
+import io
 import json
 import os
 import subprocess
@@ -271,7 +272,8 @@ def label_clip(paths: Paths, stem: str, force: bool) -> int:
     if a.transcript == a.whisper_text:
         print(f"{stem}: warning: transcript is still Whisper's text; correct it first")
     tokens = b1.timed_tokens(a.transcript, prefill_report(paths, stem, a), a.language)
-    result = b1.label_pauses(existing, tokens)
+    margin = load_evaluation().b1.labels.overlap_margin_s
+    result = b1.label_pauses(existing, tokens, margin_s=margin)
     labels_file.write_text(
         b1.write_labels(
             [LabelledPause(start_s=r.pause.start_s, end_s=r.pause.end_s, label=r.label)
@@ -385,6 +387,8 @@ def main(argv: list[str] | None = None) -> int:
     lis.add_argument("pause", type=int, help="pause number, as `label` prints it")
     sub.add_parser("score", help="compare corrected annotations with the app's reports")
     args = parser.parse_args(argv)
+    if isinstance(sys.stdout, io.TextIOWrapper):  # Arabic words, also when redirected
+        sys.stdout.reconfigure(encoding="utf-8")
     paths = Paths()
     if args.command == "status":
         return cmd_status(paths)

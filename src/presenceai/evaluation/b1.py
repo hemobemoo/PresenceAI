@@ -18,7 +18,7 @@ from __future__ import annotations
 import re
 from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Literal
 
 import yaml
 
@@ -274,28 +274,57 @@ def punctuation_label(raw: str) -> str:
     return "mid"
 
 
-def label_pauses(pauses_in: Sequence[LabelledPause], words_in: Sequence[Token]) -> list[PauseLabel]:
+Side = Literal["before", "after"]
+
+
+def side_of_pause(t: Token, p: LabelledPause, margin_s: float) -> Side | None:
+    """Which side of the pause a timed word is on; None when it cannot be told.
+
+    By midpoint first, as in `pauses.find_pauses`. Whisper often stretches a word into the
+    silence next to it (very often in Arabic), so its midpoint can fall inside the pause. Such a
+    word goes to the side where more of it lies outside the pause, if that part is longer by
+    more than `margin_s`. A word about equally on both sides, or (almost) all inside, is None.
+    """
+    if t.start_s is None or t.end_s is None:
+        raise ValueError("side_of_pause needs a timed word")
+    mid = (t.start_s + t.end_s) / 2
+    if mid <= p.start_s + 1e-9:
+        return "before"
+    if mid >= p.end_s - 1e-9:
+        return "after"
+    outside_before = max(0.0, p.start_s - t.start_s)
+    outside_after = max(0.0, t.end_s - p.end_s)
+    if outside_after - outside_before > margin_s + 1e-9:
+        return "after"
+    if outside_before - outside_after > margin_s + 1e-9:
+        return "before"
+    return None
+
+
+def label_pauses(
+    pauses_in: Sequence[LabelledPause], words_in: Sequence[Token], *, margin_s: float
+) -> list[PauseLabel]:
     """Label each pause from the owner's punctuation after the last word before it.
 
-    A word is before the pause when its midpoint is at or before the pause start, and after it
-    when its midpoint is at or after the pause end (the app's own rule, `pauses.find_pauses`).
-    The label is "?" when there is no timed word on one side, or when anything sits between the
-    last word before and the first word after: words the owner added (no timing, so they could
-    be on either side) or a word Whisper placed inside the pause. Times are never changed.
+    Each timed word is put on one side of the pause by `side_of_pause`. The label is "?" when
+    there is no timed word on one side, or when anything sits between the last word before and
+    the first word after: words the owner added (no timing, so they could be on either side) or
+    a word whose side cannot be told. Times are never changed.
     """
-    timed = [(i, t.mid_s) for i, t in enumerate(words_in) if t.mid_s is not None]
+    timed = [i for i, t in enumerate(words_in) if t.mid_s is not None]
     out: list[PauseLabel] = []
     for number, p in enumerate(pauses_in, start=1):
-        before = max((i for i, mid in timed if mid <= p.start_s + 1e-9), default=None)
-        after = min((i for i, mid in timed if mid >= p.end_s - 1e-9), default=None)
+        sides = {i: side_of_pause(words_in[i], p, margin_s) for i in timed}
+        before = max((i for i in timed if sides[i] == "before"), default=None)
+        after = min((i for i in timed if sides[i] == "after"), default=None)
         k = 0 if before is None else before + 1
         reason = None
         if before is None or after is None:
             reason = "none of your words is timed on one side of the pause"
         elif after != before + 1:
-            inside = [i for i, _ in timed if before < i < after]
+            inside = [i for i in timed if before < i < after]
             reason = (
-                "a word sits inside the pause"
+                "a word sits inside the pause, about equally on both sides"
                 if inside
                 else "words you added (no timing) are next to the pause"
             )

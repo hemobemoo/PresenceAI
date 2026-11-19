@@ -31,6 +31,12 @@ e2:                                  # ADR 0009 (accepted 2026-11-17); data: C1 
     color: pink
     seed: 20261117
 
+b1:                                  # ADR 0016 amendment (owner, 2026-11-19); owner's own recordings
+  labels:
+    overlap_margin_s: 0.10           # PROVISIONAL. A Whisper word whose midpoint is inside a pause goes
+                                     # to the side where more of it lies outside the pause, if that
+                                     # part is longer by more than this; otherwise the label is "?"
+
 c1:                                  # ADR 0014: synthetic English speech for E2 (FINAL_07 §C)
   seed: 7                            # FINAL_07: synth-speech --seed 7
   scripts: resources/c1/scripts.yaml # 60 scripts written for PresenceAI (DATA_SOURCES.md)

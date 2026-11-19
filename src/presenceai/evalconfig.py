@@ -111,9 +111,18 @@ class C1Settings(_Section):
     timing_run_clips: int = Field(gt=0)
 
 
+class B1Labels(_Section):
+    overlap_margin_s: float = Field(ge=0)
+
+
+class B1Settings(_Section):
+    labels: B1Labels
+
+
 class EvaluationSettings(_Section):
     model_config = ConfigDict(extra="ignore", frozen=True)  # e3 is read by its own experiment
     e2: E2Settings
+    b1: B1Settings
     c1: C1Settings
 
 
