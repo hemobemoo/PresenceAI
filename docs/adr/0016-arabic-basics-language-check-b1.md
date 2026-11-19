@@ -213,5 +213,28 @@ not moved by ear. The annotation workflow changes:
 5. The slow real-model Arabic test runs once the first B1 Arabic clip exists.
 6. **The app's own pause rule** (`pauses.find_pauses`) uses word midpoints only. When Whisper
    stretches a word into a pause, the app skips that word and takes the word before it as
-   `word_before`, so a reported position can come from the wrong word. B1 `score` shows how
-   often this happens; any change to the app's rule needs its own ADR.
+   `word_before`, so a reported position can come from the wrong word. **Checked, no change**
+   (owner's request, 2026-11-19; **B1-informed**: the question came from B1 round 1, the check
+   ran on C1 dev only, never on B1 or the C1 test part):
+   - B1 round 1 (`experiments/results/b1/round1.md`): 20 of 210 positions disagree with the
+     owner's labels. The midpoint rule skipped a stretched word in 3 of them, and the B1
+     overlap rule would fix 1.
+   - C1 dev (`experiments/e2_rate_pauses/word_side_dev.py`,
+     `experiments/results/e2/f1_dev_word_side.csv`, 821 matched pauses):
+
+     | Rule | Agree | mid→boundary | boundary→mid | word_before changed |
+     |---|---|---|---|---|
+     | **midpoint (app, kept)** | **612** | **0.554** | **0.049** | 0 |
+     | overlap 0.05, unplaced skipped | 603 | 0.562 | 0.061 | 96 |
+     | overlap 0.10, unplaced skipped | 606 | 0.562 | 0.057 | 68 |
+     | overlap 0.20, unplaced skipped | 610 | 0.562 | 0.051 | 18 |
+     | overlap 0.10, unplaced → `unknown` | 352 (375 unknown) | 0.576 | 0.052 | 68 |
+
+   - No variant is better than the midpoint rule on either position error, so
+     `pauses.find_pauses` stays as it is. B1 `label` keeps its own overlap rule, because it
+     places the owner's words, not the app's. The B1 re-score after this check is identical
+     to round 1, since the app did not change.
+7. **Language check, B1 round 1:** 1 false notice in 4 clips (an English clip detected as
+   Arabic, probability 0.83; another English clip reached only 0.53 for English). No
+   `mismatch_min_probability` value separates these. It stays at 0.5 until all 20 clips are
+   scored, and then the owner decides.

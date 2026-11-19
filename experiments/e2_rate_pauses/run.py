@@ -45,6 +45,9 @@ from presenceai.synth import c1, scripts, split
 
 Transcriber = Callable[[Path], Transcript]
 Vad = Callable[[np.ndarray], tuple[SpeechRegion, ...]]
+FindPauses = Callable[
+    [tuple[SpeechRegion, ...], Transcript, SpeechSettings], tuple[PauseEvent, ...]
+]
 
 
 @dataclass(frozen=True)
@@ -198,7 +201,9 @@ def evaluate(
     ev: EvaluationSettings,
     speech: SpeechSettings,
     progress: Callable[[str], None] = print,
+    find_pauses: FindPauses | None = None,
 ) -> tuple[list[E2ClipScore], list[dict[str, Any]], dict[str, Any]]:
+    """`find_pauses` defaults to the app's own; a development experiment may pass a variant."""
     from presenceai.schemas.speech import CaptureProcessing
     from presenceai.speech import audio, loudness, pauses, rate, trim
 
@@ -216,7 +221,7 @@ def evaluate(
         samples = audio.load_audio(path)
         regions = vad(samples)
         transcript, outside = trim.trim_to_speech(transcript, regions, speech.transcript)
-        events: tuple[PauseEvent, ...] = pauses.find_pauses(regions, transcript, speech)
+        events = (find_pauses or pauses.find_pauses)(regions, transcript, speech)
         m_rate, _, _ = rate.word_rate(transcript, regions, speech)
         m_pace, _ = rate.syllable_rate(samples, audio.SAMPLE_RATE, regions, "en", speech)
         wpm = m_rate["rate.wpm"].value if "rate.wpm" in m_rate else None
