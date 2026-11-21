@@ -37,48 +37,47 @@ GROUPS = (
 BASE = (
     "Write the word-for-word transcript of a short spoken presentation, about 2 to 3 minutes "
     "long, given by a university student to classmates. Topic: {topic}.\n"
-    "Length: between 300 and 380 words, never more than 380.\n"
+    "Length: between 260 and 340 words; stop before 350 words.\n"
     "Write it exactly as it would be spoken: plain paragraphs, no title, no headings, no bullet "
     "points, no stage directions, no speaker labels, no notes before or after it. Output only "
-    "the transcript. Say the central idea in your own words; do not use the words "
-    "'main idea' anywhere in the talk."
+    "the transcript."
 )
 
 # What each group must do, in plain words; everything not mentioned stays like a normal talk.
+# Pilot 2: naming "the main idea" in the prompt made the model echo it, so it is avoided here.
 GROUP_RULES = {
     "control": (
-        "Make the talk complete: early on, say in one sentence what the single central idea of "
-        "the talk is, and come back to that idea at the end. Back up the points with concrete "
-        "support: facts with numbers, a specific case from real life, a comparison with "
-        "something familiar, or the words of a named expert. If you use a specialised term, "
-        "explain it in simple words. End with a short closing that sums the talk up."
+        "Make the talk complete: early on, say in one sentence what the whole talk is trying "
+        "to get across, and come back to that point at the end. Back up the points with "
+        "concrete support: facts with numbers, a specific case from real life, a comparison "
+        "with something familiar, or the words of a named expert. If you use a specialised "
+        "term, explain it in simple words. End with a short closing that sums the talk up."
     ),
     "no_central_message": (
-        "Talk about several loosely related aspects of the topic, and never say what the one "
-        "central idea of the talk is, neither at the start nor at the end; a listener should not "
-        "be able to point to one sentence that states the purpose, and do not end with a "
-        "sentence that sums up one message either. Still back up the points "
-        "with concrete support, explain any specialised term in simple words, and end with a "
-        "short closing."
+        "Talk about several loosely related aspects of the topic, and never say in one "
+        "sentence what the whole talk is trying to get across, neither at the start nor at the "
+        "end; a listener should not be able to point to one sentence that states the purpose, "
+        "and do not end with a sentence that sums up one message either. Still back up the "
+        "points with concrete support, explain any specialised term in simple words, and end "
+        "with a short closing."
     ),
     "no_conclusion": (
-        "Early on, say in one sentence what the single central idea of the talk is, and back up "
-        "the points with concrete support; explain any specialised term in simple words. Stop "
-        "right after the last point of the body: no summary, no wrap-up, no closing "
+        "Early on, say in one sentence what the whole talk is trying to get across, and back "
+        "up the points with concrete support; explain any specialised term in simple words. "
+        "Stop right after the last point of the body: no summary, no wrap-up, no closing "
         "remark and no thanks at the end."
     ),
     "no_supporting_material": (
-        "Early on, say in one sentence what the single central idea of the talk is, come back to "
-        "it at the end, and end with a short closing. Support nothing: use only general "
-        "statements and opinions, with no numbers or figures, no specific cases or stories, no "
-        "comparisons or analogies (never say that something is like something else), and no "
-        "quoted or named experts. Explain any specialised "
-        "term in simple words."
+        "Early on, say in one sentence what the whole talk is trying to get across, come back "
+        "to that point at the end, and end with a short closing. Support nothing: use only "
+        "general statements and opinions, with no numbers or figures, no specific cases or "
+        "stories, no comparisons or analogies (never say that something is like something "
+        "else), and no quoted or named experts. Explain any specialised term in simple words."
     ),
     "undefined_jargon": (
-        "Early on, say in one sentence what the single central idea of the talk is, come back to "
-        "it at the end, and back up the points with concrete support. Use at least five "
-        "specialised technical terms of the field, the kind an expert would use, and never "
+        "Early on, say in one sentence what the whole talk is trying to get across, come back "
+        "to that point at the end, and back up the points with concrete support. Use at least "
+        "five specialised technical terms of the field, the kind an expert would use, and never "
         "explain or define any of them, not even in a short clause after the term. End with a "
         "short closing."
     ),
@@ -89,7 +88,10 @@ HOOK_RULES = {
         "Open with one or two sentences meant to catch the audience's attention before the "
         "topic is introduced."
     ),
-    False: ("Open plainly: start directly with the topic, with no attention-catching opening."),
+    False: (
+        "Open plainly: the very first sentence greets the audience or names the topic, with no "
+        "question, surprising fact, anecdote or other attention-catching opening before it."
+    ),
 }
 # A hook made of a number or a story would itself be supporting material.
 NO_SUPPORT_HOOK = " The opening must not use numbers, a specific case or a story."

@@ -139,6 +139,23 @@ Started 2026-11-17. Kept up to date as experiments report (FINAL_11 §6).
 - **Hedging is not measured** (deferred): it is not used by the rubric and is the measure
   closest to a confidence-style judgement.
 
+## Synthetic presentation transcripts (C2, ADR 0021)
+
+- **C2 transcripts are written by a language model (Qwen3.5-9B) and contain invented facts**:
+  made-up statistics, studies, "famous cases" and quotations. C2 labels describe the talk's
+  structure (central message, conclusion, supporting material, unexplained terms, hook), never
+  whether a fact is true, so C2 measures structure detection only.
+- **C2 transcripts are always labelled "synthetic"** wherever they are shown: thesis text,
+  figures, tables, the demo and any example in the app. They are never presented as a real
+  student's talk.
+- **C2 labels are the planted design, checked by the same model.** The model's own yes/no
+  answers decide whether a transcript is kept (with length and format checks); a model may
+  agree with its own mistakes. The owner's hand-checked sample gives the label-noise estimate
+  for E4 (ADR 0021).
+- **One generator, one style.** All 400 transcripts come from one model with one prompt
+  template, so E4 on C2 says nothing about other writing styles or real speech; public talk
+  transcripts (TED, E4/E5) are the other check.
+
 ## Fillers and repetitions
 
 - **Until the verbatim model T1 exists (P4), filler and repetition counts are lower bounds**,

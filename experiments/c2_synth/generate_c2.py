@@ -234,16 +234,21 @@ class Generator:
         """Greedy yes/no answers to every question, for every transcript."""
         import torch
 
-        jobs = [(i, k) for i in range(len(texts)) for k in QUESTIONS]
-        enc = self._chat([JUDGE.format(text=texts[i], question=QUESTIONS[k]) for i, k in jobs])
-        with torch.no_grad():
-            gen = self.model.generate(**enc, max_new_tokens=4, do_sample=False)
-        replies = self.tok.batch_decode(
-            gen[:, enc["input_ids"].shape[1] :], skip_special_tokens=True
-        )
-        out: list[dict[str, bool]] = [{} for _ in texts]
-        for (i, k), reply in zip(jobs, replies, strict=True):
-            out[i][k] = reply.strip().lower().startswith("yes")
+        out: list[dict[str, bool]] = []
+        for text in texts:  # one transcript at a time: 5 questions (pilot 2 ran out of memory)
+            enc = self._chat([JUDGE.format(text=text, question=q) for q in QUESTIONS.values()])
+            with torch.no_grad():
+                gen = self.model.generate(**enc, max_new_tokens=4, do_sample=False)
+            replies = self.tok.batch_decode(
+                gen[:, enc["input_ids"].shape[1] :], skip_special_tokens=True
+            )
+            out.append(
+                {
+                    k: r.strip().lower().startswith("yes")
+                    for k, r in zip(QUESTIONS, replies, strict=True)
+                }
+            )
+            torch.cuda.empty_cache()
         return out
 
 
@@ -287,11 +292,11 @@ def run(args: argparse.Namespace) -> None:
             row = {"id": p["id"], "group": p["group"], "hook": p["hook"], "part": p["part"],
                    "attempt": attempts[p["id"]], "new_tokens": n, "answers": ans,
                    "problems": problems, "batch_seconds": seconds, "seed": seed}  # fmt: skip
-            _append(out / "attempts.jsonl", row)
+            _append(out / "attempts.jsonl", {**row, "text": text})  # synthetic; for auditing
             if not problems:
                 _append(out / "generated.jsonl", {**row, "text": text, **meta})
             elif attempts[p["id"]] >= MAX_ATTEMPTS:
-                _append(out / "rejected.jsonl", {**row, **meta})
+                _append(out / "rejected.jsonl", {**row, "text": text, **meta})
             else:
                 queue.append(p)
         _log(f"batch of {len(batch)} in {seconds} s; {len(queue)} waiting")
