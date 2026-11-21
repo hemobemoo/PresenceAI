@@ -122,3 +122,7 @@ test part (ADR 0014), so this is recorded here and the rule is unchanged.
   `experiments/results/e2/f1_adr15_results.md`): the clean test part passes with wpm error
   0.93 %, F1 0.970 / 0.982 and duration error 0.076 s. No real first word is removed; the 9
   words removed (s17_r0) are invented.
+- **Confirmed on B1** (2026-11-21, 20 clips, one speaker, `experiments/results/b1/full_results.md`):
+  no word was removed after the last speech on any clip, so every quiet closing ("Thank you."
+  / «شكراً») was kept and no real word was lost. B1 cannot show a benefit of the rule either,
+  because Whisper invented no word after the end on these clips.

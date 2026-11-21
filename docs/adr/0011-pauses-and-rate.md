@@ -126,4 +126,12 @@ script fall in the same part. The split uses a fixed seed:
 - Re-check `min_speech_duration_ms` (250 vs 100) and `max_words_per_sentence_mark` on the C1
   development part and on the owner's Arabic B1 clips. Any change needs an update to this ADR.
   **C1 development part: done** (2026-11-17, `experiments/results/e2/f1_dev_findings.md`); 250 ms
-  kept, `max_words_per_sentence_mark` unchanged. **B1: still to do.**
+  kept, `max_words_per_sentence_mark` unchanged. **B1: done** (2026-11-21, the owner's own
+  Arabic, one speaker, `experiments/results/b1/full_results.md`). Whisper small writes almost
+  no Arabic punctuation (0–5 marks per clip, against the owner's 12–22), so positions are
+  `unknown` on 9 of 10 Arabic clips (436 of 492 pauses). Where they are given (`ar_01`), 75 %
+  of the owner's boundaries are labelled mid-sentence. So `unknown` is the right result and
+  Arabic pause positions stay unavailable. No value changes.
+- **Open item (ADR 0016 item 8):** the owner's correctly punctuated Arabic has about 36 words
+  per sentence mark, above the 30-word limit, so the rule would flag it too. There is no
+  Arabic data with timing truth to test another rule on.

@@ -160,3 +160,7 @@ unreliable.
   loudness variation 0.29 (low, capture unknown); pitch spread 3.1 semitones (high).
 - Re-check: the plateau ratio on real public clips (mastered and clipped); the octave limit on real
   speech (dropped counts); fmax on real higher voices (`at_limit_share`).
+- **B1, partly checked** (2026-11-21, 20 clips, one laptop microphone, SNR 55–64 dB): clipping
+  share 0, possible-clipping share 0 and no plateau ratio on every clip, so there were **no
+  false alarms**. Detection of **real** clipping is still untested, so the public clipping
+  clips (ADR 0016 open item 2) stay open.

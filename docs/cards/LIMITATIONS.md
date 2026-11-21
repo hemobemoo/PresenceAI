@@ -103,9 +103,12 @@ Started 2026-11-17. Kept up to date as experiments report (FINAL_11 §6).
 ## Language and Arabic text (ADR 0016)
 
 - The language check uses Whisper's detection on the first 30 s of speech. A notice appears
-  when another language is detected with probability ≥ 0.5; the value is provisional and is
-  re-checked on B1. Recordings that mix languages (English terms in Arabic) may give a false
-  notice. The notice never changes the analysis.
+  when another language is detected with probability ≥ 0.95. The value is provisional and was
+  chosen after seeing the developer's B1 recordings: at 0.5, 4 of 10 English clips were
+  detected as Arabic (probability up to 0.94). **Speech in English analysed as Arabic is rarely
+  caught**, because accented English is detected as English with only about 0.5–0.8. The
+  value rests on one speaker and has not been checked on independent accented speech. The
+  notice never changes the analysis.
 - The Arabic report texts are a draft translation, not yet reviewed by a native speaker.
 - **Pause detection and duration have no real-speech check, and Arabic pause timing has no
   check at all.** B1's pause times are the app's own; they were not moved by ear, so B1
@@ -114,6 +117,14 @@ Started 2026-11-17. Kept up to date as experiments report (FINAL_11 §6).
   public Arabic source has timing ground truth (ADR 0016 "Amendment").
 - B1 has 20 clips of one speaker and one microphone (10 English, 10 Arabic), so its results
   describe that speaker and are reported descriptively.
+- **B1 English pause positions and English WER rest on Whisper's own text.** The developer
+  corrected Whisper's transcript and confirmed its punctuation and words where unchanged, so
+  English WER (0.8 %) is a lower bound and English position agreement is not independent.
+  The independent English evidence is the 135 pauses decided by ear (73 % agreement).
+- **B1 does not test noise robustness.** The two "mild steady noise" clips measured about
+  60 dB SNR, the same as the quiet clips. They were not re-recorded.
+- **Arabic pause positions are not available.** Whisper small writes almost no Arabic
+  punctuation, so positions are `unknown` on 9 of 10 Arabic B1 clips (ADR 0011).
 
 ## Fillers and repetitions
 

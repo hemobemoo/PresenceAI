@@ -11,7 +11,9 @@ from presenceai.settings import AsrSettings, LanguageCheckSettings
 from presenceai.speech import analyze, language_check
 
 SR = 16_000
-CFG = LanguageCheckSettings(window_s=30.0, mismatch_min_probability=0.5)
+CFG = LanguageCheckSettings(window_s=30.0, mismatch_min_probability=0.5)  # mechanism tests
+# configs/default.yaml: 0.95, provisional and B1-informed (owner, 2026-11-21, ADR 0016 item 7)
+DEFAULT = LanguageCheckSettings(window_s=30.0, mismatch_min_probability=0.95)
 
 
 class _Model:
@@ -95,7 +97,16 @@ def test_no_speech_means_no_check():
 
 
 def test_threshold_comes_from_config(speech_cfg: Any):
-    assert speech_cfg.language_check == CFG  # configs/default.yaml, ADR 0016
+    assert speech_cfg.language_check == DEFAULT  # configs/default.yaml, ADR 0016
+
+
+@pytest.mark.parametrize(("p", "mismatch"), [(0.94, False), (0.95, True), (0.97, True)])
+def test_default_threshold_ignores_the_b1_false_notices(p: float, mismatch: bool):
+    # B1: the owner's English was detected as Arabic at up to 0.94; their Arabic was >= 0.97
+    result = language_check.check(
+        _Model("ar", p, [("en", 1 - p)]), np.zeros(SR * 5), _regions((0, 5)), "en", DEFAULT
+    )
+    assert result is not None and result.mismatch is mismatch
 
 
 def test_mismatch_never_stops_or_changes_the_analysis(

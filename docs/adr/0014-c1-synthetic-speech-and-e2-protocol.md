@@ -176,6 +176,17 @@ reported next to it. Seed 20261117 per clip.
   both headline errors above. It does **not** report pause F1 or duration error, because the
   pause edges are the app's own and were not checked by ear. So pause timing on real speech,
   and Arabic pause timing at all, has no check.
+- **B1 English result** (10 clips, 2026-11-21, `experiments/results/b1/full_results.md`):
+  437 of 483 positions agree with the owner's labels (90.5 %); mid→boundary 5.2 %,
+  boundary→mid 8.1 %.
+  - **These positions rest on Whisper's punctuation, confirmed by the owner, not on
+    independent punctuation.** The owner changed the mark of only 15 English words, and
+    confirmed that Whisper's punctuation matches what they said and how they would
+    punctuate it (owner, 2026-11-21; no anchoring check was run). Labels taken from the
+    transcript agree 338 / 348 (97 %), which is close to circular.
+  - **The independent English evidence is the 135 pauses the owner decided by ear: 99 agree
+    (73 %).** These are the hard cases, where Whisper stretched a word into the pause.
+  - **The headline stays the C1 result above.**
 - Noise, descriptive: at 20 dB / 10 dB, F1 0.960 / 0.959 at 0.5 s and duration error
   0.090 / 0.087 s; wpm error stays about 1 %.
 - Details: `experiments/results/e2/f1_test_results.md`, `f1_dev_findings.md`.
