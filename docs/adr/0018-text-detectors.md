@@ -63,6 +63,31 @@ organization, hook, supporting material and language. They must carry evidence (
     development and a test part, and the lexicons are adjusted on the development part only, so
     E4 on the test part is not inflated.
 
+## Lexicon review (owner, 2026-11-21, PR #30)
+
+1. **Normalisation before matching.** Contractions and informal forms are expanded in both the
+   transcript and the lexicons ("i'll" → "i will", "we'll" → "we will", "i'm" → "i am",
+   "i'd" → "i would", "gonna" → "going to"; list under `normalise` in `text_cues.yaml`). The
+   "we" forms are added: "today we will", "in this talk we will", "in this presentation we
+   will". A test checks that every lexicon entry survives the same normalisation as the
+   transcript and matches its own wording, so no entry can silently fail.
+2. **Thesis:** "today i will", "today i'm going to", "in this talk i will", "in this
+   presentation i will" are removed. They announce a topic, not a main point, so they stay
+   only as introduction cues.
+3. **Definition:** "that is" is removed ("that is why", "that is important" would mark almost
+   every term as defined); "i e" stays.
+4. **Analogy:** "like a" / "like an" is skipped after "would" (so "I'd like a minute" is not an
+   analogy), or when the "like" is a **hesitation** filler found by the speech detector.
+   Discourse-marker events are not used for this: ADR 0012 counts every "like" as a discourse
+   marker (an upper bound), so using them would remove every "like a" analogy. "is similar
+   to" is removed as a duplicate of "similar to"; a sentence counts once per type anyway.
+5. **Quotation:** "said that" counts only when the word before it is not "i" or "we".
+6. **Transitions:** "then" counts only as the first word of a sentence.
+7. **Conclusion:** added "in closing", "to close", "to finish", "the bottom line is", "let me
+   leave you with".
+
+Each change has a fixture test in `tests/unit/test_text_detectors.py`.
+
 ## Consequences
 
 - The eleven `text.*` rubric measures are now available (`resources/rubrics/s1_presentation.yaml`,

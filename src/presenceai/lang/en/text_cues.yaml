@@ -1,13 +1,32 @@
 # Cue lexicons for the English text detectors (P2-b, ADR 0018). PROVISIONAL: reviewed by the
 # owner in the PR; adjusted on the C2 development part only (P2-e), so E4 on the C2 test part
 # stays independent. These are lexicon matches, not an understanding of meaning or structure.
-# Matching ignores case and punctuation ("e.g." matches "e g"), and whole words only.
+# Matching ignores case and punctuation ("e.g." matches "e g"), and whole words only. Before
+# matching, contractions and informal forms are expanded in both the transcript and these lists
+# (`normalise` below), so "Today I'll" matches "today i will". Owner's review: 2026-11-21.
 
-thesis:            # a sentence that states the main point (central message)
-  - today i will
-  - today i'm going to
-  - in this talk i will
-  - in this presentation i will
+normalise:
+  "i'll": i will
+  "we'll": we will
+  "you'll": you will
+  "it'll": it will
+  "i'm": i am
+  "we're": we are
+  "you're": you are
+  "they're": they are
+  "it's": it is
+  "that's": that is
+  "let's": let us
+  "i've": i have
+  "we've": we have
+  "i'd": i would
+  "we'd": we would
+  gonna: going to
+  wanna: want to
+  gotta: got to
+
+thesis:            # a sentence that states the main point (central message); topic
+                   # announcements such as "today i will" are introduction cues only (review)
   - my main point is
   - the main point is
   - my main message is
@@ -26,6 +45,11 @@ introduction:      # a purpose or preview phrase in the opening
   - in this presentation
   - today i will
   - today i'm going to
+  - today we will
+  - in this talk i will
+  - in this talk we will
+  - in this presentation i will
+  - in this presentation we will
   - i will cover
   - i will talk about
   - i'm going to talk about
@@ -48,8 +72,14 @@ conclusion:        # a closing phrase in the closing
   - in short
   - the takeaway is
   - the key takeaway
+  - in closing
+  - to close
+  - to finish
+  - the bottom line is
+  - let me leave you with
 
-transitions:       # counted only within the first 3 words of a sentence, once per sentence
+transitions:       # counted only within the first 3 words of a sentence, once per sentence;
+                   # "then" only as the first word (review)
   - first
   - firstly
   - second
@@ -80,7 +110,6 @@ definition:        # a term counts as defined when one of these is in its senten
   - which means
   - that means
   - this means
-  - that is
   - i e
   - in other words
   - stands for
@@ -98,18 +127,19 @@ example:
   - to illustrate
   - take the case of
 
-analogy:
+analogy:           # "like a/an" is skipped after "would" ("I'd like a minute") or when "like"
+                   # is a hesitation filler found by the speech detector (review)
   - like a
   - like an
   - as if
   - as though
   - imagine
-  - is similar to
   - similar to
   - think of it as
   - just like
 
-quotation:         # quotation marks in the transcript also count
+quotation:         # quotation marks in the transcript also count; "said that" only when the
+                   # word before it is not "i" or "we" (review)
   - according to
   - once said
   - said that

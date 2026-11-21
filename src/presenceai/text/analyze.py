@@ -10,7 +10,7 @@ from __future__ import annotations
 from presenceai.lang import language_name, text
 from presenceai.rubric.loader import load_thresholds
 from presenceai.schemas.assessment import Measurement
-from presenceai.schemas.speech import Transcript
+from presenceai.schemas.speech import FillerEvent, FillerKind, Transcript
 from presenceai.schemas.text import TextReport
 from presenceai.settings import PauseSettings
 from presenceai.text import central_message, language, organization, supporting_material
@@ -31,7 +31,11 @@ def analyze_text(
     parser: Parser,
     pauses: PauseSettings,
     scenario: str = "s1_presentation",
+    fillers: tuple[FillerEvent, ...] = (),
 ) -> TextReport:
+    """`fillers`: the speech report's filler events; only hesitations are used, to skip a
+    "like a" that is a filler. Discourse markers are not used: ADR 0012 counts every "like" as
+    one (an upper bound), which would remove every "like a" analogy."""
     lang = transcript.language
     if lang != "en" or not transcript.words:
         reason = (
@@ -54,6 +58,12 @@ def analyze_text(
         pauses,
         opening_pct=values["opening_share_pct"],
         closing_pct=values["closing_share_pct"],
+        hesitation_words=frozenset(
+            i
+            for e in fillers
+            if e.kind == FillerKind.HESITATION
+            for i in range(e.first_word, e.last_word + 1)
+        ),
     )
     found: dict[str, Measurement | None] = {
         **central_message.measure(doc, values),

@@ -166,3 +166,105 @@ def test_real_spacy_on_the_sample_talk(sb: Any, speech_cfg: Any):
     assert _v(r, "text.organization.transitions") == 2
     assert _v(r, "text.hook.present") == 1
     assert _v(r, "text.support.types") == 4
+
+
+# --- owner's lexicon review (2026-11-21, ADR 0018) --------------------------------------------
+
+
+def test_every_lexicon_entry_matches_its_own_wording():
+    """No entry can silently fail: each survives the transcript's normalisation and matches."""
+    from presenceai.lang import load_pack_file
+    from presenceai.text.document import find, plain
+
+    raw = load_pack_file("en", "text_cues.yaml")
+    for kind, entries in raw.items():
+        if kind == "normalise":
+            continue
+        for entry in entries:
+            assert plain(entry), (kind, entry)
+            assert plain(plain(entry)) == plain(entry), (kind, entry)
+            assert (plain(entry), 0) in find(entry, kind), (kind, entry)
+            assert (plain(entry), 0) in find(entry.capitalize() + ".", kind), (kind, entry)
+
+
+@pytest.mark.parametrize(
+    ("said", "expanded"),
+    [("Today I'll talk", "today i will talk"), ("I'm gonna try", "i am going to try"),
+     ("We’ll see", "we will see"), ("I'd like a", "i would like a")],
+)  # fmt: skip
+def test_contractions_are_expanded(said: str, expanded: str):
+    from presenceai.text.document import plain
+
+    assert plain(said) == expanded
+
+
+def test_topic_announcement_is_introduction_not_thesis(run: Any):
+    r = run("Today I'll talk about habits. Habits matter. We sleep. We eat. We rest. Thanks.")
+    assert _v(r, "text.central_message.statements") == 0
+    assert _v(r, "text.organization.framing_parts") == 1  # introduction cue
+    r = run("Today we will cover sleep. Sleep matters. We rest. We eat. We go. Thanks.")
+    assert _v(r, "text.organization.framing_parts") == 1
+    r = run("So today I'm gonna talk about sleep. Sleep matters. We rest. We eat. Thanks.")
+    assert _v(r, "text.organization.framing_parts") == 1  # "gonna" normalised
+
+
+def test_that_is_why_is_not_a_definition(run: Any):
+    r = run("We use diarization here. That is why we split the audio.")
+    assert _v(r, "text.language.undefined_terms") == 1
+
+
+@pytest.mark.parametrize(
+    ("sentence", "analogy"),
+    [
+        ("I would like a minute.", False),
+        ("I'd like a break.", False),
+        ("Practice is like a song.", True),
+        ("This is similar to a map.", True),
+    ],
+)
+def test_like_a_is_an_analogy_only_when_it_compares(run: Any, sentence: str, analogy: bool):
+    r = run(f"{sentence} We left.")
+    assert _v(r, "text.support.items") == (1 if analogy else 0)
+
+
+def test_similar_to_counts_once(run: Any):
+    r = run("This is similar to a map, similar to a guide. We left.")
+    assert _v(r, "text.support.items") == 1
+
+
+def test_like_as_a_hesitation_filler_is_not_an_analogy(sb: Any, fake_parser: Any, speech_cfg: Any):
+    from presenceai.schemas.speech import FillerEvent, FillerKind
+
+    t = sb.spaced("It was like a big step. We left.")  # "like" is word 2
+    hesitation = FillerEvent(kind=FillerKind.HESITATION, first_word=2, last_word=2,
+                             start_s=1.0, end_s=1.3)  # fmt: skip
+    r = analyze.analyze_text(t, parser=fake_parser, pauses=speech_cfg.pauses, fillers=(hesitation,))
+    assert _v(r, "text.support.items") == 0
+    marker = hesitation.model_copy(update={"kind": FillerKind.DISCOURSE_MARKER})
+    r = analyze.analyze_text(t, parser=fake_parser, pauses=speech_cfg.pauses, fillers=(marker,))
+    assert _v(r, "text.support.items") == 1  # discourse markers are every "like" (ADR 0012)
+
+
+@pytest.mark.parametrize(
+    ("sentence", "quotation"),
+    [("I said that it works.", False), ("We said that it works.", False),
+     ("Our coach said that it works.", True)],
+)  # fmt: skip
+def test_said_that_needs_another_speaker(run: Any, sentence: str, quotation: bool):
+    r = run(f"{sentence} We left.")
+    assert _v(r, "text.support.items") == (1 if quotation else 0)
+
+
+def test_then_counts_only_as_the_first_word(run: Any):
+    r = run("We then left. So then we ate. Then we slept. The end.")
+    assert _v(r, "text.organization.transitions") == 1
+
+
+@pytest.mark.parametrize(
+    "closing",
+    ["In closing, practice daily.", "To close, practice daily.", "To finish, practice daily.",
+     "The bottom line is practice.", "Let me leave you with practice."],
+)  # fmt: skip
+def test_new_conclusion_cues(run: Any, closing: str):
+    r = run(f"We met there. We talked a lot. We ate food. We went out. {closing}")
+    assert _v(r, "text.organization.framing_parts") == 1

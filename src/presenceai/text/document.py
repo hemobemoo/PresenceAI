@@ -25,25 +25,64 @@ from presenceai.text.nlp import Parser, Tok
 
 _CLOSERS = "\"'”’»)]}"
 _NON_WORD = re.compile(r"[^\w']+")
+NORMALISE_KEY = "normalise"  # contractions and informal forms, applied before matching
+
+
+@cache
+def _pack() -> dict[str, object]:
+    return load_pack_file("en", "text_cues.yaml")
+
+
+@cache
+def _forms() -> dict[str, str]:
+    raw = _pack().get(NORMALISE_KEY) or {}
+    if not isinstance(raw, dict):
+        raise ValueError(f"text_cues.yaml: {NORMALISE_KEY} must be a mapping")
+    return {str(k).casefold(): str(v).casefold() for k, v in raw.items()}  # pyright: ignore[reportUnknownVariableType, reportUnknownArgumentType]
+
+
+def words_of(text: str) -> list[str]:
+    """Lower-case words with punctuation removed and contractions expanded ("i'll" -> "i will",
+    "gonna" -> "going to"). Transcript sentences and lexicon entries both pass through this, so
+    a lexicon entry matches its own wording (tested)."""
+    flat = _NON_WORD.sub(" ", text.casefold().replace("’", "'"))
+    forms = _forms()
+    return [part for w in flat.split() for part in forms.get(w, w).split()]
 
 
 def plain(text: str) -> str:
-    """Lower case, punctuation as spaces, single spaces: the form cues are matched on."""
-    return " ".join(_NON_WORD.sub(" ", text.casefold()).split())
+    """The normalised form cues are matched on: `words_of` joined by single spaces."""
+    return " ".join(words_of(text))
 
 
 @cache
 def cues() -> dict[str, tuple[str, ...]]:
-    data = load_pack_file("en", "text_cues.yaml")
-    return {k: tuple(plain(p) for p in v) for k, v in data.items()}
+    data = _pack()
+    out: dict[str, tuple[str, ...]] = {}
+    for k, v in data.items():
+        if k == NORMALISE_KEY:
+            continue
+        if not isinstance(v, list):
+            raise ValueError(f"text_cues.yaml: {k} must be a list")
+        out[k] = tuple(plain(str(p)) for p in v)  # pyright: ignore[reportUnknownVariableType, reportUnknownArgumentType]
+    return out
+
+
+def find(text: str, kind: str) -> list[tuple[str, int]]:
+    """Every cue of `kind` in `text` as whole words: (cue, index of its first word)."""
+    words = words_of(text)
+    found: list[tuple[str, int]] = []
+    for phrase in cues()[kind]:
+        target = phrase.split()
+        n = len(target)
+        found += [(phrase, i) for i in range(len(words) - n + 1) if words[i : i + n] == target]
+    return sorted(found, key=lambda x: x[1])
 
 
 def match(text: str, kind: str, *, within_first_words: int | None = None) -> str | None:
     """The first cue of `kind` found in `text` as whole words, or None."""
-    s = plain(text)
-    for phrase in cues()[kind]:
-        m = re.search(rf"(?<!\w){re.escape(phrase)}(?!\w)", s)
-        if m and (within_first_words is None or len(s[: m.start()].split()) < within_first_words):
+    for phrase, at in find(text, kind):
+        if within_first_words is None or at < within_first_words:
             return phrase
     return None
 
@@ -74,6 +113,16 @@ class Document:
     opening_end: int  # first word index after the opening
     closing_start: int  # first word index of the closing
     punctuation_reliable: bool
+    hesitation_words: frozenset[int] = frozenset()  # word indices of hesitation fillers
+
+    def aligned(self, s: Sentence) -> list[tuple[str, int]]:
+        """The sentence's normalised words (`words_of`), each with its transcript word index."""
+        words = self.transcript.words
+        return [
+            (part, i)
+            for i in range(s.first_word, s.last_word + 1)
+            for part in words_of(words[i].text)
+        ]
 
     @property
     def n_words(self) -> int:
@@ -116,6 +165,7 @@ def build(
     *,
     opening_pct: float,
     closing_pct: float,
+    hesitation_words: frozenset[int] = frozenset(),
 ) -> Document:
     words = transcript.words
     marks = frozenset(pauses.sentence_marks)
@@ -142,4 +192,5 @@ def build(
         opening_end=opening,
         closing_start=n - closing,
         punctuation_reliable=punctuation_reliable(transcript, pauses),
+        hesitation_words=hesitation_words,
     )
