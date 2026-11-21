@@ -38,8 +38,21 @@ vision:
     digest: 59929e1d1ee95287735ddd833b19cf4ac46d29bc7afddbbf6753c459690d574a   # SHA-256, pinned 2026-11-12
   gaze_zone_t3: {id: null, licence: null, digest: null}   # TODO: after T3
 embeddings:
-  default: {id: unsloth/embeddinggemma-300m-GGUF, licence: Gemma Terms of Use, digest: null}
-  open_alternative: {id: intfloat/multilingual-e5-small, licence: MIT, digest: null}
+  # Knowledge-base search (P2-d). Default switched to e5-small (MIT) by the owner on 2026-11-22
+  # (ADR 0020): EmbeddingGemma's Gemma Terms of Use are not an open-source licence. Files are
+  # fetched from huggingface.co at the pinned commit by scripts/download_models.py and must match
+  # the SHA-256 below (the hashes Hugging Face publishes for that commit). Run with onnxruntime
+  # and tokenizers; no torch.
+  default: e5_small
+  e5_small:
+    licence: MIT
+    source: {repo: intfloat/multilingual-e5-small, revision: 614241f622f53c4eeff9890bdc4f31cfecc418b3}
+    files: [onnx/model.onnx, onnx/tokenizer.json]
+    sha256:
+      onnx/model.onnx: ca456c06b3a9505ddfd9131408916dd79290368331e7d76bb621f1cba6bc8665
+      onnx/tokenizer.json: 0b44a9d7b51c3c62626640cda0e2c2f70fdacdc25bbbd68038369d14ebdf4c39
+    dir: multilingual-e5-small
+  embeddinggemma: {id: unsloth/embeddinggemma-300m-GGUF, licence: Gemma Terms of Use, digest: null}   # not used (ADR 0020)
 nlp:
   # spaCy's English pipeline for the text detectors (P2-b, ADR 0018; owner approval 2026-11-21).
   # The wheel's model folder is unpacked into models/<dir>/ and loaded with spacy.load(path);

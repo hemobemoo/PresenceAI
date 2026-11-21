@@ -43,8 +43,8 @@ Replaced: NiceGUI (no browser mic/webcam recorder without custom JS).
 | Need | Choice | Licence | Checked |
 |---|---|---|---|
 | NLP | spaCy `en_core_web_sm`; Arabic: rule-based tokenisation with `camel-tools` ~ or simple regex | MIT / MIT ~ | ~ |
-| Embeddings (default) | Your **EmbeddingGemma GGUF** via `llama-cpp-python` | Gemma Terms of Use (free, not OSI) | ✓ |
-| Embeddings (open alternative) | `intfloat/multilingual-e5-small` via sentence-transformers | MIT ~ | ~ |
+| Embeddings (default) | **`intfloat/multilingual-e5-small`**, ONNX with onnxruntime and tokenizers (no torch) (owner, 2026-11-22, ADR 0020) | MIT | ✓ |
+| Embeddings (not used) | EmbeddingGemma GGUF: Gemma Terms of Use are not an open-source licence (ADR 0020) | Gemma Terms of Use | ✓ |
 | Vector search | DuckDB `vss` extension or NumPy cosine over a small matrix | MIT | ~ |
 | Typed rubric decisions | **Laya** (`pip install laya`) | Apache-2.0 | ✓ |
 | Calibration, small models | scikit-learn | BSD | ~ |
