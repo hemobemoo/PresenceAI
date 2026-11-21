@@ -3,7 +3,7 @@
 No models: the Whisper output, the VAD regions and the pitch track are fakes; the audio is a
 synthetic 40 s file. The transcript has a hesitation, «يعني» markers, a doubled «يعني يعني», an
 English term ("slides", code-switching) and almost no punctuation, as base Whisper often gives
-for Arabic. A slow real-model run waits for the owner's first B1 Arabic clip.
+for Arabic. The slow real-model run is `test_arabic_real_model.py` (owner's laptop only).
 """
 
 import re
