@@ -71,3 +71,31 @@ def test_format_checks():
     assert "format" in checks.problems("<think>x</think>\n" + ok, "control")
     assert checks.problems(ok + " 45 percent", "no_supporting_material") == ["digits"]
     assert checks.problems(ok + " 45 percent", "control") == []
+
+
+gen = _load("generate_c2")
+
+
+def test_generator_quality_checks_use_no_cue_lexicons():
+    source = (REPO_ROOT / "experiments/c2_synth/generate_c2.py").read_text("utf-8")
+    # no PresenceAI imports (no cue lexicons, no detectors) and no reference to the cue file
+    assert "from presenceai" not in source and "import presenceai" not in source
+    assert "text_cues" not in source
+    ok = " ".join(["word"] * 320)
+    assert gen.text_problems(ok) == []
+    assert gen.text_problems("The main idea of my talk. " + ok) == ["echo"]
+    assert gen.text_problems("Our central idea is simple. " + ok) == ["echo"]
+    assert gen.text_problems("**Title**\n" + ok) == ["format"]
+    assert gen.text_problems(" ".join(["word"] * 470)) == ["words 470"]
+
+
+def test_design_answers_must_match_the_group():
+    yes = dict.fromkeys(gen.QUESTIONS, True)
+    control = {**yes, "jargon": False}
+    assert gen.design_problems(control, "control", hook=True) == []
+    assert gen.design_problems(control, "control", hook=False) == ["hook=yes"]
+    leak = {**yes, "jargon": False}  # supporting material found where none was asked for
+    assert gen.design_problems(leak, "no_supporting_material", hook=True) == ["support=yes"]
+    assert gen.design_problems(yes, "undefined_jargon", hook=True) == []
+    for group, want in gen.EXPECTED.items():
+        assert set(want) == set(gen.QUESTIONS) - {"hook"}, group

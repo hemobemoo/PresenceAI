@@ -2,12 +2,14 @@
 
     uv run python experiments/c2_synth/check_c2.py data/c2/generated.jsonl
 
+A second, local pass over the accepted transcripts (the notebook already applied the quality
+loop: token cap, length, format, prompt echo and the model's yes/no answers; generate_c2.py).
 Format checks (all groups): 250-450 words; no markdown, heading, bullet, speaker label or stage
-direction; no leftover thinking block. Group check that needs no language model: the
-no_supporting_material group contains no digits. Whether each planted defect is really there
-(and absent from the controls) is checked by a separate yes/no pass of the model with plain
-questions (`generate_c2.py judge`, after the pilot), and by the owner's stratified hand-checked
-sample. Writes experiments/results/c2/<file>_checks.json with counts and failing ids only.
+direction; no leftover thinking block; no "main idea" / "central idea" echo. Group check that
+needs no language model: the no_supporting_material group contains no digits. Like the
+notebook, it uses no cue lexicon and no detector. If attempts.jsonl and rejected.jsonl sit next
+to the file, it also reports attempts and rejections per group and the reasons. Writes
+experiments/results/c2/<file>_checks.json with counts and failing ids only.
 """
 
 from __future__ import annotations
@@ -35,6 +37,8 @@ def problems(text: str, group: str) -> list[str]:
         out.append(f"words {n}")
     if _FORMAT.search(text):
         out.append("format")
+    if re.search(r"(main|central) idea", text, re.IGNORECASE):
+        out.append("echo")
     if group == "no_supporting_material" and re.search(r"\d", text):
         out.append("digits")
     return out
@@ -49,7 +53,30 @@ def check(path: Path) -> dict[str, object]:
         if found:
             failing[r["id"]] = found
     missing = sorted(set(prompts) - {r["id"] for r in rows})
+    loop: dict[str, object] = {}
+    attempts_file, rejected_file = (
+        path.with_name("attempts.jsonl"),
+        path.with_name("rejected.jsonl"),
+    )
+    if attempts_file.is_file():
+        att = [json.loads(x) for x in attempts_file.read_text("utf-8").splitlines() if x.strip()]
+        rej = []
+        if rejected_file.is_file():
+            rej = [
+                json.loads(x) for x in rejected_file.read_text("utf-8").splitlines() if x.strip()
+            ]
+        failed = [a for a in att if a["problems"]]
+        loop = {
+            "attempts_by_group": dict(Counter(a["group"] for a in att)),
+            "failed_attempts_by_group": dict(Counter(a["group"] for a in failed)),
+            "rejected_by_group": dict(Counter(r["group"] for r in rej)),
+            "failed_attempt_reasons": dict(
+                Counter(p.split()[0] for a in failed for p in a["problems"])
+            ),
+            "rejected_ids": sorted(r["id"] for r in rej),
+        }
     return {
+        **loop,
         "generated": len(rows),
         "missing": len(missing),
         "failing": len(failing),

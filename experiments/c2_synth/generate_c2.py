@@ -2,19 +2,30 @@
 
     python generate_c2.py fetch  --model-dir /content/qwen35-9b
     python generate_c2.py run    --model-dir /content/qwen35-9b --prompts prompts.jsonl \
-                                 --out /content/drive/MyDrive/presenceai_c2 [--ids a,b] [--batch 4]
+                                 --out /content/drive/MyDrive/presenceai_c2 [--ids a,b] [--batch 5]
 
 - **Model:** Qwen/Qwen3.5-9B (Apache-2.0: model card and LICENSE file) at the pinned commit
   below, loaded in 4-bit NF4 with bitsandbytes (fp16 compute; the T4 has no bf16).
 - **fetch** downloads the files and checks every one against the hash Hugging Face lists for that
   commit (SHA-256 for large files, the git blob SHA-1 for small ones); any mismatch stops.
   **run** checks them again before loading.
-- **Resumable:** every finished batch is appended to `<out>/generated.jsonl` and flushed to disk;
-  a new run skips ids already there. Put `--out` on Google Drive so a stopped session loses
-  nothing.
+- **Quality loop** (owner, 2026-11-22). Each attempt is accepted only if it passes, in order:
+  1. it ended before the 600-token cap (a cut-off talk would be an unplanned "no conclusion");
+  2. length 250-450 words and format (no markdown, heading, bullet, label or thinking text);
+  3. no echo of the prompt ("main idea", "central idea");
+  4. the model's own yes/no answers to five plain questions match the group's design (central
+     message stated, closing present, supporting material present, five unexplained technical
+     terms, attention-catching opening).
+  It does **not** use PresenceAI's cue lexicons or text detectors, so C2 is not limited to the
+  cases those detectors already catch. A failed item is regenerated with a new seed, at most 3
+  attempts; items that still fail are logged in `rejected.jsonl` and left out.
+- **Files in --out** (resumable; each line is flushed to disk): `generated.jsonl` (accepted),
+  `rejected.jsonl` (failed 3 times), `attempts.jsonl` (every attempt with its result, for the
+  rejection count per group). A new run skips ids already accepted or rejected.
 - Only synthetic prompts (resources/c2/prompts.jsonl) and the generated transcripts are used.
 - Non-thinking mode (`enable_thinking=False`); sampling as the model card recommends for
-  instruct use (temperature 0.7, top-p 0.8, top-k 20), seeded per prompt id.
+  instruct use (temperature 0.7, top-p 0.8, top-k 20), seeded per prompt id and attempt. The
+  yes/no answers are greedy.
 """
 
 from __future__ import annotations
@@ -23,6 +34,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import sys
 import time
 import urllib.request
@@ -33,6 +45,46 @@ REPO = "Qwen/Qwen3.5-9B"
 REVISION = "c202236235762e1c871ad0ccb60c8ee5ba337b9a"
 PATTERNS = ["*.safetensors", "*.json", "*.jinja", "merges.txt", "vocab.json", "LICENSE"]
 SAMPLING = {"do_sample": True, "temperature": 0.7, "top_p": 0.8, "top_k": 20}
+MAX_NEW_TOKENS = 600
+MAX_ATTEMPTS = 3
+MIN_WORDS, MAX_WORDS = 250, 450
+ECHO = re.compile(r"\b(main|central) idea\b", re.IGNORECASE)
+FORMAT = re.compile(
+    r"(^\s*#)|(^\s*[-*•]\s)|(^\s*\d+[.)]\s)|(\*\*)|(<think>)|(</think>)|(^\s*\[[^\]]+\])"
+    r"|(^\s*\([^)]*\)\s*$)|(^\s*(speaker|presenter|student)\s*\d*\s*:)",
+    re.IGNORECASE | re.MULTILINE,
+)
+
+# Plain yes/no questions; the model answers them about each generated transcript.
+QUESTIONS = {
+    "central": "Does the speaker state, in one sentence, the single central point or purpose "
+    "of the whole talk?",
+    "closing": "Does the talk end with a closing that sums up or wraps up the talk, rather than "
+    "stopping right after its last point?",
+    "support": "Does the talk contain any supporting material at all: numbers or statistics, a "
+    "specific example or case, a story, a comparison or analogy, or the words of a named person?",
+    "jargon": "Does the talk use at least five specialised technical terms that are never "
+    "explained anywhere in the talk?",
+    "hook": "Do the first one or two sentences try to catch the audience's attention before the "
+    "topic itself is introduced?",
+}
+# The answers each group's design requires ("hook" follows the prompt's own hook flag).
+EXPECTED = {
+    "control": {"central": True, "closing": True, "support": True, "jargon": False},
+    "no_central_message": {"central": False, "closing": True, "support": True, "jargon": False},
+    "no_conclusion": {"central": True, "closing": False, "support": True, "jargon": False},
+    "no_supporting_material": {
+        "central": True,
+        "closing": True,
+        "support": False,
+        "jargon": False,
+    },
+    "undefined_jargon": {"central": True, "closing": True, "support": True, "jargon": True},
+}
+JUDGE = (
+    "Here is the transcript of a short spoken presentation.\n\n<transcript>\n{text}\n"
+    "</transcript>\n\n{question}\nAnswer with one word: yes or no."
+)
 
 
 def _log(msg: str) -> None:
@@ -87,11 +139,35 @@ def fetch(model_dir: Path) -> None:
     verify(model_dir)
 
 
-def _done(out: Path) -> set[str]:
-    path = out / "generated.jsonl"
+def text_problems(text: str) -> list[str]:
+    """Length, format and prompt-echo checks (no cue lexicons, no detectors)."""
+    out = []
+    n = len(text.split())
+    if not MIN_WORDS <= n <= MAX_WORDS:
+        out.append(f"words {n}")
+    if FORMAT.search(text):
+        out.append("format")
+    if ECHO.search(text):
+        out.append("echo")
+    return out
+
+
+def design_problems(answers: dict[str, bool], group: str, hook: bool) -> list[str]:
+    want = {**EXPECTED[group], "hook": hook}
+    return [f"{k}={'yes' if answers[k] else 'no'}" for k in QUESTIONS if answers[k] != want[k]]
+
+
+def _read_ids(path: Path) -> set[str]:
     if not path.is_file():
         return set()
-    return {json.loads(line)["id"] for line in path.read_text("utf-8").splitlines() if line.strip()}
+    return {json.loads(x)["id"] for x in path.read_text("utf-8").splitlines() if x.strip()}
+
+
+def _append(path: Path, row: dict[str, Any]) -> None:
+    with path.open("a", encoding="utf-8") as fh:
+        fh.write(json.dumps(row, ensure_ascii=False) + "\n")
+        fh.flush()
+        os.fsync(fh.fileno())
 
 
 def _load(model_dir: Path) -> tuple[Any, Any]:
@@ -121,53 +197,104 @@ def _load(model_dir: Path) -> tuple[Any, Any]:
     return tok, model
 
 
-def run(args: argparse.Namespace) -> None:
-    import torch
+class Generator:
+    def __init__(self, tok: Any, model: Any) -> None:
+        self.tok, self.model = tok, model
 
+    def _chat(self, contents: list[str]) -> Any:
+        texts = [
+            self.tok.apply_chat_template(
+                [{"role": "user", "content": c}], tokenize=False, add_generation_prompt=True,
+                enable_thinking=False,
+            )
+            for c in contents
+        ]  # fmt: skip
+        return self.tok(texts, return_tensors="pt", padding=True).to("cuda:0")
+
+    def write(self, prompts: list[str], seed: int) -> list[tuple[str, int, bool]]:
+        """(text, new tokens, reached the cap) per prompt."""
+        import torch
+
+        enc = self._chat(prompts)
+        torch.manual_seed(seed)
+        with torch.no_grad():
+            gen = self.model.generate(**enc, max_new_tokens=MAX_NEW_TOKENS, **SAMPLING)
+        out = []
+        cfg_eos = getattr(self.model.generation_config, "eos_token_id", None)
+        eos = {self.tok.eos_token_id}
+        eos |= set(cfg_eos) if isinstance(cfg_eos, list) else {cfg_eos}
+        for ids in gen[:, enc["input_ids"].shape[1] :]:
+            real = [int(i) for i in ids if int(i) != self.tok.pad_token_id]
+            ended = any(i in eos for i in ids.tolist())
+            text = self.tok.decode(ids, skip_special_tokens=True).strip()
+            out.append((text, len(real), not ended and len(real) >= MAX_NEW_TOKENS))
+        return out
+
+    def answer(self, texts: list[str]) -> list[dict[str, bool]]:
+        """Greedy yes/no answers to every question, for every transcript."""
+        import torch
+
+        jobs = [(i, k) for i in range(len(texts)) for k in QUESTIONS]
+        enc = self._chat([JUDGE.format(text=texts[i], question=QUESTIONS[k]) for i, k in jobs])
+        with torch.no_grad():
+            gen = self.model.generate(**enc, max_new_tokens=4, do_sample=False)
+        replies = self.tok.batch_decode(
+            gen[:, enc["input_ids"].shape[1] :], skip_special_tokens=True
+        )
+        out: list[dict[str, bool]] = [{} for _ in texts]
+        for (i, k), reply in zip(jobs, replies, strict=True):
+            out[i][k] = reply.strip().lower().startswith("yes")
+        return out
+
+
+def run(args: argparse.Namespace) -> None:
     prompts = [json.loads(x) for x in Path(args.prompts).read_text("utf-8").splitlines() if x]
     if args.ids:
         wanted = set(args.ids.split(","))
         prompts = [p for p in prompts if p["id"] in wanted]
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
-    done = _done(out)
-    todo = [p for p in prompts if p["id"] not in done]
-    _log(
-        f"{len(prompts)} prompts, {len(done & {p['id'] for p in prompts})} done, {len(todo)} to go"
-    )
+    finished = _read_ids(out / "generated.jsonl") | _read_ids(out / "rejected.jsonl")
+    todo = [p for p in prompts if p["id"] not in finished]
+    _log(f"{len(prompts)} prompts, {len(prompts) - len(todo)} finished, {len(todo)} to go")
     if not todo:
         return
     verify(Path(args.model_dir))
-    tok, model = _load(Path(args.model_dir))
+    gen = Generator(*_load(Path(args.model_dir)))
     meta = {"model": REPO, "revision": REVISION, "quantization": "bnb-nf4-4bit-fp16",
-            "sampling": SAMPLING, "max_new_tokens": args.max_new_tokens}  # fmt: skip
-    for i in range(0, len(todo), args.batch):
-        batch = todo[i : i + args.batch]
-        texts = [
-            tok.apply_chat_template(
-                [{"role": "user", "content": p["prompt"]}], tokenize=False,
-                add_generation_prompt=True, enable_thinking=False,
-            )
-            for p in batch
-        ]  # fmt: skip
-        enc = tok(texts, return_tensors="pt", padding=True).to("cuda:0")
-        seed = int(hashlib.sha256(batch[0]["id"].encode()).hexdigest()[:8], 16)
-        torch.manual_seed(seed)
+            "sampling": SAMPLING, "max_new_tokens": MAX_NEW_TOKENS}  # fmt: skip
+    attempts = dict.fromkeys((p["id"] for p in todo), 0)
+    if (out / "attempts.jsonl").is_file():  # resume: earlier sessions' attempts still count
+        for line in (out / "attempts.jsonl").read_text("utf-8").splitlines():
+            row = json.loads(line) if line.strip() else {}
+            if row.get("id") in attempts:
+                attempts[row["id"]] = max(attempts[row["id"]], int(row["attempt"]))
+    queue = list(todo)
+    while queue:
+        batch, queue = queue[: args.batch], queue[args.batch :]
+        attempt_no = {p["id"]: attempts[p["id"]] + 1 for p in batch}
+        key = f"{batch[0]['id']}:{attempt_no[batch[0]['id']]}"
+        seed = int(hashlib.sha256(key.encode()).hexdigest()[:8], 16)
         t0 = time.time()
-        with torch.no_grad():
-            gen = model.generate(**enc, max_new_tokens=args.max_new_tokens, **SAMPLING)
-        seconds = time.time() - t0
-        new = gen[:, enc["input_ids"].shape[1] :]
-        with (out / "generated.jsonl").open("a", encoding="utf-8") as fh:
-            for p, ids in zip(batch, new, strict=True):
-                text = tok.decode(ids, skip_special_tokens=True).strip()
-                n = int((ids != tok.pad_token_id).sum())
-                fh.write(json.dumps({"id": p["id"], "text": text, "new_tokens": n,
-                                     "batch_seconds": round(seconds, 1), "seed": seed, **meta},
-                                    ensure_ascii=False) + "\n")  # fmt: skip
-            fh.flush()
-            os.fsync(fh.fileno())
-        _log(f"batch {i // args.batch + 1}: {len(batch)} done in {seconds:.0f} s")
+        written = gen.write([p["prompt"] for p in batch], seed)
+        answers = gen.answer([t for t, _, _ in written])
+        seconds = round(time.time() - t0, 1)
+        for p, (text, n, capped), ans in zip(batch, written, answers, strict=True):
+            attempts[p["id"]] = attempt_no[p["id"]]
+            problems = ["cap"] if capped else []
+            problems += text_problems(text)
+            problems += design_problems(ans, p["group"], p["hook"])
+            row = {"id": p["id"], "group": p["group"], "hook": p["hook"], "part": p["part"],
+                   "attempt": attempts[p["id"]], "new_tokens": n, "answers": ans,
+                   "problems": problems, "batch_seconds": seconds, "seed": seed}  # fmt: skip
+            _append(out / "attempts.jsonl", row)
+            if not problems:
+                _append(out / "generated.jsonl", {**row, "text": text, **meta})
+            elif attempts[p["id"]] >= MAX_ATTEMPTS:
+                _append(out / "rejected.jsonl", {**row, **meta})
+            else:
+                queue.append(p)
+        _log(f"batch of {len(batch)} in {seconds} s; {len(queue)} waiting")
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -177,8 +304,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--prompts", default="prompts.jsonl")
     ap.add_argument("--out", default="/content/drive/MyDrive/presenceai_c2")
     ap.add_argument("--ids", default="", help="comma-separated prompt ids (the pilot)")
-    ap.add_argument("--batch", type=int, default=4)
-    ap.add_argument("--max-new-tokens", type=int, default=700)
+    ap.add_argument("--batch", type=int, default=5)
     args = ap.parse_args(argv)
     if args.action == "fetch":
         fetch(Path(args.model_dir))
