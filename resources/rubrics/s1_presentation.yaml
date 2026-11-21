@@ -56,7 +56,7 @@ definitions:
     story ("when I was", "last year"), is a quotation, or makes a contrast claim ("most people
     think ... but"). Pattern rules; the false-positive rate is measured on C2 (P2-e).
   mid-sentence pause: >-
-    A pause of at least 1 s between two words of the same sentence, by the transcript's
+    A pause of at least {mid_pause_min_s:g} s between two words of the same sentence, by the transcript's
     punctuation (ADR 0011). English rests on Whisper's punctuation (ADR 0014); not measurable for
     Arabic (ADR 0016).
   supporting-material types: >-
@@ -155,13 +155,13 @@ measures:
       Hesitations per 100 words (speech/fillers.py). With base Whisper this is a lower bound and
       Arabic is low confidence (ADR 0012).
   pauses.mid_sentence_per_min:
-    status: planned
-    planned_in: P2-c
+    status: available
     requires: none
     languages: [en]
     description: >-
-      Mid-sentence pauses (see the definition) per minute of speaking time, from the pause
-      events of speech/pauses.py.
+      Mid-sentence pauses (see the definition) per minute of speaking time (first speech onset
+      to last offset, as rate.wpm), from the pause events of speech/pauses.py
+      (rubric/derived.py). Missing when the punctuation is unreliable or for Arabic.
   vision.gaze.at_camera_share:
     status: planned
     planned_in: P6
@@ -332,10 +332,10 @@ dimensions:
     skills: [fluency, pacing, audience_gaze, concision_timing]
     levels:
       - level: 4
-        text_ar: "{del_fillers_4:g} كلمات حشو على الأكثر لكل 100 كلمة، و{del_mid_pauses_4:g} وقفة على الأكثر في الدقيقة داخل الجملة مدتها ثانية أو أكثر، والنظر نحو الكاميرا {del_gaze_4:.0%} على الأقل من وقت الكلام (عند تشغيل الكاميرا)، ودون تجاوز للوقت المحدد."
+        text_ar: "{del_fillers_4:g} كلمات حشو على الأكثر لكل 100 كلمة، و{del_mid_pauses_4:g} وقفة على الأكثر في الدقيقة داخل الجملة مدتها {mid_pause_min_s:g} ث أو أكثر، والنظر نحو الكاميرا {del_gaze_4:.0%} على الأقل من وقت الكلام (عند تشغيل الكاميرا)، ودون تجاوز للوقت المحدد."
         text: >-
           At most {del_fillers_4:g} fillers per 100 words, at most {del_mid_pauses_4:g}
-          mid-sentence pause of 1 s or more per minute, gaze toward the camera for at least
+          mid-sentence pause of {mid_pause_min_s:g} s or more per minute, gaze toward the camera for at least
           {del_gaze_4:.0%} of speaking time (camera on), and no time over the limit.
         conditions:
           - {measure: fillers.per_100_words, op: "<=", threshold: del_fillers_4}
@@ -343,10 +343,10 @@ dimensions:
           - {measure: vision.gaze.at_camera_share, op: ">=", threshold: del_gaze_4}
           - {measure: timing.overrun_s, op: "<=", threshold: del_overrun_4}
       - level: 3
-        text_ar: "{del_fillers_3:g} كلمات حشو على الأكثر لكل 100 كلمة، و{del_mid_pauses_3:g} وقفات على الأكثر في الدقيقة داخل الجملة مدتها ثانية أو أكثر، والنظر نحو الكاميرا {del_gaze_3:.0%} على الأقل من وقت الكلام (عند تشغيل الكاميرا)، و{del_overrun_3:g} ثانية على الأكثر بعد الوقت المحدد."
+        text_ar: "{del_fillers_3:g} كلمات حشو على الأكثر لكل 100 كلمة، و{del_mid_pauses_3:g} وقفات على الأكثر في الدقيقة داخل الجملة مدتها {mid_pause_min_s:g} ث أو أكثر، والنظر نحو الكاميرا {del_gaze_3:.0%} على الأقل من وقت الكلام (عند تشغيل الكاميرا)، و{del_overrun_3:g} ثانية على الأكثر بعد الوقت المحدد."
         text: >-
           At most {del_fillers_3:g} fillers per 100 words, at most {del_mid_pauses_3:g}
-          mid-sentence pauses of 1 s or more per minute, gaze toward the camera for at least
+          mid-sentence pauses of {mid_pause_min_s:g} s or more per minute, gaze toward the camera for at least
           {del_gaze_3:.0%} of speaking time (camera on), and at most {del_overrun_3:g} s over the
           limit.
         conditions:
@@ -355,10 +355,10 @@ dimensions:
           - {measure: vision.gaze.at_camera_share, op: ">=", threshold: del_gaze_3}
           - {measure: timing.overrun_s, op: "<=", threshold: del_overrun_3}
       - level: 2
-        text_ar: "{del_fillers_2:g} كلمات حشو على الأكثر لكل 100 كلمة، و{del_mid_pauses_2:g} وقفات على الأكثر في الدقيقة داخل الجملة مدتها ثانية أو أكثر، والنظر نحو الكاميرا {del_gaze_2:.0%} على الأقل من وقت الكلام (عند تشغيل الكاميرا)، و{del_overrun_2:g} ثانية على الأكثر بعد الوقت المحدد."
+        text_ar: "{del_fillers_2:g} كلمات حشو على الأكثر لكل 100 كلمة، و{del_mid_pauses_2:g} وقفات على الأكثر في الدقيقة داخل الجملة مدتها {mid_pause_min_s:g} ث أو أكثر، والنظر نحو الكاميرا {del_gaze_2:.0%} على الأقل من وقت الكلام (عند تشغيل الكاميرا)، و{del_overrun_2:g} ثانية على الأكثر بعد الوقت المحدد."
         text: >-
           At most {del_fillers_2:g} fillers per 100 words, at most {del_mid_pauses_2:g}
-          mid-sentence pauses of 1 s or more per minute, gaze toward the camera for at least
+          mid-sentence pauses of {mid_pause_min_s:g} s or more per minute, gaze toward the camera for at least
           {del_gaze_2:.0%} of speaking time (camera on), and at most {del_overrun_2:g} s over the
           limit.
         conditions:

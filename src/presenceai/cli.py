@@ -129,3 +129,64 @@ def analyze(
     else:
         out.write_text(payload + "\n", encoding="utf-8")
         typer.echo(f"wrote {out}", err=True)
+
+
+class Scenario(StrEnum):
+    S1 = "s1_presentation"
+
+
+@app.command()
+def assess(
+    file: Annotated[
+        Path,
+        typer.Argument(exists=True, dir_okay=False, readable=True, help="Audio or video file."),
+    ],
+    lang: Annotated[Lang, typer.Option("--lang", help="Language spoken in the recording.")],
+    scenario: Annotated[
+        Scenario, typer.Option("--scenario", help="Scenario whose rubric is used.")
+    ] = Scenario.S1,
+    model: Annotated[
+        AsrModel | None,
+        typer.Option("--model", help="ASR model (default: `asr.model` in configs/default.yaml)."),
+    ] = None,
+    out: Annotated[
+        Path | None,
+        typer.Option("--out", dir_okay=False, help="Write the JSON report here (default: stdout)."),
+    ] = None,
+) -> None:
+    """Speech report, text report and rubric assessment with verified evidence (JSON)."""
+    from presenceai.pipeline import assess as pipeline
+    from presenceai.rubric.evidence import EvidenceError
+    from presenceai.speech import asr
+    from presenceai.text.nlp import spacy_parser
+
+    settings = get_settings()
+    options = settings.asr
+    model_name = model.value if model is not None else options.model
+    try:
+        whisper = asr.load_model(model_name, options)
+        parser = spacy_parser() if lang is Lang.EN else pipeline.no_parser
+        report = pipeline.assess_file(
+            file,
+            language=lang.value,
+            model=whisper,
+            model_name=model_name,
+            options=options,
+            speech=settings.speech,
+            parser=parser,
+            scenario=scenario.value,
+        )
+    except EvidenceError:
+        raise  # a rule-based finding with unverified evidence is a bug (ADR 0019)
+    except asr.ModelNotAvailable as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(1) from None
+    except (ValueError, FFmpegError) as exc:
+        typer.echo(f"{file.name}: cannot read audio ({type(exc).__name__})", err=True)
+        raise typer.Exit(1) from None
+    payload = report.model_dump_json(indent=2)
+    if out is None:
+        typer.echo(payload)
+    else:
+        out.write_text(payload + "\n", encoding="utf-8")
+        typer.echo(f"wrote {out}", err=True)

@@ -123,9 +123,9 @@ The Arabic anchors translate the reviewed English wording. They are a draft for 
 
 | Level | Arabic anchor |
 |---|---|
-| 4 متقدّم | 4 كلمات حشو على الأكثر لكل 100 كلمة، و1 وقفة على الأكثر في الدقيقة داخل الجملة مدتها ثانية أو أكثر، والنظر نحو الكاميرا 70% على الأقل من وقت الكلام (عند تشغيل الكاميرا)، ودون تجاوز للوقت المحدد. |
-| 3 مرحلي 3 | 6 كلمات حشو على الأكثر لكل 100 كلمة، و2 وقفات على الأكثر في الدقيقة داخل الجملة مدتها ثانية أو أكثر، والنظر نحو الكاميرا 50% على الأقل من وقت الكلام (عند تشغيل الكاميرا)، و15 ثانية على الأكثر بعد الوقت المحدد. |
-| 2 مرحلي 2 | 10 كلمات حشو على الأكثر لكل 100 كلمة، و4 وقفات على الأكثر في الدقيقة داخل الجملة مدتها ثانية أو أكثر، والنظر نحو الكاميرا 30% على الأقل من وقت الكلام (عند تشغيل الكاميرا)، و30 ثانية على الأكثر بعد الوقت المحدد. |
+| 4 متقدّم | 4 كلمات حشو على الأكثر لكل 100 كلمة، و1 وقفة على الأكثر في الدقيقة داخل الجملة مدتها 1 ث أو أكثر، والنظر نحو الكاميرا 70% على الأقل من وقت الكلام (عند تشغيل الكاميرا)، ودون تجاوز للوقت المحدد. |
+| 3 مرحلي 3 | 6 كلمات حشو على الأكثر لكل 100 كلمة، و2 وقفات على الأكثر في الدقيقة داخل الجملة مدتها 1 ث أو أكثر، والنظر نحو الكاميرا 50% على الأقل من وقت الكلام (عند تشغيل الكاميرا)، و15 ثانية على الأكثر بعد الوقت المحدد. |
+| 2 مرحلي 2 | 10 كلمات حشو على الأكثر لكل 100 كلمة، و4 وقفات على الأكثر في الدقيقة داخل الجملة مدتها 1 ث أو أكثر، والنظر نحو الكاميرا 30% على الأقل من وقت الكلام (عند تشغيل الكاميرا)، و30 ثانية على الأكثر بعد الوقت المحدد. |
 | 1 أساسي | كلمات حشو أكثر، أو وقفات أكثر داخل الجمل، أو نظر أقل نحو الكاميرا، أو تجاوز للوقت أكبر مما في المستوى 2. |
 
 ## Definitions
@@ -162,7 +162,7 @@ The Arabic anchors translate the reviewed English wording. They are a draft for 
 | `text.language.undefined_terms` | available | none | en | Rare terms (word frequency below the rare-word threshold) used without a definition cue ("which means", "that is") in the same or the next sentence. |
 | `text.language.mean_sentence_words` | available | none | en | Mean words per sentence. Missing when the punctuation is unreliable (ADR 0011): then only this condition is dropped and the language dimension rests on undefined terms. |
 | `fillers.per_100_words` | available | none | en, ar | Hesitations per 100 words (speech/fillers.py). With base Whisper this is a lower bound and Arabic is low confidence (ADR 0012). |
-| `pauses.mid_sentence_per_min` | planned (P2-c) | none | en | Mid-sentence pauses (see the definition) per minute of speaking time, from the pause events of speech/pauses.py. |
+| `pauses.mid_sentence_per_min` | available | none | en | Mid-sentence pauses (see the definition) per minute of speaking time (first speech onset to last offset, as rate.wpm), from the pause events of speech/pauses.py (rubric/derived.py). Missing when the punctuation is unreliable or for Arabic. |
 | `vision.gaze.at_camera_share` | planned (P6) | camera | en, ar | Share of speaking time with gaze zone at_camera (ADR 0004); camera on only. |
 | `timing.overrun_s` | planned (P3) | session_limit | en, ar | Seconds spoken beyond the session's time limit (0 when within it). |
 

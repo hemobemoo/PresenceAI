@@ -15,6 +15,8 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from presenceai.schemas.assessment import Confidence, Evidence
+
 LEVELS = (4, 3, 2, 1)
 
 
@@ -106,3 +108,68 @@ class Rubric(_Frozen):
                     if c.measure not in self.measures:
                         raise ValueError(f"{d.id}: unknown measure {c.measure!r}")
         return self
+
+
+# --- assessment results (P2-c, ADR 0019) ------------------------------------------------------
+
+
+class ConditionResult(_Frozen):
+    level: int = Field(ge=2, le=4)
+    measure: str = Field(min_length=1)
+    op: Literal[">=", "<=", "present"]
+    threshold: str | None = None
+    limit: float | None = None  # the threshold's value; None for "present"
+    value: float | None = None  # None: the measure is missing (never read as low)
+    holds: bool | None = None  # None when the measure is missing
+
+
+class DimensionResult(_Frozen):
+    dimension: str = Field(min_length=1)
+    skills: tuple[str, ...]
+    level: int | None = Field(default=None, ge=1, le=4)  # None: not measurable
+    score: float | None = Field(default=None, ge=0, le=1)  # y = (level - 1) / 3
+    confidence: Confidence | None = None  # lowest among the measured (deciding) measures
+    measured: tuple[str, ...] = ()  # measures that could be computed
+    missing: tuple[str, ...] = ()  # measures that could not, never counted as low
+    conditions: tuple[ConditionResult, ...] = ()
+    next_level: tuple[ConditionResult, ...] = ()  # unmet measured conditions of level + 1
+    not_measurable: str | None = None
+
+    @model_validator(mode="after")
+    def _level_or_reason(self) -> DimensionResult:
+        if (self.level is None) != (self.not_measurable is not None):
+            raise ValueError("a dimension has either a level or a not-measurable reason")
+        if self.level is not None and (self.score is None or self.confidence is None):
+            raise ValueError("a level needs a score and a confidence")
+        return self
+
+
+class Finding(_Frozen):
+    """One feedback statement per dimension: observable wording, evidence, confidence."""
+
+    dimension: str = Field(min_length=1)
+    statement: str = Field(min_length=1)
+    level: int | None = Field(default=None, ge=1, le=4)
+    confidence: Confidence | None = None
+    measured: int = Field(ge=0)  # "based on N of M measures"
+    total: int = Field(ge=1)
+    evidence: tuple[Evidence, ...] = ()
+
+    @model_validator(mode="after")
+    def _evidence_for_a_level(self) -> Finding:
+        if self.level is not None and not self.evidence:
+            raise ValueError("a finding with a level needs evidence")
+        return self
+
+
+class Assessment(_Frozen):
+    schema_version: Literal[1] = 1
+    scenario: str = Field(min_length=1)
+    rubric_version: str = Field(min_length=1)
+    thresholds_status: str = Field(min_length=1)
+    language: Literal["en", "ar"]
+    dimensions: tuple[DimensionResult, ...]
+    findings: tuple[Finding, ...]
+    evidence_verified: Literal[True] = (
+        True  # every finding's evidence was checked (rubric/evidence)
+    )

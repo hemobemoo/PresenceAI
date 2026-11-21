@@ -18,6 +18,9 @@ pauses:
   p90: "90th percentile pause"
   longest: "longest pause"
   no_pauses: "no pauses of at least {shortest} s"
+  mid_per_min: "mid-sentence pauses of at least {minimum:g} s per minute of speaking time (first to last speech)"
+  mid_per_min_language: "not measurable: pause positions are not available for this language"
+  mid_per_min_punctuation: "not measurable: the transcript has too few sentence marks to place pauses in sentences"
 positions:
   sentence_boundary: "sentence_boundary"
   clause_boundary: "clause_boundary"
@@ -88,6 +91,41 @@ text:
   language:
     undefined_terms: "rare terms (word frequency below {zipf:g} on the Zipf scale) with no definition cue in the same or the next sentence"
     mean_sentence_words: "words per sentence, from the transcript's punctuation"
+assessment:
+  finding: "{dimension}: level {level} ({level_name}), based on {measured} of {total} measures ({measures}). {values}"
+  not_measurable: "{dimension}: not measurable; none of its {total} measures could be computed ({reasons})"
+  value: "{measure}: {value:g}"
+  separator: "; "
+  missing_camera: "no camera recording"
+  missing_limit: "no time limit set"
+  missing_other: "not computed"
+  measures:
+    text:
+      central_message:
+        statements: "thesis sentences"
+        in_opening: "main point stated in the opening (1 = yes)"
+        in_closing: "main point restated in the closing (1 = yes)"
+        key_phrase_recurrences: "body sentences with a key phrase"
+      organization:
+        framing_parts: "introduction and conclusion cues found"
+        transitions: "sentences with a transition"
+      hook:
+        present: "opening hook (1 = yes)"
+      support:
+        items: "supporting items"
+        types: "supporting-material types"
+      language:
+        undefined_terms: "rare terms without a definition"
+        mean_sentence_words: "words per sentence"
+    fillers:
+      per_100_words: "fillers per 100 words (at least)"
+    pauses:
+      mid_sentence_per_min: "mid-sentence pauses per minute"
+    vision:
+      gaze:
+        at_camera_share: "share of speaking time looking toward the camera"
+    timing:
+      overrun_s: "seconds over the time limit"
 units:
   count: "count"
   "words/min": "words/min"
@@ -105,3 +143,4 @@ units:
   types: "types"
   terms: "terms"
   words/sentence: "words per sentence"
+  per min: "per minute"
