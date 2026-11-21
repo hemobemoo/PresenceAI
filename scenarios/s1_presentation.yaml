@@ -1,0 +1,14 @@
+# S1 prepared short presentation (FINAL_01 §3): primary scenario.
+id: s1_presentation
+duration_s: [120, 180]          # 2-3 minutes (FINAL_01 §3)
+rubric: s1_presentation         # resources/rubrics/s1_presentation.yaml (draft, ADR 0017)
+skills:                         # engine skills the rubric feeds (FINAL_05 §1)
+  - central_message
+  - organization
+  - opening_conclusion
+  - language_clarity
+  - supporting_material
+  - fluency
+  - pacing
+  - audience_gaze
+  - concision_timing

@@ -12,7 +12,7 @@ Roles you chose: knowledge base, training text, rubric definitions.
 
 | Source | Licence | Role | Link | Checked |
 |---|---|---|---|---|
-| AAC&U **VALUE Oral Communication Rubric** | CC BY-NC-SA 4.0 | Rubric dimensions and anchor wording (adapted to observable anchors) | Copy used: `https://binghamton.edu/academics/general-education/instructorinformation/oralcommunicationaauc.pdf`; publisher page at aacu.org ~ | ✓ licence |
+| AAC&U **VALUE Oral Communication Rubric** | CC BY-NC-SA 4.0 | Rubric dimensions and anchor wording (adapted to observable anchors) | Copy used: `https://uttyler.edu/offices/continuous-improvement-and-accreditation/files/value-oral-communication.pdf` (2026-11-21; the Binghamton copy returned 404; this mirror shows no licence line, ADR 0017); publisher page at aacu.org ~ | ✓ licence |
 | *Fundamentals of Public Speaking* (Lumen Learning, via FSCJ) | **CC BY 4.0** | Knowledge base **and** T2 training text; exercise sources | `https://fscj.pressbooks.pub/publicspeaking` | ✓ |
 | *Stand up, Speak out* (Univ. of Minnesota) | CC BY-NC-SA 4.0 | Knowledge base, exercise ideas | `https://open.lib.umn.edu/publicspeaking` | ✓ |
 | *Exploring Public Speaking*, 4th ed. (Tucker) | CC BY-NC-SA 4.0 | Knowledge base | `https://open.maricopa.edu/exploringpublicspeaking` | ✓ |

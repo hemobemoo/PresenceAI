@@ -86,7 +86,8 @@ Plan: docs/plan/FINAL_00..12. Read FINAL_00 first, then only the file for the ta
 ## Non-negotiables
 1. Python 3.12 only. No .js/.ts/.html files written by hand. UI = Gradio + FastRTC.
 2. $0 stack. Allowed network calls at runtime: OpenRouter (coach/providers/openrouter.py only,
-   text only, only if the user enabled AI wording) and Supabase (storage/media.py, Stage B only).
+   text only, only if the user enabled AI wording and content checks) and Supabase
+   (storage/media.py, Stage B only).
 3. Never add emotion, mood, personality, honesty, intelligence, confidence or hireability
    inference. vision/expressions.py may emit only: smile_visible, brows_raised, brows_lowered,
    eyes_closed, mouth_moving_silent. No face recognition. Expressions never feed scores.

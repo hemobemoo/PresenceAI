@@ -1,0 +1,315 @@
+# S1 prepared short presentation: rubric DRAFT for supervisor review (P2-a, ADR 0017).
+#
+# Licence: CC BY-NC-SA 4.0. Adapted from the Oral Communication VALUE Rubric (AAC&U). This file
+# is a derivative: its five dimensions and four-level scale follow the VALUE rubric. The anchor
+# wording is our own, rewritten as observable behaviour with numbers; no VALUE sentence is copied.
+#
+# How a level is reached: every condition of the level must hold; the dimension's level is the
+# highest level reached; level 1 is the default. A measure that cannot be computed (camera off,
+# no session limit, Arabic content) is left out of the conditions, never counted against the
+# speaker. If no measure of a dimension can be computed, the dimension is "not measurable".
+#
+# Threshold values: configs/rubric.yaml, all PROPOSED until ADR 0017 is decided.
+
+id: s1_presentation
+version: "0.1"
+status: draft
+licence: CC BY-NC-SA 4.0
+attribution: >-
+  Adapted from the Oral Communication VALUE Rubric, Association of American Colleges and
+  Universities (AAC&U), CC BY-NC-SA 4.0. Changes: anchors rewritten as observable behaviour with
+  proposed numbers; parts that no rule can observe are listed as left out.
+source:
+  title: Oral Communication VALUE Rubric (AAC&U)
+  copy_url: https://uttyler.edu/offices/continuous-improvement-and-accreditation/files/value-oral-communication.pdf
+  copy_sha256: ba41c136a1d5ddd1fd0a3399ded4d8e3a10d38f9064305f27862024bcd667bde
+  note: >-
+    The Binghamton copy named in FINAL_07 returned 404 on 2026-11-21. This copy (UT Tyler) shows
+    no licence line; the licence CC BY-NC-SA 4.0 is the one recorded in DATA_SOURCES.md
+    (checked 2026-11-11). Owner's decision, 2026-11-21.
+
+scale:
+  4: Capstone
+  3: Milestone 3
+  2: Milestone 2
+  1: Benchmark
+
+measures:
+  text.central_message.statements:
+    status: planned
+    planned_in: P2-b
+    requires: none
+    languages: [en]
+    description: Number of sentences with a thesis cue ("today I will", "my main point is").
+  text.central_message.in_opening:
+    status: planned
+    planned_in: P2-b
+    requires: none
+    languages: [en]
+    description: Yes if a thesis-cue sentence falls within the opening share of the words.
+  text.central_message.in_closing:
+    status: planned
+    planned_in: P2-b
+    requires: none
+    languages: [en]
+    description: >-
+      Yes if a sentence within the closing share of the words repeats the key noun phrases of
+      the opening thesis sentence.
+  text.central_message.key_phrase_recurrences:
+    status: planned
+    planned_in: P2-b
+    requires: none
+    languages: [en]
+    description: Body sentences that repeat a key noun phrase of the thesis sentence.
+  text.organization.framing_parts:
+    status: planned
+    planned_in: P2-b
+    requires: none
+    languages: [en]
+    description: >-
+      0-2: an introduction cue (purpose or preview) in the opening share, and a conclusion cue
+      ("in conclusion", "to sum up") in the closing share.
+  text.organization.transitions:
+    status: planned
+    planned_in: P2-b
+    requires: none
+    languages: [en]
+    description: Transition and sequence cues between parts ("first", "next", "finally").
+  text.hook.present:
+    status: planned
+    planned_in: P2-b
+    requires: none
+    languages: [en]
+    description: >-
+      Yes if one of the first sentences is a question, a statistic, a story opening, a quotation
+      or a surprising claim (pattern rules).
+  text.support.items:
+    status: planned
+    planned_in: P2-b
+    requires: none
+    languages: [en]
+    description: Supporting items found (statistics, examples, analogies, quotations).
+  text.support.types:
+    status: planned
+    planned_in: P2-b
+    requires: none
+    languages: [en]
+    description: Distinct types among the supporting items (0-4).
+  text.language.undefined_terms:
+    status: planned
+    planned_in: P2-b
+    requires: none
+    languages: [en]
+    description: >-
+      Rare terms (word frequency below the rare-word threshold) used without a definition cue
+      ("which means", "that is") in the same or the next sentence.
+  text.language.mean_sentence_words:
+    status: planned
+    planned_in: P2-b
+    requires: none
+    languages: [en]
+    description: >-
+      Mean words per sentence. Depends on the transcript's punctuation; not measurable when the
+      punctuation is unreliable (ADR 0011).
+  fillers.per_100_words:
+    status: available
+    requires: none
+    languages: [en, ar]
+    description: >-
+      Hesitations per 100 words (speech/fillers.py). With base Whisper this is a lower bound and
+      Arabic is low confidence (ADR 0012).
+  pauses.mid_sentence_per_min:
+    status: planned
+    planned_in: P2-c
+    requires: none
+    languages: [en]
+    description: >-
+      Pauses of at least 1 s inside a sentence, per minute of speaking time (from the pause
+      events of speech/pauses.py; Arabic positions are unknown, ADR 0011).
+  vision.gaze.at_camera_share:
+    status: planned
+    planned_in: P6
+    requires: camera
+    languages: [en, ar]
+    description: Share of speaking time with gaze zone at_camera (ADR 0004).
+  timing.overrun_s:
+    status: planned
+    planned_in: P3
+    requires: session_limit
+    languages: [en, ar]
+    description: Seconds spoken beyond the session's time limit (0 when within it).
+
+dimensions:
+  - id: central_message
+    name: Central message
+    value_dimension: Central Message
+    skills: [central_message]
+    levels:
+      - level: 4
+        text: >-
+          A sentence stating the main point appears within the first {opening_share_pct:g} % of
+          the words, is stated again within the last {closing_share_pct:g} %, and its key phrases
+          recur in at least {cm_recurrences_min:g} sentences of the body.
+        conditions:
+          - {measure: text.central_message.in_opening, op: present}
+          - {measure: text.central_message.in_closing, op: present}
+          - {measure: text.central_message.key_phrase_recurrences, op: ">=", threshold: cm_recurrences_min}
+      - level: 3
+        text: >-
+          A sentence stating the main point appears within the first {opening_share_pct:g} % of
+          the words and is stated again within the last {closing_share_pct:g} %.
+        conditions:
+          - {measure: text.central_message.in_opening, op: present}
+          - {measure: text.central_message.in_closing, op: present}
+      - level: 2
+        text: >-
+          The main point is stated explicitly in at least {cm_statements_min:g} sentence, but not
+          both in the opening and in the closing.
+        conditions:
+          - {measure: text.central_message.statements, op: ">=", threshold: cm_statements_min}
+      - level: 1
+        text: No sentence states the main point; it can only be inferred from the content.
+    left_out:
+      - compelling, memorable
+      - consistent with the supporting material (needs a content check; judge slice)
+
+  - id: organization
+    name: Organization
+    value_dimension: Organization
+    skills: [organization, opening_conclusion]
+    levels:
+      - level: 4
+        text: >-
+          The talk has an introduction cue in the first {opening_share_pct:g} % and a conclusion
+          cue in the last {closing_share_pct:g} %, at least {org_transitions_high:g} transitions
+          between parts, and an opening hook (question, statistic, story, quotation or surprising
+          claim) in the first {hook_sentences:g} sentences.
+        conditions:
+          - {measure: text.organization.framing_parts, op: ">=", threshold: org_framing_full}
+          - {measure: text.organization.transitions, op: ">=", threshold: org_transitions_high}
+          - {measure: text.hook.present, op: present}
+      - level: 3
+        text: >-
+          The talk has both an introduction cue and a conclusion cue, and at least
+          {org_transitions_mid:g} transitions between parts.
+        conditions:
+          - {measure: text.organization.framing_parts, op: ">=", threshold: org_framing_full}
+          - {measure: text.organization.transitions, op: ">=", threshold: org_transitions_mid}
+      - level: 2
+        text: >-
+          The talk has at least {org_framing_min:g} of the two: an introduction cue or a
+          conclusion cue.
+        conditions:
+          - {measure: text.organization.framing_parts, op: ">=", threshold: org_framing_min}
+      - level: 1
+        text: No introduction cue and no conclusion cue are found.
+    left_out:
+      - skilful; makes the content cohesive
+      - purposeful choice of pattern (chronological, problem-solution)
+
+  - id: language
+    name: Language
+    value_dimension: Language
+    skills: [language_clarity]
+    levels:
+      - level: 4
+        text: >-
+          No rare term (word frequency below {lang_rare_zipf:g} on the Zipf scale) is used without
+          a definition, and sentences average at most {lang_sentence_max_4:g} words.
+        conditions:
+          - {measure: text.language.undefined_terms, op: "<=", threshold: lang_undefined_max_4}
+          - {measure: text.language.mean_sentence_words, op: "<=", threshold: lang_sentence_max_4}
+      - level: 3
+        text: >-
+          At most {lang_undefined_max_3:g} rare term is used without a definition, and sentences
+          average at most {lang_sentence_max_3:g} words.
+        conditions:
+          - {measure: text.language.undefined_terms, op: "<=", threshold: lang_undefined_max_3}
+          - {measure: text.language.mean_sentence_words, op: "<=", threshold: lang_sentence_max_3}
+      - level: 2
+        text: >-
+          At most {lang_undefined_max_2:g} rare terms are used without a definition, and sentences
+          average at most {lang_sentence_max_2:g} words.
+        conditions:
+          - {measure: text.language.undefined_terms, op: "<=", threshold: lang_undefined_max_2}
+          - {measure: text.language.mean_sentence_words, op: "<=", threshold: lang_sentence_max_2}
+      - level: 1
+        text: More rare terms are used without a definition, or sentences are longer on average.
+    left_out:
+      - imaginative, memorable, compelling
+      - appropriate to the audience; free from bias (no rule can observe these)
+
+  - id: supporting_material
+    name: Supporting material
+    value_dimension: Supporting Material
+    skills: [supporting_material]
+    levels:
+      - level: 4
+        text: >-
+          At least {sup_items_high:g} supporting items of at least {sup_types_high:g} different
+          types (statistics, examples, analogies, quotations).
+        conditions:
+          - {measure: text.support.items, op: ">=", threshold: sup_items_high}
+          - {measure: text.support.types, op: ">=", threshold: sup_types_high}
+      - level: 3
+        text: >-
+          At least {sup_items_mid:g} supporting items of at least {sup_types_mid:g} different
+          types.
+        conditions:
+          - {measure: text.support.items, op: ">=", threshold: sup_items_mid}
+          - {measure: text.support.types, op: ">=", threshold: sup_types_mid}
+      - level: 2
+        text: At least {sup_items_min:g} supporting item.
+        conditions:
+          - {measure: text.support.items, op: ">=", threshold: sup_items_min}
+      - level: 1
+        text: No statistic, example, analogy or quotation is found.
+    left_out:
+      - credibility and relevance of the sources
+      - how strongly the material supports the presentation (judge slice)
+
+  - id: delivery
+    name: Delivery
+    value_dimension: Delivery
+    skills: [fluency, pacing, audience_gaze, concision_timing]
+    levels:
+      - level: 4
+        text: >-
+          At most {del_fillers_4:g} fillers per 100 words, at most {del_mid_pauses_4:g}
+          mid-sentence pause of 1 s or more per minute, gaze toward the camera for at least
+          {del_gaze_4:.0%} of speaking time (camera on), and no time over the limit.
+        conditions:
+          - {measure: fillers.per_100_words, op: "<=", threshold: del_fillers_4}
+          - {measure: pauses.mid_sentence_per_min, op: "<=", threshold: del_mid_pauses_4}
+          - {measure: vision.gaze.at_camera_share, op: ">=", threshold: del_gaze_4}
+          - {measure: timing.overrun_s, op: "<=", threshold: del_overrun_4}
+      - level: 3
+        text: >-
+          At most {del_fillers_3:g} fillers per 100 words, at most {del_mid_pauses_3:g}
+          mid-sentence pauses of 1 s or more per minute, gaze toward the camera for at least
+          {del_gaze_3:.0%} of speaking time (camera on), and at most {del_overrun_3:g} s over the
+          limit.
+        conditions:
+          - {measure: fillers.per_100_words, op: "<=", threshold: del_fillers_3}
+          - {measure: pauses.mid_sentence_per_min, op: "<=", threshold: del_mid_pauses_3}
+          - {measure: vision.gaze.at_camera_share, op: ">=", threshold: del_gaze_3}
+          - {measure: timing.overrun_s, op: "<=", threshold: del_overrun_3}
+      - level: 2
+        text: >-
+          At most {del_fillers_2:g} fillers per 100 words, at most {del_mid_pauses_2:g}
+          mid-sentence pauses of 1 s or more per minute, gaze toward the camera for at least
+          {del_gaze_2:.0%} of speaking time (camera on), and at most {del_overrun_2:g} s over the
+          limit.
+        conditions:
+          - {measure: fillers.per_100_words, op: "<=", threshold: del_fillers_2}
+          - {measure: pauses.mid_sentence_per_min, op: "<=", threshold: del_mid_pauses_2}
+          - {measure: vision.gaze.at_camera_share, op: ">=", threshold: del_gaze_2}
+          - {measure: timing.overrun_s, op: "<=", threshold: del_overrun_2}
+      - level: 1
+        text: More fillers, more mid-sentence pauses, less gaze toward the camera or more time over the limit than level 2.
+    left_out:
+      - posture and gesture (camera; P6 measures have no thresholds yet, shown as information)
+      - vocal expressiveness (pitch and loudness variation are opt-in only, ADR 0013)
+      - speech rate (judged only against the speaker's own band, never an absolute norm; P5)
+      - the VALUE wording about how the speaker appears (an inference about the person, which the
+        app never makes; AGENTS.md rule 3)
