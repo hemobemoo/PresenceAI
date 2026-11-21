@@ -11,7 +11,8 @@
 | MediaPipe Face Landmarker | 478 landmarks, 52 blendshapes, head pose | `https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/latest/face_landmarker.task` | Apache-2.0 | ✓ |
 | MediaPipe Pose Landmarker (full) | Body landmarks | `https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/latest/pose_landmarker_full.task` | Apache-2.0 | ~ URL pattern |
 | Laya | Typed rubric decisions | `pip install laya` (downloads checkpoints on first use, ~2.3 GB for all three) | Apache-2.0 | ✓ |
-| EmbeddingGemma GGUF (yours) | Embeddings, knowledge-base search | Already on disk; or `huggingface-cli download unsloth/embeddinggemma-300m-GGUF` ~ | Gemma Terms | ✓ licence |
+| multilingual-e5-small (MIT; replaces EmbeddingGemma, ADR 0020) | Embeddings, knowledge-base search | `uv run python scripts/download_models.py --only e5_small` (pinned SHA-256) | MIT | ✓ |
+| EmbeddingGemma GGUF (yours; not used, ADR 0020) | Embeddings, knowledge-base search | Already on disk; or `huggingface-cli download unsloth/embeddinggemma-300m-GGUF` ~ | Gemma Terms | ✓ licence |
 | multilingual-e5-small | Open-licence embedding alternative | `intfloat/multilingual-e5-small` on HF | MIT ~ | ~ |
 | spaCy `en_core_web_sm` | English NLP | `uv run python -m spacy download en_core_web_sm` | MIT | ~ |
 | Kokoro-82M (optional) | Reads panel questions aloud (EN) | `pip install kokoro soundfile` + system `espeak-ng` | Apache-2.0 | ✓ |

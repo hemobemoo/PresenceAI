@@ -15,6 +15,13 @@ pip-installed.
 
     uv run python scripts/download_models.py --only spacy_en
 
+Embeddings (only when named): the `embeddings:` entries that have a `source` (owner approval
+2026-11-22, ADR 0020): files fetched from huggingface.co at the pinned commit, checked against the
+hash Hugging Face lists and against the SHA-256 pinned in configs/models.yaml, used as they are
+(no conversion), in models/<dir>/.
+
+    uv run python scripts/download_models.py --only e5_small
+
 Whisper (only when named): the `asr:` entries that have a `source` (owner approval 2026-11-17).
 
     uv run python scripts/download_models.py --only whisper_small whisper_turbo
@@ -263,6 +270,7 @@ class HfSpec:
     copy_files: tuple[str, ...]
     packages: tuple[str, ...]
     python: str
+    pins: tuple[tuple[str, str], ...] = ()  # (file, SHA-256) from configs/models.yaml
 
 
 def load_hf_specs(path: Path = MODELS_YAML) -> dict[str, HfSpec]:
@@ -286,6 +294,66 @@ def load_hf_specs(path: Path = MODELS_YAML) -> dict[str, HfSpec]:
             python=str(conv.get("python") or "3.12"),
         )
     return specs
+
+
+def load_hf_plain_specs(path: Path = MODELS_YAML) -> dict[str, HfSpec]:
+    """`embeddings:` entries with a `source`: Hugging Face files used as they are."""
+    data = yaml.safe_load(path.read_text(encoding="utf-8"))
+    specs: dict[str, HfSpec] = {}
+    for name, entry in (data.get("embeddings") or {}).items():
+        src = entry.get("source") if isinstance(entry, dict) else None
+        if not src:
+            continue
+        pins = entry.get("sha256") or {}
+        specs[name] = HfSpec(
+            name=name,
+            repo=str(src["repo"]),
+            revision=str(src["revision"]),
+            quantization="none",
+            dir=str(entry["dir"]),
+            licence=str(entry.get("licence") or ""),
+            files=tuple(entry.get("files") or ()),
+            copy_files=(),
+            packages=(),
+            python="",
+            pins=tuple((str(k), str(v)) for k, v in pins.items()),
+        )
+    return specs
+
+
+def fetch_hf_plain(
+    spec: HfSpec,
+    models_dir: Path,
+    *,
+    fetch: Fetch | None = None,
+    get_json: GetJson | None = None,
+) -> dict[str, Any]:
+    """Fetch files used without conversion; each must match Hugging Face's hash and its pin."""
+    fetch = fetch or hf_fetch
+    get_json = get_json or hf_get_json
+    _check_hf_spec(spec)
+    pins = dict(spec.pins)
+    unpinned = [f for f in spec.files if f not in pins]
+    if unpinned:
+        raise DownloadError(f"{spec.name}: no SHA-256 pinned in configs/models.yaml for {unpinned}")
+    expected = hf_expected_hashes(spec, get_json)
+    for f in spec.files:
+        algorithm, want = expected[f]
+        if algorithm == "sha256" and want != pins[f]:
+            raise DownloadError(f"{spec.name}/{f}: Hugging Face lists another SHA-256 than the pin")
+    out_dir = models_dir / spec.dir
+    rows = fetch_hf_sources(spec, out_dir, expected, fetch=fetch)
+    for row in rows:
+        if row["sha256"] != pins[row["path"]]:
+            raise DownloadError(f"{spec.name}/{row['path']}: SHA-256 does not match the pin")
+    return {
+        "name": spec.name,
+        "dir": f"models/{spec.dir}",
+        "licence": spec.licence,
+        "source": {"host": HF_HOST, "repo": spec.repo, "revision": spec.revision},
+        "files": rows,
+        "retrieved": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
+    }
 
 
 def _check_hf_spec(spec: HfSpec) -> None:
@@ -356,7 +424,7 @@ def hf_file_url(repo: str, revision: str, filename: str) -> str:
 def hf_expected_hashes(spec: HfSpec, get_json: GetJson = hf_get_json) -> dict[str, tuple[str, str]]:
     """{file: (algorithm, hex)} at the pinned commit: ('sha256', ...) for LFS files and
     ('git-sha1', ...) for files stored directly in git."""
-    url = f"https://{HF_HOST}/api/models/{quote(spec.repo)}/tree/{spec.revision}"
+    url = f"https://{HF_HOST}/api/models/{quote(spec.repo)}/tree/{spec.revision}?recursive=1"
     expected: dict[str, tuple[str, str]] = {}
     for item in get_json(url):
         if item.get("type") != "file":
@@ -399,6 +467,9 @@ def fetch_hf_sources(
     for filename in spec.files:
         algorithm, want = expected[filename]
         target = src_dir / filename
+        if not target.resolve().is_relative_to(src_dir.resolve()):
+            raise DownloadError(f"{spec.name}: unsafe file path {filename!r}")
+        target.parent.mkdir(parents=True, exist_ok=True)
         if not (target.exists() and _matches(target, algorithm, want)):
             tmp = target.with_name(target.name + ".part")
             try:
@@ -507,13 +578,18 @@ def main(argv: list[str] | None = None) -> int:
 
     specs = load_specs()
     hf_specs = load_hf_specs()
-    unknown = [n for n in args.only if n not in specs and n not in hf_specs]
+    plain_specs = load_hf_plain_specs()
+    known = set(specs) | set(hf_specs) | set(plain_specs)
+    unknown = [n for n in args.only if n not in known]
     if unknown:
-        print(f"unknown model(s): {unknown}; known: {sorted(specs) + sorted(hf_specs)}")
+        print(f"unknown model(s): {unknown}; known: {sorted(known)}")
         return 2
     if args.list:
         for name in args.only:
-            if name in hf_specs:
+            if name in plain_specs:
+                p = plain_specs[name]
+                print(f"{name}: {p.repo}@{p.revision} -> models/{p.dir} ({', '.join(p.files)})")
+            elif name in hf_specs:
                 h = hf_specs[name]
                 print(f"{name}: {h.repo}@{h.revision} -> models/{h.dir} ({h.quantization})")
             else:
@@ -526,6 +602,10 @@ def main(argv: list[str] | None = None) -> int:
     failures = 0
     for name in args.only:
         try:
+            if name in plain_specs:
+                manifest[name] = fetch_hf_plain(plain_specs[name], MODELS_DIR)
+                write_manifest(MANIFEST, manifest)
+                continue
             if name in hf_specs:
                 manifest[name] = fetch_hf_model(
                     hf_specs[name], MODELS_DIR, manifest=manifest, keep_sources=args.keep_sources

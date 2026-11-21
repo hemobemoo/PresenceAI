@@ -13,10 +13,10 @@ Roles you chose: knowledge base, training text, rubric definitions.
 | Source | Licence | Role | Link | Checked |
 |---|---|---|---|---|
 | AAC&U **VALUE Oral Communication Rubric** | CC BY-NC-SA 4.0 | Rubric dimensions and anchor wording (adapted to observable anchors) | Copy used: `https://uttyler.edu/offices/continuous-improvement-and-accreditation/files/value-oral-communication.pdf` (2026-11-21; the Binghamton copy returned 404; this mirror shows no licence line, ADR 0017); publisher page at aacu.org ~ | ✓ licence |
-| *Fundamentals of Public Speaking* (Lumen Learning, via FSCJ) | **CC BY 4.0** | Knowledge base **and** T2 training text; exercise sources | `https://fscj.pressbooks.pub/publicspeaking` | ✓ |
+| *Fundamentals of Public Speaking* (Lumen Learning, via FSCJ) | **CC BY 4.0** | Knowledge base **and** T2 training text; exercise sources | `https://openfl.pressbooks.pub/publicspeaking` (moved from `fscj.pressbooks.pub`, which no longer resolves; same book, owner's approval 2026-11-22) | ✓ 2026-11-22 |
 | *Stand up, Speak out* (Univ. of Minnesota) | CC BY-NC-SA 4.0 | Knowledge base, exercise ideas | `https://open.lib.umn.edu/publicspeaking` | ✓ |
-| *Exploring Public Speaking*, 4th ed. (Tucker) | CC BY-NC-SA 4.0 | Knowledge base | `https://open.maricopa.edu/exploringpublicspeaking` | ✓ |
-| *Speak Out, Call In* (Mapes) | CC BY-NC-SA 4.0 | Knowledge base (audience, advocacy) | `https://open.umn.edu/opentextbooks/formats/1476` | ✓ |
+| *Exploring Public Speaking*, 4th ed. (Tucker) | CC BY-NC-SA 4.0 | Knowledge base: **not ingested** (no EPUB export; owner, 2026-11-22: skip for now) | `https://open.maricopa.edu/exploringpublicspeaking` | ✓ 2026-11-22 |
+| *Speak Out, Call In* (Mapes), 2nd ed. | CC BY-NC-SA 4.0 | Knowledge base (audience, advocacy) | `https://open.umn.edu/opentextbooks/formats/1476` → `https://opentext.ku.edu/speakoutcallin2` | ✓ 2026-11-22 |
 | Research papers (Naim et al. on interviews, PodcastFillers, CrisperWhisper, Barrett et al. 2019, EU AI Act) | Citation only | Thesis Chapter 2, design justification | arXiv MCP server, publisher pages | ✓ (see FINAL_11) |
 | Commercial books (e.g. popular presentation guides) | Copyright | Cited in the thesis only; never ingested | — | — |
 
@@ -25,8 +25,11 @@ Download (Pressbooks offers PDF/EPUB exports on each book's home page; use the s
 ```bash
 mkdir -p data/texts/raw
 # save each book's PDF/EPUB from its home page into data/texts/raw/, then:
-uv run python scripts/build_knowledge_base.py --input data/texts/raw --out data/texts/kb.parquet
-# chunk ~400 tokens, keep book/chapter/section/licence on every chunk, embed with EmbeddingGemma
+uv run python scripts/download_models.py --only e5_small
+uv run python scripts/build_knowledge_base.py --input data/texts/raw --out data/texts/kb
+# EPUB only, read with the standard library; checks each book's SHA-256 and licence statement
+# against configs/knowledge.yaml; chunk ~400 tokens, keep book/chapter/section/licence on every
+# chunk, embed with multilingual-e5-small (ADR 0020); writes chunks.jsonl + embeddings.npy
 ```
 
 Rules: every knowledge-base answer cites book and section; NC-SA chunks are flagged and excluded from T2 training data; the adapted rubric is published in `resources/rubrics/` under CC BY-NC-SA 4.0 with attribution.

@@ -178,3 +178,36 @@ def test_unsafe_wheel_paths_are_refused(tmp_path: Path):
 )
 def test_redirects_only_to_github_asset_hosts(url: str, ok: bool):
     assert dm.fetch_redirect_allowed(url) is ok
+
+
+# --- e5-small embeddings (ADR 0020) ------------------------------------------------------------
+
+
+def test_e5_spec_is_pinned_at_a_commit():
+    spec = dm.load_hf_plain_specs(REPO / "configs" / "models.yaml")["e5_small"]
+    assert spec.repo == "intfloat/multilingual-e5-small" and len(spec.revision) == 40
+    assert spec.licence == "MIT"
+    assert set(spec.files) == {"onnx/model.onnx", "onnx/tokenizer.json"}
+    assert {f for f, _ in spec.pins} == set(spec.files)
+    assert all(len(h) == 64 for _, h in spec.pins)
+
+
+def _plain(pins: dict[str, str]) -> Any:
+    return dm.HfSpec(
+        name="e", repo="org/m", revision="a" * 40, quantization="none", dir="m", licence="MIT",
+        files=("onnx/model.onnx",), copy_files=(), packages=(), python="",
+        pins=tuple(pins.items()),
+    )  # fmt: skip
+
+
+def test_plain_fetch_checks_hugging_face_hash_and_pin(tmp_path: Path):
+    listing = [{"type": "file", "path": "onnx/model.onnx", "oid": "x", "lfs": {"oid": DIGEST}}]
+    entry = dm.fetch_hf_plain(_plain({"onnx/model.onnx": DIGEST}), tmp_path,
+                              fetch=FakeFetch(), get_json=lambda _: listing)  # fmt: skip
+    assert (tmp_path / "m" / "onnx" / "model.onnx").read_bytes() == DATA
+    assert entry["files"][0]["sha256"] == DIGEST
+    with pytest.raises(dm.DownloadError, match="pin"):
+        dm.fetch_hf_plain(_plain({"onnx/model.onnx": "0" * 64}), tmp_path,
+                          fetch=FakeFetch(), get_json=lambda _: listing)  # fmt: skip
+    with pytest.raises(dm.DownloadError, match="no SHA-256 pinned"):
+        dm.fetch_hf_plain(_plain({}), tmp_path, fetch=FakeFetch(), get_json=lambda _: listing)

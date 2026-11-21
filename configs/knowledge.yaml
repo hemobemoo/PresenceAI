@@ -1,0 +1,38 @@
+# Knowledge base from open public-speaking textbooks (P2-d, ADR 0020; FINAL_07 §F).
+# Built by scripts/build_knowledge_base.py from the EPUBs in data/texts/raw/ (git-ignored).
+# Every chunk keeps book, chapter, section and licence; NC-SA chunks are never T2 training text.
+
+chunk_max_tokens: 400          # FINAL_07 §F: "chunk ~400 tokens" (e5 tokenizer, passage prefix included)
+top_k: 5                       # chunks returned per question
+spine_prefixes: [chapter]      # Pressbooks: only chapter files; covers, front and back matter skipped
+
+books:
+  - id: fundamentals_of_public_speaking
+    file: fundamentals_of_public_speaking.epub
+    sha256: dd735833ff2029af20ec8b4b5ef5aa0f5c80ddf7d68d61a498ddf5234f653b96
+    title: Fundamentals of Public Speaking
+    publisher: Lumen Learning; Florida State College at Jacksonville (FLVC Pressbooks)
+    licence: CC BY 4.0
+    licence_text: Creative Commons Attribution 4.0 International License
+    url: https://openfl.pressbooks.pub/publicspeaking
+    t2_allowed: true
+  - id: stand_up_speak_out
+    file: stand_up_speak_out.epub
+    sha256: 3ab6dbd9ce2aa0ef3254f7b917f877fe3f2154dadf289a808733b0d7a57e86bd
+    title: "Stand up, Speak out: The Practice and Ethics of Public Speaking"
+    publisher: University of Minnesota Libraries Publishing
+    licence: CC BY-NC-SA 4.0
+    licence_text: Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License
+    url: https://open.lib.umn.edu/publicspeaking
+    t2_allowed: false
+  - id: speak_out_call_in_2e
+    file: speak_out_call_in_2e.epub
+    sha256: d20aa8105937d22fb70c9c19da7b8ebb860842a7d50800451bb354fce4bf6c8f
+    title: "Speak Out, Call In: Public Speaking as Advocacy, 2nd ed."
+    publisher: Meggie Mapes (University of Kansas Libraries)
+    licence: CC BY-NC-SA 4.0
+    licence_text: Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License
+    url: https://opentext.ku.edu/speakoutcallin2
+    t2_allowed: false
+# Not ingested: Exploring Public Speaking, 4th ed. (Maricopa, CC BY-NC-SA 4.0) offers no EPUB
+# (owner, 2026-11-22: skip for now).

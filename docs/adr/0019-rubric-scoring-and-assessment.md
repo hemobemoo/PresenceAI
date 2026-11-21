@@ -53,3 +53,10 @@
   from fillers alone (1 of 4 measures, low confidence; base-Whisper fillers are lower bounds).
 - Gaze (P6) and overrun (P3) stay missing until built; Delivery rests on fillers and
   mid-sentence pauses.
+
+### Open items
+
+1. **Partial levels in the report (owner, 2026-11-22, for P3).** B1 showed Arabic Delivery at
+   level 4 decided by fillers alone (1 of 4 measures). The report must either make a level
+   based on fewer than half of its measures **visibly partial**, or **limit how high it can
+   go**. The owner decides which in P3.
