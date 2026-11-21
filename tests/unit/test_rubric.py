@@ -136,10 +136,13 @@ def _minimal(threshold: str = "t", levels: tuple[int, ...] = (4, 3, 2, 1)) -> di
         "attribution": "a", "source": {"title": "t", "copy_url": "u", "copy_sha256": "0" * 64},
         "definitions": {"body": "the middle"},
         "scale": {str(n): f"L{n}" for n in (4, 3, 2, 1)},
+        "scale_ar": {str(n): f"م{n}" for n in (4, 3, 2, 1)},
         "measures": {"m.x": {"status": "planned", "planned_in": "P2-b", "requires": "none",
                              "languages": ["en"], "description": "d"}},
-        "dimensions": [{"id": "d", "name": "D", "value_dimension": "D", "skills": ["fluency"],
+        "dimensions": [{"id": "d", "name": "D", "name_ar": "د", "value_dimension": "D",
+                        "skills": ["fluency"],
                         "levels": [{"level": n, "text": f"level {n} {{t}}",
+                                    "text_ar": f"مستوى {n} {{t}}",
                                     "conditions": cond if n > 1 else []} for n in levels]}],
     }  # fmt: skip
 
@@ -206,3 +209,28 @@ def test_definitions_cover_the_reviewed_terms(rubric: Rubric, thresholds: Any):
         filled = loader.fill(text, thresholds)
         assert "{" not in filled, name
         assert not contains_verdict_term(filled, "en") and not contains_banned_term(filled, "en")
+
+
+# --- Arabic wording (draft for native-speaker review, ADR 0016 item 4) ------------------------
+
+ARABIC_LETTERS = re.compile(r"[؀-ۿ]")
+
+
+def test_arabic_anchors_use_the_same_numbers_and_no_verdict_words(rubric: Rubric, thresholds: Any):
+    for d in rubric.dimensions:
+        assert ARABIC_LETTERS.search(d.name_ar), d.id
+        for a in d.levels:
+            assert loader.placeholders(a.text_ar) == loader.placeholders(a.text), (d.id, a.level)
+            ar = loader.anchor_text(a, thresholds, "ar")
+            assert ARABIC_LETTERS.search(ar) and "{" not in ar, (d.id, a.level)
+            assert not contains_verdict_term(ar, "ar"), (d.id, a.level)
+            assert not contains_banned_term(ar, "ar"), (d.id, a.level)
+    assert set(rubric.scale_ar) == {1, 2, 3, 4}
+
+
+def test_loader_rejects_arabic_with_other_placeholders(tmp_path: Path):
+    data = _minimal()
+    data["dimensions"][0]["levels"][0]["text_ar"] = "مستوى 4 {other}"
+    root = _write(tmp_path, data, {"t": 1.0, "other": 2.0})
+    with pytest.raises(ValueError, match="text_ar"):
+        loader.load_rubric("x", resources=root / "rubrics", config=root / "rubric.yaml")

@@ -85,6 +85,20 @@ def review_markdown(rubric: Rubric, t: RubricThresholds) -> str:
         if d.left_out:
             out += ["", "Left out (not observable by rules): " + "; ".join(d.left_out) + "."]
         out.append("")
+    out += [
+        "## Arabic wording (draft)",
+        "",
+        "The Arabic anchors translate the reviewed English wording. They are a draft for a "
+        "native-speaker review (ADR 0016 open item 4), with the same numbers. The content "
+        "dimensions are not measured in Arabic (FINAL_04 §5), but their wording is shown.",
+        "",
+    ]
+    for d in rubric.dimensions:
+        out += [f"### {d.name} — {d.name_ar}", "", "| Level | Arabic anchor |", "|---|---|"]
+        for a in d.levels:
+            name = rubric.scale_ar[a.level]
+            out.append(f"| {a.level} {name} | {anchor_text(a, t, 'ar')} |")
+        out.append("")
     out += ["## Definitions", ""]
     out += [f"- **{name}**: {fill(text, t)}" for name, text in rubric.definitions.items()]
     out += [

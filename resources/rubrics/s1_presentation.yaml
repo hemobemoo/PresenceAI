@@ -79,6 +79,12 @@ scale:
   2: Milestone 2
   1: Benchmark
 
+scale_ar:
+  4: "متقدّم"
+  3: "مرحلي 3"
+  2: "مرحلي 2"
+  1: "أساسي"
+
 measures:
   text.central_message.statements:
     status: planned
@@ -183,10 +189,12 @@ measures:
 dimensions:
   - id: central_message
     name: Central message
+    name_ar: "الرسالة الرئيسية"
     value_dimension: Central Message
     skills: [central_message]
     levels:
       - level: 4
+        text_ar: "تظهر جملة تذكر الفكرة الرئيسية ضمن أول {opening_share_pct:g}٪ من الكلمات، وتُذكر مرة أخرى ضمن آخر {closing_share_pct:g}٪، وتتكرر عباراتها الأساسية في {cm_recurrences_min:g} جمل على الأقل من متن العرض."
         text: >-
           A sentence stating the main point appears within the first {opening_share_pct:g} % of
           the words, is stated again within the last {closing_share_pct:g} %, and its key phrases
@@ -196,6 +204,7 @@ dimensions:
           - {measure: text.central_message.in_closing, op: present}
           - {measure: text.central_message.key_phrase_recurrences, op: ">=", threshold: cm_recurrences_min}
       - level: 3
+        text_ar: "تظهر جملة تذكر الفكرة الرئيسية ضمن أول {opening_share_pct:g}٪ من الكلمات، وتُذكر مرة أخرى ضمن آخر {closing_share_pct:g}٪."
         text: >-
           A sentence stating the main point appears within the first {opening_share_pct:g} % of
           the words and is stated again within the last {closing_share_pct:g} %.
@@ -203,12 +212,14 @@ dimensions:
           - {measure: text.central_message.in_opening, op: present}
           - {measure: text.central_message.in_closing, op: present}
       - level: 2
+        text_ar: "تُذكر الفكرة الرئيسية صراحةً في {cm_statements_min:g} جملة على الأقل، ولكن ليس في البداية والخاتمة معًا."
         text: >-
           The main point is stated explicitly in at least {cm_statements_min:g} sentence, but not
           both in the opening and in the closing.
         conditions:
           - {measure: text.central_message.statements, op: ">=", threshold: cm_statements_min}
       - level: 1
+        text_ar: "لا توجد جملة تذكر الفكرة الرئيسية؛ يمكن استنتاجها من المحتوى فقط."
         text: No sentence states the main point; it can only be inferred from the content.
     left_out:
       - compelling, memorable
@@ -216,10 +227,12 @@ dimensions:
 
   - id: organization
     name: Organization
+    name_ar: "التنظيم"
     value_dimension: Organization
     skills: [organization, opening_conclusion]
     levels:
       - level: 4
+        text_ar: "يتضمن العرض عبارة تمهيدية ضمن أول {opening_share_pct:g}٪ وعبارة ختامية ضمن آخر {closing_share_pct:g}٪، و{org_transitions_high:g} عبارات انتقال على الأقل بين الأجزاء، ومدخلًا افتتاحيًا (سؤال أو إحصاء أو قصة أو اقتباس أو ادعاء مقارن) في أول {hook_sentences:g} جمل."
         text: >-
           The talk has an introduction cue in the first {opening_share_pct:g} % and a conclusion
           cue in the last {closing_share_pct:g} %, at least {org_transitions_high:g} transitions
@@ -230,6 +243,7 @@ dimensions:
           - {measure: text.organization.transitions, op: ">=", threshold: org_transitions_high}
           - {measure: text.hook.present, op: present}
       - level: 3
+        text_ar: "يتضمن العرض عبارة تمهيدية وعبارة ختامية، و{org_transitions_mid:g} عبارات انتقال على الأقل بين الأجزاء."
         text: >-
           The talk has both an introduction cue and a conclusion cue, and at least
           {org_transitions_mid:g} transitions between parts.
@@ -237,12 +251,14 @@ dimensions:
           - {measure: text.organization.framing_parts, op: ">=", threshold: org_framing_full}
           - {measure: text.organization.transitions, op: ">=", threshold: org_transitions_mid}
       - level: 2
+        text_ar: "يتضمن العرض {org_framing_min:g} على الأقل من الاثنتين: عبارة تمهيدية أو عبارة ختامية."
         text: >-
           The talk has at least {org_framing_min:g} of the two: an introduction cue or a
           conclusion cue.
         conditions:
           - {measure: text.organization.framing_parts, op: ">=", threshold: org_framing_min}
       - level: 1
+        text_ar: "لا توجد عبارة تمهيدية ولا عبارة ختامية."
         text: No introduction cue and no conclusion cue are found.
     left_out:
       - skilful; makes the content cohesive
@@ -250,10 +266,12 @@ dimensions:
 
   - id: language
     name: Language
+    name_ar: "اللغة"
     value_dimension: Language
     skills: [language_clarity]
     levels:
       - level: 4
+        text_ar: "لا يُستخدم أي مصطلح نادر (تكراره أقل من {lang_rare_zipf:g} على مقياس Zipf) دون تعريف، ومتوسط طول الجملة {lang_sentence_max_4:g} كلمة على الأكثر."
         text: >-
           No rare term (word frequency below {lang_rare_zipf:g} on the Zipf scale) is used without
           a definition, and sentences average at most {lang_sentence_max_4:g} words.
@@ -261,6 +279,7 @@ dimensions:
           - {measure: text.language.undefined_terms, op: "<=", threshold: lang_undefined_max_4}
           - {measure: text.language.mean_sentence_words, op: "<=", threshold: lang_sentence_max_4}
       - level: 3
+        text_ar: "يُستخدم {lang_undefined_max_3:g} مصطلح نادر على الأكثر دون تعريف، ومتوسط طول الجملة {lang_sentence_max_3:g} كلمة على الأكثر."
         text: >-
           At most {lang_undefined_max_3:g} rare term is used without a definition, and sentences
           average at most {lang_sentence_max_3:g} words.
@@ -268,6 +287,7 @@ dimensions:
           - {measure: text.language.undefined_terms, op: "<=", threshold: lang_undefined_max_3}
           - {measure: text.language.mean_sentence_words, op: "<=", threshold: lang_sentence_max_3}
       - level: 2
+        text_ar: "تُستخدم {lang_undefined_max_2:g} مصطلحات نادرة على الأكثر دون تعريف، ومتوسط طول الجملة {lang_sentence_max_2:g} كلمة على الأكثر."
         text: >-
           At most {lang_undefined_max_2:g} rare terms are used without a definition, and sentences
           average at most {lang_sentence_max_2:g} words.
@@ -275,6 +295,7 @@ dimensions:
           - {measure: text.language.undefined_terms, op: "<=", threshold: lang_undefined_max_2}
           - {measure: text.language.mean_sentence_words, op: "<=", threshold: lang_sentence_max_2}
       - level: 1
+        text_ar: "تُستخدم مصطلحات نادرة أكثر دون تعريف، أو تكون الجمل أطول في المتوسط."
         text: More rare terms are used without a definition, or sentences are longer on average.
     left_out:
       - imaginative, memorable, compelling
@@ -282,10 +303,12 @@ dimensions:
 
   - id: supporting_material
     name: Supporting material
+    name_ar: "المواد الداعمة"
     value_dimension: Supporting Material
     skills: [supporting_material]
     levels:
       - level: 4
+        text_ar: "{sup_items_high:g} عناصر داعمة على الأقل من {sup_types_high:g} أنواع مختلفة على الأقل (إحصاءات، أمثلة، تشبيهات، اقتباسات)."
         text: >-
           At least {sup_items_high:g} supporting items of at least {sup_types_high:g} different
           types (statistics, examples, analogies, quotations).
@@ -293,6 +316,7 @@ dimensions:
           - {measure: text.support.items, op: ">=", threshold: sup_items_high}
           - {measure: text.support.types, op: ">=", threshold: sup_types_high}
       - level: 3
+        text_ar: "{sup_items_mid:g} عناصر داعمة على الأقل من {sup_types_mid:g} أنواع مختلفة على الأقل."
         text: >-
           At least {sup_items_mid:g} supporting items of at least {sup_types_mid:g} different
           types.
@@ -300,10 +324,12 @@ dimensions:
           - {measure: text.support.items, op: ">=", threshold: sup_items_mid}
           - {measure: text.support.types, op: ">=", threshold: sup_types_mid}
       - level: 2
+        text_ar: "{sup_items_min:g} عنصر داعم على الأقل."
         text: At least {sup_items_min:g} supporting item.
         conditions:
           - {measure: text.support.items, op: ">=", threshold: sup_items_min}
       - level: 1
+        text_ar: "لا يوجد إحصاء أو مثال أو تشبيه أو اقتباس."
         text: No statistic, example, analogy or quotation is found.
     left_out:
       - credibility and relevance of the sources
@@ -312,10 +338,12 @@ dimensions:
 
   - id: delivery
     name: Delivery
+    name_ar: "الإلقاء"
     value_dimension: Delivery
     skills: [fluency, pacing, audience_gaze, concision_timing]
     levels:
       - level: 4
+        text_ar: "{del_fillers_4:g} كلمات حشو على الأكثر لكل 100 كلمة، و{del_mid_pauses_4:g} وقفة على الأكثر في الدقيقة داخل الجملة مدتها ثانية أو أكثر، والنظر نحو الكاميرا {del_gaze_4:.0%} على الأقل من وقت الكلام (عند تشغيل الكاميرا)، ودون تجاوز للوقت المحدد."
         text: >-
           At most {del_fillers_4:g} fillers per 100 words, at most {del_mid_pauses_4:g}
           mid-sentence pause of 1 s or more per minute, gaze toward the camera for at least
@@ -326,6 +354,7 @@ dimensions:
           - {measure: vision.gaze.at_camera_share, op: ">=", threshold: del_gaze_4}
           - {measure: timing.overrun_s, op: "<=", threshold: del_overrun_4}
       - level: 3
+        text_ar: "{del_fillers_3:g} كلمات حشو على الأكثر لكل 100 كلمة، و{del_mid_pauses_3:g} وقفات على الأكثر في الدقيقة داخل الجملة مدتها ثانية أو أكثر، والنظر نحو الكاميرا {del_gaze_3:.0%} على الأقل من وقت الكلام (عند تشغيل الكاميرا)، و{del_overrun_3:g} ثانية على الأكثر بعد الوقت المحدد."
         text: >-
           At most {del_fillers_3:g} fillers per 100 words, at most {del_mid_pauses_3:g}
           mid-sentence pauses of 1 s or more per minute, gaze toward the camera for at least
@@ -337,6 +366,7 @@ dimensions:
           - {measure: vision.gaze.at_camera_share, op: ">=", threshold: del_gaze_3}
           - {measure: timing.overrun_s, op: "<=", threshold: del_overrun_3}
       - level: 2
+        text_ar: "{del_fillers_2:g} كلمات حشو على الأكثر لكل 100 كلمة، و{del_mid_pauses_2:g} وقفات على الأكثر في الدقيقة داخل الجملة مدتها ثانية أو أكثر، والنظر نحو الكاميرا {del_gaze_2:.0%} على الأقل من وقت الكلام (عند تشغيل الكاميرا)، و{del_overrun_2:g} ثانية على الأكثر بعد الوقت المحدد."
         text: >-
           At most {del_fillers_2:g} fillers per 100 words, at most {del_mid_pauses_2:g}
           mid-sentence pauses of 1 s or more per minute, gaze toward the camera for at least
@@ -348,6 +378,7 @@ dimensions:
           - {measure: vision.gaze.at_camera_share, op: ">=", threshold: del_gaze_2}
           - {measure: timing.overrun_s, op: "<=", threshold: del_overrun_2}
       - level: 1
+        text_ar: "كلمات حشو أكثر، أو وقفات أكثر داخل الجمل، أو نظر أقل نحو الكاميرا، أو تجاوز للوقت أكبر مما في المستوى 2."
         text: More fillers, more mid-sentence pauses, less gaze toward the camera or more time over the limit than level 2.
     left_out:
       - posture and gesture (camera; P6 measures have no thresholds yet, shown as information)
