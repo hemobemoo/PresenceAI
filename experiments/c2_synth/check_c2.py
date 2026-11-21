@@ -4,7 +4,7 @@
 
 A second, local pass over the accepted transcripts (the notebook already applied the quality
 loop: token cap, length, format and prompt echo; generate_c2.py; no model yes/no check).
-Format checks (all groups): 300-550 words; no markdown, heading, bullet, speaker label or stage
+Format checks (all groups): 250-550 words; no markdown, heading, bullet, speaker label or stage
 direction; no leftover thinking block; no "main idea" / "central idea" echo. Group check that
 needs no language model: the no_supporting_material group contains no digits. Like the
 notebook, it uses no cue lexicon and no detector. If attempts.jsonl and rejected.jsonl sit next
@@ -22,7 +22,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 PROMPTS = ROOT / "resources" / "c2" / "prompts.jsonl"
-MIN_WORDS, MAX_WORDS = 300, 550
+MIN_WORDS, MAX_WORDS = 250, 550
 _FORMAT = re.compile(
     r"(^\s*#)|(^\s*[-*•]\s)|(^\s*\d+[.)]\s)|(\*\*)|(<think>)|(</think>)|(^\s*\[[^\]]+\])"
     r"|(^\s*\([^)]*\)\s*$)|(^\s*(speaker|presenter|student)\s*\d*\s*:)",

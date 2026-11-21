@@ -37,7 +37,7 @@ GROUPS = (
 BASE = (
     "Write the word-for-word transcript of a short spoken presentation, about 2 to 3 minutes "
     "long, given by a university student to classmates. Topic: {topic}.\n"
-    "Shape: exactly 4 short paragraphs of 3 to 4 sentences each.\n"
+    "Shape: exactly 4 paragraphs of 5 to 6 sentences each.\n"
     "Write it exactly as it would be spoken: plain paragraphs, no title, no headings, no bullet "
     "points, no stage directions, no speaker labels, no notes before or after it. Output only "
     "the transcript."

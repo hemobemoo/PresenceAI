@@ -89,7 +89,8 @@ def test_generator_quality_checks_use_no_cue_lexicons():
     assert gen.text_problems("Our central idea is simple. " + ok) == ["echo"]
     assert gen.text_problems("**Title**\n" + ok) == ["format"]
     assert gen.text_problems(" ".join(["word"] * 560)) == ["words 560"]
-    assert gen.text_problems(" ".join(["word"] * 290)) == ["words 290"]
+    assert gen.text_problems(" ".join(["word"] * 260)) == []  # floor 250 (owner, pilot 3)
+    assert gen.text_problems(" ".join(["word"] * 240)) == ["words 240"]
 
 
 hand = _load("hand_check")

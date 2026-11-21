@@ -42,10 +42,13 @@
    - it ended before the **800-token cap**, a safety net only; a capped transcript is always
      rejected and regenerated, never kept (a cut-off talk would be an unplanned "no
      conclusion");
-   - it has **300–550 words** and no markdown, heading, bullet, label or thinking text;
+   - it has **250–550 words** (floor lowered from 300 after pilot 3) and no markdown, heading,
+     bullet, label or thinking text;
    - it does not echo the prompt ("main idea", "central idea").
-   Length comes from a **fixed shape** in the prompt ("exactly 4 short paragraphs of 3 to 4
-   sentences each"), not a word count: the model ignored word counts in pilots 1 and 2.
+   Length comes from a **fixed shape** in the prompt, not a word count (the model ignored word
+   counts in pilots 1 and 2): first "exactly 4 short paragraphs of 3 to 4 sentences each",
+   then, after pilot 3, **"exactly 4 paragraphs of 5 to 6 sentences each"** (owner,
+   2026-11-22).
    **The model's yes/no check is not a filter** (owner, 2026-11-22; this replaces the earlier
    rule that the defect check is the model's yes/no). Evidence, pilot 2b: the generator
    followed every hook flag, yet the model answered "attention-catching opening = yes" for all
@@ -72,7 +75,14 @@
      "stop before 350", one transcript hit the cap, one echo, and the yes/no check said "hook =
      yes" on all 5 (wrong on the 4 plain openings). Fixes: the fixed shape, 300–550 words, the
      800-token safety cap, no model yes/no filter (3a).
-   - **Pilot 3** (topic 02, new topics): shown to the owner before the full run.
+   - **Pilot 3** (topic 02), stopped after 2 rounds: the shape was obeyed (4 paragraphs every
+     time, 217–339 tokens, no cap, echo or format problem) but every attempt had 198–298
+     words, under the 300-word floor. Owner's change: the shape grows to 4 paragraphs of 5 to
+     6 sentences, and the floor goes down to 250 words (ceiling 550 and the 800-token cap
+     kept).
+   - **Pilot 4** (topic 03): shown to the owner with word counts; the full run starts only if
+     at least 4 of 5 pass on the first or second attempt and the owner finds the planted
+     defects right.
 5. **Design** (owner, unchanged from the P2-e proposal):
    - 400 transcripts: 5 groups of 80 (control, no central message, no conclusion, no supporting
      material, undefined jargon); each of 80 topics (`resources/c2/topics.yaml`, written for

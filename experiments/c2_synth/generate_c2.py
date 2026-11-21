@@ -12,7 +12,7 @@
 - **Quality loop** (owner, 2026-11-22, after pilot 2b). Each attempt is accepted only if:
   1. it ended before the 800-token cap, a safety net only; a capped transcript is always
      rejected (a cut-off talk would be an unplanned "no conclusion");
-  2. it has 300-550 words and no markdown, heading, bullet, label or thinking text;
+  2. it has 250-550 words and no markdown, heading, bullet, label or thinking text;
   3. it does not echo the prompt ("main idea", "central idea").
   The model's own yes/no answers are **not** used: in pilot 2b it answered "attention-catching
   opening = yes" for 4 plain "Hello everyone" openings, so it could not be trusted as a filter.
@@ -46,7 +46,7 @@ PATTERNS = ["*.safetensors", "*.json", "*.jinja", "merges.txt", "vocab.json", "L
 SAMPLING = {"do_sample": True, "temperature": 0.7, "top_p": 0.8, "top_k": 20}
 MAX_NEW_TOKENS = 800
 MAX_ATTEMPTS = 3
-MIN_WORDS, MAX_WORDS = 300, 550
+MIN_WORDS, MAX_WORDS = 250, 550
 ECHO = re.compile(r"\b(main|central) idea\b", re.IGNORECASE)
 FORMAT = re.compile(
     r"(^\s*#)|(^\s*[-*•]\s)|(^\s*\d+[.)]\s)|(\*\*)|(<think>)|(</think>)|(^\s*\[[^\]]+\])"
