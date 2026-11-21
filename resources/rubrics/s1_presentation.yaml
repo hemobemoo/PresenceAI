@@ -87,72 +87,61 @@ scale_ar:
 
 measures:
   text.central_message.statements:
-    status: planned
-    planned_in: P2-b
+    status: available
     requires: none
     languages: [en]
     description: Sentences that match the thesis-cue lexicon, anywhere in the talk.
   text.central_message.in_opening:
-    status: planned
-    planned_in: P2-b
+    status: available
     requires: none
     languages: [en]
     description: Yes if the thesis sentence is in the opening.
   text.central_message.in_closing:
-    status: planned
-    planned_in: P2-b
+    status: available
     requires: none
     languages: [en]
     description: Yes if a sentence of the closing contains at least one key phrase.
   text.central_message.key_phrase_recurrences:
-    status: planned
-    planned_in: P2-b
+    status: available
     requires: none
     languages: [en]
     description: Key-phrase recurrences in the body (sentences, not occurrences).
   text.organization.framing_parts:
-    status: planned
-    planned_in: P2-b
+    status: available
     requires: none
     languages: [en]
     description: >-
       0-2: one for an introduction cue in the opening, one for a conclusion cue in the closing
       (lexicon matches).
   text.organization.transitions:
-    status: planned
-    planned_in: P2-b
+    status: available
     requires: none
     languages: [en]
     description: Transitions in the talk, at most one per sentence.
   text.hook.present:
-    status: planned
-    planned_in: P2-b
+    status: available
     requires: none
     languages: [en]
     description: Yes if a hook is found (see the definition).
   text.support.items:
-    status: planned
-    planned_in: P2-b
+    status: available
     requires: none
     languages: [en]
     description: Supporting items, counted as (sentence, type) pairs.
   text.support.types:
-    status: planned
-    planned_in: P2-b
+    status: available
     requires: none
     languages: [en]
     description: Distinct supporting-material types found (0-4).
   text.language.undefined_terms:
-    status: planned
-    planned_in: P2-b
+    status: available
     requires: none
     languages: [en]
     description: >-
       Rare terms (word frequency below the rare-word threshold) used without a definition cue
       ("which means", "that is") in the same or the next sentence.
   text.language.mean_sentence_words:
-    status: planned
-    planned_in: P2-b
+    status: available
     requires: none
     languages: [en]
     description: >-

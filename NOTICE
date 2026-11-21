@@ -16,3 +16,20 @@ it: it is installed as a separate Python package and can be replaced by the
 user. Its source code is available at the address above. The project's
 licence checker (scripts/check_licenses.py) allows it by name; GPL and AGPL
 dependencies remain blocked.
+
+wordfreq (word-frequency data)
+------------------------------
+PresenceAI uses wordfreq (https://github.com/rspeer/wordfreq), installed as a
+separate Python package, to look up English word frequencies. wordfreq's code
+is under the Apache License 2.0; its data files are redistributable under the
+Creative Commons Attribution-ShareAlike 4.0 licence
+(https://creativecommons.org/licenses/by-sa/4.0/). Its data includes:
+- Google Books Ngrams (http://books.google.com/ngrams), acknowledged as a source;
+- the Leeds Internet Corpus (University of Leeds Centre for Translation Studies),
+  Wikipedia and ParaCrawl, under Creative Commons licences;
+- OPUS OpenSubtitles 2018 (http://opus.nlpl.eu/OpenSubtitles.php), from the
+  OpenSubtitles project (http://www.opensubtitles.org/);
+- SUBTLEX word lists by Marc Brysbaert et al. (SUBTLEX-US, SUBTLEX-UK and others),
+  freely available data from http://crr.ugent.be/programs-data/subtitle-frequencies.
+Citation: Robyn Speer. (2022). rspeer/wordfreq: v3.0 (v3.0.2). Zenodo.
+https://doi.org/10.5281/zenodo.7199437

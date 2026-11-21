@@ -150,17 +150,17 @@ The Arabic anchors translate the reviewed English wording. They are a draft for 
 
 | Measure | Status | Needs | Languages | Description |
 |---|---|---|---|---|
-| `text.central_message.statements` | planned (P2-b) | none | en | Sentences that match the thesis-cue lexicon, anywhere in the talk. |
-| `text.central_message.in_opening` | planned (P2-b) | none | en | Yes if the thesis sentence is in the opening. |
-| `text.central_message.in_closing` | planned (P2-b) | none | en | Yes if a sentence of the closing contains at least one key phrase. |
-| `text.central_message.key_phrase_recurrences` | planned (P2-b) | none | en | Key-phrase recurrences in the body (sentences, not occurrences). |
-| `text.organization.framing_parts` | planned (P2-b) | none | en | 0-2: one for an introduction cue in the opening, one for a conclusion cue in the closing (lexicon matches). |
-| `text.organization.transitions` | planned (P2-b) | none | en | Transitions in the talk, at most one per sentence. |
-| `text.hook.present` | planned (P2-b) | none | en | Yes if a hook is found (see the definition). |
-| `text.support.items` | planned (P2-b) | none | en | Supporting items, counted as (sentence, type) pairs. |
-| `text.support.types` | planned (P2-b) | none | en | Distinct supporting-material types found (0-4). |
-| `text.language.undefined_terms` | planned (P2-b) | none | en | Rare terms (word frequency below the rare-word threshold) used without a definition cue ("which means", "that is") in the same or the next sentence. |
-| `text.language.mean_sentence_words` | planned (P2-b) | none | en | Mean words per sentence. Missing when the punctuation is unreliable (ADR 0011): then only this condition is dropped and the language dimension rests on undefined terms. |
+| `text.central_message.statements` | available | none | en | Sentences that match the thesis-cue lexicon, anywhere in the talk. |
+| `text.central_message.in_opening` | available | none | en | Yes if the thesis sentence is in the opening. |
+| `text.central_message.in_closing` | available | none | en | Yes if a sentence of the closing contains at least one key phrase. |
+| `text.central_message.key_phrase_recurrences` | available | none | en | Key-phrase recurrences in the body (sentences, not occurrences). |
+| `text.organization.framing_parts` | available | none | en | 0-2: one for an introduction cue in the opening, one for a conclusion cue in the closing (lexicon matches). |
+| `text.organization.transitions` | available | none | en | Transitions in the talk, at most one per sentence. |
+| `text.hook.present` | available | none | en | Yes if a hook is found (see the definition). |
+| `text.support.items` | available | none | en | Supporting items, counted as (sentence, type) pairs. |
+| `text.support.types` | available | none | en | Distinct supporting-material types found (0-4). |
+| `text.language.undefined_terms` | available | none | en | Rare terms (word frequency below the rare-word threshold) used without a definition cue ("which means", "that is") in the same or the next sentence. |
+| `text.language.mean_sentence_words` | available | none | en | Mean words per sentence. Missing when the punctuation is unreliable (ADR 0011): then only this condition is dropped and the language dimension rests on undefined terms. |
 | `fillers.per_100_words` | available | none | en, ar | Hesitations per 100 words (speech/fillers.py). With base Whisper this is a lower bound and Arabic is low confidence (ADR 0012). |
 | `pauses.mid_sentence_per_min` | planned (P2-c) | none | en | Mid-sentence pauses (see the definition) per minute of speaking time, from the pause events of speech/pauses.py. |
 | `vision.gaze.at_camera_share` | planned (P6) | camera | en, ar | Share of speaking time with gaze zone at_camera (ADR 0004); camera on only. |

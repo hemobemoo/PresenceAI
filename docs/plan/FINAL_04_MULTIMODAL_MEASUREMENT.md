@@ -37,7 +37,7 @@ Every measure is a `Measurement(value, unit, confidence, method, evidence[], lan
 | Supporting material | spaCy matchers: numbers/percentages (statistic), "for example" (example), "like a"/"imagine" (analogy), quotation marks/"said" (quotation) | LLM judge confirms type |
 | Conclusion | Closing cues in last 15%; restatement similarity to central message | — |
 | Language / audience fit | Low-frequency terms without definitions (wordfreq Zipf), mean sentence length, readability | — |
-| Hedging | Hedge lexicon rate | Count only, never a trait |
+| Hedging | **Deferred** (owner, 2026-11-21, ADR 0018): not used by the rubric, and it is the measure closest to a confidence-style judgement | — |
 | Relevance (S2 follow-up) | Embedding similarity question↔answer | Laya `noul` |
 | Limitations acknowledged (S2) | Limitation cue lexicon | Laya `noul` |
 

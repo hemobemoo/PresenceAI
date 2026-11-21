@@ -70,6 +70,24 @@ language_names:
   en: "English"
   ar: "Arabic"
   other: "another language (code {code})"
+text:
+  not_measured_language: "content measures cover English only (FINAL_04 §5); this recording is in {language}"
+  unreliable_punctuation: "not measurable: the transcript has too few sentence marks to count sentence length"
+  central_message:
+    statements: "sentences that match the thesis-cue lexicon"
+    in_opening: "a thesis-cue sentence within the first {share:g} % of the words"
+    in_closing: "a sentence in the last {share:g} % of the words with a key noun of the thesis sentence (by lemma)"
+    recurrences: "sentences between the first {opening:g} % and the last {closing:g} % with a key noun of the thesis sentence (by lemma)"
+  organization:
+    framing: "introduction cue in the first {opening:g} % and conclusion cue in the last {closing:g} % (lexicon)"
+    transitions: "sentences with a transition cue in their first 3 words (lexicon)"
+  hook: "question, statistic, story opening, quotation or contrast claim in the first {sentences:g} sentences (pattern rules)"
+  support:
+    items: "supporting items, one per sentence and type: statistic, example, analogy, quotation (pattern rules)"
+    types: "distinct supporting-material types (statistic, example, analogy, quotation)"
+  language:
+    undefined_terms: "rare terms (word frequency below {zipf:g} on the Zipf scale) with no definition cue in the same or the next sentence"
+    mean_sentence_words: "words per sentence, from the transcript's punctuation"
 units:
   count: "count"
   "words/min": "words/min"
@@ -81,3 +99,9 @@ units:
   share of speech time: "share of speech time"
   semitones: "semitones"
   s: "s"
+  sentences: "sentences"
+  yes/no: "yes = 1, no = 0"
+  items: "items"
+  types: "types"
+  terms: "terms"
+  words/sentence: "words per sentence"

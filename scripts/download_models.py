@@ -8,6 +8,13 @@ MediaPipe (default): the Pose Landmarker (lite, full) and Face Landmarker bundle
     uv run python scripts/download_models.py --pin    # first time: record SHA-256 digests
     uv run python scripts/download_models.py          # later: verify against recorded digests
 
+spaCy (only when named): the `nlp:` wheel from spaCy's GitHub release (owner approval
+2026-11-21, ADR 0018). The wheel is verified like the MediaPipe bundles, then its model folder
+is unpacked into models/<dir>/, which text/nlp.py loads with spacy.load(path). Nothing is
+pip-installed.
+
+    uv run python scripts/download_models.py --only spacy_en
+
 Whisper (only when named): the `asr:` entries that have a `source` (owner approval 2026-11-17).
 
     uv run python scripts/download_models.py --only whisper_small whisper_turbo
@@ -23,7 +30,8 @@ Integrity: the expected SHA-256 comes from configs/models.yaml (`digest`) or, if
 null, from models/MANIFEST.json. If neither has one, the download stops unless --pin is
 given; --pin trusts the first download and records its digest in the manifest (copy it into
 configs/models.yaml to pin it for everyone). A mismatch deletes the file and fails.
-Only HTTPS from storage.googleapis.com (MediaPipe) and huggingface.co (Whisper) is requested.
+Only HTTPS from storage.googleapis.com (MediaPipe), github.com (spaCy; redirects only to
+GitHub's release-asset hosts) and huggingface.co (Whisper) is requested.
 Hugging Face serves large files from its own CDN, so a redirect from huggingface.co is followed
 only to an HTTPS host under hf.co (HF_REDIRECT_SUFFIX); the hash check above applies either way.
 """
@@ -38,6 +46,7 @@ import shutil
 import subprocess
 import sys
 import urllib.request
+import zipfile
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -52,7 +61,11 @@ MODELS_YAML = ROOT / "configs" / "models.yaml"
 MODELS_DIR = ROOT / "models"
 MANIFEST = MODELS_DIR / "MANIFEST.json"
 DEFAULT_MODELS = ("pose_landmarker_lite", "pose_landmarker_full", "face_landmarker")
-ALLOWED_HOSTS = frozenset({"storage.googleapis.com"})
+ALLOWED_HOSTS = frozenset({"storage.googleapis.com", "github.com"})
+# GitHub serves release assets from its own storage hosts after a redirect from github.com
+REDIRECT_HOSTS = frozenset(
+    {"objects.githubusercontent.com", "release-assets.githubusercontent.com"}
+)
 MAX_BYTES = 50 * 1024 * 1024  # MediaPipe .task bundles are a few MB; refuse anything huge
 CHUNK = 1 << 16
 HF_HOST = "huggingface.co"
@@ -75,6 +88,8 @@ class ModelSpec:
     url: str
     licence: str
     digest: str | None
+    unpack: str | None = None  # wheel: path inside the wheel of the model folder to unpack
+    dir: str | None = None  # wheel: folder under models/ to unpack it into
 
     @property
     def filename(self) -> str:
@@ -84,11 +99,17 @@ class ModelSpec:
 def load_specs(path: Path = MODELS_YAML) -> dict[str, ModelSpec]:
     data = yaml.safe_load(path.read_text(encoding="utf-8"))
     specs: dict[str, ModelSpec] = {}
-    for name, entry in (data.get("vision") or {}).items():
-        if isinstance(entry, dict) and entry.get("url"):
-            specs[name] = ModelSpec(
-                name, entry["url"], entry.get("licence") or "", entry.get("digest")
-            )
+    for section in ("vision", "nlp"):
+        for name, entry in (data.get(section) or {}).items():
+            if isinstance(entry, dict) and entry.get("url"):
+                specs[name] = ModelSpec(
+                    name,
+                    entry["url"],
+                    entry.get("licence") or "",
+                    entry.get("digest"),
+                    unpack=entry.get("unpack"),
+                    dir=entry.get("dir"),
+                )
     return specs
 
 
@@ -118,12 +139,37 @@ def _check_url(url: str) -> None:
         raise DownloadError(f"URL not allowed (HTTPS from {sorted(ALLOWED_HOSTS)} only): {url}")
 
 
+def fetch_redirect_allowed(url: str) -> bool:
+    parsed = urlparse(url)
+    host = parsed.hostname or ""
+    return parsed.scheme == "https" and (host in ALLOWED_HOSTS or host in REDIRECT_HOSTS)
+
+
+class _Redirects(urllib.request.HTTPRedirectHandler):
+    def redirect_request(  # pyright: ignore[reportIncompatibleMethodOverride]
+        self,
+        req: urllib.request.Request,
+        fp: Any,
+        code: int,
+        msg: str,
+        headers: Any,
+        newurl: str,
+    ) -> urllib.request.Request | None:
+        target = urljoin(req.full_url, newurl)
+        if not fetch_redirect_allowed(target):
+            raise DownloadError(
+                f"redirect to a host that is not allowed: {urlparse(target).hostname}"
+            )
+        return super().redirect_request(req, fp, code, msg, headers, target)
+
+
 def http_fetch(url: str, dest: Path, max_bytes: int) -> None:
     """Stream `url` into `dest`, refusing bodies larger than `max_bytes`."""
     _check_url(url)
     request = urllib.request.Request(url, headers={"User-Agent": "presenceai-download-models"})  # noqa: S310
+    opener = urllib.request.build_opener(_Redirects())
     written = 0
-    with urllib.request.urlopen(request, timeout=60) as resp, dest.open("wb") as out:  # noqa: S310
+    with opener.open(request, timeout=60) as resp, dest.open("wb") as out:
         while chunk := resp.read(CHUNK):
             written += len(chunk)
             if written > max_bytes:
@@ -165,6 +211,9 @@ def fetch_model(
             tmp.unlink(missing_ok=True)
         print(f"OK    {spec.name}: downloaded {target.stat().st_size} bytes")
     digest = sha256_of(target)
+    if spec.unpack and spec.dir:
+        unpack_wheel(target, spec.unpack, dest_dir / spec.dir)
+        print(f"OK    {spec.name}: unpacked into models/{spec.dir}")
     return {
         "name": spec.name,
         "file": f"models/{spec.filename}",
@@ -175,6 +224,28 @@ def fetch_model(
         "pinned_on_first_download": expected is None,
         "retrieved": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
     }
+
+
+def unpack_wheel(wheel: Path, member_dir: str, out_dir: Path) -> None:
+    """Extract the files under `member_dir/` of a verified wheel into `out_dir` (no pip install).
+
+    Only regular files under that folder are written, and every path is checked to stay inside
+    `out_dir`, so a crafted archive cannot write elsewhere.
+    """
+    prefix = member_dir.rstrip("/") + "/"
+    root = out_dir.resolve()
+    with zipfile.ZipFile(wheel) as zf:
+        members = [m for m in zf.infolist() if m.filename.startswith(prefix) and not m.is_dir()]
+        if not members:
+            raise DownloadError(f"{wheel.name}: no files under {prefix}")
+        for m in members:
+            target = (root / m.filename[len(prefix) :]).resolve()
+            if not target.is_relative_to(root):
+                raise DownloadError(f"{wheel.name}: unsafe path {m.filename!r}")
+            target.parent.mkdir(parents=True, exist_ok=True)
+            with zf.open(m) as src, target.open("wb") as dst:
+                while block := src.read(CHUNK):
+                    dst.write(block)
 
 
 # --- Whisper from huggingface.co ------------------------------------------------------------

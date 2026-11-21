@@ -124,3 +124,57 @@ def test_write_manifest(tmp_path: Path):
 
 def test_read_manifest_empty_template():
     assert dm.read_manifest(REPO / "models" / "MANIFEST.json") is not None
+
+
+# --- spaCy wheel (ADR 0018) -------------------------------------------------------------------
+
+
+def test_spacy_spec_is_pinned_and_from_github():
+    spec = dm.load_specs(REPO / "configs" / "models.yaml")["spacy_en"]
+    assert spec.url.startswith("https://github.com/explosion/spacy-models/releases/download/")
+    assert spec.digest and len(spec.digest) == 64 and spec.licence == "MIT"
+    assert spec.unpack == "en_core_web_sm/en_core_web_sm-3.8.0"
+    assert spec.dir == "en_core_web_sm-3.8.0"
+    assert "spacy_en" not in dm.DEFAULT_MODELS  # only when named
+
+
+def _wheel(path: Path, members: dict[str, bytes]) -> Path:
+    import zipfile
+
+    with zipfile.ZipFile(path, "w") as zf:
+        for name, data in members.items():
+            zf.writestr(name, data)
+    return path
+
+
+def test_wheel_model_folder_is_unpacked(tmp_path: Path):
+    wheel = _wheel(
+        tmp_path / "m.whl",
+        {"pkg/pkg-1.0/config.cfg": b"cfg", "pkg/pkg-1.0/ner/model": b"w", "pkg/__init__.py": b""},
+    )
+    out = tmp_path / "models" / "pkg-1.0"
+    dm.unpack_wheel(wheel, "pkg/pkg-1.0", out)
+    assert (out / "config.cfg").read_bytes() == b"cfg"
+    assert (out / "ner" / "model").read_bytes() == b"w"
+    assert not (out / "__init__.py").exists()  # only the model folder
+
+
+def test_unsafe_wheel_paths_are_refused(tmp_path: Path):
+    wheel = _wheel(tmp_path / "bad.whl", {"pkg/m/../../../evil.txt": b"x"})
+    with pytest.raises(dm.DownloadError, match="unsafe"):
+        dm.unpack_wheel(wheel, "pkg/m", tmp_path / "out")
+    assert not (tmp_path / "evil.txt").exists()
+
+
+@pytest.mark.parametrize(
+    ("url", "ok"),
+    [
+        ("https://release-assets.githubusercontent.com/x", True),
+        ("https://objects.githubusercontent.com/x", True),
+        ("https://github.com/x", True),
+        ("http://objects.githubusercontent.com/x", False),
+        ("https://evil.example.com/x", False),
+    ],
+)
+def test_redirects_only_to_github_asset_hosts(url: str, ok: bool):
+    assert dm.fetch_redirect_allowed(url) is ok

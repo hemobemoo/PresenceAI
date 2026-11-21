@@ -75,7 +75,7 @@ Never send Speak & Improve text or audio to OpenRouter (its terms require local 
 | Set | Size | Built by | Role |
 |---|---|---|---|
 | C1 Synthetic speech | ~300 clips | Kokoro TTS from scripts with known word counts, inserted silences, inserted filler tokens | Exact ground truth for rate/pause (E2) |
-| C2 Synthetic presentation transcripts | ~400 | OpenRouter teacher writes presentations with controlled defects (no central message, no conclusion, no supporting material, undefined jargon) and planted hook / no-hook openings, so the hook detector's false-positive rate is known (ADR 0017); hand-checked | Content detector eval (E4); T2 inputs |
+| C2 Synthetic presentation transcripts | ~400 | OpenRouter teacher writes presentations with controlled defects (no central message, no conclusion, no supporting material, undefined jargon) and planted hook / no-hook openings, so the hook detector's false-positive rate is known (ADR 0017). The generation prompts describe each defect in plain terms and are **not written from the detectors' cue lists**. C2 is split into a development and a test part; lexicons are adjusted on the development part only, so E4 on the test part is not inflated (ADR 0018). Checked: a stratified random sample (10 per defect type plus 10 without defects) by hand, and automatic checks on all transcripts | Content detector eval (E4); T2 inputs |
 | C3 Synthetic learners | 2,000+ | `engine/simulator.py` | Policy comparison (E9) |
 | C4 Teacher feedback pairs | ~3,000 | `FINAL_06` §5 | T2 training |
 

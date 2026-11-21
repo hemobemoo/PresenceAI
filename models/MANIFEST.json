@@ -31,6 +31,16 @@
       "retrieved": "2026-11-12T18:28:27Z"
     },
     {
+      "name": "spacy_en",
+      "file": "models/en_core_web_sm-3.8.0-py3-none-any.whl",
+      "url": "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl",
+      "licence": "MIT",
+      "sha256": "1932429db727d4bff3deed6b34cfc05df17794f4a52eeb26cf8928f7c1a0fb85",
+      "bytes": 12806118,
+      "pinned_on_first_download": true,
+      "retrieved": "2026-11-21T19:44:25Z"
+    },
+    {
       "name": "whisper_small",
       "dir": "models/whisper-small-ct2-int8",
       "licence": "MIT",

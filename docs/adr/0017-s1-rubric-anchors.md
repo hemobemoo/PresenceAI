@@ -94,7 +94,7 @@ and never infers confidence or other traits (AGENTS.md rule 3).
 
 ## Consequences
 
-- P2-b builds the planned `text.*` measures; P2-c adds `pauses.mid_sentence_per_min` and the
+- P2-b built the `text.*` measures (ADR 0018); P2-c adds `pauses.mid_sentence_per_min` and the
   scoring. Gaze (P6) and overrun (P3) come later; until then Delivery rests on fillers and
   mid-sentence pauses.
 - With base Whisper, fillers per 100 words is a lower bound (ADR 0012), so Delivery levels can
@@ -103,7 +103,7 @@ and never infers confidence or other traits (AGENTS.md rule 3).
   false-positive rate is known (FINAL_07 §C). P3 adds a short UI note explaining why a
   dimension shows "not measurable" (camera off, no time limit, Arabic, punctuation failure)
   (FINAL_12 §2).
-- P2-b checks the wordfreq data licence and adds attribution to NOTICE if needed.
+- wordfreq data licence checked in P2-b: CC BY-SA 4.0 with SUBTLEX, OpenSubtitles and Google Books terms; credits in NOTICE (ADR 0018).
 - **Arabic anchor wording: added** (2026-11-21): `name_ar`, `text_ar` and `scale_ar` in the
   rubric file, translated from the reviewed English wording with the same placeholders (the
   loader rejects a difference). It is a draft for the native-speaker review (ADR 0016 open
