@@ -41,7 +41,15 @@ embeddings:
   default: {id: unsloth/embeddinggemma-300m-GGUF, licence: Gemma Terms of Use, digest: null}
   open_alternative: {id: intfloat/multilingual-e5-small, licence: MIT, digest: null}
 nlp:
-  spacy_en: {id: en_core_web_sm, licence: MIT}
+  # spaCy's English pipeline for the text detectors (P2-b, ADR 0018; owner approval 2026-11-21).
+  # The wheel's model folder is unpacked into models/<dir>/ and loaded with spacy.load(path);
+  # it needs spaCy 3.8.x. GitHub lists no digest for this release; pinned on first download.
+  spacy_en:
+    url: https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl
+    licence: MIT
+    digest: 1932429db727d4bff3deed6b34cfc05df17794f4a52eeb26cf8928f7c1a0fb85   # SHA-256, pinned 2026-11-21 (size matches GitHub: 12806118 bytes)
+    unpack: en_core_web_sm/en_core_web_sm-3.8.0
+    dir: en_core_web_sm-3.8.0
 # Converter used for every `asr` entry; same versions as S2 (ADR 0007). Run with
 # `uv run --no-project --with ...` so torch and transformers never become app dependencies.
 converter:

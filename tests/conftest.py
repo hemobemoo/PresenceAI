@@ -143,3 +143,16 @@ def silent_wav(tmp_path: Path) -> Path:
         w.setframerate(16_000)
         w.writeframes(np.zeros(8_000, dtype="<i2").tobytes())
     return path
+
+
+@pytest.fixture
+def fake_parser() -> Any:
+    """Parser for the text detectors without a model (tests/fixtures/fake_nlp.py)."""
+    import importlib.util
+
+    path = Path(__file__).parent / "fixtures" / "fake_nlp.py"
+    spec = importlib.util.spec_from_file_location("fake_nlp", path)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.fake_parser

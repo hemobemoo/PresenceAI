@@ -126,6 +126,19 @@ Started 2026-11-17. Kept up to date as experiments report (FINAL_11 §6).
 - **Arabic pause positions are not available.** Whisper small writes almost no Arabic
   punctuation, so positions are `unknown` on 9 of 10 Arabic B1 clips (ADR 0011).
 
+## Content measures (text detectors, ADR 0018)
+
+- **Content measures are rule-based and English only.** Thesis, introduction, conclusion and
+  transition cues are lexicon matches, and hooks and supporting material are pattern rules: they
+  do not understand meaning. A clear talk that avoids the listed phrases scores lower than it
+  should. The lexicons are provisional; their accuracy is measured in E4 on C2.
+- **A Whisper misrecognition can appear as an undefined rare term.** A word Whisper mishears
+  into a rare word (or a rare spelling) is counted as jargon without a definition.
+- **Sentences come from Whisper's punctuation.** With unreliable punctuation, sentence length is
+  not measured and the other content measures have low confidence.
+- **Hedging is not measured** (deferred): it is not used by the rubric and is the measure
+  closest to a confidence-style judgement.
+
 ## Fillers and repetitions
 
 - **Until the verbatim model T1 exists (P4), filler and repetition counts are lower bounds**,

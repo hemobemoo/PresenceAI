@@ -73,12 +73,14 @@ def test_every_threshold_is_provisional(thresholds: Any):
 
 
 def test_measures_are_available_or_planned_in_a_named_slice(rubric: Rubric):
-    speech_src = "\n".join(
-        p.read_text("utf-8") for p in (REPO_ROOT / "src/presenceai/speech").glob("*.py")
+    src = "\n".join(
+        p.read_text("utf-8")
+        for pkg in ("speech", "text")
+        for p in (REPO_ROOT / "src" / "presenceai" / pkg).glob("*.py")
     )
     for key, m in rubric.measures.items():
         if m.status == "available":
-            assert f'"{key}"' in speech_src, f"{key} is marked available but no module emits it"
+            assert f'"{key}"' in src, f"{key} is marked available but no module emits it"
         else:
             assert m.planned_in, f"{key}: planned measures name the slice that builds them"
 
