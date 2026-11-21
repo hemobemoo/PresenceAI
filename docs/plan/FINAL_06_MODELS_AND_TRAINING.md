@@ -67,10 +67,10 @@ Rules: every training run is a notebook in `training/` with fixed seed, logs its
 |---|---|
 | Task | Input: `Assessment` JSON (findings, evidence spans, numbers, target skill, language). Output: JSON with 1–3 feedback statements (each with quote/time span), exercise wording, 2 follow-up questions |
 | Base model | Smallest instruct model that passes a 30-item pilot: try Qwen3.5 0.8B and 2B first (confirm licence), Gemma 3 1B as alternative (Gemma Terms) ~ |
-| Data | ~3,000 pairs. Inputs from the pipeline run on the synthetic text set, pilot recordings and public speech data. Outputs from the OpenRouter teacher, **kept only if** quotes verify, numbers match the input, no banned terms, valid JSON. Plus ~200 pairs you write or edit by hand as gold |
+| Data | ~3,000 pairs. Inputs from the pipeline run on the synthetic text set, pilot recordings and public speech data. Outputs from the T2 teacher, **kept only if** quotes verify, numbers match the input, no banned terms, valid JSON. Plus ~200 pairs you write or edit by hand as gold |
 | Grounding text | Exercise wording draws on CC BY 4.0 text only (*Fundamentals of Public Speaking*, Lumen) so the trained adapter carries no share-alike or non-commercial obligation; CC BY-NC-SA texts are used for retrieval, not for training ~ (licence interpretation: confirm with supervisor) |
-| Teacher quota | Batch 5 items per request → ~600 requests, spread over non-study days |
-| Teacher terms | Use a teacher model whose licence permits training on outputs; check OpenRouter's and the provider's terms before generating ~ |
+| Teacher | **Decided in P4** (owner, 2026-11-22, ADR 0021). Leading option: Qwen3.8-27B (Apache-2.0) run as a batch job on a Kaggle TPU v5e-8 (kaggle-tpu-lab recipe, MIT), with no public endpoint. Hosted OpenRouter models are out: S4 found no provider that allows training on outputs |
+| Teacher terms | The teacher's weights must be Apache-2.0 or MIT (no restriction on training with its outputs); check the model card and LICENSE file, and verify the weight hashes against Hugging Face, before generating |
 | Method | QLoRA r=16 with Unsloth on Kaggle, 2–3 epochs, max length 2,048 |
 | Export | Unsloth GGUF export (q4_k_m) → `llama-cpp-python` on the laptop |
 | Arabic wording | Teacher prompts for Arabic items use the code-switching rule in `lang/ar/coach_prompt.yaml` (FINAL_04 §5, ADR 0003). Arabic pairs are **kept only if** no quote contains Latin-script text missing from the transcript (`latin_outside_transcript`); hand-written gold pairs follow the same rule |

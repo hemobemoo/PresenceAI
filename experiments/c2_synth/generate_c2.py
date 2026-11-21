@@ -1,4 +1,4 @@
-"""Generate C2 transcripts on a free Colab T4 (P2-e, ADR 0021). Runs on Colab only, never in the app.
+"""Generate C2 transcripts on a free Colab T4 (P2-e, ADR 0021). Colab only, never in the app.
 
     python generate_c2.py fetch  --model-dir /content/qwen35-9b
     python generate_c2.py run    --model-dir /content/qwen35-9b --prompts prompts.jsonl \
@@ -41,7 +41,7 @@ def _log(msg: str) -> None:
 
 def expected_hashes() -> dict[str, tuple[str, str]]:
     url = f"https://huggingface.co/api/models/{REPO}/tree/{REVISION}?recursive=1"
-    with urllib.request.urlopen(url, timeout=60) as resp:  # noqa: S310 - fixed https URL
+    with urllib.request.urlopen(url, timeout=60) as resp:  # fixed https URL
         listing = json.loads(resp.read().decode("utf-8"))
     out: dict[str, tuple[str, str]] = {}
     for f in listing:

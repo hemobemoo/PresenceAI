@@ -93,7 +93,7 @@ NO_SUPPORT_HOOK = " The opening must not use numbers, a specific case or a story
 def build(topics: list[str], seed: int = SEED) -> list[dict[str, object]]:
     if len(topics) != 80 or len(set(topics)) != 80:
         raise ValueError("C2 needs 80 distinct topics")
-    rng = random.Random(seed)
+    rng = random.Random(seed)  # noqa: S311 - reproducible design split, not security
     order = list(range(80))
     rng.shuffle(order)
     dev = set(order[:DEV_TOPICS])
