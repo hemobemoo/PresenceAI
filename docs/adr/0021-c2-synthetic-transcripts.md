@@ -38,29 +38,41 @@
      the plan does not rely on it.
 3. **Resumable:** every attempt is appended and flushed (`attempts.jsonl`, `generated.jsonl`,
    `rejected.jsonl`); a new run skips finished ids and counts earlier attempts.
-3a. **Quality loop** (owner, 2026-11-22, after pilot 1). An attempt is kept only if:
-   - it ended before the **600-token cap**; a capped transcript is rejected and regenerated,
-     never kept (a cut-off talk would be an unplanned "no conclusion");
-   - it has 250–450 words and no markdown, heading, bullet, label or thinking text;
-   - it does not echo the prompt ("main idea", "central idea");
-   - the model's own greedy **yes/no answers** to five plain questions (central point stated,
-     closing present, supporting material present, five unexplained technical terms,
-     attention-catching opening) match the group's design and the prompt's hook flag.
-   It **uses neither the P2-b cue lexicons nor the text detectors** (tested: the generator
-   imports nothing from PresenceAI), so C2 is not filtered down to the cases our detectors
-   already catch and E4 is not inflated. A failed item is regenerated with a new seed, **at
-   most 3 attempts**; items that still fail are logged in `rejected.jsonl` and left out. The
-   rejection count per group is reported (`check_c2.py`).
+3a. **Quality loop** (owner, 2026-11-22; final form after pilot 2b). An attempt is kept only if:
+   - it ended before the **800-token cap**, a safety net only; a capped transcript is always
+     rejected and regenerated, never kept (a cut-off talk would be an unplanned "no
+     conclusion");
+   - it has **300–550 words** and no markdown, heading, bullet, label or thinking text;
+   - it does not echo the prompt ("main idea", "central idea").
+   Length comes from a **fixed shape** in the prompt ("exactly 4 short paragraphs of 3 to 4
+   sentences each"), not a word count: the model ignored word counts in pilots 1 and 2.
+   **The model's yes/no check is not a filter** (owner, 2026-11-22; this replaces the earlier
+   rule that the defect check is the model's yes/no). Evidence, pilot 2b: the generator
+   followed every hook flag, yet the model answered "attention-catching opening = yes" for all
+   5 transcripts, including the 4 plain "Hello everyone…" openings. A check that wrong would
+   discard correct transcripts and keep wrong ones.
+   The loop **uses neither the P2-b cue lexicons nor the text detectors** (tested: the
+   generator imports nothing from PresenceAI), so C2 is not filtered down to the cases our
+   detectors already catch and E4 is not inflated. A failed item is regenerated with a new
+   seed, **at most 3 attempts**; items that still fail are logged in `rejected.jsonl` and left
+   out. Every attempt is logged with its text, and the rejection count per group is reported
+   (`check_c2.py`).
 4. **Pilots first:** 5 prompts, one per group, shown to the owner before the full run.
    - **Pilot 1** (topic 00, 2026-11-22; 5 transcripts in 78 s on the T4, 4-bit about 8 GB):
      every hook matched its flag and no-conclusion was clean, but all 5 exceeded 380 words
      (386–537; 4 over 450), the no-supporting-material talk used an analogy, the
      undefined-jargon talk defined one term and echoed the prompt ("The single main idea of
      this talk is…"), and the no-central-message talk summed one message up at the end.
-   - Prompt fixes: a hard 380-word limit; no comparisons or analogies in that group; no
+   - Prompt fixes after pilot 1: a hard 380-word limit (later replaced by the fixed shape); no comparisons or analogies in that group; no
      definition "even in a short clause"; "do not end with a sentence that sums up one message
      either"; "say the central idea in your own words; do not use the words 'main idea'".
-   - **Pilot 2** (topic 01, with the quality loop): see below.
+   - **Pilot 2** (topic 01, 2026-11-22). Run 2a, stopped after round 1: "do not use the words
+     'main idea'" primed the echo (3 of 5), and asking the 25 yes/no questions in one batch ran
+     the GPU out of memory. Run 2b, stopped after round 1: lengths 458–544 words against
+     "stop before 350", one transcript hit the cap, one echo, and the yes/no check said "hook =
+     yes" on all 5 (wrong on the 4 plain openings). Fixes: the fixed shape, 300–550 words, the
+     800-token safety cap, no model yes/no filter (3a).
+   - **Pilot 3** (topic 02, new topics): shown to the owner before the full run.
 5. **Design** (owner, unchanged from the P2-e proposal):
    - 400 transcripts: 5 groups of 80 (control, no central message, no conclusion, no supporting
      material, undefined jargon); each of 80 topics (`resources/c2/topics.yaml`, written for
@@ -71,10 +83,19 @@
      cue lists** (tested; topic names excluded).
    - Split 30/70 (dev/test) **by topic** (24 / 56 topics, 120 / 280 transcripts), hook balanced
      within each group and part, seed 20261122. Lexicons are tuned on dev only.
-   - Checks: automatic format checks on all 400 (`check_c2.py`: length, format, no digits in the
-     no-supporting-material group); a yes/no pass of the model per planted defect on all 400;
-     the owner's hand check of a stratified random sample (10 per defect type + 10 controls).
-     The sample's error rate goes into this ADR and LIMITATIONS as E4's label-noise estimate.
+   - Checks: the quality loop (3a) and, after the run, automatic checks on all accepted
+     transcripts (`check_c2.py`: length, format, echo, no digits in the no-supporting-material
+     group). **The planted labels are otherwise unverified.**
+   - **Hand check** (owner, 2026-11-22; `hand_check.py`): 10 accepted transcripts per group
+     (4 defect groups + controls = 50), drawn at random **from the test part only**, seed
+     20261123. The sheet is **blinded**: it shows only a neutral key and the text, shuffled;
+     the planted group and hook are kept in a separate key file. For each transcript the owner
+     records what is actually present: central message, conclusion, supporting material,
+     unexplained technical terms, hook (yes/no each), not only whether the planted defect is
+     there. The **planted-label error rate in the sample is E4's label-noise estimate** (this
+     ADR and LIMITATIONS).
+   - **E4 is reported twice:** on the whole test part against the planted labels, and on the
+     hand-checked subset against the owner's labels.
 6. **T2 teacher is decided in P4** (FINAL_06): Kaggle TPU Qwen3.8-27B (Apache-2.0, batch, no
    public endpoint) is the leading option.
 

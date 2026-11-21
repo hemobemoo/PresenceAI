@@ -148,10 +148,11 @@ Started 2026-11-17. Kept up to date as experiments report (FINAL_11 §6).
 - **C2 transcripts are always labelled "synthetic"** wherever they are shown: thesis text,
   figures, tables, the demo and any example in the app. They are never presented as a real
   student's talk.
-- **C2 labels are the planted design, checked by the same model.** The model's own yes/no
-  answers decide whether a transcript is kept (with length and format checks); a model may
-  agree with its own mistakes. The owner's hand-checked sample gives the label-noise estimate
-  for E4 (ADR 0021).
+- **C2 labels are the planted design and are unverified, except for the hand-checked
+  sample.** Transcripts are kept on length, format and echo checks only; no check confirms that
+  a planted defect is really there (the model's own yes/no check proved unreliable and is not
+  used). The owner's blinded hand check of 50 test transcripts gives the label-noise estimate,
+  and E4 is also reported on that subset against the owner's labels (ADR 0021).
 - **One generator, one style.** All 400 transcripts come from one model with one prompt
   template, so E4 on C2 says nothing about other writing styles or real speech; public talk
   transcripts (TED, E4/E5) are the other check.

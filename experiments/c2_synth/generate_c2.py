@@ -9,23 +9,22 @@
 - **fetch** downloads the files and checks every one against the hash Hugging Face lists for that
   commit (SHA-256 for large files, the git blob SHA-1 for small ones); any mismatch stops.
   **run** checks them again before loading.
-- **Quality loop** (owner, 2026-11-22). Each attempt is accepted only if it passes, in order:
-  1. it ended before the 600-token cap (a cut-off talk would be an unplanned "no conclusion");
-  2. length 250-450 words and format (no markdown, heading, bullet, label or thinking text);
-  3. no echo of the prompt ("main idea", "central idea");
-  4. the model's own yes/no answers to five plain questions match the group's design (central
-     message stated, closing present, supporting material present, five unexplained technical
-     terms, attention-catching opening).
-  It does **not** use PresenceAI's cue lexicons or text detectors, so C2 is not limited to the
-  cases those detectors already catch. A failed item is regenerated with a new seed, at most 3
-  attempts; items that still fail are logged in `rejected.jsonl` and left out.
+- **Quality loop** (owner, 2026-11-22, after pilot 2b). Each attempt is accepted only if:
+  1. it ended before the 800-token cap, a safety net only; a capped transcript is always
+     rejected (a cut-off talk would be an unplanned "no conclusion");
+  2. it has 300-550 words and no markdown, heading, bullet, label or thinking text;
+  3. it does not echo the prompt ("main idea", "central idea").
+  The model's own yes/no answers are **not** used: in pilot 2b it answered "attention-catching
+  opening = yes" for 4 plain "Hello everyone" openings, so it could not be trusted as a filter.
+  Nothing here uses PresenceAI's cue lexicons or text detectors. A failed item is regenerated
+  with a new seed, at most 3 attempts; items that still fail are logged and left out. The
+  planted labels stay unverified except for the owner's hand-checked sample (ADR 0021).
 - **Files in --out** (resumable; each line is flushed to disk): `generated.jsonl` (accepted),
   `rejected.jsonl` (failed 3 times), `attempts.jsonl` (every attempt with its result, for the
   rejection count per group). A new run skips ids already accepted or rejected.
 - Only synthetic prompts (resources/c2/prompts.jsonl) and the generated transcripts are used.
 - Non-thinking mode (`enable_thinking=False`); sampling as the model card recommends for
-  instruct use (temperature 0.7, top-p 0.8, top-k 20), seeded per prompt id and attempt. The
-  yes/no answers are greedy.
+  instruct use (temperature 0.7, top-p 0.8, top-k 20), seeded per prompt id and attempt.
 """
 
 from __future__ import annotations
@@ -45,45 +44,14 @@ REPO = "Qwen/Qwen3.5-9B"
 REVISION = "c202236235762e1c871ad0ccb60c8ee5ba337b9a"
 PATTERNS = ["*.safetensors", "*.json", "*.jinja", "merges.txt", "vocab.json", "LICENSE"]
 SAMPLING = {"do_sample": True, "temperature": 0.7, "top_p": 0.8, "top_k": 20}
-MAX_NEW_TOKENS = 600
+MAX_NEW_TOKENS = 800
 MAX_ATTEMPTS = 3
-MIN_WORDS, MAX_WORDS = 250, 450
+MIN_WORDS, MAX_WORDS = 300, 550
 ECHO = re.compile(r"\b(main|central) idea\b", re.IGNORECASE)
 FORMAT = re.compile(
     r"(^\s*#)|(^\s*[-*•]\s)|(^\s*\d+[.)]\s)|(\*\*)|(<think>)|(</think>)|(^\s*\[[^\]]+\])"
     r"|(^\s*\([^)]*\)\s*$)|(^\s*(speaker|presenter|student)\s*\d*\s*:)",
     re.IGNORECASE | re.MULTILINE,
-)
-
-# Plain yes/no questions; the model answers them about each generated transcript.
-QUESTIONS = {
-    "central": "Does the speaker state, in one sentence, the single central point or purpose "
-    "of the whole talk?",
-    "closing": "Does the talk end with a closing that sums up or wraps up the talk, rather than "
-    "stopping right after its last point?",
-    "support": "Does the talk contain any supporting material at all: numbers or statistics, a "
-    "specific example or case, a story, a comparison or analogy, or the words of a named person?",
-    "jargon": "Does the talk use at least five specialised technical terms that are never "
-    "explained anywhere in the talk?",
-    "hook": "Do the first one or two sentences try to catch the audience's attention before the "
-    "topic itself is introduced?",
-}
-# The answers each group's design requires ("hook" follows the prompt's own hook flag).
-EXPECTED = {
-    "control": {"central": True, "closing": True, "support": True, "jargon": False},
-    "no_central_message": {"central": False, "closing": True, "support": True, "jargon": False},
-    "no_conclusion": {"central": True, "closing": False, "support": True, "jargon": False},
-    "no_supporting_material": {
-        "central": True,
-        "closing": True,
-        "support": False,
-        "jargon": False,
-    },
-    "undefined_jargon": {"central": True, "closing": True, "support": True, "jargon": True},
-}
-JUDGE = (
-    "Here is the transcript of a short spoken presentation.\n\n<transcript>\n{text}\n"
-    "</transcript>\n\n{question}\nAnswer with one word: yes or no."
 )
 
 
@@ -150,11 +118,6 @@ def text_problems(text: str) -> list[str]:
     if ECHO.search(text):
         out.append("echo")
     return out
-
-
-def design_problems(answers: dict[str, bool], group: str, hook: bool) -> list[str]:
-    want = {**EXPECTED[group], "hook": hook}
-    return [f"{k}={'yes' if answers[k] else 'no'}" for k in QUESTIONS if answers[k] != want[k]]
 
 
 def _read_ids(path: Path) -> set[str]:
@@ -230,27 +193,6 @@ class Generator:
             out.append((text, len(real), not ended and len(real) >= MAX_NEW_TOKENS))
         return out
 
-    def answer(self, texts: list[str]) -> list[dict[str, bool]]:
-        """Greedy yes/no answers to every question, for every transcript."""
-        import torch
-
-        out: list[dict[str, bool]] = []
-        for text in texts:  # one transcript at a time: 5 questions (pilot 2 ran out of memory)
-            enc = self._chat([JUDGE.format(text=text, question=q) for q in QUESTIONS.values()])
-            with torch.no_grad():
-                gen = self.model.generate(**enc, max_new_tokens=4, do_sample=False)
-            replies = self.tok.batch_decode(
-                gen[:, enc["input_ids"].shape[1] :], skip_special_tokens=True
-            )
-            out.append(
-                {
-                    k: r.strip().lower().startswith("yes")
-                    for k, r in zip(QUESTIONS, replies, strict=True)
-                }
-            )
-            torch.cuda.empty_cache()
-        return out
-
 
 def run(args: argparse.Namespace) -> None:
     prompts = [json.loads(x) for x in Path(args.prompts).read_text("utf-8").splitlines() if x]
@@ -282,15 +224,13 @@ def run(args: argparse.Namespace) -> None:
         seed = int(hashlib.sha256(key.encode()).hexdigest()[:8], 16)
         t0 = time.time()
         written = gen.write([p["prompt"] for p in batch], seed)
-        answers = gen.answer([t for t, _, _ in written])
         seconds = round(time.time() - t0, 1)
-        for p, (text, n, capped), ans in zip(batch, written, answers, strict=True):
+        for p, (text, n, capped) in zip(batch, written, strict=True):
             attempts[p["id"]] = attempt_no[p["id"]]
             problems = ["cap"] if capped else []
             problems += text_problems(text)
-            problems += design_problems(ans, p["group"], p["hook"])
             row = {"id": p["id"], "group": p["group"], "hook": p["hook"], "part": p["part"],
-                   "attempt": attempts[p["id"]], "new_tokens": n, "answers": ans,
+                   "attempt": attempts[p["id"]], "new_tokens": n, "words": len(text.split()),
                    "problems": problems, "batch_seconds": seconds, "seed": seed}  # fmt: skip
             _append(out / "attempts.jsonl", {**row, "text": text})  # synthetic; for auditing
             if not problems:

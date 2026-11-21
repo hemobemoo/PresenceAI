@@ -63,7 +63,7 @@ def test_committed_prompts_are_the_built_ones():
 
 
 def test_format_checks():
-    ok = " ".join(["word"] * 320)
+    ok = " ".join(["word"] * 420)
     assert checks.problems(ok, "control") == []
     assert checks.problems("too short", "control") == ["words 2"]
     assert "format" in checks.problems("# Title\n" + ok, "control")
@@ -81,21 +81,50 @@ def test_generator_quality_checks_use_no_cue_lexicons():
     # no PresenceAI imports (no cue lexicons, no detectors) and no reference to the cue file
     assert "from presenceai" not in source and "import presenceai" not in source
     assert "text_cues" not in source
-    ok = " ".join(["word"] * 320)
+    ok = " ".join(["word"] * 420)
     assert gen.text_problems(ok) == []
+    assert gen.MAX_NEW_TOKENS == 800  # a safety net; a capped transcript is always rejected
+    assert not hasattr(gen, "QUESTIONS")  # the model's yes/no check is not a filter (pilot 2b)
     assert gen.text_problems("The main idea of my talk. " + ok) == ["echo"]
     assert gen.text_problems("Our central idea is simple. " + ok) == ["echo"]
     assert gen.text_problems("**Title**\n" + ok) == ["format"]
-    assert gen.text_problems(" ".join(["word"] * 470)) == ["words 470"]
+    assert gen.text_problems(" ".join(["word"] * 560)) == ["words 560"]
+    assert gen.text_problems(" ".join(["word"] * 290)) == ["words 290"]
 
 
-def test_design_answers_must_match_the_group():
-    yes = dict.fromkeys(gen.QUESTIONS, True)
-    control = {**yes, "jargon": False}
-    assert gen.design_problems(control, "control", hook=True) == []
-    assert gen.design_problems(control, "control", hook=False) == ["hook=yes"]
-    leak = {**yes, "jargon": False}  # supporting material found where none was asked for
-    assert gen.design_problems(leak, "no_supporting_material", hook=True) == ["support=yes"]
-    assert gen.design_problems(yes, "undefined_jargon", hook=True) == []
-    for group, want in gen.EXPECTED.items():
-        assert set(want) == set(gen.QUESTIONS) - {"hook"}, group
+hand = _load("hand_check")
+
+
+def _rows() -> list[dict[str, object]]:
+    return [{**r, "text": f"text of {r['id']}"} for r in ROWS]
+
+
+def test_hand_check_sample_is_stratified_test_only_and_blinded():
+    sheet, key = hand.draw(_rows())
+    assert len(sheet) == 50
+    assert Counter(key[s["key"]]["group"] for s in sheet) == dict.fromkeys(build.GROUPS, 10)
+    parts = {r["id"]: r["part"] for r in ROWS}
+    assert all(parts[k["id"]] == "test" for k in key.values())
+    for s in sheet:  # the sheet shows no planted information
+        assert set(s) == {"key", "text", *hand.LABELS}
+        assert all(s[lab] is None for lab in hand.LABELS)
+    assert hand.draw(_rows()) == (sheet, key)  # seeded
+
+
+def test_hand_check_score_is_the_planted_label_error_rate():
+    sheet, key = hand.draw(_rows())
+    for s in sheet:  # the owner agrees with the design everywhere ...
+        s.update(hand.planted(key[s["key"]]))
+    assert hand.score(sheet, key)["item_error_rate"] == 0
+    s0 = sheet[0]  # ... except one item, where the planted conclusion state is wrong
+    s0["conclusion"] = not s0["conclusion"]
+    result = hand.score(sheet, key)
+    assert result["items_with_any_planted_label_wrong"] == 1
+    assert result["label_error_rate"]["conclusion"] == 0.02
+    sheet[1]["hook"] = None
+    try:
+        hand.score(sheet, key)
+    except ValueError as exc:
+        assert "missing" in str(exc)
+    else:
+        raise AssertionError("an unfilled sheet must not be scored")
