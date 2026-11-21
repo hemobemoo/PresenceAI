@@ -89,7 +89,7 @@ HOOK_RULES = {
         "topic is introduced."
     ),
     False: (
-        "Open plainly: the very first sentence greets the audience or names the topic, with no "
+        "Open plainly: the opening sentence greets the audience or names the topic, with no "
         "question, surprising fact, anecdote or other attention-catching opening before it."
     ),
 }
