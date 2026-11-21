@@ -75,6 +75,8 @@ def load_rubric(rubric_id: str, *, resources: Path = RESOURCES, config: Path = C
             missing = placeholders(a.text) - set(values)
             if missing:
                 raise ValueError(f"{d.id} level {a.level}: text needs {sorted(missing)}")
+            if placeholders(a.text_ar) != placeholders(a.text):
+                raise ValueError(f"{d.id} level {a.level}: text_ar placeholders differ from text")
             used |= placeholders(a.text)
     orphans = set(values) - used
     if orphans:
@@ -88,9 +90,11 @@ def fill(template: str, thresholds: RubricThresholds) -> str:
     return template.format(**{k: v for k, v in thresholds.values.items() if k in names})
 
 
-def anchor_text(anchor: LevelAnchor, thresholds: RubricThresholds) -> str:
-    """The anchor's wording with its threshold values filled in."""
-    return fill(anchor.text, thresholds)
+def anchor_text(
+    anchor: LevelAnchor, thresholds: RubricThresholds, lang: Literal["en", "ar"] = "en"
+) -> str:
+    """The anchor's wording in `lang` with its threshold values filled in."""
+    return fill(anchor.text if lang == "en" else anchor.text_ar, thresholds)
 
 
 def level_score(level: int) -> float:

@@ -37,6 +37,7 @@ class Condition(_Frozen):
 class LevelAnchor(_Frozen):
     level: int = Field(ge=1, le=4)
     text: str = Field(min_length=1)  # observable wording; {threshold} placeholders
+    text_ar: str = Field(min_length=1)  # Arabic draft; the same placeholders (native review)
     conditions: tuple[Condition, ...] = ()
 
 
@@ -58,6 +59,7 @@ class MeasureSpec(_Frozen):
 class Dimension(_Frozen):
     id: str = Field(min_length=1)
     name: str = Field(min_length=1)
+    name_ar: str = Field(min_length=1)
     value_dimension: str = Field(min_length=1)  # the VALUE dimension it adapts
     skills: tuple[str, ...] = Field(min_length=1)  # engine skills it feeds (FINAL_05 §1)
     levels: tuple[LevelAnchor, ...]
@@ -90,13 +92,14 @@ class Rubric(_Frozen):
     source: Source
     definitions: dict[str, str] = Field(min_length=1)  # operational definitions; {threshold}s
     scale: dict[int, str]  # level -> name (Capstone, Milestone, Benchmark)
+    scale_ar: dict[int, str]
     measures: dict[str, MeasureSpec]
     dimensions: tuple[Dimension, ...] = Field(min_length=1)
 
     @model_validator(mode="after")
     def _consistent(self) -> Rubric:
-        if tuple(sorted(self.scale, reverse=True)) != LEVELS:
-            raise ValueError("scale must name levels 4, 3, 2, 1")
+        if tuple(sorted(self.scale, reverse=True)) != LEVELS or set(self.scale_ar) != set(LEVELS):
+            raise ValueError("scale and scale_ar must name levels 4, 3, 2, 1")
         for d in self.dimensions:
             for a in d.levels:
                 for c in a.conditions:

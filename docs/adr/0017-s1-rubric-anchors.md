@@ -104,7 +104,10 @@ and never infers confidence or other traits (AGENTS.md rule 3).
   dimension shows "not measurable" (camera off, no time limit, Arabic, punctuation failure)
   (FINAL_12 §2).
 - P2-b checks the wordfreq data licence and adds attribution to NOTICE if needed.
-- The Arabic version of the anchor wording follows this ADR (owner, 2026-11-21).
+- **Arabic anchor wording: added** (2026-11-21): `name_ar`, `text_ar` and `scale_ar` in the
+  rubric file, translated from the reviewed English wording with the same placeholders (the
+  loader rejects a difference). It is a draft for the native-speaker review (ADR 0016 open
+  item 4), shown in the anchors document. Content dimensions are still not measured in Arabic.
 - S2 (project defense) reuses these five dimensions scaled to a 90-second explanation, plus a
   `followup_handling` criterion (relevance, response latency, acknowledged limitations;
   FINAL_05 §1).
