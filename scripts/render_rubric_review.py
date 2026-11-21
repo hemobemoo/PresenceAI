@@ -1,4 +1,4 @@
-"""Write the review document of a rubric draft (ADR 0017).
+"""Write the anchors document of a rubric (ADR 0017).
 
 uv run python scripts/render_rubric_review.py                  # s1_presentation
 uv run python scripts/render_rubric_review.py --rubric s1_presentation
@@ -19,7 +19,7 @@ def main(argv: list[str] | None = None) -> int:
     rubric = loader.load_rubric(args.rubric)
     doc = review.review_markdown(rubric, loader.load_thresholds(args.rubric))
     name = args.rubric.split("_")[0].upper()
-    out = REPO_ROOT / "docs" / "rubric" / f"{name}_ANCHORS_FOR_REVIEW.md"
+    out = REPO_ROOT / "docs" / "rubric" / f"{name}_ANCHORS.md"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(doc, encoding="utf-8", newline="\n")
     print(f"wrote {out.relative_to(REPO_ROOT)}")

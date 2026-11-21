@@ -88,6 +88,7 @@ class Rubric(_Frozen):
     licence: Literal["CC BY-NC-SA 4.0"]
     attribution: str = Field(min_length=1)
     source: Source
+    definitions: dict[str, str] = Field(min_length=1)  # operational definitions; {threshold}s
     scale: dict[int, str]  # level -> name (Capstone, Milestone, Benchmark)
     measures: dict[str, MeasureSpec]
     dimensions: tuple[Dimension, ...] = Field(min_length=1)

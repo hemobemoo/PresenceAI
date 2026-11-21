@@ -1,4 +1,4 @@
-# S1 prepared short presentation: rubric DRAFT for supervisor review (P2-a, ADR 0017).
+# S1 prepared short presentation: rubric v0.2, reviewed by the supervisor (ADR 0017, accepted).
 #
 # Licence: CC BY-NC-SA 4.0. Adapted from the Oral Communication VALUE Rubric (AAC&U). This file
 # is a derivative: its five dimensions and four-level scale follow the VALUE rubric. The anchor
@@ -9,16 +9,16 @@
 # no session limit, Arabic content) is left out of the conditions, never counted against the
 # speaker. If no measure of a dimension can be computed, the dimension is "not measurable".
 #
-# Threshold values: configs/rubric.yaml, all PROPOSED until ADR 0017 is decided.
+# Threshold values: configs/rubric.yaml, all provisional: re-estimate after E5/E6 (ADR 0017).
 
 id: s1_presentation
-version: "0.1"
-status: draft
+version: "0.2"
+status: accepted
 licence: CC BY-NC-SA 4.0
 attribution: >-
   Adapted from the Oral Communication VALUE Rubric, Association of American Colleges and
   Universities (AAC&U), CC BY-NC-SA 4.0. Changes: anchors rewritten as observable behaviour with
-  proposed numbers; parts that no rule can observe are listed as left out.
+  provisional numbers; parts that no rule can observe are listed as left out.
 source:
   title: Oral Communication VALUE Rubric (AAC&U)
   copy_url: https://uttyler.edu/offices/continuous-improvement-and-accreditation/files/value-oral-communication.pdf
@@ -27,6 +27,51 @@ source:
     The Binghamton copy named in FINAL_07 returned 404 on 2026-11-21. This copy (UT Tyler) shows
     no licence line; the licence CC BY-NC-SA 4.0 is the one recorded in DATA_SOURCES.md
     (checked 2026-11-11). Owner's decision, 2026-11-21.
+
+definitions:
+  opening: The first {opening_share_pct:g} % of the words of the transcript.
+  closing: The last {closing_share_pct:g} % of the words of the transcript.
+  body: The words between the opening and the closing.
+  sentence: >-
+    A stretch of words ended by a sentence mark in the transcript. English sentence positions
+    rest on Whisper's punctuation (ADR 0014); for Arabic they are not measurable (ADR 0011,
+    ADR 0016).
+  thesis sentence: >-
+    The first sentence in the opening that matches the thesis-cue lexicon ("today I will", "my
+    main point is", "I will show that"). A lexicon match, not an understanding of meaning.
+  key phrase: >-
+    The lemmatised head nouns of the noun phrases of the thesis sentence (spaCy en_core_web_sm;
+    stop words left out). Matching is by lemma, so "result" and "results" match; it is not an
+    exact-string match and not a match of meaning.
+  key-phrase recurrence: A sentence of the body that contains at least one key phrase.
+  introduction cue: >-
+    A purpose or preview phrase in the opening ("in this talk", "I will cover"), from a lexicon.
+  conclusion cue: >-
+    A closing phrase in the closing ("in conclusion", "to sum up"), from a lexicon. Both cues are
+    lexicon matches, not an understanding of the structure.
+  transition: >-
+    A sequence or transition cue between parts ("first", "next", "finally"), from a lexicon.
+  hook: >-
+    One of the first {hook_sentences:g} sentences is a question, contains a statistic, opens a
+    story ("when I was", "last year"), is a quotation, or makes a contrast claim ("most people
+    think ... but"). Pattern rules; the false-positive rate is measured on C2 (P2-e).
+  mid-sentence pause: >-
+    A pause of at least 1 s between two words of the same sentence, by the transcript's
+    punctuation (ADR 0011). English rests on Whisper's punctuation (ADR 0014); not measurable for
+    Arabic (ADR 0016).
+  supporting-material types: >-
+    statistic (a number, percentage or quantity about the topic; list numbers, years used as
+    dates and times of day are not counted); example ("for example", "for instance", "such as");
+    analogy ("like a", "as if", "imagine", "similar to"); quotation (words in quotation marks, or
+    "said" / "according to" with a source). All are pattern rules.
+  counting supporting items: >-
+    One item per sentence and type: a sentence with two statistics counts as one statistic; a
+    sentence with a statistic and an example counts as one of each. Items is the number of such
+    (sentence, type) pairs; types is the number of distinct types.
+  missing measure: >-
+    A measure that cannot be computed (camera off, no time limit, Arabic content, unreliable
+    punctuation) is missing, never a low value: its conditions are dropped. A dimension with no
+    computable measure is "not measurable", never level 1.
 
 scale:
   4: Capstone
@@ -40,61 +85,57 @@ measures:
     planned_in: P2-b
     requires: none
     languages: [en]
-    description: Number of sentences with a thesis cue ("today I will", "my main point is").
+    description: Sentences that match the thesis-cue lexicon, anywhere in the talk.
   text.central_message.in_opening:
     status: planned
     planned_in: P2-b
     requires: none
     languages: [en]
-    description: Yes if a thesis-cue sentence falls within the opening share of the words.
+    description: Yes if the thesis sentence is in the opening.
   text.central_message.in_closing:
     status: planned
     planned_in: P2-b
     requires: none
     languages: [en]
-    description: >-
-      Yes if a sentence within the closing share of the words repeats the key noun phrases of
-      the opening thesis sentence.
+    description: Yes if a sentence of the closing contains at least one key phrase.
   text.central_message.key_phrase_recurrences:
     status: planned
     planned_in: P2-b
     requires: none
     languages: [en]
-    description: Body sentences that repeat a key noun phrase of the thesis sentence.
+    description: Key-phrase recurrences in the body (sentences, not occurrences).
   text.organization.framing_parts:
     status: planned
     planned_in: P2-b
     requires: none
     languages: [en]
     description: >-
-      0-2: an introduction cue (purpose or preview) in the opening share, and a conclusion cue
-      ("in conclusion", "to sum up") in the closing share.
+      0-2: one for an introduction cue in the opening, one for a conclusion cue in the closing
+      (lexicon matches).
   text.organization.transitions:
     status: planned
     planned_in: P2-b
     requires: none
     languages: [en]
-    description: Transition and sequence cues between parts ("first", "next", "finally").
+    description: Transitions in the talk, at most one per sentence.
   text.hook.present:
     status: planned
     planned_in: P2-b
     requires: none
     languages: [en]
-    description: >-
-      Yes if one of the first sentences is a question, a statistic, a story opening, a quotation
-      or a surprising claim (pattern rules).
+    description: Yes if a hook is found (see the definition).
   text.support.items:
     status: planned
     planned_in: P2-b
     requires: none
     languages: [en]
-    description: Supporting items found (statistics, examples, analogies, quotations).
+    description: Supporting items, counted as (sentence, type) pairs.
   text.support.types:
     status: planned
     planned_in: P2-b
     requires: none
     languages: [en]
-    description: Distinct types among the supporting items (0-4).
+    description: Distinct supporting-material types found (0-4).
   text.language.undefined_terms:
     status: planned
     planned_in: P2-b
@@ -109,8 +150,8 @@ measures:
     requires: none
     languages: [en]
     description: >-
-      Mean words per sentence. Depends on the transcript's punctuation; not measurable when the
-      punctuation is unreliable (ADR 0011).
+      Mean words per sentence. Missing when the punctuation is unreliable (ADR 0011): then only
+      this condition is dropped and the language dimension rests on undefined terms.
   fillers.per_100_words:
     status: available
     requires: none
@@ -124,14 +165,14 @@ measures:
     requires: none
     languages: [en]
     description: >-
-      Pauses of at least 1 s inside a sentence, per minute of speaking time (from the pause
-      events of speech/pauses.py; Arabic positions are unknown, ADR 0011).
+      Mid-sentence pauses (see the definition) per minute of speaking time, from the pause
+      events of speech/pauses.py.
   vision.gaze.at_camera_share:
     status: planned
     planned_in: P6
     requires: camera
     languages: [en, ar]
-    description: Share of speaking time with gaze zone at_camera (ADR 0004).
+    description: Share of speaking time with gaze zone at_camera (ADR 0004); camera on only.
   timing.overrun_s:
     status: planned
     planned_in: P3
@@ -171,7 +212,7 @@ dimensions:
         text: No sentence states the main point; it can only be inferred from the content.
     left_out:
       - compelling, memorable
-      - consistent with the supporting material (needs a content check; judge slice)
+      - consistent with the supporting material (judge slice, ADR 0017)
 
   - id: organization
     name: Organization
@@ -182,7 +223,7 @@ dimensions:
         text: >-
           The talk has an introduction cue in the first {opening_share_pct:g} % and a conclusion
           cue in the last {closing_share_pct:g} %, at least {org_transitions_high:g} transitions
-          between parts, and an opening hook (question, statistic, story, quotation or surprising
+          between parts, and an opening hook (question, statistic, story, quotation or contrast
           claim) in the first {hook_sentences:g} sentences.
         conditions:
           - {measure: text.organization.framing_parts, op: ">=", threshold: org_framing_full}
@@ -266,7 +307,8 @@ dimensions:
         text: No statistic, example, analogy or quotation is found.
     left_out:
       - credibility and relevance of the sources
-      - how strongly the material supports the presentation (judge slice)
+      - whether each item supports its claim; unsupported claims (judge slice, ADR 0017)
+      - levels 4 and 3 are stretch goals for a 2-3 minute talk (reviewed by the supervisor)
 
   - id: delivery
     name: Delivery

@@ -22,6 +22,7 @@ CONFIG = REPO_ROOT / "configs" / "rubric.yaml"
 __all__ = [
     "RubricThresholds",
     "anchor_text",
+    "fill",
     "level_score",
     "load_rubric",
     "load_thresholds",
@@ -31,7 +32,7 @@ __all__ = [
 
 class RubricThresholds(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
-    status: Literal["proposed", "decided"]
+    status: Literal["proposed", "provisional", "decided"]
     decided_in: str = Field(min_length=1)  # the ADR that records the values
     values: dict[str, float]
 
@@ -58,6 +59,11 @@ def load_rubric(rubric_id: str, *, resources: Path = RESOURCES, config: Path = C
         raise ValueError(f"{rubric_id}: {e}") from e
     values = load_thresholds(rubric_id, config=config).values
     used: set[str] = set()
+    for name, definition in rubric.definitions.items():
+        missing = placeholders(definition) - set(values)
+        if missing:
+            raise ValueError(f"definition {name!r}: text needs {sorted(missing)}")
+        used |= placeholders(definition)
     for d in rubric.dimensions:
         for a in d.levels:
             for c in a.conditions:
@@ -76,10 +82,15 @@ def load_rubric(rubric_id: str, *, resources: Path = RESOURCES, config: Path = C
     return rubric
 
 
+def fill(template: str, thresholds: RubricThresholds) -> str:
+    """A rubric text with its threshold values filled in."""
+    names = placeholders(template)
+    return template.format(**{k: v for k, v in thresholds.values.items() if k in names})
+
+
 def anchor_text(anchor: LevelAnchor, thresholds: RubricThresholds) -> str:
     """The anchor's wording with its threshold values filled in."""
-    names = placeholders(anchor.text)
-    return anchor.text.format(**{k: v for k, v in thresholds.values.items() if k in names})
+    return fill(anchor.text, thresholds)
 
 
 def level_score(level: int) -> float:
