@@ -1,0 +1,48 @@
+# Rubric thresholds (AGENTS.md rule 7). The rubric itself is resources/rubrics/<id>.yaml.
+# ADR 0017 (accepted 2026-11-21, reviewed by the supervisor). Every value is PROVISIONAL:
+# re-estimate after E5/E6. Values marked "FINAL_04" come from the plan; the others have no data
+# source yet. Thresholds are per scenario (S1 here, S2 later), not a formula of talk length;
+# length-aware thresholds are an open item to test on C2 (ADR 0017).
+
+s1_presentation:
+  status: provisional
+  decided_in: ADR 0017
+  values:
+    opening_share_pct: 20       # FINAL_04 §3: thesis cue in the first 20 %
+    closing_share_pct: 15       # FINAL_04 §3: closing cues in the last 15 %
+    hook_sentences: 2           # FINAL_04 §3: hook in the first 2 sentences
+    # central message
+    cm_recurrences_min: 2       # body sentences with a key phrase (level 4; review: 3 -> 2)
+    cm_statements_min: 1        # explicit statements (level 2)
+    # organization
+    org_framing_full: 2         # introduction and conclusion cue (levels 4, 3)
+    org_framing_min: 1          # one of them (level 2)
+    org_transitions_high: 3     # transitions between parts (level 4; review: 4 -> 3)
+    org_transitions_mid: 2      # (level 3; review: kept)
+    # language
+    lang_rare_zipf: 3.0         # rare term: Zipf frequency below this (wordfreq; P2-b)
+    lang_undefined_max_4: 0
+    lang_undefined_max_3: 1
+    lang_undefined_max_2: 3
+    lang_sentence_max_4: 20     # mean words per sentence
+    lang_sentence_max_3: 25
+    lang_sentence_max_2: 30
+    # supporting material
+    sup_items_high: 5           # levels 4 and 3 are stretch goals (review)
+    sup_types_high: 3
+    sup_items_mid: 3
+    sup_types_mid: 2
+    sup_items_min: 1
+    # delivery
+    del_fillers_4: 4            # per 100 words; a lower bound with base Whisper (review: 2 -> 4)
+    del_fillers_3: 6            # proposed to match level 4
+    del_fillers_2: 10           # proposed to match level 4
+    del_mid_pauses_4: 1         # mid-sentence pauses >= 1 s per minute
+    del_mid_pauses_3: 2
+    del_mid_pauses_2: 4
+    del_gaze_4: 0.70            # share of speaking time at_camera, camera on only (review: kept)
+    del_gaze_3: 0.50
+    del_gaze_2: 0.30
+    del_overrun_4: 0            # seconds over the session limit
+    del_overrun_3: 15
+    del_overrun_2: 30

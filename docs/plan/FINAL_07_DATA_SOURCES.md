@@ -12,7 +12,7 @@ Roles you chose: knowledge base, training text, rubric definitions.
 
 | Source | Licence | Role | Link | Checked |
 |---|---|---|---|---|
-| AAC&U **VALUE Oral Communication Rubric** | CC BY-NC-SA 4.0 | Rubric dimensions and anchor wording (adapted to observable anchors) | Copy used: `https://binghamton.edu/academics/general-education/instructorinformation/oralcommunicationaauc.pdf`; publisher page at aacu.org ~ | ✓ licence |
+| AAC&U **VALUE Oral Communication Rubric** | CC BY-NC-SA 4.0 | Rubric dimensions and anchor wording (adapted to observable anchors) | Copy used: `https://uttyler.edu/offices/continuous-improvement-and-accreditation/files/value-oral-communication.pdf` (2026-11-21; the Binghamton copy returned 404; this mirror shows no licence line, ADR 0017); publisher page at aacu.org ~ | ✓ licence |
 | *Fundamentals of Public Speaking* (Lumen Learning, via FSCJ) | **CC BY 4.0** | Knowledge base **and** T2 training text; exercise sources | `https://fscj.pressbooks.pub/publicspeaking` | ✓ |
 | *Stand up, Speak out* (Univ. of Minnesota) | CC BY-NC-SA 4.0 | Knowledge base, exercise ideas | `https://open.lib.umn.edu/publicspeaking` | ✓ |
 | *Exploring Public Speaking*, 4th ed. (Tucker) | CC BY-NC-SA 4.0 | Knowledge base | `https://open.maricopa.edu/exploringpublicspeaking` | ✓ |
@@ -75,7 +75,7 @@ Never send Speak & Improve text or audio to OpenRouter (its terms require local 
 | Set | Size | Built by | Role |
 |---|---|---|---|
 | C1 Synthetic speech | ~300 clips | Kokoro TTS from scripts with known word counts, inserted silences, inserted filler tokens | Exact ground truth for rate/pause (E2) |
-| C2 Synthetic presentation transcripts | ~400 | OpenRouter teacher writes presentations with controlled defects (no central message, no conclusion, no supporting material, undefined jargon); hand-checked | Content detector eval (E4); T2 inputs |
+| C2 Synthetic presentation transcripts | ~400 | OpenRouter teacher writes presentations with controlled defects (no central message, no conclusion, no supporting material, undefined jargon) and planted hook / no-hook openings, so the hook detector's false-positive rate is known (ADR 0017); hand-checked | Content detector eval (E4); T2 inputs |
 | C3 Synthetic learners | 2,000+ | `engine/simulator.py` | Policy comparison (E9) |
 | C4 Teacher feedback pairs | ~3,000 | `FINAL_06` §5 | T2 training |
 
