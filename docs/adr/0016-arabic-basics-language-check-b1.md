@@ -89,7 +89,7 @@ speech:
 recording runs through the whole `analyze` path. Fillers are capped at low confidence, markers
 are counted apart, «يعني يعني» is a repetition, pause positions are `unknown` with sparse
 punctuation, syllable pace is information only, and every report text is Arabic with no
-verdict or banned word. A slow real-model test waits for the first B1 Arabic clip.
+verdict or banned word. A slow real-model test runs on a B1 Arabic clip (open item 5).
 
 **B1: 20 clips, 10 English and 10 Arabic, 2–3 minutes each**, recorded and corrected by the
 owner only. The clip plan, setup, file names and correcting steps are in
@@ -229,7 +229,15 @@ in `experiments/results/b1/full_results.md`. All 20 clips were corrected and lab
      optional and not part of the decision.
 4. A native-speaker review of `lang/ar/report.yaml` (with `lang/ar/ui.yaml`), before any user
    sees Arabic reports.
-5. The slow real-model Arabic test runs once the first B1 Arabic clip exists.
+5. **Slow real-model Arabic test: done** (owner, 2026-11-21;
+   `tests/integration/test_arabic_real_model.py`, marked `slow`). One run of whisper_small,
+   int8 on CPU, through the app's `analyze` path on `b1_ar_04_normal` (138.8 s). It asserts
+   behaviour only: no crash and a valid report, Arabic detected without a mismatch, a non-empty
+   Arabic transcript, and at least one «يعني» found as a discourse marker. All passed in about
+   50 s on the owner's laptop. The owner's shortest clip, `b1_ar_08_fast` (135.2 s), was not
+   used, because their own transcript of it has no «يعني» (the owner chose `ar_04`, the
+   shortest clip with the marker). The test skips when the clip or the model is absent, so it
+   never runs in CI. It prints, logs and writes no transcript text.
 6. **The app's own pause rule** (`pauses.find_pauses`) uses word midpoints only. When Whisper
    stretches a word into a pause, the app skips that word and takes the word before it as
    `word_before`, so a reported position can come from the wrong word. **Checked, no change**
