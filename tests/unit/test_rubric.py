@@ -75,7 +75,7 @@ def test_every_threshold_is_provisional(thresholds: Any):
 def test_measures_are_available_or_planned_in_a_named_slice(rubric: Rubric):
     src = "\n".join(
         p.read_text("utf-8")
-        for pkg in ("speech", "text")
+        for pkg in ("speech", "text", "rubric")
         for p in (REPO_ROOT / "src" / "presenceai" / pkg).glob("*.py")
     )
     for key, m in rubric.measures.items():

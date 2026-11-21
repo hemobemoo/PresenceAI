@@ -91,7 +91,7 @@ Each change has a fixture test in `tests/unit/test_text_detectors.py`.
 ## Consequences
 
 - The eleven `text.*` rubric measures are now available (`resources/rubrics/s1_presentation.yaml`,
-  `docs/rubric/S1_ANCHORS.md`). P2-c adds `pauses.mid_sentence_per_min`, the scoring and the
+  `docs/rubric/S1_ANCHORS.md`). P2-c added `pauses.mid_sentence_per_min`, the scoring and the
   assessment with verified evidence.
 - New runtime dependencies: `spacy` (and its MIT/BSD stack) and `wordfreq`; the licence check
   reports 0 FAIL.

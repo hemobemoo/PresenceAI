@@ -18,6 +18,9 @@ pauses:
   p90: "المئين التسعون لمدة التوقف"
   longest: "أطول توقف"
   no_pauses: "لا توجد توقفات مدتها {shortest} ث على الأقل"
+  mid_per_min: "وقفات داخل الجمل مدتها {minimum:g} ث على الأقل لكل دقيقة من وقت الكلام (من أول كلام إلى آخره)"
+  mid_per_min_language: "غير قابل للقياس: مواضع الوقفات غير متاحة لهذه اللغة"
+  mid_per_min_punctuation: "غير قابل للقياس: علامات نهاية الجمل في النص قليلة جدًا لتحديد مواضع الوقفات"
 positions:
   sentence_boundary: "نهاية جملة"
   clause_boundary: "نهاية عبارة"
@@ -87,6 +90,41 @@ text:
   language:
     undefined_terms: "مصطلحات نادرة (تكرارها أقل من {zipf:g} على مقياس Zipf) بلا عبارة تعريف في الجملة نفسها أو التالية"
     mean_sentence_words: "عدد الكلمات لكل جملة، من علامات الترقيم في النص"
+assessment:
+  finding: "{dimension}: المستوى {level} ({level_name})، بناءً على {measured} من {total} مقاييس ({measures}). {values}"
+  not_measurable: "{dimension}: غير قابل للقياس؛ تعذّر حساب أي من مقاييسه الـ{total} ({reasons})"
+  value: "{measure} بقيمة {value:g}"
+  separator: "؛ "
+  missing_camera: "لا يوجد تسجيل بالكاميرا"
+  missing_limit: "لم يُحدَّد وقت"
+  missing_other: "لم يُحسب"
+  measures:
+    text:
+      central_message:
+        statements: "جمل الفكرة الرئيسية"
+        in_opening: "ذكر الفكرة الرئيسية في البداية (1 = نعم)"
+        in_closing: "إعادة الفكرة الرئيسية في الخاتمة (1 = نعم)"
+        key_phrase_recurrences: "جمل في المتن فيها عبارة أساسية"
+      organization:
+        framing_parts: "عبارات التمهيد والخاتمة الموجودة"
+        transitions: "جمل فيها عبارة انتقال"
+      hook:
+        present: "مدخل افتتاحي (1 = نعم)"
+      support:
+        items: "عناصر داعمة"
+        types: "أنواع المواد الداعمة"
+      language:
+        undefined_terms: "مصطلحات نادرة بلا تعريف"
+        mean_sentence_words: "كلمات لكل جملة"
+    fillers:
+      per_100_words: "كلمات حشو لكل 100 كلمة (على الأقل)"
+    pauses:
+      mid_sentence_per_min: "وقفات داخل الجمل لكل دقيقة"
+    vision:
+      gaze:
+        at_camera_share: "حصة وقت الكلام مع النظر نحو الكاميرا"
+    timing:
+      overrun_s: "ثوانٍ بعد الوقت المحدد"
 units:
   count: "عدد"
   "words/min": "كلمة/دقيقة"
@@ -104,3 +142,4 @@ units:
   types: "أنواع"
   terms: "مصطلحات"
   words/sentence: "كلمة لكل جملة"
+  per min: "في الدقيقة"

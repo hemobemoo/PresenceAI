@@ -94,7 +94,7 @@ and never infers confidence or other traits (AGENTS.md rule 3).
 
 ## Consequences
 
-- P2-b built the `text.*` measures (ADR 0018); P2-c adds `pauses.mid_sentence_per_min` and the
+- P2-b built the `text.*` measures (ADR 0018); P2-c added `pauses.mid_sentence_per_min` (minimum length `mid_pause_min_s`, 1.0 s, provisional) and the
   scoring. Gaze (P6) and overrun (P3) come later; until then Delivery rests on fillers and
   mid-sentence pauses.
 - With base Whisper, fillers per 100 words is a lower bound (ADR 0012), so Delivery levels can

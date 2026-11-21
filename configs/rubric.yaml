@@ -37,7 +37,8 @@ s1_presentation:
     del_fillers_4: 4            # per 100 words; a lower bound with base Whisper (review: 2 -> 4)
     del_fillers_3: 6            # proposed to match level 4
     del_fillers_2: 10           # proposed to match level 4
-    del_mid_pauses_4: 1         # mid-sentence pauses >= 1 s per minute
+    mid_pause_min_s: 1.0        # shortest pause counted as a mid-sentence pause (P2-c)
+    del_mid_pauses_4: 1         # mid-sentence pauses per minute of speaking time
     del_mid_pauses_3: 2
     del_mid_pauses_2: 4
     del_gaze_4: 0.70            # share of speaking time at_camera, camera on only (review: kept)
