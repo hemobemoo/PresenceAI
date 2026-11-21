@@ -5,7 +5,8 @@
   F1 or duration on B1 (see "Amendment"). On 2026-11-18 the owner also accepted English unit
   codes with translated labels and report schema 6, and decided open item 3 (B1 storage,
   option A).
-  `mismatch_min_probability` is **provisional** until the B1 re-check.
+  On 2026-11-21, after B1, the owner set `mismatch_min_probability` to **0.95, provisional and
+  B1-informed** (open item 7) and accepted the B1 results notes ("B1 results").
 - Date: 2026-11-18
 - Decider: project owner
 - Plan reference: FINAL_12 §2 (P1: "Arabic language pack basics", study "Record pilot set B1");
@@ -72,12 +73,13 @@ a native-speaker review, as `lang/ar/ui.yaml` is.
 speech:
   language_check:
     window_s: 30.0
-    mismatch_min_probability: 0.5   # PROVISIONAL; re-check on B1
+    mismatch_min_probability: 0.95  # PROVISIONAL, B1-informed (2026-11-21); was 0.5
 ```
 
 - Whisper's `detect_language` runs on the first 30 s of speech, counted from the first VAD
   onset so that leading silence does not dilute it. No VAD filter inside Whisper.
-- A mismatch is: detected language ≠ chosen language **and** probability ≥ 0.5. The report then
+- A mismatch is: detected language ≠ chosen language **and** probability ≥ 0.95 (0.5 until
+  2026-11-21; see open item 7). The report then
   carries a notice in the report language, with the detected language and its probability.
 - It is a notice only. The analysis still runs in the chosen language, nothing stops, and no
   measurement or score changes (`tests/unit/test_language_check.py`). With no speech there is no
@@ -180,11 +182,28 @@ not moved by ear. The annotation workflow changes:
 - FINAL_07 §B now says B1 is 20 clips (10 EN + 10 AR). E1's "20 hand-corrected clips of the
   owner (B1)" in FINAL_10 is unchanged and now matches.
 - Reports are schema 6. A baseline report from schema 5 must be made again.
-- **Re-check on B1:** `mismatch_min_probability`. All 20 clips are in the chosen language, so
-  every notice on B1 is a false notice. If there are any, especially on the code-switching
-  clips, propose a new value here; the owner decides.
+- **Re-check on B1: done** (2026-11-21). At 0.5 there were 4 false notices, all on English
+  clips and none on the code-switching Arabic clips. The owner set 0.95 (open item 7).
 - What would show a decision is wrong: a false language notice on B1; Arabic report text that a
   native speaker reads as a judgement; correcting taking far longer than 20 minutes per clip.
+
+### B1 results (all 20 clips, owner's decisions 2026-11-21)
+
+Run `b1_20261121-143314` (config `36e2561db2a04161`, whisper_small), descriptive only; summary
+in `experiments/results/b1/full_results.md`. All 20 clips were corrected and labelled by
+`label`, with every `?` decided by ear. Pause edges were not hand-checked.
+
+- **Rate:** wpm error 0.32 % in English (max 1.19 %) and 0.99 % in Arabic (max 2.74 %). Both
+  sides use the same speech span, so this mostly reflects word-count differences.
+- **WER (E1):** English 0.8 % (0–3.1 %), a **lower bound**: the owner corrected Whisper's text
+  and confirmed it where it was unchanged (e.g. `en_02`, listened through in full). Arabic
+  13.3 % (8.4–20.0 %).
+- **Pause positions:** English in ADR 0014, Arabic in ADR 0011.
+- **ADR 0015:** confirmed on real speech for one speaker (see ADR 0015).
+- **ADR 0013:** partly checked, with no false clipping alarms; open item 2 stays open.
+- **Noise clips** (`en_10`, `ar_10`): SNR about 60 dB, the same as the quiet clips, so B1 does
+  not test noise robustness. They were not re-recorded (`docs/cards/LIMITATIONS.md`).
+- **Language check:** 4 false notices at 0.5; the threshold is now 0.95 (open item 7).
 
 ### Open items
 
@@ -234,7 +253,26 @@ not moved by ear. The annotation workflow changes:
      `pauses.find_pauses` stays as it is. B1 `label` keeps its own overlap rule, because it
      places the owner's words, not the app's. The B1 re-score after this check is identical
      to round 1, since the app did not change.
-7. **Language check, B1 round 1:** 1 false notice in 4 clips (an English clip detected as
-   Arabic, probability 0.83; another English clip reached only 0.53 for English). No
-   `mismatch_min_probability` value separates these. It stays at 0.5 until all 20 clips are
-   scored, and then the owner decides.
+7. **Language check: decided** (owner, 2026-11-21, option A). `mismatch_min_probability` is
+   now **0.95, provisional and B1-informed**. The value was chosen after seeing B1, which
+   breaks the rule that no threshold is tuned on B1; the owner accepted that for this value
+   only.
+   - At 0.5, B1 gave **4 false notices in 10 English clips**: Arabic detected at 0.756, 0.794,
+     0.835 and 0.940. On the other 6 English clips the probability for English was only
+     0.509–0.815. On all 10 Arabic clips, including the 3 with English terms, the probability
+     for Arabic was 0.970–0.995. Whisper's detection is close to a coin flip on the owner's
+     English.
+   - 0.95 removes all 4 false notices. Arabic speech analysed as English is still caught for
+     this speaker, because the owner's Arabic is always at least 0.970.
+   - **Weakness: English speech analysed as Arabic (the wrong choice of Arabic for English) is
+     rarely caught**, because accented English is detected as English with only about
+     0.5–0.8, below 0.95. Further: one speaker, a margin of only 0.03 (0.940 against 0.970),
+     and no real mismatch in B1.
+   - **Check on independent data:** L2-ARCTIC (Arabic-L1 speakers of English) is a candidate,
+     evaluation only, CC BY-NC acknowledged. It is approved for later and downloaded only when
+     the check is scheduled, on Kaggle, never on the owner's laptop (`DATA_SOURCES.md` §1).
+8. **Arabic punctuation reliability** (ADR 0011, open). In the 10 Arabic B1 clips the owner's
+   own transcripts have about 36 words per sentence mark (2,351 words, 66 marks; 8 of 10
+   clips are above 30). The `max_words_per_sentence_mark: 30` rule would therefore call even
+   correctly punctuated formal Arabic unreliable. No change: there is no Arabic data with
+   timing truth to test another rule on.

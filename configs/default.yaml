@@ -37,8 +37,8 @@ speech:                         # ADR 0011 (P1 slice 2: pauses and rate); FINAL_
     speech_pad_ms: 0            # padding would shorten every pause by 2 x pad
   language_check:               # ADR 0016; FINAL_04 §5: a notice only, never an error or a score change
     window_s: 30.0              # detect on the first 30 s of speech (from the first VAD onset)
-    mismatch_min_probability: 0.5  # PROVISIONAL (owner 2026-11-18): notice when another language is detected
-                                   # with at least this probability; re-check on B1
+    mismatch_min_probability: 0.95 # PROVISIONAL, B1-informed (owner 2026-11-21): notice when another language
+                                   # is detected with at least this probability; was 0.5. ADR 0016 item 7
   transcript:                   # ADR 0015: words Whisper invents in silence after the last speech
     end_tolerance_s: 0.2        # PROVISIONAL; test-informed (end only); re-check on B1 (real words removed)
   pauses:

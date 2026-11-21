@@ -1,5 +1,11 @@
 # B1 round 1 (2026-11-19): 2 English + 2 Arabic clips, owner's own speech
 
+> **Note (2026-11-21): superseded for pause positions.** The owner later relabelled the `?`
+> pauses of these 4 clips: some clause pauses had been marked mid. In the full run
+> (`b1_20261121-143314`, `full_results.md`), agreement on these clips is 175 of 210 (was 190):
+> ar_01 43/56 (was 45), en_01 58/67 (was 67), en_05 74/87 (was 78). Rate, WER, clipping and
+> the language check are unchanged. The numbers below are kept as they were.
+
 Descriptive only (ADR 0016): no pass/fail, nothing tuned on B1. Numbers come from
 `b1_20261119-190516_*` (all 4 clips). `b1_20261119-190229_*` is the owner's first run: 3 clips,
 because `b1_en_01_normal` was skipped. Its annotation had lost its `labels_method` line when the
