@@ -1,7 +1,7 @@
 # 0021 — C2 synthetic presentation transcripts: Colab, Qwen3.5-9B, design (P2-e)
 
-- Status: **proposed** (2026-11-22). Platform, batch mode and design decided by the owner on
-  2026-11-22; the model is proposed here and confirmed after the 5-prompt pilot.
+- Status: **accepted** (owner, 2026-11-23, after the hand check). Platform, batch mode and
+  design decided by the owner on 2026-11-22; the model confirmed after the pilots.
 - Date: 2026-11-22
 - Decider: project owner
 - Plan reference: FINAL_07 §C (C2), FINAL_10 E4 (content detectors), FINAL_06 §5 (T2 teacher),
@@ -16,7 +16,7 @@
    Only the synthetic prompts (`resources/c2/prompts.jsonl`) and the generated transcripts are
    in the notebook. Output goes to Google Drive during the run (synthetic text only) so a
    stopped session resumes, and is then saved into the git-ignored `data/c2/`.
-2. **Model (proposed): `Qwen/Qwen3.5-9B`**, commit `c202236235762e1c871ad0ccb60c8ee5ba337b9a`.
+2. **Model: `Qwen/Qwen3.5-9B`**, commit `c202236235762e1c871ad0ccb60c8ee5ba337b9a`.
    - Licence: Apache-2.0 on the model card (`license: apache-2.0`) **and** in its LICENSE file
      (Apache License 2.0), not gated. Apache-2.0 puts no limit on training with its outputs.
    - Size: 9.65 B parameters, bf16 weights 19.3 GB in 4 shards; 4-bit NF4 (bitsandbytes, fp16
@@ -124,7 +124,28 @@
      ones the model wrote. Length differs by group (no supporting material is shortest), so
      word count alone partly reveals the group; E4 should not use length as a feature.
    - The hand-check sample was drawn (`hand_check.py draw`, 50 items, 10 per group from the
-     test part); its error rate is added here after the owner's check.
+     test part); results in 4b.
+4b. **Hand check** (owner, blinded, 2026-11-23; `hand_check.py score`,
+   `experiments/results/c2/hand_check.json`). The owner's labels are compared with the planted
+   design on all five labels of every item.
+   - **27 of 50 items (0.54) have at least one planted label the owner disagrees with.**
+     Per label (of 50): central message 0.30, conclusion 0.10, supporting material 0.16,
+     unexplained terms 0.04, hook 0.00.
+   - **The planted defect itself** is confirmed in no central message 10/10, no conclusion
+     10/10, undefined jargon 10/10, but in **no supporting material only 2/10**: the owner
+     found supporting material in 8 of the 10 talks told to have none.
+   - The other disagreements are on labels the group did not target: no conclusion, central
+     message absent 8/10; no central message, conclusion absent 5/10; no supporting material,
+     central message absent 4/10; control, central message absent 3/10 and unexplained terms
+     present 2/10.
+   - Scoring fix: the sheet held the quoted strings "yes"/"no", and the first score used
+     `bool()`, which reads "no" as yes (it reported 0.88). `hand_check.py` now reads yes/no
+     strictly and refuses any other value (tested); the numbers above are from the fixed score.
+   - **Consequence for E4:** the planted labels are reliable for hook, unexplained terms and
+     conclusion, less for central message, and **not for supporting material in the
+     no-supporting-material group**. E4 on the planted labels reports these rates next to
+     each F1, and E4's second report (the 50 hand-checked items against the owner's labels) is
+     the reference for supporting material and central message.
 5. **Design** (owner, unchanged from the P2-e proposal):
    - 400 transcripts: 5 groups of 80 (control, no central message, no conclusion, no supporting
      material, undefined jargon); each of 80 topics (`resources/c2/topics.yaml`, written for
@@ -153,6 +174,8 @@
 
 ## Consequences
 
-- C2 labels are the planted design, checked as above; E4 reports per-label F1 on the test part.
-- Pilot results, the full run's checks and the hand-checked error rate are added here before
-  this ADR is accepted.
+- C2 labels are the planted design, checked as above; E4 reports per-label F1 on the test part,
+  each with the hand-checked label error rate (4b), and again on the hand-checked subset
+  against the owner's labels.
+- Pilot results, the full run's checks and the hand-checked error rates are recorded above
+  (4, 4a, 4b).

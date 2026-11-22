@@ -1,0 +1,18 @@
+{
+  "items": 50,
+  "items_with_any_planted_label_wrong": 27,
+  "item_error_rate": 0.54,
+  "label_error_rate": {
+    "central_message": 0.3,
+    "conclusion": 0.1,
+    "supporting_material": 0.16,
+    "unexplained_terms": 0.04,
+    "hook": 0.0
+  },
+  "items_wrong_by_group": {
+    "control": 4,
+    "no_central_message": 5,
+    "no_supporting_material": 10,
+    "no_conclusion": 8
+  }
+}

@@ -153,6 +153,14 @@ Started 2026-11-17. Kept up to date as experiments report (FINAL_11 §6).
   a planted defect is really there (the model's own yes/no check proved unreliable and is not
   used). The owner's blinded hand check of 50 test transcripts gives the label-noise estimate,
   and E4 is also reported on that subset against the owner's labels (ADR 0021).
+- **The planted labels are noisy.** In the hand check, 27 of 50 transcripts (54 %) had at
+  least one planted label the owner disagreed with. Per label: central message 30 %,
+  supporting material 16 %, conclusion 10 %, unexplained terms 4 %, hook 0 %. The planted
+  defect was confirmed in all 10 no-central-message, no-conclusion and undefined-jargon talks,
+  but **only 2 of 10 "no supporting material" talks really had none**: the owner found
+  supporting material in the other 8. E4's supporting-material and central-message results on
+  the planted labels are therefore unreliable; the hand-checked subset (50 items, one rater)
+  is their reference.
 - **One generator, one style.** All 400 transcripts come from one model with one prompt
   template, so E4 on C2 says nothing about other writing styles or real speech; public talk
   transcripts (TED, E4/E5) are the other check.

@@ -143,3 +143,19 @@ def test_hand_check_score_is_the_planted_label_error_rate():
         assert "missing" in str(exc)
     else:
         raise AssertionError("an unfilled sheet must not be scored")
+
+
+def test_hand_check_reads_yes_no_strings_strictly():
+    # The owner's sheet held quoted 'yes'/'no'; bool("no") is True, so strings must be parsed.
+    sheet, key = hand.draw(_rows())
+    for s in sheet:
+        s.update({lab: "yes" if v else "no" for lab, v in hand.planted(key[s["key"]]).items()})
+    assert hand.score(sheet, key)["item_error_rate"] == 0
+    assert hand.label("No") is False and hand.label(" YES ") is True and hand.label(False) is False
+    sheet[0]["hook"] = "maybe"
+    try:
+        hand.score(sheet, key)
+    except ValueError as exc:
+        assert "yes/no" in str(exc)
+    else:
+        raise AssertionError("a label that is not yes/no must be refused")

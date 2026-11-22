@@ -74,6 +74,19 @@ def planted(entry: dict[str, Any]) -> dict[str, bool]:
     return {**PLANTED[entry["group"]], "hook": bool(entry["hook"])}
 
 
+def label(value: Any) -> bool:
+    """The owner's yes/no: a YAML boolean or the strings "yes"/"no" (quoted or not).
+    Anything else is refused; bool("no") would be True."""
+    if isinstance(value, bool):
+        return value
+    text = str(value).strip().lower() if isinstance(value, str) else ""
+    if text in ("yes", "y", "true"):
+        return True
+    if text in ("no", "n", "false"):
+        return False
+    raise ValueError(f"not a yes/no label: {value!r}")
+
+
 def score(sheet: list[dict[str, Any]], key: dict[str, Any]) -> dict[str, Any]:
     missing = [s["key"] for s in sheet if any(s.get(lab) is None for lab in LABELS)]
     if missing:
@@ -81,7 +94,7 @@ def score(sheet: list[dict[str, Any]], key: dict[str, Any]) -> dict[str, Any]:
     wrong_items, by_label, by_group = 0, Counter(), Counter()
     for s in sheet:
         want = planted(key[s["key"]])
-        diff = [lab for lab in LABELS if bool(s[lab]) != want[lab]]
+        diff = [lab for lab in LABELS if label(s[lab]) != want[lab]]
         by_label.update(diff)
         if diff:
             wrong_items += 1
