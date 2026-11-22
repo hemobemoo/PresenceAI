@@ -44,7 +44,8 @@
      conclusion");
    - it has **250–550 words** (floor lowered from 300 after pilot 3) and no markdown, heading,
      bullet, label or thinking text;
-   - it does not echo the prompt ("main idea", "central idea").
+   - it does not echo the prompt ("main idea", "central idea"; "specific detail" added after
+     pilot 5).
    Length comes from a **fixed shape** in the prompt, not a word count (the model ignored word
    counts in pilots 1 and 2): first "exactly 4 short paragraphs of 3 to 4 sentences each",
    then, after pilot 3, **"exactly 4 paragraphs of 5 to 6 sentences each"** (owner,
@@ -80,9 +81,25 @@
      words, under the 300-word floor. Owner's change: the shape grows to 4 paragraphs of 5 to
      6 sentences, and the floor goes down to 250 words (ceiling 550 and the 800-token cap
      kept).
-   - **Pilot 4** (topic 03): shown to the owner with word counts; the full run starts only if
-     at least 4 of 5 pass on the first or second attempt and the owner finds the planted
-     defects right.
+   - **Pilot 4** (topic 03, commit b14830b): all 5 passed on the first attempt (427–488 words,
+     73 s), every hook as asked. Owner's review: the planted defects were right except in the
+     no-conclusion group.
+   - **No-conclusion leak** (owner, 2026-11-22): **pilot 2b and pilot 4 both leaked a
+     summing-up ending in the no-conclusion group** (pilot 4's last sentence: "By embracing these
+     diverse roles, libraries are securing their place as essential institutions in our rapidly
+     changing world."). The prompt was tightened to: "End the talk inside the last point: the
+     final sentence gives one more specific detail about that point. The talk stops there, with
+     no sentence about the topic as a whole, the talk itself, or the future." (commit e62cea6).
+   - **Borderline thesis line accepted as label noise** (owner, 2026-11-22): in pilot 4's
+     no-central-message talk, a paragraph-1 sentence ("It seems the building is adapting to the
+     needs of a generation that learns by doing…") could be read as a thesis. The owner accepted
+     this as label noise; the hand check measures it and the prompt is not changed.
+   - **Pilot 5** (no-conclusion only, topics 04, 05, 06, tightened prompt, commit e62cea6):
+     all 3 passed on the first attempt (503–514 words, 61.5 s for the batch of 3). No ending
+     sums up the talk; each stops on a detail of the last point. Topic 05's last sentence echoed
+     the prompt ("The last specific detail I want to mention is…"), so "specific detail" was
+     added to the echo check (3a): such an attempt is now rejected and regenerated. Full run
+     at the commit with that check.
 5. **Design** (owner, unchanged from the P2-e proposal):
    - 400 transcripts: 5 groups of 80 (control, no central message, no conclusion, no supporting
      material, undefined jargon); each of 80 topics (`resources/c2/topics.yaml`, written for

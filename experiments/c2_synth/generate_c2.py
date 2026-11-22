@@ -13,7 +13,7 @@
   1. it ended before the 800-token cap, a safety net only; a capped transcript is always
      rejected (a cut-off talk would be an unplanned "no conclusion");
   2. it has 250-550 words and no markdown, heading, bullet, label or thinking text;
-  3. it does not echo the prompt ("main idea", "central idea").
+  3. it does not echo the prompt ("main idea", "central idea", "specific detail").
   The model's own yes/no answers are **not** used: in pilot 2b it answered "attention-catching
   opening = yes" for 4 plain "Hello everyone" openings, so it could not be trusted as a filter.
   Nothing here uses PresenceAI's cue lexicons or text detectors. A failed item is regenerated
@@ -47,7 +47,8 @@ SAMPLING = {"do_sample": True, "temperature": 0.7, "top_p": 0.8, "top_k": 20}
 MAX_NEW_TOKENS = 800
 MAX_ATTEMPTS = 3
 MIN_WORDS, MAX_WORDS = 250, 550
-ECHO = re.compile(r"\b(main|central) idea\b", re.IGNORECASE)
+# Prompt wording copied into the talk; "specific detail" added after pilot 5 (no-conclusion).
+ECHO = re.compile(r"\b(main|central) idea\b|\bspecific detail\b", re.IGNORECASE)
 FORMAT = re.compile(
     r"(^\s*#)|(^\s*[-*•]\s)|(^\s*\d+[.)]\s)|(\*\*)|(<think>)|(</think>)|(^\s*\[[^\]]+\])"
     r"|(^\s*\([^)]*\)\s*$)|(^\s*(speaker|presenter|student)\s*\d*\s*:)",

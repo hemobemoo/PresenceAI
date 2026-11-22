@@ -5,8 +5,9 @@
 A second, local pass over the accepted transcripts (the notebook already applied the quality
 loop: token cap, length, format and prompt echo; generate_c2.py; no model yes/no check).
 Format checks (all groups): 250-550 words; no markdown, heading, bullet, speaker label or stage
-direction; no leftover thinking block; no "main idea" / "central idea" echo. Group check that
-needs no language model: the no_supporting_material group contains no digits. Like the
+direction; no leftover thinking block; no "main idea" / "central idea" / "specific detail"
+echo. Group check that needs no language model: the no_supporting_material group contains no
+digits. Like the
 notebook, it uses no cue lexicon and no detector. If attempts.jsonl and rejected.jsonl sit next
 to the file, it also reports attempts and rejections per group and the reasons. Writes
 experiments/results/c2/<file>_checks.json with counts and failing ids only.
@@ -37,7 +38,7 @@ def problems(text: str, group: str) -> list[str]:
         out.append(f"words {n}")
     if _FORMAT.search(text):
         out.append("format")
-    if re.search(r"(main|central) idea", text, re.IGNORECASE):
+    if re.search(r"\b(main|central) idea\b|\bspecific detail\b", text, re.IGNORECASE):
         out.append("echo")
     if group == "no_supporting_material" and re.search(r"\d", text):
         out.append("digits")

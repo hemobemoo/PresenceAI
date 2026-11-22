@@ -87,6 +87,7 @@ def test_generator_quality_checks_use_no_cue_lexicons():
     assert not hasattr(gen, "QUESTIONS")  # the model's yes/no check is not a filter (pilot 2b)
     assert gen.text_problems("The main idea of my talk. " + ok) == ["echo"]
     assert gen.text_problems("Our central idea is simple. " + ok) == ["echo"]
+    assert gen.text_problems("The last specific detail is this. " + ok) == ["echo"]
     assert gen.text_problems("**Title**\n" + ok) == ["format"]
     assert gen.text_problems(" ".join(["word"] * 560)) == ["words 560"]
     assert gen.text_problems(" ".join(["word"] * 260)) == []  # floor 250 (owner, pilot 3)
