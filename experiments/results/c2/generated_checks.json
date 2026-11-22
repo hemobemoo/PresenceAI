@@ -1,0 +1,57 @@
+{
+  "attempts_by_group": {
+    "control": 102,
+    "no_central_message": 83,
+    "no_conclusion": 98,
+    "no_supporting_material": 93,
+    "undefined_jargon": 90
+  },
+  "failed_attempts_by_group": {
+    "control": 22,
+    "no_central_message": 3,
+    "no_conclusion": 20,
+    "no_supporting_material": 14,
+    "undefined_jargon": 10
+  },
+  "rejected_by_group": {
+    "no_conclusion": 2,
+    "no_supporting_material": 1
+  },
+  "failed_attempt_reasons": {
+    "words": 38,
+    "echo": 25,
+    "format": 7
+  },
+  "rejected_ids": [
+    "c2_no_conclusion_23",
+    "c2_no_conclusion_75",
+    "c2_no_supporting_material_79"
+  ],
+  "accepted_by_part": {
+    "dev": 118,
+    "test": 279
+  },
+  "accepted_by_group_and_part": {
+    "control/dev": 24,
+    "control/test": 56,
+    "no_central_message/dev": 24,
+    "no_central_message/test": 56,
+    "no_conclusion/dev": 23,
+    "no_conclusion/test": 55,
+    "no_supporting_material/dev": 23,
+    "no_supporting_material/test": 56,
+    "undefined_jargon/dev": 24,
+    "undefined_jargon/test": 56
+  },
+  "generated": 397,
+  "missing": 3,
+  "failing": 1,
+  "by_problem": {
+    "digits": 1
+  },
+  "failing_ids": {
+    "c2_no_supporting_material_78": [
+      "digits"
+    ]
+  }
+}

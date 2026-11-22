@@ -135,9 +135,13 @@ def _append(path: Path, row: dict[str, Any]) -> None:
 
 
 def _load(model_dir: Path) -> tuple[Any, Any]:
-    import torch
-    import transformers
-    from transformers import AutoTokenizer, BitsAndBytesConfig
+    # torch and transformers exist only on Colab, not in the project environment.
+    import torch  # pyright: ignore[reportMissingImports]
+    import transformers  # pyright: ignore[reportMissingImports]
+    from transformers import (  # pyright: ignore[reportMissingImports]
+        AutoTokenizer,
+        BitsAndBytesConfig,
+    )
 
     quant = BitsAndBytesConfig(
         load_in_4bit=True, bnb_4bit_quant_type="nf4", bnb_4bit_use_double_quant=True,
@@ -189,7 +193,7 @@ class Generator:
 
     def write(self, prompts: list[str], seed: int) -> list[tuple[str, int, bool]]:
         """(text, new tokens, reached the cap) per prompt."""
-        import torch
+        import torch  # pyright: ignore[reportMissingImports]  # Colab only
 
         enc = self._chat(prompts)
         torch.manual_seed(seed)

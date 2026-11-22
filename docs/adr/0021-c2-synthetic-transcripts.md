@@ -100,6 +100,31 @@
      the prompt ("The last specific detail I want to mention is…"), so "specific detail" was
      added to the echo check (3a): such an attempt is now rejected and regenerated. Full run
      at the commit with that check.
+4a. **Full run** (2026-11-22, Colab T4, generator and prompts at commit b12f6f1, notebook
+   `notebooks/c2_colab.ipynb`; torch 2.14.1+cu130, transformers 5.24.0, accelerate 1.16.0,
+   bitsandbytes 0.50.2, huggingface_hub 2.4.0; about 2 h, ~75 s per batch of 5; no
+   disconnect). Results from `check_c2.py` (`experiments/results/c2/generated_checks.json`):
+   - **397 of 400 accepted, 3 rejected** after 3 attempts: `c2_no_conclusion_23` (test, 561
+     words), `c2_no_conclusion_75` (dev, echo), `c2_no_supporting_material_79` (dev, echo).
+   - 466 attempts; accepted on attempt 1: 346, attempt 2: 42, attempt 3: 9.
+   - Failed attempts by group: control 22, no central message 3, no conclusion 20, no
+     supporting material 14, undefined jargon 10. Reasons: length 38 (all over 550 words,
+     none under 250), echo 25 ("main idea" 12 in no supporting material; "specific detail"
+     in no conclusion), format 7. No attempt reached the 800-token cap.
+   - **Split:** dev 118, test 279. By group, dev/test: control 24/56, no central message
+     24/56, no conclusion 23/55, no supporting material 23/56, undefined jargon 24/56. Hook:
+     40 of 80 in every group except no supporting material (39 of 79).
+   - Median words: control 484, no central message 438, no conclusion 464, no supporting
+     material 397, undefined jargon 454 (range 302–550).
+   - The post-run check flags one accepted transcript (`c2_no_supporting_material_78`, test)
+     for a digit; the digit is the topic's name ("3D printing"), not supporting material, so
+     it is kept.
+   - **Length selection:** control talks ran longest, and 22 control attempts (555–646
+     words) were regenerated under the 550-word ceiling, so accepted controls are the shorter
+     ones the model wrote. Length differs by group (no supporting material is shortest), so
+     word count alone partly reveals the group; E4 should not use length as a feature.
+   - The hand-check sample was drawn (`hand_check.py draw`, 50 items, 10 per group from the
+     test part); its error rate is added here after the owner's check.
 5. **Design** (owner, unchanged from the P2-e proposal):
    - 400 transcripts: 5 groups of 80 (control, no central message, no conclusion, no supporting
      material, undefined jargon); each of 80 topics (`resources/c2/topics.yaml`, written for
