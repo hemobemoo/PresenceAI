@@ -146,6 +146,16 @@
      no-supporting-material group**. E4 on the planted labels reports these rates next to
      each F1, and E4's second report (the 50 hand-checked items against the owner's labels) is
      the reference for supporting material and central message.
+4c. **Dev tuning after the hand check** (owner, 2026-11-23). Because the planted labels for
+   **supporting material** and **central message** proved unreliable (4b: supporting material
+   confirmed in only 2 of 10 no-supporting-material talks; central message wrong in 30 % of
+   items), **those planted labels must not be used to tune lexicons or rules on the C2 dev
+   part.** For these two measures, either the lexicons stay as they are, or they are tuned
+   only on dev items the owner labels by hand. The other measures (conclusion, unexplained
+   terms, hook, and the measures without a planted label) may still be tuned on dev against
+   the planted labels as planned (ADR 0018).
+   - **Optional, P8:** the owner hand-labels more C2 test items for supporting material and
+     central message, and a second rater labels a subset for an inter-rater agreement figure.
 5. **Design** (owner, unchanged from the P2-e proposal):
    - 400 transcripts: 5 groups of 80 (control, no central message, no conclusion, no supporting
      material, undefined jargon); each of 80 topics (`resources/c2/topics.yaml`, written for
@@ -155,7 +165,8 @@
    - Prompts describe each defect in plain words and contain **no phrase from the detectors'
      cue lists** (tested; topic names excluded).
    - Split 30/70 (dev/test) **by topic** (24 / 56 topics, 120 / 280 transcripts), hook balanced
-     within each group and part, seed 20261122. Lexicons are tuned on dev only.
+     within each group and part, seed 20261122. Lexicons are tuned on dev only, within the
+     limits of 4c.
    - Checks: the quality loop (3a) and, after the run, automatic checks on all accepted
      transcripts (`check_c2.py`: length, format, echo, no digits in the no-supporting-material
      group). **The planted labels are otherwise unverified.**
@@ -178,4 +189,4 @@
   each with the hand-checked label error rate (4b), and again on the hand-checked subset
   against the owner's labels.
 - Pilot results, the full run's checks and the hand-checked error rates are recorded above
-  (4, 4a, 4b).
+  (4, 4a, 4b); the dev-tuning limits that follow from them are in 4c.
