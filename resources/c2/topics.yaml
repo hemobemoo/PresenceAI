@@ -1,0 +1,84 @@
+# C2 topics (P2-e, ADR 0021): 80 everyday topics for a 2-3 minute student presentation, written
+# for PresenceAI (no third-party text). Each topic is used once in each of the 5 C2 groups, so a
+# topic's 5 transcripts differ only in the planted defect (and the hook). Released with the code.
+topics:
+  - why sleep matters for students
+  - learning a second language as an adult
+  - the benefits of walking to campus
+  - how libraries are changing
+  - reducing food waste at home
+  - the value of internships
+  - why people procrastinate
+  - choosing a first laptop
+  - the history of the bicycle
+  - urban gardens on rooftops
+  - how to prepare for a job interview
+  - the role of volunteering in a community
+  - saving money on a student budget
+  - why bees matter to farming
+  - learning to code without a computer science degree
+  - the effects of social media on attention
+  - public transport in growing cities
+  - why we should drink more water
+  - the rise of electric scooters
+  - keeping a personal journal
+  - how vaccines are tested
+  - the benefits of group study
+  - recycling plastics at home
+  - how weather forecasts are made
+  - the importance of first aid training
+  - working part time while studying
+  - the history of coffee
+  - why museums are worth visiting
+  - reading on paper versus on screens
+  - planning a small business
+  - the science of habits
+  - protecting your data online
+  - the benefits of team sports
+  - how solar panels work
+  - learning a musical instrument
+  - the future of remote work
+  - making cities safer for cyclists
+  - why we dream
+  - choosing a university major
+  - the history of the internet
+  - cooking simple healthy meals
+  - how to give useful feedback
+  - the value of travelling on a budget
+  - why water is scarce in some regions
+  - mentoring younger students
+  - how memory works when studying
+  - the benefits of nature walks
+  - building a personal website
+  - preparing for exams without stress
+  - the role of bridges in city design
+  - why we should repair instead of replace
+  - the impact of music on mood
+  - how to start running
+  - the history of chess
+  - electric cars and charging stations
+  - keeping plants alive indoors
+  - why handwriting still matters
+  - how online maps are made
+  - the benefits of learning to swim
+  - managing time during a project
+  - why some cities ban cars from the centre
+  - how earthquakes are measured
+  - the value of student clubs
+  - making a podcast with a phone
+  - why breakfast habits differ around the world
+  - the role of translators
+  - designing a good poster
+  - how batteries store energy
+  - the benefits of board games
+  - preparing a family emergency plan
+  - why some species migrate
+  - learning from failure
+  - how to read a nutrition label
+  - the history of the printing press
+  - making presentations accessible
+  - why trees cool down streets
+  - how to negotiate a fair price
+  - the benefits of a gap year
+  - how 3D printers work
+  - staying focused while working from home

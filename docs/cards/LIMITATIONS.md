@@ -139,6 +139,32 @@ Started 2026-11-17. Kept up to date as experiments report (FINAL_11 §6).
 - **Hedging is not measured** (deferred): it is not used by the rubric and is the measure
   closest to a confidence-style judgement.
 
+## Synthetic presentation transcripts (C2, ADR 0021)
+
+- **C2 transcripts are written by a language model (Qwen3.5-9B) and contain invented facts**:
+  made-up statistics, studies, "famous cases" and quotations. C2 labels describe the talk's
+  structure (central message, conclusion, supporting material, unexplained terms, hook), never
+  whether a fact is true, so C2 measures structure detection only.
+- **C2 transcripts are always labelled "synthetic"** wherever they are shown: thesis text,
+  figures, tables, the demo and any example in the app. They are never presented as a real
+  student's talk.
+- **C2 labels are the planted design and are unverified, except for the hand-checked
+  sample.** Transcripts are kept on length, format and echo checks only; no check confirms that
+  a planted defect is really there (the model's own yes/no check proved unreliable and is not
+  used). The owner's blinded hand check of 50 test transcripts gives the label-noise estimate,
+  and E4 is also reported on that subset against the owner's labels (ADR 0021).
+- **The planted labels are noisy.** In the hand check, 27 of 50 transcripts (54 %) had at
+  least one planted label the owner disagreed with. Per label: central message 30 %,
+  supporting material 16 %, conclusion 10 %, unexplained terms 4 %, hook 0 %. The planted
+  defect was confirmed in all 10 no-central-message, no-conclusion and undefined-jargon talks,
+  but **only 2 of 10 "no supporting material" talks really had none**: the owner found
+  supporting material in the other 8. E4's supporting-material and central-message results on
+  the planted labels are therefore unreliable; the hand-checked subset (50 items, one rater)
+  is their reference.
+- **One generator, one style.** All 400 transcripts come from one model with one prompt
+  template, so E4 on C2 says nothing about other writing styles or real speech; public talk
+  transcripts (TED, E4/E5) are the other check.
+
 ## Fillers and repetitions
 
 - **Until the verbatim model T1 exists (P4), filler and repetition counts are lower bounds**,
