@@ -28,7 +28,7 @@ Assumes ~18 working weeks. Two tracks from day one: **Build** and **Study/Writin
 | P5 Engine | 8–9 | Policies, library (~140 items), adaptive live prompts, simulator, progress page | Engine section of Ch. 3 | Full journey works; E9 plots |
 | P6 Vision + live loop | 10–11 | Live meters and prompts, posture/gesture/expression events, calibration, low-light / low-camera-fps notice, battery run | Robustness matrix B2 recorded (owner only) | E7 run; unstable measures disabled |
 | P7 Coach + evaluation prep | 12 | Guardrails, provider chain (prompt builder with `coach_prompt.yaml` rules), consent-(d) and payload tests (text only, names redacted; (d) off → no OpenRouter call), follow-ups, E13 rater page; optional Stage B deploy | E13 talk list, rating guide and E14 block order committed; two raters calibrated on 5 talks | Full journey dry run; **feature freeze** `v0.9-eval` |
-| P8 Experiments | 13–15 | Bug fixes only; run E1–E9, E11–E13 on public data and the frozen tag | E14 self-study sessions (13–14), blind expert rating for E13 (14–15), annotation | All experiments reproduce from clean clone |
+| P8 Experiments | 13–15 | Bug fixes only; run E1–E9, E11–E13 on public data and the frozen tag | E14 self-study sessions (13–14), blind expert rating for E13 (14–15), annotation; optional: hand-label more C2 test items for supporting material and central message, with a second rater on a subset for an agreement figure (ADR 0021 §4c) | All experiments reproduce from clean clone |
 | P9 Write + ship | 16–18 | Cards, README, demo fixtures, `v1.0` | E13/E14 analysis; Ch. 4–6; abstract; slides | Draft to supervisor; demo rehearsed twice |
 
 ## 3. Cut order if time runs short
