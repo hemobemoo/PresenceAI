@@ -71,6 +71,19 @@ def test_format_checks():
     assert "format" in checks.problems("<think>x</think>\n" + ok, "control")
     assert checks.problems(ok + " 45 percent", "no_supporting_material") == ["digits"]
     assert checks.problems(ok + " 45 percent", "control") == []
+    assert checks.problems("The last specific detail. " + ok, "control") == ["echo"]
+
+
+def test_check_reports_the_dev_test_split(tmp_path):
+    ok = " ".join(["word"] * 420)
+    picked = [ROWS[0], ROWS[1], next(r for r in ROWS if r["part"] != ROWS[0]["part"])]
+    path = tmp_path / "generated.jsonl"
+    path.write_text("".join(json.dumps({"id": r["id"], "text": ok}) + "\n" for r in picked))
+    result = checks.check(path)
+    want = Counter(str(r["part"]) for r in picked)
+    assert result["accepted_by_part"] == dict(sorted(want.items()))
+    assert sum(result["accepted_by_group_and_part"].values()) == 3
+    assert result["generated"] == 3 and result["missing"] == 397 and result["failing"] == 0
 
 
 gen = _load("generate_c2")

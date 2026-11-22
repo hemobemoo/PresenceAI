@@ -76,8 +76,12 @@ def check(path: Path) -> dict[str, object]:
             ),
             "rejected_ids": sorted(r["id"] for r in rej),
         }
+    parts = Counter(str(prompts[r["id"]]["part"]) for r in rows)
+    group_part = Counter(f"{prompts[r['id']]['group']}/{prompts[r['id']]['part']}" for r in rows)
     return {
         **loop,
+        "accepted_by_part": dict(sorted(parts.items())),
+        "accepted_by_group_and_part": dict(sorted(group_part.items())),
         "generated": len(rows),
         "missing": len(missing),
         "failing": len(failing),
