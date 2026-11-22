@@ -160,6 +160,18 @@ def _load(model_dir: Path) -> tuple[Any, Any]:
     return tok, model
 
 
+def _versions() -> dict[str, str]:
+    from importlib.metadata import PackageNotFoundError, version
+
+    out = {}
+    for name in ("torch", "transformers", "accelerate", "bitsandbytes", "huggingface_hub"):
+        try:
+            out[name] = version(name)
+        except PackageNotFoundError:
+            out[name] = "missing"
+    return out
+
+
 class Generator:
     def __init__(self, tok: Any, model: Any) -> None:
         self.tok, self.model = tok, model
@@ -209,7 +221,9 @@ def run(args: argparse.Namespace) -> None:
     verify(Path(args.model_dir))
     gen = Generator(*_load(Path(args.model_dir)))
     meta = {"model": REPO, "revision": REVISION, "quantization": "bnb-nf4-4bit-fp16",
-            "sampling": SAMPLING, "max_new_tokens": MAX_NEW_TOKENS}  # fmt: skip
+            "sampling": SAMPLING, "max_new_tokens": MAX_NEW_TOKENS,
+            "libraries": _versions()}  # fmt: skip
+    _log(f"libraries {meta['libraries']}")
     attempts = dict.fromkeys((p["id"] for p in todo), 0)
     if (out / "attempts.jsonl").is_file():  # resume: earlier sessions' attempts still count
         for line in (out / "attempts.jsonl").read_text("utf-8").splitlines():
@@ -217,6 +231,7 @@ def run(args: argparse.Namespace) -> None:
             if row.get("id") in attempts:
                 attempts[row["id"]] = max(attempts[row["id"]], int(row["attempt"]))
     queue = list(todo)
+    batches, kept, dropped = 0, 0, 0
     while queue:
         batch, queue = queue[: args.batch], queue[args.batch :]
         attempt_no = {p["id"]: attempts[p["id"]] + 1 for p in batch}
@@ -235,11 +250,15 @@ def run(args: argparse.Namespace) -> None:
             _append(out / "attempts.jsonl", {**row, "text": text})  # synthetic; for auditing
             if not problems:
                 _append(out / "generated.jsonl", {**row, "text": text, **meta})
+                kept += 1
             elif attempts[p["id"]] >= MAX_ATTEMPTS:
                 _append(out / "rejected.jsonl", {**row, "text": text, **meta})
+                dropped += 1
             else:
                 queue.append(p)
-        _log(f"batch of {len(batch)} in {seconds} s; {len(queue)} waiting")
+        batches += 1
+        _log(f"batch {batches}: {len(batch)} in {seconds} s; this session {kept} accepted, "
+             f"{dropped} rejected; {len(queue)} waiting")  # fmt: skip
 
 
 def main(argv: list[str] | None = None) -> int:

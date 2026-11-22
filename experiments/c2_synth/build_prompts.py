@@ -64,8 +64,9 @@ GROUP_RULES = {
     "no_conclusion": (
         "Early on, say in one sentence what the whole talk is trying to get across, and back "
         "up the points with concrete support; explain any specialised term in simple words. "
-        "Stop right after the last point of the body: no summary, no wrap-up, no closing "
-        "remark and no thanks at the end."
+        "End the talk inside the last point: the final sentence gives one more specific detail "
+        "about that point. The talk stops there, with no sentence about the topic as a whole, "
+        "the talk itself, or the future."
     ),
     "no_supporting_material": (
         "Early on, say in one sentence what the whole talk is trying to get across, come back "
