@@ -23,6 +23,12 @@ P3-a (ADR 0019 amendment, owner 2026-11-24):
 - **Partial levels are capped.** When at most half of a dimension's measures are computed
   (`configs/rubric.yaml: partial_cap`), its level is capped at 3; `capped_from` keeps the level
   the conditions reached, the score follows the capped level, and the finding says so.
+- **Absent by the user's choice is not counted** (owner, 2026-11-24, FINAL_05: camera off is
+  never penalised): measures that need the camera when it is off (any reason, including no
+  camera before P6) and measures in `opted_out` (opt-in measures not turned on, excluded skills)
+  are left out of M, for both "based on N of M" and the cap (`DimensionResult.excluded`).
+  Absences from system limits (Arabic, punctuation, an upload's missing time limit, a failed
+  stage) stay in M.
 - **Overrun** (`timing.overrun_s`) is measured against `limit_s`, the session's time limit, for
   recordings made in the app; `limit_s` None is an uploaded file.
 - **One failed finding must not crash the report** (`strict=False`, the app): an error while
@@ -120,9 +126,14 @@ def _dimension(
     missing: Mapping[str, str],
     t: RubricThresholds,
     cap: PartialCap,
+    excluded: frozenset[str] = frozenset(),
 ) -> DimensionResult:
-    keys = measures_of(d)
-    values = {k: (found[k].value if k in found else None) for k in keys}
+    every = measures_of(d)
+    # M leaves out measures absent by the user's choice; a dimension made only of such measures
+    # (none today) would keep them all, as missing
+    keys = tuple(k for k in every if k not in excluded) or every
+    left_out = tuple(k for k in every if k not in keys)
+    values = {k: (found[k].value if k in found and k in keys else None) for k in every}
     results = condition_results(d, values, t)
     level = level_from(results)
     measured = tuple(k for k in keys if k in found)
@@ -132,6 +143,7 @@ def _dimension(
             dimension=d.id,
             skills=d.skills,
             missing=absent,
+            excluded=left_out,
             conditions=results,
             not_measurable="; ".join(dict.fromkeys(missing[k] for k in absent)),
         )
@@ -149,6 +161,7 @@ def _dimension(
         confidence=confidence,
         measured=measured,
         missing=absent,
+        excluded=left_out,
         conditions=results,
         next_level=nxt,
     )
@@ -165,7 +178,7 @@ def _finding(
     lang_ = "ar" if lang == "ar" else "en"
     name = d.name_ar if lang_ == "ar" else d.name
     sep = text(lang_, "assessment.separator")
-    total = len(measures_of(d))
+    total = len(r.measured) + len(r.missing)  # M, without measures absent by user choice
     if r.level is None:
         reasons = sep.join(dict.fromkeys(missing[k] for k in r.missing))
         statement = text(
@@ -290,10 +303,19 @@ def assess(
     *,
     limit_s: float | None = None,
     strict: bool = True,
+    camera_on: bool = False,
+    opted_out: frozenset[str] = frozenset(),
 ) -> Assessment:
-    """Score every dimension. `strict=False` (the app) isolates a failure to its dimension."""
+    """Score every dimension. `strict=False` (the app) isolates a failure to its dimension.
+
+    `camera_on` False (always before P6): camera measures are absent by the user's choice and
+    left out of M. `opted_out`: further measure keys the user turned off or excluded."""
     lang = speech.transcript.language
     cap = load_partial_cap()
+    excluded = frozenset(opted_out) | (
+        frozenset() if camera_on
+        else frozenset(k for k, spec in rubric.measures.items() if spec.requires == "camera")
+    )  # fmt: skip
     found, missing = collect(rubric, thresholds, speech, text_report, cfg, followups, limit_s)
     answers = followups.transcripts if followups is not None else ()
     results: list[DimensionResult] = []
@@ -301,7 +323,7 @@ def assess(
     failed: list[str] = []
     for d in rubric.dimensions:
         try:
-            r = _dimension(d, found, missing, thresholds, cap)
+            r = _dimension(d, found, missing, thresholds, cap, excluded)
             f = _finding(rubric, d, r, found, missing, lang)
             f = _with_followup_notes(f, d, followups, lang, found, thresholds)
             if f.level is not None:
@@ -311,7 +333,9 @@ def assess(
                 raise
             # counts only: the dimension id and the error class, never transcript text
             log.warning("finding failed: dimension=%s error=%s", d.id, type(e).__name__)
-            r, f = _failed(d, lang, len(measures_of(d)))
+            every = measures_of(d)
+            total = sum(k not in excluded for k in every) or len(every)
+            r, f = _failed(d, lang, total)
             failed.append(d.id)
         results.append(r)
         findings.append(f)

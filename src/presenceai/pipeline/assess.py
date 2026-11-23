@@ -59,6 +59,7 @@ def assess_report(
     followups: FollowupReport | None = None,
     limit_s: float | None = None,
     strict: bool = True,
+    camera_on: bool = False,
 ) -> AssessmentReport:
     """Text analysis and rubric scoring on an existing speech report."""
     rubric = loader.load_rubric(scenario)
@@ -74,8 +75,9 @@ def assess_report(
         log.warning("stage failed: stage=text error=%s", type(e).__name__)
         text_report = _text_failed(speech, rubric, scenario)
     assessment = score.assess(
-        rubric, thresholds, speech, text_report, cfg, followups, limit_s=limit_s, strict=strict
-    )
+        rubric, thresholds, speech, text_report, cfg, followups, limit_s=limit_s, strict=strict,
+        camera_on=camera_on,
+    )  # fmt: skip
     return AssessmentReport(
         speech=speech, text=text_report, assessment=assessment, followups=followups
     )
@@ -96,6 +98,7 @@ def assess_file(
     embedder: Embedder | None = None,
     limit_s: float | None = None,
     strict: bool = True,
+    camera_on: bool = False,
     **speech_kwargs: Any,
 ) -> AssessmentReport:
     report = speech_analyze.analyze_file(
@@ -123,5 +126,5 @@ def assess_file(
         )  # fmt: skip
     return assess_report(
         report, parser=parser, cfg=speech, scenario=scenario, followups=fu, limit_s=limit_s,
-        strict=strict,
+        strict=strict, camera_on=camera_on,
     )  # fmt: skip

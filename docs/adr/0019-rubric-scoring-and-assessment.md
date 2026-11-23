@@ -27,6 +27,10 @@
 4. **Findings** (`schemas/rubric.py: Finding`): one per dimension, in observable wording from
    templates in `lang/{en,ar}/report.yaml` (level, level name, measures and their values), with
    the evidence of its computed measures and a confidence. A not-measurable dimension says why.
+   - **M leaves out measures absent by the user's choice** (owner, 2026-11-24; P3-a amendment
+     item 2a): camera measures when the camera is off, opted-out measures and excluded skills.
+     **Accepted consequence: Arabic camera-off Delivery is "based on 2 of 3 measures"** (fillers
+     and overrun) **and is not capped**; it keeps low confidence (base-Whisper fillers).
 5. **Verification** (`rubric/evidence.py`): a transcript quote must equal the transcript text at
    its offsets; a time span must lie within the recording. **For rule-based findings a failure is
    a bug**: `EvidenceError` is raised, the tests fail, and `assess` stops with it.
@@ -72,16 +76,34 @@ Owner's decisions in the P3 plan (2026-11-24); config keys `configs/rubric.yaml:
 2. **Partial-level cap.** When **at most half** of a dimension's measures are computed
    (computed share ≤ `partial_cap.max_share`, 0.5), the level is capped at
    `partial_cap.max_level` (3). The owner chose "at most half" over "fewer than half", so
-   **2 of 4 is capped**: Arabic Delivery from fillers plus overrun (2 of 4) cannot reach level 4.
+   **2 of 4 is capped** (for example, camera on and gaze missing); with the camera off, M is 3
+   (item 2a).
    - `DimensionResult.capped_from` / `Finding.capped_from` keep the level the conditions reached;
      `level` and the score y = (level − 1) / 3 follow the capped level; the confidence is
      unchanged (the lowest computed measure).
    - The finding adds: "Reached level 4, limited to level 3 because only 1 of 4 measures could
      be computed."
-   - Levels 1–3 are never changed by the cap. It applies to every rubric, so it also covers
+   - Levels 1–3 are never changed by the cap. The cap is the one deliberate exception to "a
+     missing measure never lowers a level". It applies to every rubric, so it also covers
      ADR 0022 open item 1 (Arabic follow-up handling on latency alone: 1 of 3, capped).
    - `next_level` is taken from the capped level, so a capped level 3 lists the unmet computed
      level-4 conditions; when none are unmet, the missing measures are the gap.
+2a. **What M counts** (owner, 2026-11-24, before merging P3-a). FINAL_05: camera off is never
+   penalised, so **a measure absent because of the user's choice is removed from M**, both for
+   the cap and for "based on N of M":
+   - measures that need the camera when the camera is off, for any reason, including no camera
+     before P6 (`score.assess(camera_on=False)`, the default until P6);
+   - opt-in measures not turned on and excluded skills (`opted_out`, for later phases).
+
+   **Absences caused by system limits still count in M:** Arabic, punctuation failure, no time
+   limit on an upload, a failed stage, and gaze missing while the camera is on.
+   `DimensionResult.excluded` lists the measures left out. Examples: an English upload with
+   the camera off has Delivery "based on 2 of 3" (fillers, mid-sentence pauses; overrun missing)
+   and is not capped; Arabic with the camera on and gaze missing for a system reason is 2 of 4
+   and capped. **Accepted consequence (owner): Arabic camera-off Delivery from fillers plus
+   overrun is 2 of 3 and not capped**; it still says "based on 2 of 3 measures", with low
+   confidence. A dimension made only of excluded measures (none today) would keep them, as
+   missing.
 3. **Overrun** (`rubric/derived.py: overrun`, planned in P3 since ADR 0017): seconds from the
    session's time limit to the end of the last speech region, 0 when within it; time evidence is
    the limit to the end of speech (or the whole talk when within it). The recording's start is

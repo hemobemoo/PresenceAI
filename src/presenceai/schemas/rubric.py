@@ -133,6 +133,8 @@ class DimensionResult(_Frozen):
     confidence: Confidence | None = None  # lowest among the measured (deciding) measures
     measured: tuple[str, ...] = ()  # measures that could be computed
     missing: tuple[str, ...] = ()  # measures that could not, never counted as low
+    # absent by the user's choice (camera off, opted out): left out of M ("N of M") and the cap
+    excluded: tuple[str, ...] = ()
     conditions: tuple[ConditionResult, ...] = ()
     next_level: tuple[ConditionResult, ...] = ()  # unmet measured conditions of level + 1
     not_measurable: str | None = None
@@ -157,7 +159,7 @@ class Finding(_Frozen):
     capped_from: int | None = Field(default=None, ge=2, le=4)  # as DimensionResult
     confidence: Confidence | None = None
     measured: int = Field(ge=0)  # "based on N of M measures", always shown
-    total: int = Field(ge=1)
+    total: int = Field(ge=1)  # M: the dimension's measures minus those absent by user choice
     evidence: tuple[Evidence, ...] = ()
 
     @model_validator(mode="after")
