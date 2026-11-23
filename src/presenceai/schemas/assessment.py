@@ -54,6 +54,9 @@ class TranscriptSpan(_Frozen):
 class Evidence(_Frozen):
     transcript: TranscriptSpan | None = None
     time: TimeSpan | None = None
+    # S2 follow-up answer this evidence comes from (0 = the first answer; ADR 0022): offsets and
+    # times are then into that answer's own recording. None: the main recording.
+    answer: int | None = Field(default=None, ge=0)
 
     @model_validator(mode="after")
     def _at_least_one(self) -> Self:

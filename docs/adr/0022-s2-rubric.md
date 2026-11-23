@@ -60,7 +60,8 @@
    question's words without answering). `fu_relevance_high/mid/low` are set between the two
    score distributions in S2-b and recorded here as provisional. **These pairs are calibration
    data only and are kept out of any test set.** Until then the three values in
-   `configs/rubric.yaml` are **placeholders, not used for scoring** (0.85 / 0.80 / 0.75).
+   `configs/rubric.yaml` were **placeholders, not used for scoring** (0.85 / 0.80 / 0.75);
+   set to one cut of 0.82 on 2026-11-24 (see "Relevance calibration").
    A similarity of words is not an understanding of whether the question was answered; the
    evasive pairs show how far an evasive answer can score.
 6. **Arabic.** Relevance is **not measured for Arabic** until there are Arabic calibration
@@ -138,6 +139,70 @@ answering) overlapping the real answers in similarity, **relevance only separate
 answers**, and this ADR records that limit. No word lists are added to catch evasion: it is a
 matter of meaning, and goes to the language-model judge slice (P7, consent switch (d)).
 
+## S2-c: follow-ups in the assessment (2026-11-24)
+
+`presenceai assess --scenario s2_project_defense --followups followups.json` scores S2. The
+file lists each follow-up's `question`, answer recording `file` (relative to the JSON file) and
+answer `window_s`; until P7 generates questions they are given as input (item 9). Each answer
+recording gets its own speech report; a file that cannot be read is a failed recording.
+
+- **Evidence names its answer:** `Evidence.answer` is the follow-up index; its quote and times
+  are into that answer's own recording, and verification checks them against that answer's
+  transcript (`rubric/evidence.py`). Latency evidence is the time from the end of the question
+  to the first speech; relevance evidence is the whole answer of the weaker answer; limitation
+  evidence quotes the cue's words (or, with no cue, every measured answer).
+- **Non-answer finding:** an answer with no speech over its whole window adds "Answer N: no
+  speech in the W s answer window." to the finding, with the window (0–W s of that answer) as
+  time evidence.
+- **Relevance is reported, not scored, until calibrated** (until 2026-11-24): `configs/rubric.yaml`
+  listed the `fu_relevance_*` keys under `uncalibrated`; a measure with a condition on one of them keeps its
+  value in the not-measurable reason ("measured 0.87, not scored until its thresholds are
+  calibrated") and its conditions are dropped (partial evidence, supervisor's condition 2).
+- **No follow-ups recorded:** the follow-up measures are missing ("no follow-up answer
+  recorded") and the dimension is not measurable, never level 1.
+- **Confidence:** latency medium (voice-activity onset, not yet checked on real answers),
+  limitation medium (lexicon match), relevance low (similarity of words; 20 calibration pairs).
+- Arabic answers: latency only (item 6); relevance and limitation give the reason "not
+  measured for ar answers".
+
+## Relevance calibration: the owner's 20 pairs (2026-11-24)
+
+The owner wrote 20 question-answer pairs about PresenceAI (`data/s2_relevance/pairs.txt`,
+git-ignored, SHA-256 `80b97b79…a733b`): 10 good answers, 5 evasive and 5 off-topic, each bad
+answer paired with a good answer's question. Scored with the app's relevance function
+(`experiments/s2_relevance/score_pairs.py`; ids, labels and scores only in
+`experiments/results/s2_relevance/scores.json`):
+
+| Label | n | min | median | max |
+|---|---|---|---|---|
+| good | 10 | 0.841 | 0.874 | 0.933 |
+| evasive | 5 | 0.908 | 0.934 | 0.943 |
+| off-topic | 5 | 0.776 | 0.790 | 0.842 |
+
+- **Evasive answers score above every good answer** (lowest evasive 0.908; only one good
+  answer, 0.933, is higher). The fallback above applies: **relevance only separates off-topic
+  answers**; evasion goes to P7.
+- **Off-topic and good touch:** the highest off-topic answer (0.842) is above the lowest good
+  answer (0.841). No value separates all 15 of them; the gap is narrow and rests on 15 answers
+  by one writer.
+
+**Decision (owner, 2026-11-24): `fu_relevance_high = mid = low = 0.82`, one on-topic cut,
+provisional.** `uncalibrated` is now empty, so relevance is scored.
+
+- **Relevance only flags clearly off-topic answers.** At 0.82 the calibration pairs give 0 of
+  10 good answers flagged (lowest good 0.841, margin 0.02), **3 of 5 off-topic caught**
+  (0.776, 0.785, 0.790; the two borderline ones, 0.835 and 0.842, pass) and **0 of 5 evasive
+  caught**.
+- **Why not 0.84:** it clears good answer #10 by only 0.0005, and real answers are spoken and
+  transcribed, which likely lowers similarity, while the weaker answer decides.
+- **All three thresholds are equal, so relevance only separates level 1 from level 2.
+  Levels 3 and 4 are decided by latency and the limitation cue.**
+- **The finding describes what was measured:** "Answer N shares little wording with the
+  question (similarity 0.78, below 0.82)". It never says the speaker did not answer or was
+  off-topic. Relevance keeps low confidence.
+- **The pairs were written, not spoken.** The cut is re-checked on the first real spoken S2
+  answers (open item 2, together with the 2 s latency caveat).
+
 ## Supervisor review (2026-11-23)
 
 Approved, subject to five conditions, all met in this ADR's PR or bound to S2-b:
@@ -164,8 +229,9 @@ item 1 below.
 1. **Arabic follow-up handling rests on latency alone.** With relevance and limitation cues not
    measured for Arabic, levels 4 and 3 could be reached on latency only, the same issue as
    ADR 0019 open item 1 (partial levels); the owner's P3 decision there covers this dimension.
-2. **Relevance thresholds** are set from the owner's 20 pairs (item 5), together with the
-   evasive-answer finding above.
+2. **Re-check on the first real spoken S2 answers:** the ≤ 2 s latency, which includes
+   reading time (supervisor's condition 3, item 4), and the 0.82 relevance cut, which rests on
+   20 written pairs by one writer ("Relevance calibration").
 3. ~~Supervisor review~~: done 2026-11-23 (above).
 4. **P3: retry before a non-answer is scored** ("We didn't hear an answer"; "Empty answers"
    item 4).

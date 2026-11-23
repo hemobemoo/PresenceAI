@@ -133,6 +133,7 @@ def analyze(
 
 class Scenario(StrEnum):
     S1 = "s1_presentation"
+    S2 = "s2_project_defense"
 
 
 @app.command()
@@ -153,17 +154,43 @@ def assess(
         Path | None,
         typer.Option("--out", dir_okay=False, help="Write the JSON report here (default: stdout)."),
     ] = None,
+    followups: Annotated[
+        Path | None,
+        typer.Option(
+            "--followups",
+            exists=True,
+            dir_okay=False,
+            readable=True,
+            help="S2 only: JSON with the follow-up questions and answer recordings.",
+        ),
+    ] = None,
 ) -> None:
     """Speech report, text report and rubric assessment with verified evidence (JSON)."""
     from presenceai.pipeline import assess as pipeline
     from presenceai.rubric.evidence import EvidenceError
+    from presenceai.schemas.followup import FollowupInput
     from presenceai.speech import asr
     from presenceai.text.nlp import spacy_parser
 
+    fu_input = None
+    if followups is not None:
+        if scenario is not Scenario.S2:
+            typer.echo("--followups is only used with --scenario s2_project_defense", err=True)
+            raise typer.Exit(2)
+        try:
+            fu_input = FollowupInput.model_validate_json(followups.read_text(encoding="utf-8"))
+        except ValueError as exc:
+            typer.echo(f"{followups.name}: not a valid follow-up file ({exc})", err=True)
+            raise typer.Exit(2) from None
     settings = get_settings()
     options = settings.asr
     model_name = model.value if model is not None else options.model
     try:
+        embedder = None
+        if fu_input is not None and lang is Lang.EN:
+            from presenceai.knowledge.embed import E5Embedder
+
+            embedder = E5Embedder()  # relevance (ADR 0022); English only
         whisper = asr.load_model(model_name, options)
         parser = spacy_parser() if lang is Lang.EN else pipeline.no_parser
         report = pipeline.assess_file(
@@ -175,6 +202,9 @@ def assess(
             speech=settings.speech,
             parser=parser,
             scenario=scenario.value,
+            followups=fu_input,
+            followups_dir=followups.parent if followups is not None else None,
+            embedder=embedder,
         )
     except EvidenceError:
         raise  # a rule-based finding with unverified evidence is a bug (ADR 0019)

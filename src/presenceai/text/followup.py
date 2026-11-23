@@ -5,7 +5,8 @@
   a "query" and the answer as a "passage", as e5 expects for question-answer retrieval. It is a
   similarity of words, not an understanding of whether the question was answered: an evasive
   answer that reuses the question's words can score high. English only until there are Arabic
-  calibration pairs; its thresholds are placeholders until the owner's 20 pairs are scored.
+  calibration pairs. One provisional on-topic cut (0.82) from the owner's 20 written pairs
+  flags only clearly off-topic answers; evasive answers pass (ADR 0022).
 - **Limitation cue:** an explicit limitation phrase from `lang/en/text_cues.yaml: limitation`
   (never a hedging phrase). A lexicon match, not an understanding of meaning.
 - **Summary:** the weaker answer decides (owner, 2026-11-23): the lowest relevance and the

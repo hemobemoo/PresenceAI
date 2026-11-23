@@ -7,10 +7,10 @@ every threshold is used by a condition or an anchor text, so no value is silentl
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Literal, cast
+from typing import Any, Literal, Self, cast
 
 import yaml
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from presenceai.evalconfig import REPO_ROOT
 from presenceai.lang import placeholders
@@ -35,6 +35,16 @@ class RubricThresholds(BaseModel):
     status: Literal["proposed", "provisional", "decided"]
     decided_in: str = Field(min_length=1)  # the ADR that records the values
     values: dict[str, float]
+    # Threshold keys whose values are placeholders: a measure with a condition on one of them
+    # is reported with its value but not scored (its conditions are dropped; ADR 0022).
+    uncalibrated: tuple[str, ...] = ()
+
+    @model_validator(mode="after")
+    def _uncalibrated_exist(self) -> Self:
+        unknown = set(self.uncalibrated) - set(self.values)
+        if unknown:
+            raise ValueError(f"uncalibrated names unknown thresholds: {sorted(unknown)}")
+        return self
 
 
 def _yaml(path: Path) -> dict[str, Any]:

@@ -141,6 +141,14 @@ Started 2026-11-17. Kept up to date as experiments report (FINAL_11 §6).
   the speaker: a pause before a short closing line is a mid-sentence pause unless Whisper puts
   a full stop there, and one well-chosen unusual word counts as an undefined term. Proposed
   fixes are open items for the threshold review after E5/E6 (ADR 0017 open item 4).
+- **Follow-up relevance does not catch evasive answers.** It is the similarity of the question
+  and the answer's words. On the developer's 20 calibration pairs, the 5 evasive answers (which
+  repeat the question's words without answering) scored above every good answer but one, so
+  relevance only separates off-topic answers, and even there the highest off-topic answer
+  (0.842) scored just above the lowest good one (0.841). The provisional cut (0.82) flags only
+  clearly off-topic answers: 3 of 5 off-topic and 0 of 5 evasive answers in calibration. The
+  pairs were written, not spoken; the cut is re-checked on real spoken answers. Evasion is left
+  to the optional language-model judge (P7). Relevance is English only (ADR 0022).
 - **Hedging is not measured** (deferred): it is not used by the rubric and is the measure
   closest to a confidence-style judgement.
 

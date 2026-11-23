@@ -85,9 +85,9 @@ VALUE dimension: none (S2 follow-up handling, FINAL_05 §1; not part of the VALU
 
 | Level | Anchor (observable) | Conditions | Arabic |
 |---|---|---|---|
-| 4 Capstone | Every answer has a similarity of at least 0.85 to its question, every answer starts within 2 s of the end of the question, and at least one answer names an explicit limitation of the project. | `followup.relevance_min` ≥ 0.85 (`fu_relevance_high`)<br>`followup.latency_max_s` ≤ 2 (`fu_latency_4`)<br>`followup.limitation_acknowledged` = yes | only `followup.latency_max_s` |
-| 3 Milestone 3 | Every answer has a similarity of at least 0.8 to its question, and every answer starts within 4 s of the end of the question. | `followup.relevance_min` ≥ 0.8 (`fu_relevance_mid`)<br>`followup.latency_max_s` ≤ 4 (`fu_latency_3`) | only `followup.latency_max_s` |
-| 2 Milestone 2 | Every answer has a similarity of at least 0.75 to its question. | `followup.relevance_min` ≥ 0.75 (`fu_relevance_low`) | not measured (missing, not low) |
+| 4 Capstone | Every answer has a similarity of at least 0.82 to its question, every answer starts within 2 s of the end of the question, and at least one answer names an explicit limitation of the project. | `followup.relevance_min` ≥ 0.82 (`fu_relevance_high`)<br>`followup.latency_max_s` ≤ 2 (`fu_latency_4`)<br>`followup.limitation_acknowledged` = yes | only `followup.latency_max_s` |
+| 3 Milestone 3 | Every answer has a similarity of at least 0.82 to its question, and every answer starts within 4 s of the end of the question. | `followup.relevance_min` ≥ 0.82 (`fu_relevance_mid`)<br>`followup.latency_max_s` ≤ 4 (`fu_latency_3`) | only `followup.latency_max_s` |
+| 2 Milestone 2 | Every answer has a similarity of at least 0.82 to its question. | `followup.relevance_min` ≥ 0.82 (`fu_relevance_low`) | not measured (missing, not low) |
 | 1 Benchmark | At least one answer is less similar to its question than level 2 requires. | default | default when any measure is computable |
 
 Left out (not observable by rules): whether the answer is correct, or actually answers the question (similarity of words only); honesty, confidence or composure under questioning (never inferred; AGENTS.md rule 3); limitations acknowledged without one of the listed phrases (lexicon match only).
@@ -145,9 +145,9 @@ The Arabic anchors translate the reviewed English wording. They are a draft for 
 
 | Level | Arabic anchor |
 |---|---|
-| 4 متقدّم | تشابه كل إجابة مع سؤالها 0.85 على الأقل، وتبدأ كل إجابة خلال 2 ث على الأكثر من نهاية السؤال، وتذكر إجابة واحدة على الأقل حدًّا صريحًا للمشروع. |
-| 3 مرحلي 3 | تشابه كل إجابة مع سؤالها 0.8 على الأقل، وتبدأ كل إجابة خلال 4 ث على الأكثر من نهاية السؤال. |
-| 2 مرحلي 2 | تشابه كل إجابة مع سؤالها 0.75 على الأقل. |
+| 4 متقدّم | تشابه كل إجابة مع سؤالها 0.82 على الأقل، وتبدأ كل إجابة خلال 2 ث على الأكثر من نهاية السؤال، وتذكر إجابة واحدة على الأقل حدًّا صريحًا للمشروع. |
+| 3 مرحلي 3 | تشابه كل إجابة مع سؤالها 0.82 على الأقل، وتبدأ كل إجابة خلال 4 ث على الأكثر من نهاية السؤال. |
+| 2 مرحلي 2 | تشابه كل إجابة مع سؤالها 0.82 على الأقل. |
 | 1 أساسي | إجابة واحدة على الأقل تشابه سؤالها أقل مما في المستوى 2. |
 
 ## Definitions
@@ -168,7 +168,7 @@ The Arabic anchors translate the reviewed English wording. They are a draft for 
 - **counting supporting items**: One item per sentence and type: a sentence with two statistics counts as one statistic; a sentence with a statistic and an example counts as one of each. Items is the number of such (sentence, type) pairs; types is the number of distinct types.
 - **missing measure**: A measure that cannot be computed (camera off, no time limit, Arabic content, unreliable punctuation, no follow-up answer recorded) is missing, never a low value: its conditions are dropped. A dimension with no computable measure is "not measurable", never level 1.
 - **follow-up answer**: The speaker's answer to one follow-up question, recorded on its own. The recording starts automatically when the question ends (no manual start), so the answer's timeline begins at the end of the question (ADR 0022).
-- **relevance**: Cosine similarity between the question and the answer transcript, from the knowledge-base embedding model (multilingual-e5-small, configs/models.yaml). The weaker answer decides: the lowest of the answers' similarities. A similarity of words, not an understanding of whether the question was answered; an evasive answer that reuses the question's words can score high. Thresholds are calibrated on 20 question-answer pairs written by the owner (ADR 0022); until then the relevance values shown are placeholders and are not used for scoring.
+- **relevance**: Cosine similarity between the question and the answer transcript, from the knowledge-base embedding model (multilingual-e5-small, configs/models.yaml). The weaker answer decides: the lowest of the answers' similarities. A similarity of words, not an understanding of whether the question was answered; an evasive answer that reuses the question's words can score high. One on-topic cut calibrated on 20 question-answer pairs written by the owner (ADR 0022): it flags only answers that share little wording with the question.
 - **response latency**: Seconds from the start of the answer recording (the end of the question) to the first speech onset found by voice activity detection. The weaker answer decides: the longest latency. If the question is shown as text, the reading time is included.
 - **limitation cue**: An explicit limitation phrase in an answer ("one limitation", "we did not test", "future work"), from a lexicon. Hedging phrases ("I'm not sure", "maybe", "I think") are not limitation cues. A lexicon match, not an understanding of meaning.
 
@@ -191,9 +191,9 @@ The Arabic anchors translate the reviewed English wording. They are a draft for 
 | `pauses.mid_sentence_per_min` | available | none | en | Mid-sentence pauses (see the definition) per minute of speaking time (first speech onset to last offset, as rate.wpm), from the pause events of speech/pauses.py (rubric/derived.py). Missing when the punctuation is unreliable or for Arabic. |
 | `vision.gaze.at_camera_share` | planned (P6) | camera | en, ar | Share of speaking time with gaze zone at_camera (ADR 0004); camera on only. |
 | `timing.overrun_s` | planned (P3) | session_limit | en, ar | Seconds spoken beyond the session's time limit (0 when within it). |
-| `followup.relevance_min` | planned (S2-c) | followups | en | Lowest question-answer similarity over the follow-up answers (see relevance). Not measured for Arabic until there are Arabic calibration pairs (ADR 0022). |
-| `followup.latency_max_s` | planned (S2-c) | followups | en, ar | Longest response latency over the follow-up answers (see response latency). Missing for an answer whose recording has no speech onset; then only this condition is dropped. |
-| `followup.limitation_acknowledged` | planned (S2-c) | followups | en | Yes if at least one follow-up answer contains a limitation cue. |
+| `followup.relevance_min` | available | followups | en | Lowest question-answer similarity over the follow-up answers (see relevance). Not measured for Arabic until there are Arabic calibration pairs (ADR 0022). |
+| `followup.latency_max_s` | available | followups | en, ar | Longest response latency over the follow-up answers (see response latency). Missing for an answer whose recording has no speech onset; then only this condition is dropped. |
+| `followup.limitation_acknowledged` | available | followups | en | Yes if at least one follow-up answer contains a limitation cue. |
 
 ## Source and licence
 

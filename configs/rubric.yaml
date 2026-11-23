@@ -56,6 +56,8 @@ s2_project_defense:
   # S1's values unchanged.
   status: provisional
   decided_in: ADR 0022
+  # Placeholder thresholds (reported, not scored) would be listed here; none since 2026-11-24.
+  uncalibrated: []
   values:
     opening_share_pct: 20       # as S1
     closing_share_pct: 15       # as S1
@@ -97,8 +99,11 @@ s2_project_defense:
     del_overrun_3: 10           # S1 15, scaled
     del_overrun_2: 20           # S1 30, scaled
     # follow-up handling (the weaker of the 2 answers decides; ADR 0022)
-    fu_relevance_high: 0.85     # PLACEHOLDER: set from the owner's 20 calibration pairs (S2-b)
-    fu_relevance_mid: 0.80      # PLACEHOLDER: as above; not used for scoring before calibration
-    fu_relevance_low: 0.75      # PLACEHOLDER: as above
+    # relevance: ONE on-topic cut (owner, 2026-11-24, from the 20 written calibration pairs;
+    # re-check on the first real spoken answers). All three equal, so levels 3 and 4 are decided
+    # by latency and the limitation cue. It flags only clearly off-topic answers.
+    fu_relevance_high: 0.82
+    fu_relevance_mid: 0.82
+    fu_relevance_low: 0.82
     fu_latency_4: 2             # seconds from the end of the question to speech onset (owner)
     fu_latency_3: 4             # (owner, 2026-11-23); no data
