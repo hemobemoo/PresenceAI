@@ -23,13 +23,14 @@ from presenceai.schemas.followup import AnswerMeasures, FollowupSummary
 from presenceai.text.document import match
 
 
-def relevance(question: str, answer: str, embedder: Embedder) -> float:
+def relevance(question: str, answer: str, embedder: Embedder) -> float | None:
     """Cosine similarity of the question (query) and the answer (passage).
 
-    An empty answer has nothing to match and scores 0.0: it is a measured non-answer, not a
-    measure that could not be computed."""
+    Empty text gives None (missing): the text alone cannot tell silence from a failed
+    transcription (owner, 2026-11-23). A real non-answer is decided from the audio
+    (`pipeline/followup.py: measure_answer`)."""
     if not answer.strip():
-        return 0.0
+        return None
     q = embedder.embed([question], "query")[0]
     a = embedder.embed([answer], "passage")[0]
     return float(np.dot(q, a) / max(float(np.linalg.norm(q) * np.linalg.norm(a)), 1e-12))

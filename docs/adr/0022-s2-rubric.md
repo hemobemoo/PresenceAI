@@ -102,13 +102,41 @@ lists them as planned in S2-c):
 - **Latency** (`speech/latency.py`): the first speech onset in the answer recording; no speech
   region gives no latency (missing, never low).
 - **Relevance** (`text/followup.py`): cosine similarity, question embedded as an e5 "query" and
-  the answer as a "passage". **An empty answer transcript scores 0.0**: it is a measured
-  non-answer, not a measure that could not be computed (proposed; owner to confirm).
+  the answer as a "passage". **Empty text gives no relevance (missing)**: the text alone
+  cannot tell silence from a failed transcription (owner, 2026-11-23; see "Empty answers").
 - **Weaker answer** (`text/followup.py: summarise`): lowest relevance, longest latency; an
   answer whose value is missing is left out; a limitation counts if any answer has one.
 - **Relevance does not score until calibrated:** S2-c emits `followup.relevance_min` only after
   `fu_relevance_*` are set from the owner's 20 pairs; until then it is reported as information
   and its conditions are dropped ("based on N of M measures", item 2 below).
+
+## Empty answers: "no answer given" is decided from the audio (owner, 2026-11-23)
+
+`pipeline/followup.py: measure_answer` gives each answer a status (`schemas/followup.py`):
+
+1. **No answer given** (`no_answer`): the recording passed its checks, **the full answer window
+   elapsed and the voice detector found no speech**. This is a measured non-answer: relevance
+   0.0, and the latency counts as the whole window, which is longer than every latency limit,
+   so it fails every latency condition and is not missing. The finding uses the answer window
+   as its time evidence (S2-c). The dimension scores **level 1**.
+2. **Speech found but the transcript is empty** (`speech_untranscribed`): relevance is missing;
+   the latency is known (the speech onset).
+3. **The recording failed** (`recording_failed`): relevance and latency are missing.
+
+   In cases 2 and 3 the partial-evidence wording applies (ADR 0019: "based on N of M
+   measures"). A recording that stopped before the window ended with no speech found
+   (`incomplete`) is also missing, never a non-answer.
+4. **In the app (P3), before a non-answer is scored, the user is offered a retry** ("We didn't
+   hear an answer").
+
+Tests: `tests/unit/test_followup.py` covers all three cases, the early stop and a full answer.
+
+## Evasive answers (owner, 2026-11-23)
+
+If the owner's calibration pairs show evasive answers (reusing the question's words without
+answering) overlapping the real answers in similarity, **relevance only separates off-topic
+answers**, and this ADR records that limit. No word lists are added to catch evasion: it is a
+matter of meaning, and goes to the language-model judge slice (P7, consent switch (d)).
 
 ## Supervisor review (2026-11-23)
 
@@ -136,5 +164,8 @@ item 1 below.
 1. **Arabic follow-up handling rests on latency alone.** With relevance and limitation cues not
    measured for Arabic, levels 4 and 3 could be reached on latency only, the same issue as
    ADR 0019 open item 1 (partial levels); the owner's P3 decision there covers this dimension.
-2. **Relevance thresholds** are set in S2-b from the owner's 20 pairs (item 5).
+2. **Relevance thresholds** are set from the owner's 20 pairs (item 5), together with the
+   evasive-answer finding above.
 3. ~~Supervisor review~~: done 2026-11-23 (above).
+4. **P3: retry before a non-answer is scored** ("We didn't hear an answer"; "Empty answers"
+   item 4).
