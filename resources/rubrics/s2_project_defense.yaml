@@ -1,0 +1,460 @@
+# S2 project defense with skeptical follow-up: rubric v0.1, reviewed by the supervisor (ADR 0022,
+# accepted). A 90-second project explanation, then 2 follow-up questions (FINAL_01 §3). The
+# Arabic wording is a draft pending a native-speaker review (ADR 0016 open item 4).
+#
+# Licence: CC BY-NC-SA 4.0. Adapted from the Oral Communication VALUE Rubric (AAC&U). This file
+# is a derivative: its first five dimensions and the four-level scale follow the VALUE rubric and
+# reuse the S1 wording reviewed by the supervisor (ADR 0017), with counts scaled to 90 s. The
+# sixth dimension, follow-up handling, is not part of the VALUE rubric (FINAL_05 §1). The anchor
+# wording is our own, rewritten as observable behaviour with numbers; no VALUE sentence is copied.
+#
+# How a level is reached: every condition of the level must hold; the dimension's level is the
+# highest level reached; level 1 is the default. A measure that cannot be computed (camera off,
+# no session limit, Arabic content) is left out of the conditions, never counted against the
+# speaker. If no measure of a dimension can be computed, the dimension is "not measurable".
+#
+# Threshold values: configs/rubric.yaml, all provisional: re-estimate after E5/E6 (ADR 0022).
+# The 90 s counts are scaled from S1 by ratio (about 90/150), not derived from data.
+
+id: s2_project_defense
+version: "0.1"
+status: accepted
+licence: CC BY-NC-SA 4.0
+attribution: >-
+  Adapted from the Oral Communication VALUE Rubric, Association of American Colleges and
+  Universities (AAC&U), CC BY-NC-SA 4.0. Changes: anchors rewritten as observable behaviour with
+  provisional numbers; parts that no rule can observe are listed as left out.
+source:
+  title: Oral Communication VALUE Rubric (AAC&U)
+  copy_url: https://uttyler.edu/offices/continuous-improvement-and-accreditation/files/value-oral-communication.pdf
+  copy_sha256: ba41c136a1d5ddd1fd0a3399ded4d8e3a10d38f9064305f27862024bcd667bde
+  note: >-
+    The Binghamton copy named in FINAL_07 returned 404 on 2026-11-21. This copy (UT Tyler) shows
+    no licence line; the licence CC BY-NC-SA 4.0 is the one recorded in DATA_SOURCES.md
+    (checked 2026-11-11). Owner's decision, 2026-11-21.
+
+definitions:
+  opening: The first {opening_share_pct:g} % of the words of the transcript.
+  closing: The last {closing_share_pct:g} % of the words of the transcript.
+  body: The words between the opening and the closing.
+  sentence: >-
+    A stretch of words ended by a sentence mark in the transcript. English sentence positions
+    rest on Whisper's punctuation (ADR 0014); for Arabic they are not measurable (ADR 0011,
+    ADR 0016).
+  thesis sentence: >-
+    The first sentence in the opening that matches the thesis-cue lexicon ("today I will", "my
+    main point is", "I will show that"). A lexicon match, not an understanding of meaning.
+  key phrase: >-
+    The lemmatised head nouns of the noun phrases of the thesis sentence (spaCy en_core_web_sm;
+    stop words left out). Matching is by lemma, so "result" and "results" match; it is not an
+    exact-string match and not a match of meaning.
+  key-phrase recurrence: A sentence of the body that contains at least one key phrase.
+  introduction cue: >-
+    A purpose or preview phrase in the opening ("in this talk", "I will cover"), from a lexicon.
+  conclusion cue: >-
+    A closing phrase in the closing ("in conclusion", "to sum up"), from a lexicon. Both cues are
+    lexicon matches, not an understanding of the structure.
+  transition: >-
+    A sequence or transition cue between parts ("first", "next", "finally"), from a lexicon.
+  hook: >-
+    One of the first {hook_sentences:g} sentences is a question, contains a statistic, opens a
+    story ("when I was", "last year"), is a quotation, or makes a contrast claim ("most people
+    think ... but"). Pattern rules; the false-positive rate is measured on C2 (P2-e).
+  mid-sentence pause: >-
+    A pause of at least {mid_pause_min_s:g} s between two words of the same sentence, by the transcript's
+    punctuation (ADR 0011). English rests on Whisper's punctuation (ADR 0014); not measurable for
+    Arabic (ADR 0016).
+  supporting-material types: >-
+    statistic (a number, percentage or quantity about the topic; list numbers, years used as
+    dates and times of day are not counted); example ("for example", "for instance", "such as");
+    analogy ("like a", "as if", "imagine", "similar to"); quotation (words in quotation marks, or
+    "said" / "according to" with a source). All are pattern rules.
+  counting supporting items: >-
+    One item per sentence and type: a sentence with two statistics counts as one statistic; a
+    sentence with a statistic and an example counts as one of each. Items is the number of such
+    (sentence, type) pairs; types is the number of distinct types.
+  missing measure: >-
+    A measure that cannot be computed (camera off, no time limit, Arabic content, unreliable
+    punctuation, no follow-up answer recorded) is missing, never a low value: its conditions are
+    dropped. A dimension with no computable measure is "not measurable", never level 1.
+  follow-up answer: >-
+    The speaker's answer to one follow-up question, recorded on its own. The recording starts
+    automatically when the question ends (no manual start), so the answer's timeline begins at
+    the end of the question (ADR 0022).
+  relevance: >-
+    Cosine similarity between the question and the answer transcript, from the knowledge-base
+    embedding model (multilingual-e5-small, configs/models.yaml). The weaker answer decides: the
+    lowest of the answers' similarities. A similarity of words, not an understanding of whether
+    the question was answered; an evasive answer that reuses the question's words can score
+    high. Thresholds are calibrated on 20 question-answer pairs written by the owner (ADR 0022);
+    until then the relevance values shown are placeholders and are not used for scoring.
+  response latency: >-
+    Seconds from the start of the answer recording (the end of the question) to the first speech
+    onset found by voice activity detection. The weaker answer decides: the longest latency. If
+    the question is shown as text, the reading time is included.
+  limitation cue: >-
+    An explicit limitation phrase in an answer ("one limitation", "we did not test", "future
+    work"), from a lexicon. Hedging phrases ("I'm not sure", "maybe", "I think") are not
+    limitation cues. A lexicon match, not an understanding of meaning.
+
+scale:
+  4: Capstone
+  3: Milestone 3
+  2: Milestone 2
+  1: Benchmark
+
+scale_ar:
+  4: "متقدّم"
+  3: "مرحلي 3"
+  2: "مرحلي 2"
+  1: "أساسي"
+
+measures:
+  text.central_message.statements:
+    status: available
+    requires: none
+    languages: [en]
+    description: Sentences that match the thesis-cue lexicon, anywhere in the talk.
+  text.central_message.in_opening:
+    status: available
+    requires: none
+    languages: [en]
+    description: Yes if the thesis sentence is in the opening.
+  text.central_message.in_closing:
+    status: available
+    requires: none
+    languages: [en]
+    description: Yes if a sentence of the closing contains at least one key phrase.
+  text.central_message.key_phrase_recurrences:
+    status: available
+    requires: none
+    languages: [en]
+    description: Key-phrase recurrences in the body (sentences, not occurrences).
+  text.organization.framing_parts:
+    status: available
+    requires: none
+    languages: [en]
+    description: >-
+      0-2: one for an introduction cue in the opening, one for a conclusion cue in the closing
+      (lexicon matches).
+  text.organization.transitions:
+    status: available
+    requires: none
+    languages: [en]
+    description: Transitions in the talk, at most one per sentence.
+  text.hook.present:
+    status: available
+    requires: none
+    languages: [en]
+    description: Yes if a hook is found (see the definition).
+  text.support.items:
+    status: available
+    requires: none
+    languages: [en]
+    description: Supporting items, counted as (sentence, type) pairs.
+  text.support.types:
+    status: available
+    requires: none
+    languages: [en]
+    description: Distinct supporting-material types found (0-4).
+  text.language.undefined_terms:
+    status: available
+    requires: none
+    languages: [en]
+    description: >-
+      Rare terms (word frequency below the rare-word threshold) used without a definition cue
+      ("which means", "that is") in the same or the next sentence.
+  text.language.mean_sentence_words:
+    status: available
+    requires: none
+    languages: [en]
+    description: >-
+      Mean words per sentence. Missing when the punctuation is unreliable (ADR 0011): then only
+      this condition is dropped and the language dimension rests on undefined terms.
+  fillers.per_100_words:
+    status: available
+    requires: none
+    languages: [en, ar]
+    description: >-
+      Hesitations per 100 words (speech/fillers.py). With base Whisper this is a lower bound and
+      Arabic is low confidence (ADR 0012).
+  pauses.mid_sentence_per_min:
+    status: available
+    requires: none
+    languages: [en]
+    description: >-
+      Mid-sentence pauses (see the definition) per minute of speaking time (first speech onset
+      to last offset, as rate.wpm), from the pause events of speech/pauses.py
+      (rubric/derived.py). Missing when the punctuation is unreliable or for Arabic.
+  vision.gaze.at_camera_share:
+    status: planned
+    planned_in: P6
+    requires: camera
+    languages: [en, ar]
+    description: Share of speaking time with gaze zone at_camera (ADR 0004); camera on only.
+  timing.overrun_s:
+    status: planned
+    planned_in: P3
+    requires: session_limit
+    languages: [en, ar]
+    description: Seconds spoken beyond the session's time limit (0 when within it).
+  followup.relevance_min:
+    status: planned
+    planned_in: S2-b
+    requires: followups
+    languages: [en]
+    description: >-
+      Lowest question-answer similarity over the follow-up answers (see relevance). Not measured
+      for Arabic until there are Arabic calibration pairs (ADR 0022).
+  followup.latency_max_s:
+    status: planned
+    planned_in: S2-b
+    requires: followups
+    languages: [en, ar]
+    description: >-
+      Longest response latency over the follow-up answers (see response latency). Missing for
+      an answer whose recording has no speech onset; then only this condition is dropped.
+  followup.limitation_acknowledged:
+    status: planned
+    planned_in: S2-b
+    requires: followups
+    languages: [en]
+    description: Yes if at least one follow-up answer contains a limitation cue.
+
+dimensions:
+  - id: central_message
+    name: Central message
+    name_ar: "الرسالة الرئيسية"
+    value_dimension: Central Message
+    skills: [central_message]
+    levels:
+      - level: 4
+        text_ar: "تظهر جملة تذكر الفكرة الرئيسية ضمن أول {opening_share_pct:g}٪ من الكلمات، وتُذكر مرة أخرى ضمن آخر {closing_share_pct:g}٪، وتتكرر عباراتها الأساسية في {cm_recurrences_min:g} جمل على الأقل من متن العرض."
+        text: >-
+          A sentence stating the main point appears within the first {opening_share_pct:g} % of
+          the words, is stated again within the last {closing_share_pct:g} %, and its key phrases
+          recur in at least {cm_recurrences_min:g} sentences of the body.
+        conditions:
+          - {measure: text.central_message.in_opening, op: present}
+          - {measure: text.central_message.in_closing, op: present}
+          - {measure: text.central_message.key_phrase_recurrences, op: ">=", threshold: cm_recurrences_min}
+      - level: 3
+        text_ar: "تظهر جملة تذكر الفكرة الرئيسية ضمن أول {opening_share_pct:g}٪ من الكلمات، وتُذكر مرة أخرى ضمن آخر {closing_share_pct:g}٪."
+        text: >-
+          A sentence stating the main point appears within the first {opening_share_pct:g} % of
+          the words and is stated again within the last {closing_share_pct:g} %.
+        conditions:
+          - {measure: text.central_message.in_opening, op: present}
+          - {measure: text.central_message.in_closing, op: present}
+      - level: 2
+        text_ar: "تُذكر الفكرة الرئيسية صراحةً في {cm_statements_min:g} جملة على الأقل، ولكن ليس في البداية والخاتمة معًا."
+        text: >-
+          The main point is stated explicitly in at least {cm_statements_min:g} sentence, but not
+          both in the opening and in the closing.
+        conditions:
+          - {measure: text.central_message.statements, op: ">=", threshold: cm_statements_min}
+      - level: 1
+        text_ar: "لا توجد جملة تذكر الفكرة الرئيسية؛ يمكن استنتاجها من المحتوى فقط."
+        text: No sentence states the main point; it can only be inferred from the content.
+    left_out:
+      - compelling, memorable
+      - consistent with the supporting material (judge slice, ADR 0017)
+
+  - id: organization
+    name: Organization
+    name_ar: "التنظيم"
+    value_dimension: Organization
+    skills: [organization, opening_conclusion]
+    levels:
+      - level: 4
+        text_ar: "يتضمن العرض عبارة تمهيدية ضمن أول {opening_share_pct:g}٪ وعبارة ختامية ضمن آخر {closing_share_pct:g}٪، و{org_transitions_high:g} عبارات انتقال على الأقل بين الأجزاء، ومدخلًا افتتاحيًا (سؤال أو إحصاء أو قصة أو اقتباس أو ادعاء مقارن) في أول {hook_sentences:g} جمل."
+        text: >-
+          The talk has an introduction cue in the first {opening_share_pct:g} % and a conclusion
+          cue in the last {closing_share_pct:g} %, at least {org_transitions_high:g} transitions
+          between parts, and an opening hook (question, statistic, story, quotation or contrast
+          claim) in the first {hook_sentences:g} sentences.
+        conditions:
+          - {measure: text.organization.framing_parts, op: ">=", threshold: org_framing_full}
+          - {measure: text.organization.transitions, op: ">=", threshold: org_transitions_high}
+          - {measure: text.hook.present, op: present}
+      - level: 3
+        text_ar: "يتضمن العرض عبارة تمهيدية وعبارة ختامية، و{org_transitions_mid:g} عبارات انتقال على الأقل بين الأجزاء."
+        text: >-
+          The talk has both an introduction cue and a conclusion cue, and at least
+          {org_transitions_mid:g} transitions between parts.
+        conditions:
+          - {measure: text.organization.framing_parts, op: ">=", threshold: org_framing_full}
+          - {measure: text.organization.transitions, op: ">=", threshold: org_transitions_mid}
+      - level: 2
+        text_ar: "يتضمن العرض {org_framing_min:g} على الأقل من الاثنتين: عبارة تمهيدية أو عبارة ختامية."
+        text: >-
+          The talk has at least {org_framing_min:g} of the two: an introduction cue or a
+          conclusion cue.
+        conditions:
+          - {measure: text.organization.framing_parts, op: ">=", threshold: org_framing_min}
+      - level: 1
+        text_ar: "لا توجد عبارة تمهيدية ولا عبارة ختامية."
+        text: No introduction cue and no conclusion cue are found.
+    left_out:
+      - skilful; makes the content cohesive
+      - purposeful choice of pattern (chronological, problem-solution)
+
+  - id: language
+    name: Language
+    name_ar: "اللغة"
+    value_dimension: Language
+    skills: [language_clarity]
+    levels:
+      - level: 4
+        text_ar: "لا يُستخدم أي مصطلح نادر (تكراره أقل من {lang_rare_zipf:g} على مقياس Zipf) دون تعريف، ومتوسط طول الجملة {lang_sentence_max_4:g} كلمة على الأكثر."
+        text: >-
+          No rare term (word frequency below {lang_rare_zipf:g} on the Zipf scale) is used without
+          a definition, and sentences average at most {lang_sentence_max_4:g} words.
+        conditions:
+          - {measure: text.language.undefined_terms, op: "<=", threshold: lang_undefined_max_4}
+          - {measure: text.language.mean_sentence_words, op: "<=", threshold: lang_sentence_max_4}
+      - level: 3
+        text_ar: "يُستخدم {lang_undefined_max_3:g} مصطلح نادر على الأكثر دون تعريف، ومتوسط طول الجملة {lang_sentence_max_3:g} كلمة على الأكثر."
+        text: >-
+          At most {lang_undefined_max_3:g} rare term is used without a definition, and sentences
+          average at most {lang_sentence_max_3:g} words.
+        conditions:
+          - {measure: text.language.undefined_terms, op: "<=", threshold: lang_undefined_max_3}
+          - {measure: text.language.mean_sentence_words, op: "<=", threshold: lang_sentence_max_3}
+      - level: 2
+        text_ar: "تُستخدم {lang_undefined_max_2:g} مصطلحات نادرة على الأكثر دون تعريف، ومتوسط طول الجملة {lang_sentence_max_2:g} كلمة على الأكثر."
+        text: >-
+          At most {lang_undefined_max_2:g} rare terms are used without a definition, and sentences
+          average at most {lang_sentence_max_2:g} words.
+        conditions:
+          - {measure: text.language.undefined_terms, op: "<=", threshold: lang_undefined_max_2}
+          - {measure: text.language.mean_sentence_words, op: "<=", threshold: lang_sentence_max_2}
+      - level: 1
+        text_ar: "تُستخدم مصطلحات نادرة أكثر دون تعريف، أو تكون الجمل أطول في المتوسط."
+        text: More rare terms are used without a definition, or sentences are longer on average.
+    left_out:
+      - imaginative, memorable, compelling
+      - appropriate to the audience; free from bias (no rule can observe these)
+
+  - id: supporting_material
+    name: Supporting material
+    name_ar: "المواد الداعمة"
+    value_dimension: Supporting Material
+    skills: [supporting_material]
+    levels:
+      - level: 4
+        text_ar: "{sup_items_high:g} عناصر داعمة على الأقل من {sup_types_high:g} أنواع مختلفة على الأقل (إحصاءات، أمثلة، تشبيهات، اقتباسات)."
+        text: >-
+          At least {sup_items_high:g} supporting items of at least {sup_types_high:g} different
+          types (statistics, examples, analogies, quotations).
+        conditions:
+          - {measure: text.support.items, op: ">=", threshold: sup_items_high}
+          - {measure: text.support.types, op: ">=", threshold: sup_types_high}
+      - level: 3
+        text_ar: "{sup_items_mid:g} عناصر داعمة على الأقل من {sup_types_mid:g} أنواع مختلفة على الأقل."
+        text: >-
+          At least {sup_items_mid:g} supporting items of at least {sup_types_mid:g} different
+          types.
+        conditions:
+          - {measure: text.support.items, op: ">=", threshold: sup_items_mid}
+          - {measure: text.support.types, op: ">=", threshold: sup_types_mid}
+      - level: 2
+        text_ar: "{sup_items_min:g} عنصر داعم على الأقل."
+        text: At least {sup_items_min:g} supporting item.
+        conditions:
+          - {measure: text.support.items, op: ">=", threshold: sup_items_min}
+      - level: 1
+        text_ar: "لا يوجد إحصاء أو مثال أو تشبيه أو اقتباس."
+        text: No statistic, example, analogy or quotation is found.
+    left_out:
+      - credibility and relevance of the sources
+      - whether each item supports its claim; unsupported claims (judge slice, ADR 0017)
+      - levels 4 and 3 are stretch goals for a 90-second explanation (scaled from S1)
+
+  - id: delivery
+    name: Delivery
+    name_ar: "الإلقاء"
+    value_dimension: Delivery
+    skills: [fluency, pacing, audience_gaze, concision_timing]
+    levels:
+      - level: 4
+        text_ar: "{del_fillers_4:g} كلمات حشو على الأكثر لكل 100 كلمة، و{del_mid_pauses_4:g} وقفة على الأكثر في الدقيقة داخل الجملة مدتها {mid_pause_min_s:g} ث أو أكثر، والنظر نحو الكاميرا {del_gaze_4:.0%} على الأقل من وقت الكلام (عند تشغيل الكاميرا)، ودون تجاوز للوقت المحدد."
+        text: >-
+          At most {del_fillers_4:g} fillers per 100 words, at most {del_mid_pauses_4:g}
+          mid-sentence pause of {mid_pause_min_s:g} s or more per minute, gaze toward the camera for at least
+          {del_gaze_4:.0%} of speaking time (camera on), and no time over the limit.
+        conditions:
+          - {measure: fillers.per_100_words, op: "<=", threshold: del_fillers_4}
+          - {measure: pauses.mid_sentence_per_min, op: "<=", threshold: del_mid_pauses_4}
+          - {measure: vision.gaze.at_camera_share, op: ">=", threshold: del_gaze_4}
+          - {measure: timing.overrun_s, op: "<=", threshold: del_overrun_4}
+      - level: 3
+        text_ar: "{del_fillers_3:g} كلمات حشو على الأكثر لكل 100 كلمة، و{del_mid_pauses_3:g} وقفات على الأكثر في الدقيقة داخل الجملة مدتها {mid_pause_min_s:g} ث أو أكثر، والنظر نحو الكاميرا {del_gaze_3:.0%} على الأقل من وقت الكلام (عند تشغيل الكاميرا)، و{del_overrun_3:g} ثانية على الأكثر بعد الوقت المحدد."
+        text: >-
+          At most {del_fillers_3:g} fillers per 100 words, at most {del_mid_pauses_3:g}
+          mid-sentence pauses of {mid_pause_min_s:g} s or more per minute, gaze toward the camera for at least
+          {del_gaze_3:.0%} of speaking time (camera on), and at most {del_overrun_3:g} s over the
+          limit.
+        conditions:
+          - {measure: fillers.per_100_words, op: "<=", threshold: del_fillers_3}
+          - {measure: pauses.mid_sentence_per_min, op: "<=", threshold: del_mid_pauses_3}
+          - {measure: vision.gaze.at_camera_share, op: ">=", threshold: del_gaze_3}
+          - {measure: timing.overrun_s, op: "<=", threshold: del_overrun_3}
+      - level: 2
+        text_ar: "{del_fillers_2:g} كلمات حشو على الأكثر لكل 100 كلمة، و{del_mid_pauses_2:g} وقفات على الأكثر في الدقيقة داخل الجملة مدتها {mid_pause_min_s:g} ث أو أكثر، والنظر نحو الكاميرا {del_gaze_2:.0%} على الأقل من وقت الكلام (عند تشغيل الكاميرا)، و{del_overrun_2:g} ثانية على الأكثر بعد الوقت المحدد."
+        text: >-
+          At most {del_fillers_2:g} fillers per 100 words, at most {del_mid_pauses_2:g}
+          mid-sentence pauses of {mid_pause_min_s:g} s or more per minute, gaze toward the camera for at least
+          {del_gaze_2:.0%} of speaking time (camera on), and at most {del_overrun_2:g} s over the
+          limit.
+        conditions:
+          - {measure: fillers.per_100_words, op: "<=", threshold: del_fillers_2}
+          - {measure: pauses.mid_sentence_per_min, op: "<=", threshold: del_mid_pauses_2}
+          - {measure: vision.gaze.at_camera_share, op: ">=", threshold: del_gaze_2}
+          - {measure: timing.overrun_s, op: "<=", threshold: del_overrun_2}
+      - level: 1
+        text_ar: "كلمات حشو أكثر، أو وقفات أكثر داخل الجمل، أو نظر أقل نحو الكاميرا، أو تجاوز للوقت أكبر مما في المستوى 2."
+        text: More fillers, more mid-sentence pauses, less gaze toward the camera or more time over the limit than level 2.
+    left_out:
+      - posture and gesture (camera; P6 measures have no thresholds yet, shown as information)
+      - vocal expressiveness (pitch and loudness variation are opt-in only, ADR 0013)
+      - speech rate (judged only against the speaker's own band, never an absolute norm; P5)
+      - the VALUE wording about how the speaker appears (an inference about the person, which the
+        app never makes; AGENTS.md rule 3)
+
+  - id: followup_handling
+    name: Follow-up handling
+    name_ar: "التعامل مع أسئلة المتابعة"
+    value_dimension: none (S2 follow-up handling, FINAL_05 §1; not part of the VALUE rubric)
+    skills: [followup_handling]
+    levels:
+      - level: 4
+        text_ar: "تشابه كل إجابة مع سؤالها {fu_relevance_high:g} على الأقل، وتبدأ كل إجابة خلال {fu_latency_4:g} ث على الأكثر من نهاية السؤال، وتذكر إجابة واحدة على الأقل حدًّا صريحًا للمشروع."
+        text: >-
+          Every answer has a similarity of at least {fu_relevance_high:g} to its question, every
+          answer starts within {fu_latency_4:g} s of the end of the question, and at least one
+          answer names an explicit limitation of the project.
+        conditions:
+          - {measure: followup.relevance_min, op: ">=", threshold: fu_relevance_high}
+          - {measure: followup.latency_max_s, op: "<=", threshold: fu_latency_4}
+          - {measure: followup.limitation_acknowledged, op: present}
+      - level: 3
+        text_ar: "تشابه كل إجابة مع سؤالها {fu_relevance_mid:g} على الأقل، وتبدأ كل إجابة خلال {fu_latency_3:g} ث على الأكثر من نهاية السؤال."
+        text: >-
+          Every answer has a similarity of at least {fu_relevance_mid:g} to its question, and
+          every answer starts within {fu_latency_3:g} s of the end of the question.
+        conditions:
+          - {measure: followup.relevance_min, op: ">=", threshold: fu_relevance_mid}
+          - {measure: followup.latency_max_s, op: "<=", threshold: fu_latency_3}
+      - level: 2
+        text_ar: "تشابه كل إجابة مع سؤالها {fu_relevance_low:g} على الأقل."
+        text: Every answer has a similarity of at least {fu_relevance_low:g} to its question.
+        conditions:
+          - {measure: followup.relevance_min, op: ">=", threshold: fu_relevance_low}
+      - level: 1
+        text_ar: "إجابة واحدة على الأقل تشابه سؤالها أقل مما في المستوى 2."
+        text: At least one answer is less similar to its question than level 2 requires.
+    left_out:
+      - whether the answer is correct, or actually answers the question (similarity of words only)
+      - honesty, confidence or composure under questioning (never inferred; AGENTS.md rule 3)
+      - limitations acknowledged without one of the listed phrases (lexicon match only)

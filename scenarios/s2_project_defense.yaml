@@ -1,0 +1,17 @@
+# S2 project defense with skeptical follow-up (FINAL_01 §3): secondary scenario.
+id: s2_project_defense
+duration_s: [90, 90]            # a 90-second project explanation (FINAL_01 §3)
+followups: 2                    # follow-up questions after the explanation; generated in P7
+answer_recording: auto_start    # each answer recording starts when the question ends (ADR 0022)
+rubric: s2_project_defense      # resources/rubrics/s2_project_defense.yaml (accepted, ADR 0022)
+skills:                         # engine skills the rubric feeds (FINAL_05 §1)
+  - central_message
+  - organization
+  - opening_conclusion
+  - language_clarity
+  - supporting_material
+  - fluency
+  - pacing
+  - audience_gaze
+  - concision_timing
+  - followup_handling
