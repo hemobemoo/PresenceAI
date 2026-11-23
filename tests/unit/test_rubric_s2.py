@@ -83,7 +83,7 @@ def test_followup_measures_need_followups_and_relevance_is_not_measured_in_arabi
     fu = {k: m for k, m in rubric.measures.items() if k.startswith("followup.")}
     assert set(fu) == {"followup.relevance_min", "followup.latency_max_s",
                        "followup.limitation_acknowledged"}  # fmt: skip
-    assert all(m.requires == "followups" and m.planned_in == "S2-b" for m in fu.values())
+    assert all(m.requires == "followups" and m.planned_in == "S2-c" for m in fu.values())
     assert fu["followup.relevance_min"].languages == ("en",)
     assert fu["followup.limitation_acknowledged"].languages == ("en",)
     assert set(fu["followup.latency_max_s"].languages) == {"en", "ar"}

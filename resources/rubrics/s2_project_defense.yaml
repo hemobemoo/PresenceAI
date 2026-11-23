@@ -200,7 +200,7 @@ measures:
     description: Seconds spoken beyond the session's time limit (0 when within it).
   followup.relevance_min:
     status: planned
-    planned_in: S2-b
+    planned_in: S2-c
     requires: followups
     languages: [en]
     description: >-
@@ -208,7 +208,7 @@ measures:
       for Arabic until there are Arabic calibration pairs (ADR 0022).
   followup.latency_max_s:
     status: planned
-    planned_in: S2-b
+    planned_in: S2-c
     requires: followups
     languages: [en, ar]
     description: >-
@@ -216,7 +216,7 @@ measures:
       an answer whose recording has no speech onset; then only this condition is dropped.
   followup.limitation_acknowledged:
     status: planned
-    planned_in: S2-b
+    planned_in: S2-c
     requires: followups
     languages: [en]
     description: Yes if at least one follow-up answer contains a limitation cue.
