@@ -136,6 +136,11 @@ Started 2026-11-17. Kept up to date as experiments report (FINAL_11 §6).
   into a rare word (or a rare spelling) is counted as jargon without a definition.
 - **Sentences come from Whisper's punctuation.** With unreliable punctuation, sentence length is
   not measured and the other content measures have low confidence.
+- **Rhetorical quality and persuasiveness are not scored.** The rubric counts observable
+  features; it does not credit a well-made sentence and can count a deliberate choice against
+  the speaker: a pause before a short closing line is a mid-sentence pause unless Whisper puts
+  a full stop there, and one well-chosen unusual word counts as an undefined term. Proposed
+  fixes are open items for the threshold review after E5/E6 (ADR 0017 open item 4).
 - **Hedging is not measured** (deferred): it is not used by the rubric and is the measure
   closest to a confidence-style judgement.
 
