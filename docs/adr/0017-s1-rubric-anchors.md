@@ -124,3 +124,27 @@ and never infers confidence or other traits (AGENTS.md rule 3).
 2. **Length-aware thresholds** (e.g. transitions or supporting items per minute instead of per
    talk): test on C2 whether fixed per-scenario counts favour longer talks.
 3. **Re-estimate every threshold after E5/E6** (κ against human labels, calibration).
+4. **Rhetorical choices can be penalised** (owner, 2026-11-23; for the S1 threshold review after
+   E5/E6, not built now). The rubric does not credit a well-made sentence and can count a
+   deliberate choice against the speaker. Each item names the check to write with it:
+   - **(a) Emphasis pause.** A deliberate pause before a short closing line ("The answer is…
+     [2 s] nothing.") counts as a mid-sentence pause unless Whisper happens to punctuate it, so
+     the result depends on punctuation, not intent. Proposed rule: a mid-sentence pause of
+     ≥ 1 s followed by at most about 4 words to the sentence end is reported as an **emphasis
+     pause, not penalised**. Check it on B1 and E2 (C1) and record the false-negative risk: a
+     real hesitation near a sentence end would also be excused. Test: a pause before the last
+     4 words is an emphasis pause and is not counted in `pauses.mid_sentence_per_min`; a pause
+     before the last 5 or more words is still counted.
+   - **(b) Undefined terms.** A single well-chosen unusual word counts as an undefined term.
+     Proposed rule: count a rare word as undefined **only if it appears at least twice**,
+     since jargon tends to repeat and a single vivid word does not. Check it against the C2
+     undefined-jargon defect (its planted labels were not flagged as unreliable; ADR 0021 §4b,
+     unexplained terms 4 % error). Test: one rare word used once is not counted; the same word
+     used twice without a definition is counted once.
+   - **(c) Rhetorical quality and persuasiveness are not scored** at all (the "left out" lists
+     in `docs/rubric/S1_ANCHORS.md`); recorded in LIMITATIONS. Partly addressed by item 5.
+5. **"Strongest line" finding for the language-model judge slice** (owner, 2026-11-23; P7,
+   consent (d)). The judge's ADR must include a "strongest line" finding: the judge quotes the
+   user's most effective sentence and says why it works. It is **praise and coaching only, with
+   no score and no level**, and must pass the same quote check (rapidfuzz ≥ 85 against the
+   transcript) and the same guardrails as every other judge claim (AGENTS.md rules 3 and 4).
