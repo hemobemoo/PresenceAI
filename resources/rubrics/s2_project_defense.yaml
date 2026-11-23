@@ -1,5 +1,6 @@
-# S2 project defense with skeptical follow-up: rubric v0.1, DRAFT for the supervisor's review
-# (ADR 0022, proposed). A 90-second project explanation, then 2 follow-up questions (FINAL_01 §3).
+# S2 project defense with skeptical follow-up: rubric v0.1, reviewed by the supervisor (ADR 0022,
+# accepted). A 90-second project explanation, then 2 follow-up questions (FINAL_01 §3). The
+# Arabic wording is a draft pending a native-speaker review (ADR 0016 open item 4).
 #
 # Licence: CC BY-NC-SA 4.0. Adapted from the Oral Communication VALUE Rubric (AAC&U). This file
 # is a derivative: its first five dimensions and the four-level scale follow the VALUE rubric and
@@ -17,7 +18,7 @@
 
 id: s2_project_defense
 version: "0.1"
-status: draft
+status: accepted
 licence: CC BY-NC-SA 4.0
 attribution: >-
   Adapted from the Oral Communication VALUE Rubric, Association of American Colleges and

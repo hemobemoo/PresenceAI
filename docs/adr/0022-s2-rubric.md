@@ -1,8 +1,8 @@
 # 0022 — S2 project-defense rubric: S1 scaled to 90 s, plus follow-up handling (P2, S2)
 
-- Status: **proposed** (2026-11-23). The owner approved the design on 2026-11-23. The ADR is
-  accepted after the **supervisor reviews the anchors** (`docs/rubric/S2_ANCHORS.md`). S2-b
-  (follow-up measures) and S2-c (assessment) go ahead while the review is pending.
+- Status: **accepted** (2026-11-23), **reviewed by the supervisor**: approved subject to five
+  conditions, recorded under "Supervisor review" below. Rubric v0.1 accepted; thresholds
+  provisional, as for S1.
 - Date: 2026-11-23
 - Decider: project owner; anchors reviewed by the supervisor
 - Plan reference: FINAL_01 §3 (S2: 90 s explanation, then 2 follow-up questions), FINAL_05 §1
@@ -53,7 +53,8 @@
    | 2 | relevance_min ≥ `fu_relevance_low` (both answers, since the weaker decides) |
    | 1 | default |
 
-   The latency values (2 s, 4 s) are the owner's, with no data.
+   The latency values (2 s, 4 s) are the owner's, with no data. **The ≤ 2 s Capstone latency
+   includes reading time (item 8) and is likely to be relaxed after the first real S2 pilots.**
 5. **Relevance calibration** (owner, 2026-11-23). The owner writes 20 question–answer pairs:
    10 on-topic and 10 off-topic, about 5 of the off-topic ones **evasive** (they reuse the
    question's words without answering). `fu_relevance_high/mid/low` are set between the two
@@ -68,8 +69,8 @@
 7. **Limitation cues** (owner, 2026-11-23): explicit limitation phrases only ("one limitation",
    "we did not test", "future work", …). The list **must not overlap hedging**: phrases such as
    "I'm not sure", "maybe" or "I think" are not limitation cues. Hedging is not measured
-   (ADR 0018), so there is no hedge lexicon yet; S2-b adds a test that no limitation cue is a
-   common hedging phrase.
+   (ADR 0018), so there is no hedge lexicon yet. **The test that no limitation cue is a hedging
+   phrase is written in S2-b, before the follow-up measures go live** (supervisor's condition).
 8. **Response latency replaces the FINAL_04 event-log method** (owner, 2026-11-23). Each answer
    recording **starts automatically when the question ends** (no manual start), so latency is
    the first speech onset in that answer recording (voice activity detection), with no event
@@ -89,10 +90,31 @@
 - S2 inherits S1's limitations (lexicon matches, lower-bound fillers, Whisper punctuation) and
   ADR 0017 open item 2 (length-aware thresholds): the ratio scaling is a stopgap for that item.
 
+## Supervisor review (2026-11-23)
+
+Approved, subject to five conditions, all met in this ADR's PR or bound to S2-b:
+
+1. The S2 row is in `resources/rubrics/README.md`, whose render note names `S2_ANCHORS.md`.
+2. **Partial evidence applies to `followup_handling` unchanged** (ADR 0019 item 3, no new
+   policy): its dimension result and finding state how many of its measures were computed
+   ("based on N of M measures"). This includes **Arabic, where follow-up handling rests on
+   latency alone** ("based on 1 of 3 measures"), and **early English runs before the relevance
+   thresholds are calibrated**, when relevance is not used for scoring.
+3. The ≤ 2 s Capstone latency includes reading time and is likely to be relaxed after the
+   first real S2 pilots (item 4).
+4. The no-hedge test for limitation cues is written in S2-b, before the measures go live
+   (item 7).
+5. **The Arabic wording stays a draft** pending a native-speaker review (ADR 0016 open item 4),
+   with the same placeholder discipline as S1: `text_ar` uses exactly the placeholders of
+   `text`, and the loader rejects any difference.
+
+The owner's two additions were approved: `lang_undefined_max_2` scaled from 3 to 2, and open
+item 1 below.
+
 ### Open items
 
 1. **Arabic follow-up handling rests on latency alone.** With relevance and limitation cues not
    measured for Arabic, levels 4 and 3 could be reached on latency only, the same issue as
    ADR 0019 open item 1 (partial levels); the owner's P3 decision there covers this dimension.
 2. **Relevance thresholds** are set in S2-b from the owner's 20 pairs (item 5).
-3. **Supervisor review** of the S2 anchors, then this ADR is accepted.
+3. ~~Supervisor review~~: done 2026-11-23 (above).

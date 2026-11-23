@@ -12,6 +12,9 @@ American Colleges and Universities (AAC&U), licensed under CC BY-NC-SA 4.0
 | File | Status | Decision |
 |---|---|---|
 | `s1_presentation.yaml` | v0.2, accepted (reviewed by the supervisor); thresholds provisional | ADR 0017 |
+| `s2_project_defense.yaml` | v0.1, accepted (reviewed by the supervisor); thresholds provisional; relevance thresholds pending calibration (S2-b) | ADR 0022 |
 
-Thresholds are in `configs/rubric.yaml`. The anchors document is generated with
-`uv run python scripts/render_rubric_review.py` into `docs/rubric/S1_ANCHORS.md`.
+Thresholds are in `configs/rubric.yaml`. The anchors documents are generated with
+`uv run python scripts/render_rubric_review.py --rubric <id>` into `docs/rubric/S1_ANCHORS.md`
+(`s1_presentation`, the default) and `docs/rubric/S2_ANCHORS.md` (`s2_project_defense`). The
+Arabic wording in both is a draft pending a native-speaker review (ADR 0016 open item 4).

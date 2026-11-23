@@ -47,7 +47,8 @@ def test_s1_dimensions_plus_followup_handling(rubric: Rubric):
     for d in rubric.dimensions:
         assert set(d.skills) <= ENGINE_SKILLS, d.id
     assert _dim(rubric, "followup_handling").skills == ("followup_handling",)
-    assert rubric.status == "draft" and rubric.licence == "CC BY-NC-SA 4.0"
+    assert rubric.status == "accepted" and rubric.version == "0.1"  # supervisor, 2026-11-23
+    assert rubric.licence == "CC BY-NC-SA 4.0"
 
 
 def test_counts_scaled_by_ratio_and_everything_else_as_s1(thresholds: Any):
@@ -124,10 +125,11 @@ def test_scenario_points_to_the_rubric(rubric: Rubric):
     assert set(scenario["skills"]) == {s for d in rubric.dimensions for s in d.skills}
 
 
-def test_review_document_is_generated_and_marked_unreviewed(rubric: Rubric, thresholds: Any):
+def test_review_document_is_generated_and_marked_reviewed(rubric: Rubric, thresholds: Any):
     doc = review.review_markdown(rubric, thresholds)
     assert REVIEW_DOC.read_text("utf-8") == doc, (
         "run: uv run python scripts/render_rubric_review.py --rubric s2_project_defense"
     )
-    assert "not yet reviewed" in doc and "no follow-up answer recorded" in doc
+    assert "reviewed by the supervisor" in doc and "not yet reviewed" not in doc
+    assert "no follow-up answer recorded" in doc
     assert "`followup_handling` is added" in doc

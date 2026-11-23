@@ -49,7 +49,7 @@ s1_presentation:
     del_overrun_2: 30
 
 s2_project_defense:
-  # ADR 0022 (proposed; the supervisor reviews the anchors before it is accepted). Every value is
+  # ADR 0022 (accepted 2026-11-23, reviewed by the supervisor). Every value is
   # PROVISIONAL: re-estimate after E5/E6. S2 is a 90-second explanation, so the counts are S1's
   # SCALED BY RATIO (about 90/150 = 0.6, rounded, at least 1), NOT DERIVED FROM DATA. Shares
   # (opening, closing), the hook window and the rates (per 100 words, per minute, gaze share) are
