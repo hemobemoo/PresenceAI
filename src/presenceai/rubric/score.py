@@ -15,7 +15,9 @@ Every finding's evidence is verified; a failure in a rule-based finding raises E
 S2 (ADR 0022): the follow-up measures come from a `FollowupReport`; their evidence names the
 answer it comes from and is verified against that answer's transcript. A measure with a
 condition on an uncalibrated threshold (`RubricThresholds.uncalibrated`) is reported with its
-value but not scored. A follow-up answered with silence adds the answer window to the finding.
+value but not scored. A follow-up answered with silence adds the answer window to the finding;
+an answer below the lowest relevance threshold is named in observable words ("shares little
+wording with the question"), never as "off-topic" or "did not answer".
 """
 
 from __future__ import annotations
@@ -176,26 +178,55 @@ def _finding(
     )
 
 
-def _with_silent_answers(
-    f: Finding, d: Dimension, followups: FollowupReport | None, lang: str
+def _with_followup_notes(
+    f: Finding,
+    d: Dimension,
+    followups: FollowupReport | None,
+    lang: str,
+    found: Mapping[str, Measurement],
+    thresholds: RubricThresholds,
 ) -> Finding:
-    """Name each follow-up answered with silence, with its answer window as time evidence."""
+    """Name each follow-up answered with silence (its answer window as time evidence) and each
+    scored answer whose relevance is below the lowest relevance threshold."""
     if followups is None or f.level is None:
         return f
     if not any(k.startswith("followup.") for k in measures_of(d)):
         return f
+    lang_ = _report_lang(lang)
     silent = [a for a in followups.summary.answers if a.status == "no_answer" and a.window_s]
-    if not silent:
+    limit = thresholds.values.get("fu_relevance_low")
+    low = [
+        a
+        for a in followups.summary.answers
+        if "followup.relevance_min" in found
+        and limit is not None
+        and a.status == "answered"
+        and a.relevance is not None
+        and a.relevance < limit
+    ]
+    if not silent and not low:
         return f
     notes = " ".join(
-        text(_report_lang(lang), "assessment.followup_no_answer", answer=a.index + 1,
-             window=a.window_s)
-        for a in silent
+        [
+            text(lang_, "assessment.followup_low_relevance", answer=a.index + 1,
+                 value=round(a.relevance or 0.0, 2), limit=limit)
+            for a in low
+        ]
+        + [
+            text(lang_, "assessment.followup_no_answer", answer=a.index + 1, window=a.window_s)
+            for a in silent
+        ]
     )  # fmt: skip
     windows = tuple(
         Evidence(time=TimeSpan(start_s=0.0, end_s=a.window_s or 0.0), answer=a.index)
         for a in silent
     )
+    for a in low:  # quote each low-relevance answer, not only the one that decides
+        t = followups.transcripts[a.index]
+        if t is not None and t.words:
+            w = t.words
+            span = TimeSpan(start_s=w[0].start_s, end_s=w[-1].end_s)
+            windows += (Evidence(transcript=t.span(0, len(w)), time=span, answer=a.index),)
     return f.model_copy(
         update={
             "statement": f"{f.statement} {notes}",
@@ -216,7 +247,9 @@ def assess(
     found, missing = collect(rubric, thresholds, speech, text_report, cfg, followups)
     results = tuple(_dimension(d, found, missing, thresholds) for d in rubric.dimensions)
     findings = tuple(
-        _with_silent_answers(_finding(rubric, d, r, found, missing, lang), d, followups, lang)
+        _with_followup_notes(
+            _finding(rubric, d, r, found, missing, lang), d, followups, lang, found, thresholds
+        )
         for d, r in zip(rubric.dimensions, results, strict=True)
     )
     answers = followups.transcripts if followups is not None else ()

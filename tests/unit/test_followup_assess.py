@@ -215,3 +215,28 @@ def test_assess_command_with_followups(
 
     s1 = CliRunner().invoke(cli.app, args)  # --followups needs the S2 scenario
     assert s1.exit_code == 2
+
+
+OFF = "Lunch is served in the cafeteria from noon every weekday."
+
+
+def test_config_scores_relevance_once_calibrated(sb: Any, fake_parser: Any, speech_cfg: Any):
+    fu = _fu(sb, [_answer(sb, A1), _answer(sb, A2)])
+    assert fu.measurements[RELEVANCE].confidence.value == "low"  # relevance stays low confidence
+    r, f = _part(_assess(sb, fake_parser, speech_cfg, fu, loader.load_thresholds(S2)))
+    assert RELEVANCE in r.measured and f.measured == 3
+
+
+def test_low_relevance_is_described_as_what_was_measured(sb: Any, fake_parser: Any,
+                                                         speech_cfg: Any):  # fmt: skip
+    fu = _fu(sb, [_answer(sb, A2), _answer(sb, OFF)])
+    rel = fu.summary.answers[1].relevance
+    assert rel is not None and rel < 0.82
+    r, f = _part(_assess(sb, fake_parser, speech_cfg, fu, loader.load_thresholds(S2)))
+    assert r.level == 1  # the weaker answer is below the one on-topic cut
+    assert "Answer 2 shares little wording with the question" in f.statement
+    assert "below 0.82" in f.statement
+    for banned in ("off-topic", "off topic", "did not answer", "didn't answer", "you"):
+        assert banned not in f.statement.casefold(), banned
+    quoted = [e for e in f.evidence if e.answer == 1 and e.transcript is not None]
+    assert quoted and quoted[0].transcript is not None and quoted[0].transcript.text == OFF

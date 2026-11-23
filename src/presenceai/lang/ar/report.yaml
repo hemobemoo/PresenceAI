@@ -102,6 +102,7 @@ assessment:
   uncalibrated: "القيمة المقيسة {value:g}، ولا تدخل في التقييم حتى تُعايَر حدودها"
   followup_not_measured_language: "لا يُقاس لإجابات اللغة {language} (ADR 0022)"
   followup_no_answer: "الإجابة {answer}: لا كلام خلال نافذة الإجابة البالغة {window:g} ث."
+  followup_low_relevance: "الإجابة {answer} تشترك مع السؤال في القليل من الكلمات (التشابه {value:g}، أقل من {limit:g})."
   measures:
     text:
       central_message:

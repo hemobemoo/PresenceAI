@@ -60,7 +60,8 @@
    question's words without answering). `fu_relevance_high/mid/low` are set between the two
    score distributions in S2-b and recorded here as provisional. **These pairs are calibration
    data only and are kept out of any test set.** Until then the three values in
-   `configs/rubric.yaml` are **placeholders, not used for scoring** (0.85 / 0.80 / 0.75).
+   `configs/rubric.yaml` were **placeholders, not used for scoring** (0.85 / 0.80 / 0.75);
+   set to one cut of 0.82 on 2026-11-24 (see "Relevance calibration").
    A similarity of words is not an understanding of whether the question was answered; the
    evasive pairs show how far an evasive answer can score.
 6. **Arabic.** Relevance is **not measured for Arabic** until there are Arabic calibration
@@ -153,8 +154,8 @@ recording gets its own speech report; a file that cannot be read is a failed rec
 - **Non-answer finding:** an answer with no speech over its whole window adds "Answer N: no
   speech in the W s answer window." to the finding, with the window (0–W s of that answer) as
   time evidence.
-- **Relevance is reported, not scored, until calibrated:** `configs/rubric.yaml` lists the
-  `fu_relevance_*` keys under `uncalibrated`; a measure with a condition on one of them keeps its
+- **Relevance is reported, not scored, until calibrated** (until 2026-11-24): `configs/rubric.yaml`
+  listed the `fu_relevance_*` keys under `uncalibrated`; a measure with a condition on one of them keeps its
   value in the not-measurable reason ("measured 0.87, not scored until its thresholds are
   calibrated") and its conditions are dropped (partial evidence, supervisor's condition 2).
 - **No follow-ups recorded:** the follow-up measures are missing ("no follow-up answer
@@ -184,8 +185,23 @@ answer paired with a good answer's question. Scored with the app's relevance fun
 - **Off-topic and good touch:** the highest off-topic answer (0.842) is above the lowest good
   answer (0.841). No value separates all 15 of them; the gap is narrow and rests on 15 answers
   by one writer.
-- The thresholds are **not set yet**: the values are the owner's decision (AGENTS.md rule 7),
-  and `fu_relevance_*` stay listed as uncalibrated until then.
+
+**Decision (owner, 2026-11-24): `fu_relevance_high = mid = low = 0.82`, one on-topic cut,
+provisional.** `uncalibrated` is now empty, so relevance is scored.
+
+- **Relevance only flags clearly off-topic answers.** At 0.82 the calibration pairs give 0 of
+  10 good answers flagged (lowest good 0.841, margin 0.02), **3 of 5 off-topic caught**
+  (0.776, 0.785, 0.790; the two borderline ones, 0.835 and 0.842, pass) and **0 of 5 evasive
+  caught**.
+- **Why not 0.84:** it clears good answer #10 by only 0.0005, and real answers are spoken and
+  transcribed, which likely lowers similarity, while the weaker answer decides.
+- **All three thresholds are equal, so relevance only separates level 1 from level 2.
+  Levels 3 and 4 are decided by latency and the limitation cue.**
+- **The finding describes what was measured:** "Answer N shares little wording with the
+  question (similarity 0.78, below 0.82)". It never says the speaker did not answer or was
+  off-topic. Relevance keeps low confidence.
+- **The pairs were written, not spoken.** The cut is re-checked on the first real spoken S2
+  answers (open item 2, together with the 2 s latency caveat).
 
 ## Supervisor review (2026-11-23)
 
@@ -213,8 +229,9 @@ item 1 below.
 1. **Arabic follow-up handling rests on latency alone.** With relevance and limitation cues not
    measured for Arabic, levels 4 and 3 could be reached on latency only, the same issue as
    ADR 0019 open item 1 (partial levels); the owner's P3 decision there covers this dimension.
-2. **Relevance thresholds** are set from the owner's 20 pairs (item 5), together with the
-   evasive-answer finding above.
+2. **Re-check on the first real spoken S2 answers:** the ≤ 2 s latency, which includes
+   reading time (supervisor's condition 3, item 4), and the 0.82 relevance cut, which rests on
+   20 written pairs by one writer ("Relevance calibration").
 3. ~~Supervisor review~~: done 2026-11-23 (above).
 4. **P3: retry before a non-answer is scored** ("We didn't hear an answer"; "Empty answers"
    item 4).

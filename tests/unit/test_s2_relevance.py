@@ -54,6 +54,9 @@ def test_summary():
     assert s["n"] == 3 and s["median"] == 0.9 and s["min"] == 0.8
 
 
-def test_relevance_thresholds_are_not_scored_until_calibrated():
+def test_relevance_is_calibrated_as_one_on_topic_cut():
+    # owner, 2026-11-24 (ADR 0022): one provisional cut; levels 3 and 4 come from latency and
+    # the limitation cue
     t = loader.load_thresholds("s2_project_defense")
-    assert set(t.uncalibrated) == {"fu_relevance_high", "fu_relevance_mid", "fu_relevance_low"}
+    assert t.uncalibrated == () and t.status == "provisional"
+    assert [t.values[f"fu_relevance_{k}"] for k in ("high", "mid", "low")] == [0.82] * 3

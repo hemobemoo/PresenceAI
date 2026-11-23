@@ -145,8 +145,10 @@ Started 2026-11-17. Kept up to date as experiments report (FINAL_11 §6).
   and the answer's words. On the developer's 20 calibration pairs, the 5 evasive answers (which
   repeat the question's words without answering) scored above every good answer but one, so
   relevance only separates off-topic answers, and even there the highest off-topic answer
-  (0.842) scored just above the lowest good one (0.841). Evasion is left to the optional
-  language-model judge (P7). Relevance is English only (ADR 0022).
+  (0.842) scored just above the lowest good one (0.841). The provisional cut (0.82) flags only
+  clearly off-topic answers: 3 of 5 off-topic and 0 of 5 evasive answers in calibration. The
+  pairs were written, not spoken; the cut is re-checked on real spoken answers. Evasion is left
+  to the optional language-model judge (P7). Relevance is English only (ADR 0022).
 - **Hedging is not measured** (deferred): it is not used by the rubric and is the measure
   closest to a confidence-style judgement.
 

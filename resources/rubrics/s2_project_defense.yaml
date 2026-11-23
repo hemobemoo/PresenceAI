@@ -86,8 +86,8 @@ definitions:
     embedding model (multilingual-e5-small, configs/models.yaml). The weaker answer decides: the
     lowest of the answers' similarities. A similarity of words, not an understanding of whether
     the question was answered; an evasive answer that reuses the question's words can score
-    high. Thresholds are calibrated on 20 question-answer pairs written by the owner (ADR 0022);
-    until then the relevance values shown are placeholders and are not used for scoring.
+    high. One on-topic cut calibrated on 20 question-answer pairs written by the owner
+    (ADR 0022): it flags only answers that share little wording with the question.
   response latency: >-
     Seconds from the start of the answer recording (the end of the question) to the first speech
     onset found by voice activity detection. The weaker answer decides: the longest latency. If
