@@ -6,6 +6,13 @@ the first speech onset to the last offset, as for `rate.wpm`; below the rate's m
 time it is not measurable. It is missing for Arabic and whenever the transcript's punctuation is
 unreliable, because pause positions then cannot be told (ADR 0011, ADR 0016); English positions
 rest on Whisper's punctuation (ADR 0014). Pauses with no word on one side are not counted.
+
+`timing.overrun_s` (P3-a, ADR 0019 amendment): seconds from the session's time limit to the end
+of the last speech region, 0 when the speech ends within it. The recording's start is time 0, so
+it is measured only for recordings made in the app, which start with the session; an uploaded
+file has no time limit and the measure is missing ("uploaded file: no time limit"). Medium
+confidence: the end comes from the voice detector, and speech after the talk (a remark to
+oneself) counts as speech.
 """
 
 from __future__ import annotations
@@ -17,6 +24,31 @@ from presenceai.settings import SpeechSettings
 from presenceai.speech.pauses import punctuation_reliable
 
 KEY = "pauses.mid_sentence_per_min"
+OVERRUN_KEY = "timing.overrun_s"
+
+
+def overrun(report: SpeechReport, limit_s: float | None) -> tuple[Measurement | None, str | None]:
+    """Seconds spoken beyond `limit_s`, or (None, reason). `limit_s` None: an uploaded file."""
+    lang = report.transcript.language
+    if limit_s is None:
+        return None, text(lang, "timing.no_limit_upload")
+    if not report.speech_regions:
+        return None, text(lang, "common.no_speech")
+    end = report.speech_regions[-1].end_s
+    value = max(0.0, end - limit_s)
+    span = TimeSpan(start_s=limit_s, end_s=end) if value > 0 else TimeSpan(start_s=0.0, end_s=end)
+    return (
+        Measurement(
+            value=round(value, 3),
+            unit="s",
+            confidence=Confidence.MEDIUM,
+            method=text(lang, "timing.overrun", limit=limit_s),
+            evidence=(Evidence(time=span),),
+            language=lang,
+            live=False,
+        ),
+        None,
+    )
 
 
 def mid_sentence_per_min(

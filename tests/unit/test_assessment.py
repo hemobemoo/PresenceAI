@@ -54,6 +54,8 @@ def build(sb: Any, fake_parser: Any, speech_cfg: Any) -> Any:
         filler_conf: Confidence = Confidence.MEDIUM,
         mid_pauses: int = 1,
         filler_end_s: float = 33.3,
+        limit_s: float | None = None,
+        strict: bool = True,
     ) -> tuple[SpeechReport, Any]:
         t = sb.spaced(talk, language=language, duration_s=40.0)
         last = t.words[-1].end_s
@@ -74,7 +76,9 @@ def build(sb: Any, fake_parser: Any, speech_cfg: Any) -> Any:
         text_report = analyze.analyze_text(t, parser=fake_parser, pauses=speech_cfg.pauses)
         rubric = loader.load_rubric("s1_presentation")
         thresholds = loader.load_thresholds("s1_presentation")
-        return report, score.assess(rubric, thresholds, report, text_report, speech_cfg)
+        return report, score.assess(
+            rubric, thresholds, report, text_report, speech_cfg, limit_s=limit_s, strict=strict
+        )
 
     return make
 
@@ -137,7 +141,9 @@ def test_missing_measures_never_lower_a_level(build: Any):
     _, a = build(fillers=None, mid_pauses=0)
     delivery = _dim(a, "delivery")
     assert delivery.measured == ("pauses.mid_sentence_per_min",)
-    assert delivery.level == 4  # 0 mid-sentence pauses; nothing else counted against it
+    # 0 mid-sentence pauses; nothing else counted against it. Level 4 is reached, then capped at
+    # 3 because only 1 of 4 measures was computed (ADR 0019, partial levels).
+    assert delivery.capped_from == 4 and delivery.level == 3
 
 
 def test_arabic_content_not_measurable_and_delivery_from_fillers(build: Any):
@@ -148,7 +154,8 @@ def test_arabic_content_not_measurable_and_delivery_from_fillers(build: Any):
         assert r.level is None and r.not_measurable and r.score is None
         assert _finding(a, dim).measured == 0 and not _finding(a, dim).evidence
     delivery = _dim(a, "delivery")
-    assert delivery.measured == ("fillers.per_100_words",) and delivery.level == 4
+    assert delivery.measured == ("fillers.per_100_words",)
+    assert delivery.level == 3 and delivery.capped_from == 4  # 1 of 4 measures: capped
     assert delivery.confidence == Confidence.LOW  # still a level, at low confidence
     f = _finding(a, "delivery")
     assert ARABIC.search(f.statement) and "1" in f.statement and "4" in f.statement
@@ -253,3 +260,143 @@ def test_b1_english_reports_have_verified_findings(speech_cfg: Any):
         assert result.assessment.evidence_verified
         findings += sum(f.level is not None for f in result.assessment.findings)
     assert findings > 0
+
+
+# --- P3-a: partial levels, overrun, one failed finding (ADR 0019 amendment) -------------------
+
+
+def test_partial_cap_values_come_from_the_config():
+    cap = loader.load_partial_cap()
+    assert cap.max_share == 0.5 and cap.max_level == 3
+
+
+def test_at_most_half_of_the_measures_caps_the_level_at_3(build: Any):
+    _, a = build(fillers=3.0, mid_pauses=0)  # 2 of 4 computed, both meet level 4
+    delivery = _dim(a, "delivery")
+    assert len(delivery.measured) == 2
+    assert delivery.level == 3 and delivery.capped_from == 4
+    assert delivery.score == pytest.approx(2 / 3)  # the score follows the capped level
+    f = _finding(a, "delivery")
+    assert f.level == 3 and f.capped_from == 4
+    assert "limited to level 3" in f.statement and "based on 2 of 4 measures" in f.statement
+
+
+def test_more_than_half_of_the_measures_is_not_capped(build: Any):
+    _, a = build(fillers=3.0, mid_pauses=0, limit_s=180.0)  # + overrun: 3 of 4
+    delivery = _dim(a, "delivery")
+    assert len(delivery.measured) == 3
+    assert delivery.level == 4 and delivery.capped_from is None
+    assert "limited to level" not in _finding(a, "delivery").statement
+
+
+def test_the_cap_never_changes_levels_1_to_3(build: Any):
+    _, a = build(fillers=None, mid_pauses=2)  # 1 of 4: 3.6 pauses/min -> level 2
+    delivery = _dim(a, "delivery")
+    assert delivery.level == 2 and delivery.capped_from is None
+
+
+def test_arabic_delivery_from_fillers_and_overrun_is_capped(build: Any):
+    _, a = build("اليوم سأتحدث عن التدريب اليومي. " * 12, language="ar", limit_s=180.0)
+    delivery = _dim(a, "delivery")
+    assert set(delivery.measured) == {"fillers.per_100_words", "timing.overrun_s"}  # 2 of 4
+    assert delivery.level == 3 and delivery.capped_from == 4
+    assert ARABIC.search(_finding(a, "delivery").statement)
+
+
+def test_every_finding_states_n_of_m_measures(build: Any):
+    for kwargs in ({}, {"limit_s": 180.0}, {"fillers": None}):
+        _, a = build(**kwargs)
+        for f in a.findings:
+            assert f.total >= 1 and 0 <= f.measured <= f.total
+            if f.level is not None:
+                assert f"based on {f.measured} of {f.total} measures" in f.statement
+            else:
+                assert f"none of its {f.total} measures" in f.statement
+    _, a = build()
+    cm = _finding(a, "central_message")
+    assert cm.measured == cm.total  # all computed: still shown ("4 of 4")
+
+
+def test_overrun_against_the_session_limit(build: Any):
+    _, a = build(limit_s=30.0)  # speech ends at 33.3 s
+    delivery = _dim(a, "delivery")
+    over = next(c for c in delivery.conditions if c.measure == "timing.overrun_s")
+    assert over.value == pytest.approx(3.3, abs=1e-6)
+    f = _finding(a, "delivery")
+    times = [e.time for e in f.evidence if e.time is not None]
+    assert any(t.start_s == 30.0 and t.end_s == pytest.approx(33.3) for t in times)
+    _, a = build(limit_s=180.0)
+    over = next(c for c in _dim(a, "delivery").conditions if c.measure == "timing.overrun_s")
+    assert over.value == 0 and over.holds is True
+
+
+def test_overrun_of_an_upload_is_missing_with_its_reason(build: Any, speech_cfg: Any):
+    report, a = build()  # no limit: a file, not an in-app recording
+    assert "timing.overrun_s" in _dim(a, "delivery").missing
+    m, why = derived.overrun(report, None)
+    assert m is None and why == "uploaded file: no time limit"
+    report, _ = build("اليوم سأتحدث عن التدريب اليومي. " * 12, language="ar")
+    _, why = derived.overrun(report, None)
+    assert why is not None and ARABIC.search(why)
+
+
+def test_overrun_needs_speech(build: Any):
+    report, _ = build()
+    silent = report.model_copy(update={"speech_regions": ()})
+    m, why = derived.overrun(silent, 180.0)
+    assert m is None and why
+
+
+def test_in_the_app_one_failed_finding_does_not_crash_the_report(
+    build: Any, caplog: pytest.LogCaptureFixture
+):
+    with caplog.at_level("WARNING"):
+        _, a = build(filler_end_s=45.0, strict=False)  # fillers evidence past the recording
+    delivery = _dim(a, "delivery")
+    assert delivery.level is None and delivery.not_measurable == "could not be checked"
+    f = _finding(a, "delivery")
+    assert f.level is None and not f.evidence and "not measurable" in f.statement
+    assert a.failed_dimensions == ("delivery",)
+    assert _dim(a, "central_message").level == 4  # the rest of the report stands
+    logged = caplog.text
+    assert "delivery" in logged and "EvidenceError" in logged
+    assert "practice" not in logged.lower()  # counts only, never transcript text
+
+
+def test_in_the_app_any_error_in_one_dimension_is_isolated(
+    build: Any, monkeypatch: pytest.MonkeyPatch
+):
+    real = score._finding
+
+    def boom(rubric: Any, d: Any, *args: Any) -> Any:
+        if d.id == "organization":
+            raise KeyError("a template key")
+        return real(rubric, d, *args)
+
+    monkeypatch.setattr(score, "_finding", boom)
+    _, a = build(strict=False)
+    assert a.failed_dimensions == ("organization",)
+    assert _dim(a, "organization").level is None
+    assert _dim(a, "delivery").level is not None
+    with pytest.raises(KeyError):
+        build()  # outside the app (CLI, tests) a failure still stops
+
+
+def test_in_the_app_a_failed_text_analysis_leaves_delivery(build: Any, speech_cfg: Any):
+    from presenceai.pipeline.assess import assess_report
+
+    report, _ = build()
+
+    def broken(texts: Any) -> Any:
+        raise RuntimeError("parser crashed")
+
+    out = assess_report(
+        report, parser=broken, cfg=speech_cfg, scenario="s1_presentation", strict=False
+    )
+    a = out.assessment
+    for dim in ("central_message", "organization", "language", "supporting_material"):
+        assert _dim(a, dim).level is None
+        assert "text analysis failed" in (_dim(a, dim).not_measurable or "")
+    assert _dim(a, "delivery").level is not None
+    with pytest.raises(RuntimeError):
+        assess_report(report, parser=broken, cfg=speech_cfg, scenario="s1_presentation")

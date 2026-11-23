@@ -166,6 +166,8 @@ def test_arabic_answers_measure_latency_only(sb: Any, fake_parser: Any, speech_c
     assert set(fu.not_measurable) == {RELEVANCE, LIMITATION}
     r, f = _part(_assess(sb, fake_parser, speech_cfg, fu, _calibrated(), language="ar"))
     assert r.level is not None and f.measured == 1 and f.total == 3
+    # latency alone (1.5 s) meets level 4; 1 of 3 measures caps it at 3 (ADR 0022 open item 1)
+    assert r.level == 3 and r.capped_from == 4 and f.capped_from == 4
 
 
 def test_answer_evidence_is_checked_against_that_answer(sb: Any):

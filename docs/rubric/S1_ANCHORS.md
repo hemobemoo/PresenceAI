@@ -164,7 +164,7 @@ The Arabic anchors translate the reviewed English wording. They are a draft for 
 | `fillers.per_100_words` | available | none | en, ar | Hesitations per 100 words (speech/fillers.py). With base Whisper this is a lower bound and Arabic is low confidence (ADR 0012). |
 | `pauses.mid_sentence_per_min` | available | none | en | Mid-sentence pauses (see the definition) per minute of speaking time (first speech onset to last offset, as rate.wpm), from the pause events of speech/pauses.py (rubric/derived.py). Missing when the punctuation is unreliable or for Arabic. |
 | `vision.gaze.at_camera_share` | planned (P6) | camera | en, ar | Share of speaking time with gaze zone at_camera (ADR 0004); camera on only. |
-| `timing.overrun_s` | planned (P3) | session_limit | en, ar | Seconds spoken beyond the session's time limit (0 when within it). |
+| `timing.overrun_s` | available | session_limit | en, ar | Seconds spoken beyond the session's time limit (0 when within it). |
 
 ## Source and licence
 

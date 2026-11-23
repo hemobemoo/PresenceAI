@@ -226,12 +226,21 @@ item 1 below.
 
 ### Open items
 
-1. **Arabic follow-up handling rests on latency alone.** With relevance and limitation cues not
-   measured for Arabic, levels 4 and 3 could be reached on latency only, the same issue as
-   ADR 0019 open item 1 (partial levels); the owner's P3 decision there covers this dimension.
+1. ~~**Arabic follow-up handling rests on latency alone.**~~ **Closed 2026-11-24 (P3-a, ADR 0019
+   amendment):** a level based on at most half of its measures is capped at 3, so Arabic
+   follow-up handling on latency alone (1 of 3) reaches at most level 3, and its finding says
+   "based on 1 of 3 measures" and why it is limited.
 2. **Re-check on the first real spoken S2 answers:** the ≤ 2 s latency, which includes
    reading time (supervisor's condition 3, item 4), and the 0.82 relevance cut, which rests on
    20 written pairs by one writer ("Relevance calibration").
 3. ~~Supervisor review~~: done 2026-11-23 (above).
 4. **P3: retry before a non-answer is scored** ("We didn't hear an answer"; "Empty answers"
-   item 4).
+   item 4). Decided in the P3 plan (owner, 2026-11-24), built in P3-e: **one retry per
+   question**; a retry replaces the silent recording (the old encrypted file is deleted); a
+   second silence is scored as no answer.
+5. **The 0.82 relevance cut was calibrated on project-specific questions** (owner, 2026-11-24):
+   the 20 pairs ask about PresenceAI itself. In the app (P3-e, until P7 generates questions) the
+   questions come from a bank of about 6 generic skeptical questions per language, 2 picked at
+   random, or the user's own; generic questions may share fewer words with a good answer, so
+   the cut is re-checked on the first real spoken S2 answers together with item 2. No question
+   in the bank may ask for limitations directly, since that would prompt the limitation cue.

@@ -11,6 +11,9 @@ common:
   too_little_speech_whole: "only {speech_s:.0f} s of speech; at least {minimum:g} s needed"
   too_noisy: "not measurable in this recording: too noisy ({snr:.0f} dB signal-to-noise)"
   noisy_note: "; noisy recording ({snr:.0f} dB signal-to-noise)"
+timing:
+  overrun: "seconds from the {limit:g} s time limit to the end of the last speech"
+  no_limit_upload: "uploaded file: no time limit"
 pauses:
   count_ge: "VAD gaps >= {threshold} s"
   by_position: "VAD gaps by position: {position}"
@@ -99,6 +102,9 @@ assessment:
   missing_camera: "no camera recording"
   missing_limit: "no time limit set"
   missing_other: "not computed"
+  capped: "Reached level {reached}, limited to level {max_level} because only {measured} of {total} measures could be computed."
+  failed: "could not be checked"
+  text_failed: "text analysis failed"
   missing_followups: "no follow-up answer recorded"
   uncalibrated: "measured {value:g}, not scored until its thresholds are calibrated"
   followup_not_measured_language: "not measured for {language} answers (ADR 0022)"

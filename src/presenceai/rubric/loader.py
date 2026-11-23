@@ -20,10 +20,12 @@ RESOURCES = REPO_ROOT / "resources" / "rubrics"
 CONFIG = REPO_ROOT / "configs" / "rubric.yaml"
 
 __all__ = [
+    "PartialCap",
     "RubricThresholds",
     "anchor_text",
     "fill",
     "level_score",
+    "load_partial_cap",
     "load_rubric",
     "load_thresholds",
     "placeholders",
@@ -47,6 +49,16 @@ class RubricThresholds(BaseModel):
         return self
 
 
+class PartialCap(BaseModel):
+    """A level based on at most `max_share` of its measures is capped at `max_level` (ADR 0019)."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+    status: Literal["proposed", "provisional", "decided"]
+    decided_in: str = Field(min_length=1)
+    max_share: float = Field(gt=0, lt=1)
+    max_level: int = Field(ge=1, le=4)
+
+
 def _yaml(path: Path) -> dict[str, Any]:
     data = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(data, dict):
@@ -59,6 +71,10 @@ def load_thresholds(rubric_id: str, *, config: Path = CONFIG) -> RubricThreshold
     if rubric_id not in data:
         raise ValueError(f"{config.name} has no thresholds for {rubric_id!r}")
     return RubricThresholds.model_validate(data[rubric_id])
+
+
+def load_partial_cap(*, config: Path = CONFIG) -> PartialCap:
+    return PartialCap.model_validate(_yaml(config)["partial_cap"])
 
 
 def load_rubric(rubric_id: str, *, resources: Path = RESOURCES, config: Path = CONFIG) -> Rubric:

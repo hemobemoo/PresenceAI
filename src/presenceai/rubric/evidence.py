@@ -2,8 +2,9 @@
 
 A transcript quote is verified when the transcript has exactly that text at its offsets; a time
 span when it lies within the recording. For rule-based findings a failure is a bug: `verify`
-raises `EvidenceError`, and the tests fail. (In the app, P3, one failed finding must not crash
-the report: that dimension shows "not measurable" and the failure is logged as counts only.
+raises `EvidenceError`, and the tests fail. (In the app, `score.assess(strict=False)`, one
+failed finding does not crash the report: that dimension shows "not measurable" and the failure
+is logged as the dimension id and error class only, ADR 0019 P3-a amendment.
 Language-model claims whose quote is not found are dropped silently, AGENTS.md rule 4.)
 """
 

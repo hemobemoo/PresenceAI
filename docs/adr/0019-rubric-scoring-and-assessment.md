@@ -7,7 +7,7 @@
   FINAL_05 §1–§2 (skills, observations with confidence); FINAL_10 E5 ("share of feedback
   statements with verified evidence"); AGENTS.md rule 4; ADR 0011, 0014, 0017, 0018
 - Config keys affected: `configs/rubric.yaml: s1_presentation.values.mid_pause_min_s` (new,
-  1.0 s, provisional)
+  1.0 s, provisional); `configs/rubric.yaml: partial_cap` (new 2026-11-24, decided: 0.5, 3)
 
 ## Decision
 
@@ -56,7 +56,48 @@
 
 ### Open items
 
-1. **Partial levels in the report (owner, 2026-11-22, for P3).** B1 showed Arabic Delivery at
-   level 4 decided by fillers alone (1 of 4 measures). The report must either make a level
-   based on fewer than half of its measures **visibly partial**, or **limit how high it can
-   go**. The owner decides which in P3.
+1. ~~**Partial levels in the report (owner, 2026-11-22, for P3).**~~ **Closed 2026-11-24 (P3-a,
+   below):** both. Every finding shows "based on N of M measures", and a level based on at most
+   half of its measures is capped at level 3.
+
+## P3-a amendment: partial levels, overrun, one failed finding (2026-11-24)
+
+Owner's decisions in the P3 plan (2026-11-24); config keys `configs/rubric.yaml: partial_cap`
+(new, decided) and the measure `timing.overrun_s` (now available in both rubrics).
+
+1. **"Based on N of M measures" is always shown,** also when every measure was computed ("4 of
+   4"). The finding's `measured` and `total` fields carry it, so the app shows it on each card;
+   the statement already says it (item 3 above). A not-measurable finding says "none of its M
+   measures".
+2. **Partial-level cap.** When **at most half** of a dimension's measures are computed
+   (computed share ≤ `partial_cap.max_share`, 0.5), the level is capped at
+   `partial_cap.max_level` (3). The owner chose "at most half" over "fewer than half", so
+   **2 of 4 is capped**: Arabic Delivery from fillers plus overrun (2 of 4) cannot reach level 4.
+   - `DimensionResult.capped_from` / `Finding.capped_from` keep the level the conditions reached;
+     `level` and the score y = (level − 1) / 3 follow the capped level; the confidence is
+     unchanged (the lowest computed measure).
+   - The finding adds: "Reached level 4, limited to level 3 because only 1 of 4 measures could
+     be computed."
+   - Levels 1–3 are never changed by the cap. It applies to every rubric, so it also covers
+     ADR 0022 open item 1 (Arabic follow-up handling on latency alone: 1 of 3, capped).
+   - `next_level` is taken from the capped level, so a capped level 3 lists the unmet computed
+     level-4 conditions; when none are unmet, the missing measures are the gap.
+3. **Overrun** (`rubric/derived.py: overrun`, planned in P3 since ADR 0017): seconds from the
+   session's time limit to the end of the last speech region, 0 when within it; time evidence is
+   the limit to the end of speech (or the whole talk when within it). The recording's start is
+   time 0, so it is measured **only for recordings made in the app**, which pass the scenario's
+   limit (`limit_s`); for an uploaded file it is missing with the reason **"uploaded file: no
+   time limit"** (owner). Medium confidence: the end comes from the voice detector, and a remark
+   after the talk counts as speech. The `assess` command analyses files, so it never measures
+   overrun.
+4. **One failed finding must not crash the report** (item 5 above, now built). `score.assess`
+   and `pipeline.assess.assess_report` take `strict`: the CLI and the tests keep `strict=True`
+   (a failure in a rule-based finding is a bug and stops); the app uses `strict=False`.
+   - Any error while scoring, wording or verifying one dimension makes **that dimension** "not
+     measurable" ("could not be checked"); `Assessment.failed_dimensions` lists it; the other
+     dimensions stand.
+   - A failed text analysis makes every text measure missing ("text analysis failed"), so the
+     content dimensions are not measurable and Delivery is still scored.
+   - The log holds the dimension id (or stage) and the error class only, never transcript text
+     (tested).
+

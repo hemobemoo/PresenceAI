@@ -18,10 +18,22 @@ condition on an uncalibrated threshold (`RubricThresholds.uncalibrated`) is repo
 value but not scored. A follow-up answered with silence adds the answer window to the finding;
 an answer below the lowest relevance threshold is named in observable words ("shares little
 wording with the question"), never as "off-topic" or "did not answer".
+
+P3-a (ADR 0019 amendment, owner 2026-11-24):
+- **Partial levels are capped.** When at most half of a dimension's measures are computed
+  (`configs/rubric.yaml: partial_cap`), its level is capped at 3; `capped_from` keeps the level
+  the conditions reached, the score follows the capped level, and the finding says so.
+- **Overrun** (`timing.overrun_s`) is measured against `limit_s`, the session's time limit, for
+  recordings made in the app; `limit_s` None is an uploaded file.
+- **One failed finding must not crash the report** (`strict=False`, the app): an error while
+  scoring, wording or verifying one dimension makes that dimension "not measurable" and is
+  logged as the dimension id and error class only, never transcript text. With `strict=True`
+  (the CLI and the tests) the error is raised, because for rule-based findings it is a bug.
 """
 
 from __future__ import annotations
 
+import logging
 from collections.abc import Mapping
 from typing import Literal
 
@@ -29,7 +41,7 @@ from presenceai.lang import text
 from presenceai.rubric import derived
 from presenceai.rubric.evidence import verify
 from presenceai.rubric.levels import condition_results, level_from, measures_of
-from presenceai.rubric.loader import RubricThresholds, level_score
+from presenceai.rubric.loader import PartialCap, RubricThresholds, level_score, load_partial_cap
 from presenceai.schemas.assessment import Confidence, Evidence, Measurement, TimeSpan
 from presenceai.schemas.followup import FollowupReport
 from presenceai.schemas.rubric import Assessment, Dimension, DimensionResult, Finding, Rubric
@@ -37,6 +49,7 @@ from presenceai.schemas.speech import SpeechReport
 from presenceai.schemas.text import TextReport
 from presenceai.settings import SpeechSettings
 
+log = logging.getLogger(__name__)
 _RANK = {Confidence.LOW: 0, Confidence.MEDIUM: 1, Confidence.HIGH: 2}
 _MISSING_KEY = {
     "camera": "assessment.missing_camera",
@@ -68,6 +81,7 @@ def collect(
     text_report: TextReport,
     cfg: SpeechSettings,
     followups: FollowupReport | None = None,
+    limit_s: float | None = None,
 ) -> tuple[dict[str, Measurement], dict[str, str]]:
     """Every rubric measure: its Measurement, or the reason it is missing."""
     lang = _report_lang(speech.transcript.language)
@@ -81,6 +95,11 @@ def collect(
         found[derived.KEY] = mid
     elif why is not None:
         reasons[derived.KEY] = why
+    over, why = derived.overrun(speech, limit_s)
+    if over is not None:
+        found[derived.OVERRUN_KEY] = over
+    elif why is not None:
+        reasons[derived.OVERRUN_KEY] = why
     out_found: dict[str, Measurement] = {}
     out_missing: dict[str, str] = {}
     for key, spec in rubric.measures.items():
@@ -100,6 +119,7 @@ def _dimension(
     found: Mapping[str, Measurement],
     missing: Mapping[str, str],
     t: RubricThresholds,
+    cap: PartialCap,
 ) -> DimensionResult:
     keys = measures_of(d)
     values = {k: (found[k].value if k in found else None) for k in keys}
@@ -116,11 +136,15 @@ def _dimension(
             not_measurable="; ".join(dict.fromkeys(missing[k] for k in absent)),
         )
     confidence = min((found[k].confidence for k in measured), key=_RANK.__getitem__)
+    capped_from = None
+    if len(measured) / len(keys) <= cap.max_share + 1e-9 and level > cap.max_level:
+        capped_from, level = level, cap.max_level
     nxt = tuple(r for r in results if r.level == level + 1 and r.holds is False)
     return DimensionResult(
         dimension=d.id,
         skills=d.skills,
         level=level,
+        capped_from=capped_from,
         score=level_score(level),
         confidence=confidence,
         measured=measured,
@@ -164,6 +188,12 @@ def _finding(
         measures=sep.join(labels.values()),
         values=values,
     )
+    if r.capped_from is not None:
+        capped = text(
+            lang_, "assessment.capped", reached=r.capped_from, max_level=r.level,
+            measured=len(r.measured), total=total,
+        )  # fmt: skip
+        statement = f"{statement} {capped}"
     evidence: tuple[Evidence, ...] = tuple(
         dict.fromkeys(e for k in r.measured for e in found[k].evidence)
     )
@@ -171,6 +201,7 @@ def _finding(
         dimension=d.id,
         statement=statement,
         level=r.level,
+        capped_from=r.capped_from,
         confidence=r.confidence,
         measured=len(r.measured),
         total=total,
@@ -235,6 +266,20 @@ def _with_followup_notes(
     )
 
 
+def _failed(d: Dimension, lang: str, total: int) -> tuple[DimensionResult, Finding]:
+    """A dimension whose scoring failed, shown as not measurable (app mode, ADR 0019)."""
+    lang_ = _report_lang(lang)
+    reason = text(lang_, "assessment.failed")
+    name = d.name_ar if lang_ == "ar" else d.name
+    statement = text(
+        lang_, "assessment.not_measurable", dimension=name, total=total, reasons=reason
+    )
+    return (
+        DimensionResult(dimension=d.id, skills=d.skills, not_measurable=reason),
+        Finding(dimension=d.id, statement=statement, measured=0, total=total),
+    )
+
+
 def assess(
     rubric: Rubric,
     thresholds: RubricThresholds,
@@ -242,25 +287,40 @@ def assess(
     text_report: TextReport,
     cfg: SpeechSettings,
     followups: FollowupReport | None = None,
+    *,
+    limit_s: float | None = None,
+    strict: bool = True,
 ) -> Assessment:
+    """Score every dimension. `strict=False` (the app) isolates a failure to its dimension."""
     lang = speech.transcript.language
-    found, missing = collect(rubric, thresholds, speech, text_report, cfg, followups)
-    results = tuple(_dimension(d, found, missing, thresholds) for d in rubric.dimensions)
-    findings = tuple(
-        _with_followup_notes(
-            _finding(rubric, d, r, found, missing, lang), d, followups, lang, found, thresholds
-        )
-        for d, r in zip(rubric.dimensions, results, strict=True)
-    )
+    cap = load_partial_cap()
+    found, missing = collect(rubric, thresholds, speech, text_report, cfg, followups, limit_s)
     answers = followups.transcripts if followups is not None else ()
-    for f in findings:
-        if f.level is not None:
-            verify(f.evidence, speech.transcript, speech.transcript.duration_s, answers)
+    results: list[DimensionResult] = []
+    findings: list[Finding] = []
+    failed: list[str] = []
+    for d in rubric.dimensions:
+        try:
+            r = _dimension(d, found, missing, thresholds, cap)
+            f = _finding(rubric, d, r, found, missing, lang)
+            f = _with_followup_notes(f, d, followups, lang, found, thresholds)
+            if f.level is not None:
+                verify(f.evidence, speech.transcript, speech.transcript.duration_s, answers)
+        except Exception as e:
+            if strict:
+                raise
+            # counts only: the dimension id and the error class, never transcript text
+            log.warning("finding failed: dimension=%s error=%s", d.id, type(e).__name__)
+            r, f = _failed(d, lang, len(measures_of(d)))
+            failed.append(d.id)
+        results.append(r)
+        findings.append(f)
     return Assessment(
         scenario=rubric.id,
         rubric_version=rubric.version,
         thresholds_status=thresholds.status,
         language="ar" if lang == "ar" else "en",
-        dimensions=results,
-        findings=findings,
+        dimensions=tuple(results),
+        findings=tuple(findings),
+        failed_dimensions=tuple(failed),
     )

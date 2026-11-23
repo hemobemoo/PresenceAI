@@ -4,6 +4,15 @@
 # source yet. Thresholds are per scenario (S1 here, S2 later), not a formula of talk length;
 # length-aware thresholds are an open item to test on C2 (ADR 0017).
 
+# Partial levels (owner, 2026-11-24, ADR 0019 open item 1; also ADR 0022 open item 1). When at
+# most `max_share` of a dimension's measures are computed (share <= 0.5), its level is capped at
+# `max_level`. Every finding states "based on N of M measures" either way. Applies to every rubric.
+partial_cap:
+  status: decided
+  decided_in: ADR 0019
+  max_share: 0.5
+  max_level: 3
+
 s1_presentation:
   status: provisional
   decided_in: ADR 0017
