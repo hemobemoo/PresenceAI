@@ -11,6 +11,9 @@ common:
   too_little_speech_whole: "{speech_s:.0f} ث فقط من الكلام؛ المطلوب {minimum:g} ث على الأقل"
   too_noisy: "غير قابل للقياس في هذا التسجيل: الضجيج مرتفع (نسبة الإشارة إلى الضجيج {snr:.0f} dB)"
   noisy_note: "؛ تسجيل فيه ضجيج (نسبة الإشارة إلى الضجيج {snr:.0f} dB)"
+timing:
+  overrun: "الثواني من الحد الزمني {limit:g} ث حتى نهاية آخر كلام"
+  no_limit_upload: "ملف مرفوع: لا يوجد حد زمني"
 pauses:
   count_ge: "فجوات VAD مدتها {threshold} ث أو أكثر"
   by_position: "فجوات VAD حسب الموضع: {position}"
@@ -98,6 +101,9 @@ assessment:
   missing_camera: "لا يوجد تسجيل بالكاميرا"
   missing_limit: "لم يُحدَّد وقت"
   missing_other: "لم يُحسب"
+  capped: "بلغ المستوى {reached}، وحُدِّد بالمستوى {max_level} لأنه لم يُحسب إلا {measured} من {total} مقاييس."
+  failed: "تعذّر التحقق منه"
+  text_failed: "تعذّر تحليل النص"
   missing_followups: "لم تُسجَّل إجابة عن أي سؤال متابعة"
   uncalibrated: "القيمة المقيسة {value:g}، ولا تدخل في التقييم حتى تُعايَر حدودها"
   followup_not_measured_language: "لا يُقاس لإجابات اللغة {language} (ADR 0022)"

@@ -127,10 +127,14 @@ class DimensionResult(_Frozen):
     dimension: str = Field(min_length=1)
     skills: tuple[str, ...]
     level: int | None = Field(default=None, ge=1, le=4)  # None: not measurable
-    score: float | None = Field(default=None, ge=0, le=1)  # y = (level - 1) / 3
+    # the level the conditions reached before the partial cap (ADR 0019); None: not capped
+    capped_from: int | None = Field(default=None, ge=2, le=4)
+    score: float | None = Field(default=None, ge=0, le=1)  # y = (level - 1) / 3, after the cap
     confidence: Confidence | None = None  # lowest among the measured (deciding) measures
     measured: tuple[str, ...] = ()  # measures that could be computed
     missing: tuple[str, ...] = ()  # measures that could not, never counted as low
+    # absent by the user's choice (camera off, opted out): left out of M ("N of M") and the cap
+    excluded: tuple[str, ...] = ()
     conditions: tuple[ConditionResult, ...] = ()
     next_level: tuple[ConditionResult, ...] = ()  # unmet measured conditions of level + 1
     not_measurable: str | None = None
@@ -141,6 +145,8 @@ class DimensionResult(_Frozen):
             raise ValueError("a dimension has either a level or a not-measurable reason")
         if self.level is not None and (self.score is None or self.confidence is None):
             raise ValueError("a level needs a score and a confidence")
+        if self.capped_from is not None and (self.level is None or self.capped_from <= self.level):
+            raise ValueError("a capped level is lower than the level it was capped from")
         return self
 
 
@@ -150,9 +156,10 @@ class Finding(_Frozen):
     dimension: str = Field(min_length=1)
     statement: str = Field(min_length=1)
     level: int | None = Field(default=None, ge=1, le=4)
+    capped_from: int | None = Field(default=None, ge=2, le=4)  # as DimensionResult
     confidence: Confidence | None = None
-    measured: int = Field(ge=0)  # "based on N of M measures"
-    total: int = Field(ge=1)
+    measured: int = Field(ge=0)  # "based on N of M measures", always shown
+    total: int = Field(ge=1)  # M: the dimension's measures minus those absent by user choice
     evidence: tuple[Evidence, ...] = ()
 
     @model_validator(mode="after")
@@ -170,6 +177,8 @@ class Assessment(_Frozen):
     language: Literal["en", "ar"]
     dimensions: tuple[DimensionResult, ...]
     findings: tuple[Finding, ...]
+    # App mode (P3): dimensions whose scoring or evidence check failed; shown as not measurable
+    failed_dimensions: tuple[str, ...] = ()
     evidence_verified: Literal[True] = (
         True  # every finding's evidence was checked (rubric/evidence)
     )

@@ -169,8 +169,7 @@ measures:
     languages: [en, ar]
     description: Share of speaking time with gaze zone at_camera (ADR 0004); camera on only.
   timing.overrun_s:
-    status: planned
-    planned_in: P3
+    status: available
     requires: session_limit
     languages: [en, ar]
     description: Seconds spoken beyond the session's time limit (0 when within it).

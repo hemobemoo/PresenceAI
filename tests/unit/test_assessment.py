@@ -54,6 +54,9 @@ def build(sb: Any, fake_parser: Any, speech_cfg: Any) -> Any:
         filler_conf: Confidence = Confidence.MEDIUM,
         mid_pauses: int = 1,
         filler_end_s: float = 33.3,
+        limit_s: float | None = None,
+        strict: bool = True,
+        camera_on: bool = False,
     ) -> tuple[SpeechReport, Any]:
         t = sb.spaced(talk, language=language, duration_s=40.0)
         last = t.words[-1].end_s
@@ -74,7 +77,10 @@ def build(sb: Any, fake_parser: Any, speech_cfg: Any) -> Any:
         text_report = analyze.analyze_text(t, parser=fake_parser, pauses=speech_cfg.pauses)
         rubric = loader.load_rubric("s1_presentation")
         thresholds = loader.load_thresholds("s1_presentation")
-        return report, score.assess(rubric, thresholds, report, text_report, speech_cfg)
+        return report, score.assess(
+            rubric, thresholds, report, text_report, speech_cfg, limit_s=limit_s, strict=strict,
+            camera_on=camera_on,
+        )  # fmt: skip
 
     return make
 
@@ -116,13 +122,14 @@ def test_levels_and_partial_evidence(build: Any):
     _, a = build()
     delivery = _dim(a, "delivery")
     assert delivery.measured == ("fillers.per_100_words", "pauses.mid_sentence_per_min")
-    assert set(delivery.missing) == {"vision.gaze.at_camera_share", "timing.overrun_s"}
+    assert delivery.missing == ("timing.overrun_s",)  # an upload: no time limit (counted in M)
+    assert delivery.excluded == ("vision.gaze.at_camera_share",)  # camera off: left out of M
     assert delivery.level == 3  # 3 fillers (<= 6) but 1.8 mid-sentence pauses/min (> 1)
     assert delivery.score == pytest.approx(2 / 3)
     gap = {r.measure for r in delivery.next_level}
     assert gap == {"pauses.mid_sentence_per_min"}  # what level 4 still needs, as data
     f = _finding(a, "delivery")
-    assert "based on 2 of 4 measures" in f.statement and f.measured == 2 and f.total == 4
+    assert "based on 2 of 3 measures" in f.statement and f.measured == 2 and f.total == 3
     assert _dim(a, "central_message").level == 4  # stated, restated, 2 recurrences
     assert _dim(a, "organization").level == 3  # 2 transitions (< 3 for level 4)
 
@@ -133,11 +140,13 @@ def test_confidence_is_the_lowest_deciding_measure(build: Any):
     assert _dim(a, "language").confidence == Confidence.MEDIUM
 
 
-def test_missing_measures_never_lower_a_level(build: Any):
+def test_missing_measures_are_dropped_not_read_as_low(build: Any):
     _, a = build(fillers=None, mid_pauses=0)
     delivery = _dim(a, "delivery")
     assert delivery.measured == ("pauses.mid_sentence_per_min",)
-    assert delivery.level == 4  # 0 mid-sentence pauses; nothing else counted against it
+    # 0 mid-sentence pauses; nothing else counted against it, so the conditions reach level 4.
+    # The partial cap is the one deliberate exception: 1 of 3 measures caps it at 3 (ADR 0019).
+    assert delivery.capped_from == 4 and delivery.level == 3
 
 
 def test_arabic_content_not_measurable_and_delivery_from_fillers(build: Any):
@@ -148,7 +157,8 @@ def test_arabic_content_not_measurable_and_delivery_from_fillers(build: Any):
         assert r.level is None and r.not_measurable and r.score is None
         assert _finding(a, dim).measured == 0 and not _finding(a, dim).evidence
     delivery = _dim(a, "delivery")
-    assert delivery.measured == ("fillers.per_100_words",) and delivery.level == 4
+    assert delivery.measured == ("fillers.per_100_words",)
+    assert delivery.level == 3 and delivery.capped_from == 4  # 1 of 3 measures: capped
     assert delivery.confidence == Confidence.LOW  # still a level, at low confidence
     f = _finding(a, "delivery")
     assert ARABIC.search(f.statement) and "1" in f.statement and "4" in f.statement
@@ -253,3 +263,188 @@ def test_b1_english_reports_have_verified_findings(speech_cfg: Any):
         assert result.assessment.evidence_verified
         findings += sum(f.level is not None for f in result.assessment.findings)
     assert findings > 0
+
+
+# --- P3-a: partial levels, overrun, one failed finding (ADR 0019 amendment) -------------------
+
+
+def test_partial_cap_values_come_from_the_config():
+    cap = loader.load_partial_cap()
+    assert cap.max_share == 0.5 and cap.max_level == 3
+
+
+def test_at_most_half_of_the_measures_caps_the_level_at_3(build: Any):
+    # camera on, gaze missing for a system reason: 2 of 4 computed, both meet level 4
+    _, a = build(fillers=3.0, mid_pauses=0, camera_on=True)
+    delivery = _dim(a, "delivery")
+    assert len(delivery.measured) == 2 and not delivery.excluded
+    assert delivery.level == 3 and delivery.capped_from == 4
+    assert delivery.score == pytest.approx(2 / 3)  # the score follows the capped level
+    f = _finding(a, "delivery")
+    assert f.level == 3 and f.capped_from == 4
+    assert "limited to level 3" in f.statement and "based on 2 of 4 measures" in f.statement
+
+
+def test_more_than_half_of_the_measures_is_not_capped(build: Any):
+    _, a = build(fillers=3.0, mid_pauses=0, limit_s=180.0, camera_on=True)  # + overrun: 3 of 4
+    delivery = _dim(a, "delivery")
+    assert len(delivery.measured) == 3
+    assert delivery.level == 4 and delivery.capped_from is None
+    assert "limited to level" not in _finding(a, "delivery").statement
+
+
+def test_the_cap_never_changes_levels_1_to_3(build: Any):
+    _, a = build(fillers=None, mid_pauses=2)  # 1 of 4: 3.6 pauses/min -> level 2
+    delivery = _dim(a, "delivery")
+    assert delivery.level == 2 and delivery.capped_from is None
+
+
+def test_arabic_camera_on_with_gaze_missing_for_a_system_reason_is_capped(build: Any):
+    talk = "اليوم سأتحدث عن التدريب اليومي. " * 12
+    _, a = build(talk, language="ar", limit_s=180.0, camera_on=True)
+    delivery = _dim(a, "delivery")
+    assert set(delivery.measured) == {"fillers.per_100_words", "timing.overrun_s"}  # 2 of 4
+    assert "vision.gaze.at_camera_share" in delivery.missing and not delivery.excluded
+    assert delivery.level == 3 and delivery.capped_from == 4
+    assert ARABIC.search(_finding(a, "delivery").statement)
+
+
+def test_arabic_camera_off_delivery_is_2_of_3_and_not_capped(build: Any):
+    # accepted by the owner (ADR 0019, P3-a item 2): camera off is the user's choice
+    talk = "اليوم سأتحدث عن التدريب اليومي. " * 12
+    _, a = build(talk, language="ar", limit_s=180.0, filler_conf=Confidence.LOW)
+    delivery = _dim(a, "delivery")
+    assert delivery.level == 4 and delivery.capped_from is None
+    assert delivery.confidence == Confidence.LOW
+    f = _finding(a, "delivery")
+    assert f.measured == 2 and f.total == 3
+
+
+def test_english_upload_with_the_camera_off_is_not_capped(build: Any):
+    _, a = build(fillers=3.0, mid_pauses=0)  # upload: no limit; camera off -> 2 of 3
+    delivery = _dim(a, "delivery")
+    assert delivery.level == 4 and delivery.capped_from is None
+    f = _finding(a, "delivery")
+    assert (f.measured, f.total) == (2, 3) and "based on 2 of 3 measures" in f.statement
+
+
+def test_n_of_m_leaves_camera_measures_out_only_when_the_camera_is_off(build: Any):
+    _, off = build(limit_s=180.0)
+    _, on = build(limit_s=180.0, camera_on=True)
+    assert (_finding(off, "delivery").measured, _finding(off, "delivery").total) == (3, 3)
+    assert (_finding(on, "delivery").measured, _finding(on, "delivery").total) == (3, 4)
+    assert _dim(off, "delivery").excluded == ("vision.gaze.at_camera_share",)
+
+
+def test_opted_out_measures_are_left_out_of_m(build: Any, speech_cfg: Any):
+    report, _ = build()
+    rubric = loader.load_rubric("s1_presentation")
+    text_report = analyze.analyze_text(report.transcript, parser=lambda t: [[] for _ in t],
+                                       pauses=speech_cfg.pauses)  # fmt: skip
+    a = score.assess(
+        rubric, loader.load_thresholds("s1_presentation"), report, text_report, speech_cfg,
+        opted_out=frozenset({"pauses.mid_sentence_per_min"}),
+    )  # fmt: skip
+    delivery = _dim(a, "delivery")
+    assert "pauses.mid_sentence_per_min" in delivery.excluded
+    assert "pauses.mid_sentence_per_min" not in delivery.measured
+    assert _finding(a, "delivery").total == 2  # fillers + overrun; gaze (camera off) too left out
+
+
+def test_every_finding_states_n_of_m_measures(build: Any):
+    for kwargs in ({}, {"limit_s": 180.0}, {"fillers": None}):
+        _, a = build(**kwargs)
+        for f in a.findings:
+            assert f.total >= 1 and 0 <= f.measured <= f.total
+            if f.level is not None:
+                assert f"based on {f.measured} of {f.total} measures" in f.statement
+            else:
+                assert f"none of its {f.total} measures" in f.statement
+    _, a = build()
+    cm = _finding(a, "central_message")
+    assert cm.measured == cm.total  # all computed: still shown ("4 of 4")
+
+
+def test_overrun_against_the_session_limit(build: Any):
+    _, a = build(limit_s=30.0)  # speech ends at 33.3 s
+    delivery = _dim(a, "delivery")
+    over = next(c for c in delivery.conditions if c.measure == "timing.overrun_s")
+    assert over.value == pytest.approx(3.3, abs=1e-6)
+    f = _finding(a, "delivery")
+    times = [e.time for e in f.evidence if e.time is not None]
+    assert any(t.start_s == 30.0 and t.end_s == pytest.approx(33.3) for t in times)
+    _, a = build(limit_s=180.0)
+    over = next(c for c in _dim(a, "delivery").conditions if c.measure == "timing.overrun_s")
+    assert over.value == 0 and over.holds is True
+
+
+def test_overrun_of_an_upload_is_missing_with_its_reason(build: Any, speech_cfg: Any):
+    report, a = build()  # no limit: a file, not an in-app recording
+    assert "timing.overrun_s" in _dim(a, "delivery").missing
+    m, why = derived.overrun(report, None)
+    assert m is None and why == "uploaded file: no time limit"
+    report, _ = build("اليوم سأتحدث عن التدريب اليومي. " * 12, language="ar")
+    _, why = derived.overrun(report, None)
+    assert why is not None and ARABIC.search(why)
+
+
+def test_overrun_needs_speech(build: Any):
+    report, _ = build()
+    silent = report.model_copy(update={"speech_regions": ()})
+    m, why = derived.overrun(silent, 180.0)
+    assert m is None and why
+
+
+def test_in_the_app_one_failed_finding_does_not_crash_the_report(
+    build: Any, caplog: pytest.LogCaptureFixture
+):
+    with caplog.at_level("WARNING"):
+        _, a = build(filler_end_s=45.0, strict=False)  # fillers evidence past the recording
+    delivery = _dim(a, "delivery")
+    assert delivery.level is None and delivery.not_measurable == "could not be checked"
+    f = _finding(a, "delivery")
+    assert f.level is None and not f.evidence and "not measurable" in f.statement
+    assert a.failed_dimensions == ("delivery",)
+    assert _dim(a, "central_message").level == 4  # the rest of the report stands
+    logged = caplog.text
+    assert "delivery" in logged and "EvidenceError" in logged
+    assert "practice" not in logged.lower()  # counts only, never transcript text
+
+
+def test_in_the_app_any_error_in_one_dimension_is_isolated(
+    build: Any, monkeypatch: pytest.MonkeyPatch
+):
+    real = score._finding
+
+    def boom(rubric: Any, d: Any, *args: Any) -> Any:
+        if d.id == "organization":
+            raise KeyError("a template key")
+        return real(rubric, d, *args)
+
+    monkeypatch.setattr(score, "_finding", boom)
+    _, a = build(strict=False)
+    assert a.failed_dimensions == ("organization",)
+    assert _dim(a, "organization").level is None
+    assert _dim(a, "delivery").level is not None
+    with pytest.raises(KeyError):
+        build()  # outside the app (CLI, tests) a failure still stops
+
+
+def test_in_the_app_a_failed_text_analysis_leaves_delivery(build: Any, speech_cfg: Any):
+    from presenceai.pipeline.assess import assess_report
+
+    report, _ = build()
+
+    def broken(texts: Any) -> Any:
+        raise RuntimeError("parser crashed")
+
+    out = assess_report(
+        report, parser=broken, cfg=speech_cfg, scenario="s1_presentation", strict=False
+    )
+    a = out.assessment
+    for dim in ("central_message", "organization", "language", "supporting_material"):
+        assert _dim(a, dim).level is None
+        assert "text analysis failed" in (_dim(a, dim).not_measurable or "")
+    assert _dim(a, "delivery").level is not None
+    with pytest.raises(RuntimeError):
+        assess_report(report, parser=broken, cfg=speech_cfg, scenario="s1_presentation")
