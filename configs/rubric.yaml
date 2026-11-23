@@ -47,3 +47,58 @@ s1_presentation:
     del_overrun_4: 0            # seconds over the session limit
     del_overrun_3: 15
     del_overrun_2: 30
+
+s2_project_defense:
+  # ADR 0022 (proposed; the supervisor reviews the anchors before it is accepted). Every value is
+  # PROVISIONAL: re-estimate after E5/E6. S2 is a 90-second explanation, so the counts are S1's
+  # SCALED BY RATIO (about 90/150 = 0.6, rounded, at least 1), NOT DERIVED FROM DATA. Shares
+  # (opening, closing), the hook window and the rates (per 100 words, per minute, gaze share) are
+  # S1's values unchanged.
+  status: provisional
+  decided_in: ADR 0022
+  values:
+    opening_share_pct: 20       # as S1
+    closing_share_pct: 15       # as S1
+    hook_sentences: 2           # as S1
+    # central message
+    cm_recurrences_min: 1       # S1 2, scaled
+    cm_statements_min: 1        # as S1
+    # organization
+    org_framing_full: 2         # as S1 (introduction and conclusion cue: parts, not counts)
+    org_framing_min: 1          # as S1
+    org_transitions_high: 2     # S1 3, scaled
+    org_transitions_mid: 1      # S1 2, scaled
+    # language (rates and per-sentence values: as S1)
+    lang_rare_zipf: 3.0
+    lang_undefined_max_4: 0
+    lang_undefined_max_3: 1
+    lang_undefined_max_2: 2     # S1 3, scaled (a count over the talk)
+    lang_sentence_max_4: 20
+    lang_sentence_max_3: 25
+    lang_sentence_max_2: 30
+    # supporting material
+    sup_items_high: 3           # S1 5, scaled
+    sup_types_high: 2           # S1 3, scaled
+    sup_items_mid: 2            # S1 3, scaled
+    sup_types_mid: 2            # as S1 (owner's table, 2026-11-23: level 3 still needs two kinds)
+    sup_items_min: 1            # as S1
+    # delivery (rates and shares: as S1)
+    del_fillers_4: 4
+    del_fillers_3: 6
+    del_fillers_2: 10
+    mid_pause_min_s: 1.0
+    del_mid_pauses_4: 1
+    del_mid_pauses_3: 2
+    del_mid_pauses_2: 4
+    del_gaze_4: 0.70
+    del_gaze_3: 0.50
+    del_gaze_2: 0.30
+    del_overrun_4: 0            # seconds over the 90 s limit
+    del_overrun_3: 10           # S1 15, scaled
+    del_overrun_2: 20           # S1 30, scaled
+    # follow-up handling (the weaker of the 2 answers decides; ADR 0022)
+    fu_relevance_high: 0.85     # PLACEHOLDER: set from the owner's 20 calibration pairs (S2-b)
+    fu_relevance_mid: 0.80      # PLACEHOLDER: as above; not used for scoring before calibration
+    fu_relevance_low: 0.75      # PLACEHOLDER: as above
+    fu_latency_4: 2             # seconds from the end of the question to speech onset (owner)
+    fu_latency_3: 4             # (owner, 2026-11-23); no data

@@ -19,7 +19,7 @@ All three are served by the same product and scenario library; the user picks a 
 | Scenario | Status | Format | Rubric source |
 |---|---|---|---|
 | **S1 Prepared short presentation** | Primary, fully implemented | 2–3 min talk on the user's own topic or a prompt from the bank; optional outline upload | Adapted AAC&U VALUE Oral Communication rubric (organization, language, delivery, supporting material, central message) |
-| **S2 Project defense with skeptical follow-up** | Secondary, fully implemented | 90 s project explanation, then 2 generated follow-up questions | Concept document's defense rubric + follow-up handling |
+| **S2 Project defense with skeptical follow-up** | Secondary, fully implemented | 90 s project explanation, then 2 generated follow-up questions | S1's VALUE-adapted rubric (five dimensions) scaled to 90 s + follow-up handling (relevance, latency, limitations acknowledged); ADR 0022 |
 | S3 Structured interview answer (STAR) | Stub (YAML only) | 60–90 s answer | Concept document |
 | S4–S10 Criticism, disagreement, bad news, feedback, delay, accountability, clarification | Stubs | — | Concept document |
 

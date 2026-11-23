@@ -47,7 +47,7 @@ class MeasureSpec(_Frozen):
     status: Literal["available", "planned"]
     planned_in: str | None = None  # slice that builds it, e.g. "P2-b"
     # a measure that cannot be computed is dropped from the conditions, never penalised
-    requires: Literal["none", "camera", "session_limit"]
+    requires: Literal["none", "camera", "session_limit", "followups"]
     languages: tuple[Literal["en", "ar"], ...] = Field(min_length=1)
     description: str = Field(min_length=1)
 
