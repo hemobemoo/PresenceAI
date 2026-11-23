@@ -170,3 +170,37 @@ contrast_turn:
   - however
   - actually
   - in fact
+
+limitation:        # S2 follow-up answers (ADR 0022): EXPLICIT limitation phrases only. Never a
+                   # hedging phrase ("i am not sure", "maybe", "i think"): a test checks this
+                   # before the measure goes live (supervisor's condition, 2026-11-23).
+                   # Contractions other than the normalised ones are listed in both forms.
+  - one limitation
+  - a limitation
+  - the main limitation
+  - the limitation
+  - limitations of
+  - a weakness
+  - the main weakness
+  - a drawback
+  - a shortcoming
+  - we did not test
+  - we didn't test
+  - we did not evaluate
+  - we didn't evaluate
+  - we have not tested
+  - we haven't tested
+  - we have not yet
+  - we haven't yet
+  - we could not
+  - we couldn't
+  - it does not handle
+  - it doesn't handle
+  - it does not cover
+  - it doesn't cover
+  - is not covered
+  - out of scope
+  - only tested on
+  - not yet validated
+  - has not been validated
+  - future work

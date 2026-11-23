@@ -90,6 +90,26 @@
 - S2 inherits S1's limitations (lexicon matches, lower-bound fillers, Whisper punctuation) and
   ADR 0017 open item 2 (length-aware thresholds): the ratio scaling is a stopgap for that item.
 
+## S2-b: follow-up measures (2026-11-23)
+
+Built and tested, not yet scored (S2-c wires them into the assessment, so the rubric still
+lists them as planned in S2-c):
+
+- **Limitation cues:** `lang/en/text_cues.yaml: limitation`, 29 explicit phrases ("one
+  limitation", "we did not test", "out of scope", "future work", …; contractions listed in both
+  forms). **The no-hedge test is written** (`tests/unit/test_followup.py`): no cue is or contains
+  a common hedging phrase, and hedged answers ("I'm not sure, maybe…") are not matched.
+- **Latency** (`speech/latency.py`): the first speech onset in the answer recording; no speech
+  region gives no latency (missing, never low).
+- **Relevance** (`text/followup.py`): cosine similarity, question embedded as an e5 "query" and
+  the answer as a "passage". **An empty answer transcript scores 0.0**: it is a measured
+  non-answer, not a measure that could not be computed (proposed; owner to confirm).
+- **Weaker answer** (`text/followup.py: summarise`): lowest relevance, longest latency; an
+  answer whose value is missing is left out; a limitation counts if any answer has one.
+- **Relevance does not score until calibrated:** S2-c emits `followup.relevance_min` only after
+  `fu_relevance_*` are set from the owner's 20 pairs; until then it is reported as information
+  and its conditions are dropped ("based on N of M measures", item 2 below).
+
 ## Supervisor review (2026-11-23)
 
 Approved, subject to five conditions, all met in this ADR's PR or bound to S2-b:
