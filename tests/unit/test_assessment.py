@@ -224,7 +224,8 @@ def test_assess_command_writes_one_report(
     )
     assert result.exit_code == 0, result.output
     data = json.loads(out.read_text("utf-8"))
-    assert set(data) == {"schema_version", "speech", "text", "assessment"}
+    assert set(data) == {"schema_version", "speech", "text", "assessment", "followups"}
+    assert data["followups"] is None
     assert data["assessment"]["evidence_verified"] is True
     assert len(data["assessment"]["findings"]) == 5
 

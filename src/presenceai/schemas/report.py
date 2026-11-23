@@ -6,6 +6,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict
 
+from presenceai.schemas.followup import FollowupReport
 from presenceai.schemas.rubric import Assessment
 from presenceai.schemas.speech import SpeechReport
 from presenceai.schemas.text import TextReport
@@ -18,3 +19,4 @@ class AssessmentReport(BaseModel):
     speech: SpeechReport
     text: TextReport
     assessment: Assessment
+    followups: FollowupReport | None = None  # S2 follow-up answers (ADR 0022)

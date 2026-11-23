@@ -56,6 +56,8 @@ s2_project_defense:
   # S1's values unchanged.
   status: provisional
   decided_in: ADR 0022
+  # Placeholders: a measure with a condition on one of these is reported, not scored (S2-c).
+  uncalibrated: [fu_relevance_high, fu_relevance_mid, fu_relevance_low]
   values:
     opening_share_pct: 20       # as S1
     closing_share_pct: 15       # as S1

@@ -98,6 +98,10 @@ assessment:
   missing_camera: "لا يوجد تسجيل بالكاميرا"
   missing_limit: "لم يُحدَّد وقت"
   missing_other: "لم يُحسب"
+  missing_followups: "لم تُسجَّل إجابة عن أي سؤال متابعة"
+  uncalibrated: "القيمة المقيسة {value:g}، ولا تدخل في التقييم حتى تُعايَر حدودها"
+  followup_not_measured_language: "لا يُقاس لإجابات اللغة {language} (ADR 0022)"
+  followup_no_answer: "الإجابة {answer}: لا كلام خلال نافذة الإجابة البالغة {window:g} ث."
   measures:
     text:
       central_message:
@@ -125,6 +129,10 @@ assessment:
         at_camera_share: "حصة وقت الكلام مع النظر نحو الكاميرا"
     timing:
       overrun_s: "ثوانٍ بعد الوقت المحدد"
+    followup:
+      relevance_min: "أدنى تشابه بين السؤال والإجابة في إجابات المتابعة"
+      latency_max_s: "أطول زمن حتى أول كلام في إجابة متابعة (ث)"
+      limitation_acknowledged: "ذكر حدٍّ من حدود العمل في إجابة متابعة (1 = نعم)"
 units:
   count: "عدد"
   "words/min": "كلمة/دقيقة"
@@ -136,6 +144,8 @@ units:
   share of speech time: "حصة من وقت الكلام"
   semitones: "نصف نغمة"
   s: "ث"
+  similarity: "تشابه"
+  yes/no: "نعم/لا"
   sentences: "جمل"
   yes/no: "نعم = 1، لا = 0"
   items: "عناصر"

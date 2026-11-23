@@ -99,6 +99,10 @@ assessment:
   missing_camera: "no camera recording"
   missing_limit: "no time limit set"
   missing_other: "not computed"
+  missing_followups: "no follow-up answer recorded"
+  uncalibrated: "measured {value:g}, not scored until its thresholds are calibrated"
+  followup_not_measured_language: "not measured for {language} answers (ADR 0022)"
+  followup_no_answer: "Answer {answer}: no speech in the {window:g} s answer window."
   measures:
     text:
       central_message:
@@ -126,6 +130,10 @@ assessment:
         at_camera_share: "share of speaking time looking toward the camera"
     timing:
       overrun_s: "seconds over the time limit"
+    followup:
+      relevance_min: "lowest question-answer similarity over the follow-up answers"
+      latency_max_s: "longest time to the first speech in a follow-up answer (s)"
+      limitation_acknowledged: "limitation stated in a follow-up answer (1 = yes)"
 units:
   count: "count"
   "words/min": "words/min"
@@ -137,6 +145,8 @@ units:
   share of speech time: "share of speech time"
   semitones: "semitones"
   s: "s"
+  similarity: "similarity"
+  yes/no: "yes/no"
   sentences: "sentences"
   yes/no: "yes = 1, no = 0"
   items: "items"

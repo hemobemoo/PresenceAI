@@ -6,9 +6,12 @@ answer's times are seconds from the end of its question.
 
 from __future__ import annotations
 
-from typing import Literal
+from typing import Literal, Self
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
+
+from presenceai.schemas.assessment import Measurement
+from presenceai.schemas.speech import Transcript
 
 # How an answer recording ended (owner, 2026-11-23, ADR 0022):
 # - answered: speech found and transcribed;
@@ -46,3 +49,37 @@ class FollowupSummary(_Frozen):
     latency_max_index: int | None = None
     limitation_acknowledged: bool = False
     limitation_index: int | None = None
+
+
+class FollowupAnswerInput(_Frozen):
+    """One follow-up in the `presenceai assess --followups` file. Until P7 generates the
+    questions, they are given as input (ADR 0022 item 9)."""
+
+    question: str = Field(min_length=1)
+    file: str = Field(min_length=1)  # the answer recording; relative to the JSON file's folder
+    window_s: float = Field(gt=0)  # the answer window the recording was given
+
+
+class FollowupInput(_Frozen):
+    answers: tuple[FollowupAnswerInput, ...] = Field(min_length=1)
+
+
+class FollowupReport(_Frozen):
+    """The follow-up part of an S2 assessment: per-answer measures, the weaker-answer summary,
+    and the rubric measures with evidence that names the answer it comes from."""
+
+    questions: tuple[str, ...] = Field(min_length=1)
+    sources: tuple[str, ...]  # answer recording file names, no folders
+    transcripts: tuple[Transcript | None, ...]  # None: the recording could not be read
+    summary: FollowupSummary
+    measurements: dict[str, Measurement] = Field(default_factory=dict)
+    not_measurable: dict[str, str] = Field(default_factory=dict)
+
+    @model_validator(mode="after")
+    def _one_entry_per_answer(self) -> Self:
+        n = len(self.summary.answers)
+        if not (len(self.questions) == len(self.sources) == len(self.transcripts) == n):
+            raise ValueError("questions, sources, transcripts and answers must match in number")
+        if [a.index for a in self.summary.answers] != list(range(n)):
+            raise ValueError("answers must be indexed 0..n-1 in order")
+        return self

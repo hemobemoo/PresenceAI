@@ -9,7 +9,7 @@ Language-model claims whose quote is not found are dropped silently, AGENTS.md r
 
 from __future__ import annotations
 
-from collections.abc import Iterable
+from collections.abc import Iterable, Sequence
 
 from presenceai.schemas.assessment import Evidence
 from presenceai.schemas.speech import Transcript
@@ -35,9 +35,24 @@ def is_verified(e: Evidence, transcript: Transcript, duration_s: float) -> bool:
     return True
 
 
-def verify(evidence: Iterable[Evidence], transcript: Transcript, duration_s: float) -> None:
-    """Raise EvidenceError when any evidence item is not verified. Counts only, no text."""
+def verify(
+    evidence: Iterable[Evidence],
+    transcript: Transcript,
+    duration_s: float,
+    answers: Sequence[Transcript | None] = (),
+) -> None:
+    """Raise EvidenceError when any evidence item is not verified. Counts only, no text.
+
+    Evidence that names a follow-up answer (`answer`, S2) is checked against that answer's own
+    transcript and recording length; an answer with no transcript verifies nothing."""
     items = list(evidence)
-    failed = sum(not is_verified(e, transcript, duration_s) for e in items)
+
+    def ok(e: Evidence) -> bool:
+        if e.answer is None:
+            return is_verified(e, transcript, duration_s)
+        t = answers[e.answer] if e.answer < len(answers) else None
+        return t is not None and is_verified(e, t, t.duration_s)
+
+    failed = sum(not ok(e) for e in items)
     if not items or failed:
         raise EvidenceError(f"{failed} of {len(items)} evidence items not verified")

@@ -191,9 +191,9 @@ The Arabic anchors translate the reviewed English wording. They are a draft for 
 | `pauses.mid_sentence_per_min` | available | none | en | Mid-sentence pauses (see the definition) per minute of speaking time (first speech onset to last offset, as rate.wpm), from the pause events of speech/pauses.py (rubric/derived.py). Missing when the punctuation is unreliable or for Arabic. |
 | `vision.gaze.at_camera_share` | planned (P6) | camera | en, ar | Share of speaking time with gaze zone at_camera (ADR 0004); camera on only. |
 | `timing.overrun_s` | planned (P3) | session_limit | en, ar | Seconds spoken beyond the session's time limit (0 when within it). |
-| `followup.relevance_min` | planned (S2-c) | followups | en | Lowest question-answer similarity over the follow-up answers (see relevance). Not measured for Arabic until there are Arabic calibration pairs (ADR 0022). |
-| `followup.latency_max_s` | planned (S2-c) | followups | en, ar | Longest response latency over the follow-up answers (see response latency). Missing for an answer whose recording has no speech onset; then only this condition is dropped. |
-| `followup.limitation_acknowledged` | planned (S2-c) | followups | en | Yes if at least one follow-up answer contains a limitation cue. |
+| `followup.relevance_min` | available | followups | en | Lowest question-answer similarity over the follow-up answers (see relevance). Not measured for Arabic until there are Arabic calibration pairs (ADR 0022). |
+| `followup.latency_max_s` | available | followups | en, ar | Longest response latency over the follow-up answers (see response latency). Missing for an answer whose recording has no speech onset; then only this condition is dropped. |
+| `followup.limitation_acknowledged` | available | followups | en | Yes if at least one follow-up answer contains a limitation cue. |
 
 ## Source and licence
 

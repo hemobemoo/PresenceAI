@@ -1,0 +1,130 @@
+{
+  "source": "owner-written calibration pairs (data/s2_relevance/pairs.txt)",
+  "sha256": "80b97b7981c27c43e888affdc3a6de426f588adaf68937ecb55662aee15a733b",
+  "embedder": "intfloat/multilingual-e5-small",
+  "by_label": {
+    "good": {
+      "n": 10,
+      "min": 0.8405,
+      "median": 0.874,
+      "max": 0.9326,
+      "mean": 0.8796099999999999
+    },
+    "evasive": {
+      "n": 5,
+      "min": 0.9085,
+      "median": 0.9341,
+      "max": 0.9425,
+      "mean": 0.92846
+    },
+    "off-topic": {
+      "n": 5,
+      "min": 0.7762,
+      "median": 0.7901,
+      "max": 0.8415,
+      "mean": 0.8057399999999999
+    }
+  },
+  "pairs": [
+    {
+      "id": 1,
+      "label": "good",
+      "relevance": 0.8994
+    },
+    {
+      "id": 2,
+      "label": "good",
+      "relevance": 0.8883
+    },
+    {
+      "id": 3,
+      "label": "good",
+      "relevance": 0.9326
+    },
+    {
+      "id": 4,
+      "label": "good",
+      "relevance": 0.872
+    },
+    {
+      "id": 5,
+      "label": "good",
+      "relevance": 0.8679
+    },
+    {
+      "id": 6,
+      "label": "good",
+      "relevance": 0.8663
+    },
+    {
+      "id": 7,
+      "label": "good",
+      "relevance": 0.8895
+    },
+    {
+      "id": 8,
+      "label": "good",
+      "relevance": 0.8636
+    },
+    {
+      "id": 9,
+      "label": "good",
+      "relevance": 0.876
+    },
+    {
+      "id": 10,
+      "label": "good",
+      "relevance": 0.8405
+    },
+    {
+      "id": 11,
+      "label": "evasive",
+      "relevance": 0.9085
+    },
+    {
+      "id": 12,
+      "label": "evasive",
+      "relevance": 0.9425
+    },
+    {
+      "id": 13,
+      "label": "evasive",
+      "relevance": 0.9224
+    },
+    {
+      "id": 14,
+      "label": "evasive",
+      "relevance": 0.9341
+    },
+    {
+      "id": 15,
+      "label": "evasive",
+      "relevance": 0.9348
+    },
+    {
+      "id": 16,
+      "label": "off-topic",
+      "relevance": 0.8354
+    },
+    {
+      "id": 17,
+      "label": "off-topic",
+      "relevance": 0.7855
+    },
+    {
+      "id": 18,
+      "label": "off-topic",
+      "relevance": 0.8415
+    },
+    {
+      "id": 19,
+      "label": "off-topic",
+      "relevance": 0.7901
+    },
+    {
+      "id": 20,
+      "label": "off-topic",
+      "relevance": 0.7762
+    }
+  ]
+}
