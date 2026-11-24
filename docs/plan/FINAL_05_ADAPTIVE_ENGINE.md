@@ -51,6 +51,8 @@ promote level[s] after 2 consecutive y_adj ≥ 0.75; demote after 2 ≤ 0.40
 
 Every call returns a `Decision`: chosen exercise, skill, alternatives with their numbers, live-prompt set, plain-language reason ("This targets supporting material: your lowest reliably measured skill, 0.38 ± 0.09 over 3 attempts").
 
+**To handle in P5 (owner, 2026-11-25): floor effects.** A skill whose measure sits at the floor for nearly everyone must not keep winning "weakest skill". Central message is at rubric level 1 on all 12 real English talks so far (ADR 0019 open item 2): with the policy above it would be chosen every time, whatever the user does. P5 decides how the engine detects a floor effect (for example, a skill at the lowest level on every attempt, including after its targeted exercise) and what it does then (for example, mark the skill as "not yet reliably measured", leave it out of the argmax, and say so in the `Decision` reason). A property test checks that a skill held at the floor is not selected on every call.
+
 ## 4. Difficulty ladder (from the concept)
 
 | Level | Condition |

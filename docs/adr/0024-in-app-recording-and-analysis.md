@@ -116,3 +116,18 @@ Browser re-run on the laptop (whisper_small, 4 threads, models unloaded after ea
 
 1. Re-check `completeness_min_ratio` (0.95) and `cpu_threads` (4) on the owner's first real
    recordings; record the observed ratio and analysis time here.
+   - **Round 2 of the owner's real S1 test (2026-11-25), passed.** whisper_small, int8, 4 threads,
+     models unloaded after each run:
+
+     | Path | Audio | Analysis | load_models | speech | content | save |
+     |---|---|---|---|---|---|---|
+     | Live recording | 163.1 s | 69.3 s | 5.14 s | 63.58 s | 0.47 s | 0.07 s |
+     | Upload (Sound Recorder) | 160.5 s | 69.6 s | 1.93 s | 67.28 s | 0.32 s | 0.07 s |
+
+     Laptop: fan quiet, heat normal. No "incomplete" warning on the recording (the ratio was not
+     yet logged; it is from this PR on). Report, export and delete as expected; no terminal
+     errors.
+   - **Decision (owner): keep `cpu_threads: 4`.** About 69 s for 2:40 of audio is 15 % over
+     FINAL_02 §3.2's "under 60 s for a 3-minute talk", at no thermal cost; the speech step is
+     about 95 % of it.
+   - Still open: the completeness ratio on a real recording (now in the start log line).

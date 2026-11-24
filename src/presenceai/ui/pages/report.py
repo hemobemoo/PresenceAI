@@ -8,24 +8,38 @@ the words are replaced by a note.
 
 The user's words are escaped before they go into Markdown, so a transcript can never add links,
 images or formatting to the page.
+
+After the owner's real S1 runs (2026-11-25): a long quote shows its first `QUOTE_WORDS` words and
+"…" (the full quote stays in the report data and the export); each card names the measures that
+were not measured and why, and those left out because the camera was off; and a Central message
+card at level 1 with no thesis sentence says what was checked (rules-only wording from lang/).
 """
 
 from __future__ import annotations
 
 import re
 
-from presenceai.lang import Language, ui_text
+from presenceai.lang import Language, text, ui_text
 from presenceai.rubric import loader
 from presenceai.schemas.assessment import Evidence
-from presenceai.schemas.storage import DimensionSummary
+from presenceai.schemas.rubric import DimensionResult
+from presenceai.schemas.storage import DimensionSummary, SessionSummary
 from presenceai.storage.reports import ReportView
 
 _MD = re.compile(r"([\\`*_{}\[\]()#+\-.!|<>~])")
+QUOTE_WORDS = 25  # longer quotes are shortened on the card only
+THESIS = "text.central_message.statements"
 
 
 def escape(text: str) -> str:
     """Markdown-safe text: every formatting character is escaped."""
     return _MD.sub(r"\\\1", text)
+
+
+def shorten(quote: str, words: int = QUOTE_WORDS) -> str:
+    """The first `words` words and "…" for a long quote; a short quote unchanged."""
+    parts = quote.split()
+    return quote if len(parts) <= words else " ".join(parts[:words]) + " …"
 
 
 def clock(seconds: float) -> str:
@@ -62,10 +76,48 @@ def _evidence(e: Evidence, lang: Language) -> str:
     if e.answer is not None:
         bits.append(ui_text(lang, "report.answer", n=e.answer + 1))
     if e.transcript is not None:
-        bits.append(f"“{escape(e.transcript.text)}”")
+        bits.append(f"“{escape(shorten(e.transcript.text))}”")
     if e.time is not None:
         bits.append(f"({clock(e.time.start_s)}–{clock(e.time.end_s)})")
     return "- " + " ".join(bits)
+
+
+def _measure_label(lang: Language, key: str) -> str:
+    try:
+        return text(lang, f"assessment.measures.{key}")
+    except KeyError:
+        return key
+
+
+def _unmeasured(r: DimensionResult, lang: Language) -> list[str]:
+    """One line per measure that was not measured (and why), and one for those left out of the
+    count because the camera was off."""
+    lines = [
+        "- "
+        + escape(
+            ui_text(
+                lang,
+                "report.not_measured",
+                measure=_measure_label(lang, k),
+                reason=r.missing_reasons.get(k, text(lang, "assessment.missing_other")),
+            )
+        )
+        for k in r.missing
+    ]
+    if r.excluded:
+        names = text(lang, "assessment.separator").join(_measure_label(lang, k) for k in r.excluded)
+        lines.append("- " + escape(ui_text(lang, "report.not_counted_camera", measures=names)))
+    return lines
+
+
+def _hint(d: DimensionSummary, summary: SessionSummary, lang: Language) -> str | None:
+    """Rules-only coaching for a Central message at level 1 with no thesis sentence found."""
+    if d.dimension != "central_message" or d.level != 1:
+        return None
+    statements = {m.measure: m.value for m in summary.measures}.get(THESIS)
+    if statements != 0:
+        return None
+    return ui_text(lang, "report.hints.central_message_no_statement")
 
 
 def render(view: ReportView, lang: Language, scenario: str, *, max_evidence: int = 5) -> str:
@@ -75,15 +127,22 @@ def render(view: ReportView, lang: Language, scenario: str, *, max_evidence: int
     if view.text_note:
         out.append(f"> {escape(view.text_note)}")
     findings = {f.dimension: f for f in view.report.assessment.findings} if view.report else {}
+    results = {r.dimension: r for r in view.report.assessment.dimensions} if view.report else {}
     order = {dim: i for i, dim in enumerate(names)}  # the rubric's order
     dims = sorted(view.summary.dimensions, key=lambda d: order.get(d.dimension, len(order)))
     for d in dims:
         out.append(f"### {escape(names.get(d.dimension, d.dimension))}")
         out.append(_badges(d, lang))
+        hint = _hint(d, view.summary, lang)
+        if hint:
+            out.append(f"> {escape(hint)}")
         f = findings.get(d.dimension)
         if f is None:
             continue
         out.append(escape(f.statement))
+        r = results.get(d.dimension)
+        if r is not None and d.level is not None:  # a not-measurable card already says why
+            out.extend(_unmeasured(r, lang))
         if f.evidence:
             out.append(f"*{ui_text(lang, 'report.evidence')}*")
             out.extend(_evidence(e, lang) for e in f.evidence[:max_evidence])

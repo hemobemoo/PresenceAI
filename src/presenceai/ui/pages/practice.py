@@ -81,6 +81,7 @@ def _run(
     duration_s: float,
     limit_s: float | None,
     notices: list[str],
+    completeness: float | None = None,
 ) -> Iterator[Update]:
     if ctx.store is None:
         yield Update(ui_text(lang, "practice.key_missing"))
@@ -93,7 +94,7 @@ def _run(
     ctx.store.write_bytes(session.id, audio.name, audio.data)  # encrypted at write time
     steps = analyzer.steps(
         ctx.db, ctx.store, session, audio, limit_s=limit_s, keep=keep is not None,
-        duration_s=duration_s,
+        duration_s=duration_s, completeness=completeness,
     )  # fmt: skip
     try:
         while True:
@@ -165,6 +166,7 @@ def run_recording(
         yield from _run(
             ctx, analyzer, lang, language=language, scenario=scenario, source="app", audio=audio,
             duration_s=recording.received_s, limit_s=limit, notices=notices,
+            completeness=recording.ratio,
         )  # fmt: skip
 
     return _guarded(lang, inner())

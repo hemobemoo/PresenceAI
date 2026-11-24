@@ -156,6 +156,9 @@
    the planted labels as planned (ADR 0018).
    - **Optional, P8:** the owner hand-labels more C2 test items for supporting material and
      central message, and a second rater labels a subset for an inter-rater agreement figure.
+   - **Required before P5 (owner, 2026-11-25):** the owner hand-labels the **C2 development**
+     items for central message, so its cues can be tuned on those labels (the floor effect in
+     ADR 0019 open item 2). FINAL_12's P5 row records it.
 5. **Design** (owner, unchanged from the P2-e proposal):
    - 400 transcripts: 5 groups of 80 (control, no central message, no conclusion, no supporting
      material, undefined jargon); each of 80 topics (`resources/c2/topics.yaml`, written for

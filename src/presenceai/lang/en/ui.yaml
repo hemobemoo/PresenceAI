@@ -73,6 +73,10 @@ report:
   evidence: "Evidence"
   answer: "answer {n}"
   more_evidence: "and {n} more"
+  not_measured: "Not measured: {measure} ({reason})"
+  not_counted_camera: "Not counted (camera off): {measures}"
+  hints:
+    central_message_no_statement: "No sentence stating your main point was found (phrases like 'My main point is…'). A topic announcement such as 'Today I will talk about…' counts as an introduction. Try adding one sentence that states your main point."
 data:
   heading: "My data"
   intro: "Your sessions on this computer. Report text and recordings are encrypted; levels and measures are kept for your progress."
