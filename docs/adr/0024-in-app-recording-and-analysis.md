@@ -70,6 +70,48 @@ recording or analysing (P3 plan, 2026-11-24).
   it, together with the completeness ratio on real loopback WebRTC and the analysis time with 4
   threads.
 
+## Round 1 of the owner's real S1 test (2026-11-25): failed, fixed
+
+The owner pressed "Stop and analyse" and "Analyse the upload" and nothing visible happened; the
+log held only Windows WinError 10054 tracebacks (633 in the recording session). Reproduced in a
+scripted browser (Playwright, a fake microphone playing a C1 clip through the real WebRTC path,
+and a real 60 s WAV upload). Causes and fixes:
+
+1. **Every click was swallowed.** FastRTC 0.0.34's `WebRTC` defaults to `full_screen=True`, which
+   draws a full-screen waveform layer over the page; neither analyse button ever received a
+   click. Now `full_screen=False` (a test checks the built component).
+2. **No sign of progress.** Each button first runs a step outside Gradio's queue that shows
+   "Preparing the audio…" and disables both buttons (about 1 s after the press in the browser),
+   then the analysis shows "Analysing… step N of 4: …" (load models, speech, content, save). Any
+   failure ends as a message on the page with its error type; a test checks that every press
+   ends in a report or a message (analysis error, storage error, upload-check error, a second
+   analysis while one runs).
+3. **The take and stopping the microphone box.** The audio survived the stop, but FastRTC's
+   `shutdown` was not handled (the timer kept counting), and the buffer was reset in `start_up`,
+   which FastRTC runs in a thread at the same time as the first frames. Now a take starts on its
+   connection's first frame and `shutdown` ends the stream while keeping the take for "Stop and
+   analyse" (tested).
+4. **The timer flooded the server.** The 0.5 s `gr.Timer` sent a queued request (join plus event
+   stream) per tick, about 720 over a 3-minute take, the source of the 10054 resets. Now a 1 s
+   timer runs only while the microphone records (`start_recording` / `stop_recording`) and skips
+   the queue.
+5. **Windows 10054 noise.** The app runs uvicorn on its own event loop with an exception handler
+   that drops only `ConnectionResetError` with `winerror == 10054`; everything else goes to
+   asyncio's default handler (tested both ways). The browser re-run logged none.
+6. **Logs.** One line when an analysis starts (session id, source, audio seconds) and one when
+   it ends (step timings, total) or fails (step, error type); never text.
+7. **A reload locked Practice again** (found while reproducing): the consent state and the My
+   data table were read once at app start. Every page load now reads them again.
+8. **WMA** (Sound Recorder's fifth format) gets its own message; the upload box lists the
+   accepted formats.
+
+Browser re-run on the laptop (whisper_small, 4 threads, models unloaded after each run):
+
+| Path | Audio | Analysis | Of which speech | Report |
+|---|---|---|---|---|
+| Recording (fake microphone, real WebRTC) | 15.7 s | 10.0 s | 8.4 s | shown, quotes from the clip |
+| WAV upload | 59.8 s | 17.4 s | 16.6 s | shown, 10 N-of-M badges |
+
 ### Open items
 
 1. Re-check `completeness_min_ratio` (0.95) and `cpu_threads` (4) on the owner's first real

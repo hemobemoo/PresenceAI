@@ -84,7 +84,9 @@ def delete_all(ctx: AppContext, lang: Language, *, confirmed: bool) -> str:
     return ui_text(lang, "data.deleted_all")
 
 
-def build(ctx: AppContext, lang: Language) -> None:
+def build(ctx: AppContext, lang: Language) -> Any:
+    """The page's components; returns `wire(blocks)`, which refreshes the table on every page
+    load (sessions made since the app started)."""
     import gradio as gr
 
     rtl = lang == "ar"
@@ -131,3 +133,11 @@ def build(ctx: AppContext, lang: Language) -> None:
         [confirm],
         [status, table, picker],
     )
+
+    def wire(blocks: Any) -> None:
+        def on_load() -> tuple[Any, Any]:
+            return gr.Dataframe(value=rows(ctx, lang)), gr.Dropdown(choices=choices(ctx, lang))
+
+        blocks.load(on_load, outputs=[table, picker], queue=False, show_progress="hidden")
+
+    return wire

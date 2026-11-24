@@ -177,3 +177,21 @@ def test_presenceai_with_no_command_starts_the_app(monkeypatch: pytest.MonkeyPat
     started.clear()
     assert CliRunner().invoke(cli.app, ["version"]).exit_code == 0
     assert started == []  # a command never starts the app
+
+
+def test_every_page_load_reads_consent_and_sessions_again(ctx: AppContext):
+    """Round-1 test: after a reload Practice was locked although consent was saved."""
+    import gradio as gr
+
+    from presenceai.ui.app import build_blocks
+
+    blocks = build_blocks(ctx, "en")
+    loads = [d for d in blocks.fns.values() if any(t[1] == "load" for t in d.targets)]
+    tabs = {i for i, b in blocks.blocks.items() if isinstance(b, gr.Tab)}
+    frames = {i for i, b in blocks.blocks.items() if isinstance(b, gr.Dataframe)}
+    outs = {o._id for d in loads for o in d.outputs}
+    assert outs & tabs and outs & frames
+    consent.save(ctx, "en", Consent(use_app=True), now=T0)  # saved after the app started
+    load = next(d for d in loads if any(o._id in tabs for o in d.outputs))
+    values = load.fn()
+    assert values[0] is True and values[-1].interactive is True

@@ -1,19 +1,27 @@
 """Practice page (P3-d): record in the app (FastRTC, audio only) or upload a file, then analyse.
 
-- **Recording:** FastRTC `WebRTC(modality="audio", mode="send")`, frames resampled to 16 kHz
-  and kept in memory (`live/recorder.py`). **No STUN or TURN server**: `{"iceServers": []}` on
-  the browser and on the server, so the connection stays on this computer (aiortc would
-  otherwise contact stun.l.google.com; owner, P3 plan). A timer shows the elapsed time; frames
-  stop being kept at the limit + `app.recording_extra_s`; a recording whose received audio is
-  below `app.completeness_min_ratio` of its wall-clock time gets a warning.
+- **Recording:** FastRTC `WebRTC(modality="audio", mode="send", full_screen=False)`, frames
+  resampled to 16 kHz and kept in memory (`live/recorder.py`). `full_screen=False` matters:
+  FastRTC 0.0.34's default draws a full-screen waveform layer that swallows every click on the
+  page (owner's round-1 test: neither analyse button reacted). **No STUN or TURN server**:
+  `{"iceServers": []}` on the browser and on the server (aiortc would otherwise contact
+  stun.l.google.com). A take starts with its first frame and survives stopping the microphone
+  box until "Stop and analyse" takes it.
+- **Timer:** a 1 s `gr.Timer`, active only while the microphone records (FastRTC's
+  `start_recording` / `stop_recording` events) and sent outside Gradio's queue, so it no longer
+  floods the server with queued requests (round 1: hundreds of Windows 10054 resets).
 - **Upload:** read into memory, Gradio's temp copy deleted, limits checked
-  (`pipeline/app_run.py: check_upload`). Uploads have no time limit (overrun is missing).
-- Either way the audio is encrypted before it is stored, analysed from memory, and the report is
-  shown with its N-of-M and capped badges (`ui/pages/report.py`).
+  (`pipeline/app_run.py: check_upload`). Uploads have no time limit (overrun is missing). WMA
+  gets its own message.
+- **Pressing either analyse button always ends in a report or a visible message:** the handler
+  is a generator that first shows "Preparing…", then "Analysing… step N of 4", disables both
+  buttons while it runs, and turns every failure into a message on the page.
 """
 
 from __future__ import annotations
 
+import logging
+from collections.abc import Iterator
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
@@ -31,6 +39,8 @@ from presenceai.storage import media, reports
 from presenceai.ui.context import AppContext
 from presenceai.ui.pages import report as report_page
 
+log = logging.getLogger(__name__)
+
 SCENARIOS = ("s1_presentation",)  # S2 comes with its follow-up flow (P3-e)
 NO_ICE: dict[str, Any] = {"iceServers": []}  # no STUN/TURN in Stage A
 INPUT_RATE = 16_000
@@ -43,17 +53,23 @@ def scenario_limit_s(scenario: str) -> float:
 
 
 @dataclass(frozen=True)
-class Outcome:
-    status: str  # Markdown: notices and errors, in the page language
+class Update:
+    """One state of the page while an analysis runs (or after it)."""
+
+    status: str  # Markdown: progress, notices and errors, in the page language
     report: str = ""  # Markdown report
     transcript: str = ""  # plain text
+    busy: bool = False  # True while running: the analyse buttons are disabled
+
+
+Outcome = Update  # the final state
 
 
 def _keep_days(ctx: AppContext) -> int | None:
     return ctx.raw_media_days if ctx.consent().keep_recordings else None
 
 
-def _analyse(
+def _run(
     ctx: AppContext,
     analyzer: app_run.Analyzer,
     lang: Language,
@@ -62,25 +78,130 @@ def _analyse(
     scenario: str,
     source: MediaSource,
     audio: MemoryAudio,
+    duration_s: float,
     limit_s: float | None,
     notices: list[str],
-) -> Outcome:
+) -> Iterator[Update]:
     if ctx.store is None:
-        return Outcome(ui_text(lang, "practice.key_missing"))
+        yield Update(ui_text(lang, "practice.key_missing"))
+        return
     if analyzer.busy():
-        return Outcome(ui_text(lang, "practice.busy"))
+        yield Update(ui_text(lang, "practice.busy"))
+        return
     keep = _keep_days(ctx)
     session = ctx.db.new_session(scenario, language, source, now=datetime.now(UTC), keep_days=keep)
     ctx.store.write_bytes(session.id, audio.name, audio.data)  # encrypted at write time
+    steps = analyzer.steps(
+        ctx.db, ctx.store, session, audio, limit_s=limit_s, keep=keep is not None,
+        duration_s=duration_s,
+    )  # fmt: skip
     try:
-        analyzer.run(ctx.db, ctx.store, session, audio, limit_s=limit_s, keep=keep is not None)
-    except app_run.AnalysisFailed:
-        return Outcome("\n\n".join([*notices, ui_text(lang, "practice.failed")]))
+        while True:
+            try:
+                step = next(steps)
+            except StopIteration:
+                break
+            name = ui_text(lang, f"practice.steps.{step.name}")
+            text = ui_text(lang, "practice.step_status", n=step.index, total=step.total, step=name)
+            yield Update("\n\n".join([*notices, text]), busy=True)
+    except app_run.AnalysisBusy:
+        yield Update(ui_text(lang, "practice.busy"))
+        return
+    except app_run.AnalysisFailed as e:
+        yield Update("\n\n".join([*notices, ui_text(lang, "practice.failed", error=str(e))]))
+        return
     view = reports.open_report(ctx.db, ctx.store, session.id, lang=lang)
-    status = "\n\n".join([*notices, ui_text(lang, "practice.done")])
-    return Outcome(
-        status, report_page.render(view, lang, scenario), report_page.transcript_text(view)
+    yield Update(
+        "\n\n".join([*notices, ui_text(lang, "practice.done")]),
+        report_page.render(view, lang, scenario),
+        report_page.transcript_text(view),
     )
+
+
+def _guarded(lang: Language, updates: Iterator[Update]) -> Iterator[Update]:
+    """Every press ends in a report or a visible message, never a silent stop."""
+    last: Update | None = None
+    try:
+        for last in updates:
+            yield last
+    except Exception as e:  # anything unexpected: say so on the page, log the type only
+        log.warning("practice handler failed: error=%s", type(e).__name__)
+        yield Update(ui_text(lang, "practice.failed", error=type(e).__name__))
+        return
+    if last is None or last.busy:
+        yield Update(ui_text(lang, "practice.failed", error="no result"))
+
+
+def run_recording(
+    ctx: AppContext,
+    analyzer: app_run.Analyzer,
+    lang: Language,
+    recording: Recording | None,
+    *,
+    language: Language,
+    scenario: str,
+    extra_s: float,
+) -> Iterator[Update]:
+    def inner() -> Iterator[Update]:
+        yield Update(ui_text(lang, "practice.preparing"), busy=True)
+        if recording is None:
+            yield Update(ui_text(lang, "practice.no_audio"))
+            return
+        limit = scenario_limit_s(scenario)
+        notices: list[str] = []
+        if not recording.complete:
+            notices.append(
+                ui_text(
+                    lang,
+                    "practice.incomplete",
+                    received=recording.received_s,
+                    wall=recording.wall_s,
+                )
+            )
+        if recording.hard_stopped:
+            hard, extra = round(limit + extra_s), round(extra_s)
+            notices.append(ui_text(lang, "practice.hard_stopped", hard=hard, extra=extra))
+        audio = MemoryAudio("talk.wav", media.wav_bytes(recording.samples, recording.sample_rate))
+        yield from _run(
+            ctx, analyzer, lang, language=language, scenario=scenario, source="app", audio=audio,
+            duration_s=recording.received_s, limit_s=limit, notices=notices,
+        )  # fmt: skip
+
+    return _guarded(lang, inner())
+
+
+def run_upload(
+    ctx: AppContext,
+    analyzer: app_run.Analyzer,
+    lang: Language,
+    path: str | None,
+    *,
+    language: Language,
+    scenario: str,
+) -> Iterator[Update]:
+    def inner() -> Iterator[Update]:
+        yield Update(ui_text(lang, "practice.preparing"), busy=True)
+        if not path:
+            yield Update(ui_text(lang, "practice.no_file"))
+            return
+        check = app_run.check_upload(Path(path), analyzer.settings.app)
+        if check.audio is None:
+            key = check.reason or "practice.upload_unreadable"
+            yield Update(ui_text(lang, key, **dict(check.values)))
+            return
+        yield from _run(
+            ctx, analyzer, lang, language=language, scenario=scenario, source="upload",
+            audio=check.audio, duration_s=check.duration_s or 0.0, limit_s=None, notices=[],
+        )  # fmt: skip
+
+    return _guarded(lang, inner())
+
+
+def _last(updates: Iterator[Update]) -> Update:
+    final = Update("")
+    for update in updates:
+        final = update
+    return final
 
 
 def analyse_recording(
@@ -93,27 +214,12 @@ def analyse_recording(
     scenario: str,
     extra_s: float,
 ) -> Outcome:
-    if recording is None:
-        return Outcome(ui_text(lang, "practice.no_audio"))
-    limit = scenario_limit_s(scenario)
-    notices: list[str] = []
-    if not recording.complete:
-        notices.append(
-            ui_text(
-                lang, "practice.incomplete", received=recording.received_s, wall=recording.wall_s
-            )
+    """The final state of `run_recording` (tests and callers without progress)."""
+    return _last(
+        run_recording(
+            ctx, analyzer, lang, recording, language=language, scenario=scenario, extra_s=extra_s
         )
-    if recording.hard_stopped:
-        notices.append(
-            ui_text(
-                lang, "practice.hard_stopped", hard=round(limit + extra_s), extra=round(extra_s)
-            )
-        )
-    audio = MemoryAudio("talk.wav", media.wav_bytes(recording.samples, recording.sample_rate))
-    return _analyse(
-        ctx, analyzer, lang, language=language, scenario=scenario, source="app", audio=audio,
-        limit_s=limit, notices=notices,
-    )  # fmt: skip
+    )
 
 
 def analyse_upload(
@@ -125,17 +231,7 @@ def analyse_upload(
     language: Language,
     scenario: str,
 ) -> Outcome:
-    if not path:
-        return Outcome(ui_text(lang, "practice.no_file"))
-    check = app_run.check_upload(Path(path), analyzer.settings.app)
-    if check.audio is None:
-        return Outcome(
-            ui_text(lang, check.reason or "practice.upload_unreadable", **dict(check.values))
-        )
-    return _analyse(
-        ctx, analyzer, lang, language=language, scenario=scenario, source="upload",
-        audio=check.audio, limit_s=None, notices=[],
-    )  # fmt: skip
+    return _last(run_upload(ctx, analyzer, lang, path, language=language, scenario=scenario))
 
 
 def elapsed_text(buffer: RecordingBuffer, lang: Language) -> str:
@@ -148,22 +244,34 @@ def elapsed_text(buffer: RecordingBuffer, lang: Language) -> str:
 
 
 def make_handler(buffer: RecordingBuffer) -> Any:
-    """A FastRTC handler that keeps microphone frames in `buffer` (send-only: nothing back)."""
+    """A FastRTC handler that keeps microphone frames in `buffer` (send-only: nothing back).
+
+    FastRTC makes one copy per microphone connection. The take starts with that connection's
+    first frame, not in `start_up`, which FastRTC runs in a thread at the same time as the first
+    frames (a reset there could drop them). `shutdown` (the microphone box stopped) keeps the
+    take for "Stop and analyse"."""
     from fastrtc import StreamHandler
 
     class _Recorder(StreamHandler):
         def __init__(self) -> None:
             super().__init__(input_sample_rate=INPUT_RATE)
+            self._started = False
 
         def start_up(self) -> None:
-            buffer.start()
+            return None
 
         def receive(self, frame: tuple[int, Any]) -> None:
+            if not self._started:
+                buffer.start()
+                self._started = True
             rate, samples = frame
             buffer.add(rate, samples)
 
         def emit(self) -> None:
             return None
+
+        def shutdown(self) -> None:
+            buffer.end_stream()
 
         def copy(self) -> _Recorder:
             return _Recorder()
@@ -202,13 +310,21 @@ def build(ctx: AppContext, lang: Language, analyzer: app_run.Analyzer) -> None:
         label=ui_text(lang, "practice.microphone"),
         modality="audio",
         mode="send",
+        full_screen=False,  # the default full-screen layer swallows every click on the page
         rtc_configuration=NO_ICE,
         server_rtc_configuration=NO_ICE,
     )
     mic.stream(make_handler(buffer), inputs=[mic], outputs=[mic], time_limit=hard)
     elapsed = gr.Markdown(elapsed_text(buffer, lang), rtl=rtl)
-    gr.Timer(0.5).tick(
-        lambda: elapsed_text(buffer, lang), outputs=[elapsed], show_progress="hidden"
+    timer = gr.Timer(1.0, active=False)
+    timer.tick(
+        lambda: elapsed_text(buffer, lang), outputs=[elapsed], queue=False, show_progress="hidden"
+    )
+    mic.start_recording(lambda: gr.Timer(active=True), outputs=[timer], queue=False)
+    mic.stop_recording(
+        lambda: (gr.Timer(active=False), elapsed_text(buffer, lang)),
+        outputs=[timer, elapsed],
+        queue=False,
     )
     stop = gr.Button(
         ui_text(lang, "practice.stop_analyse"), variant="primary", interactive=ctx.key_ok
@@ -222,7 +338,7 @@ def build(ctx: AppContext, lang: Language, analyzer: app_run.Analyzer) -> None:
     )
     upload = gr.File(
         label=ui_text(lang, "practice.upload"),
-        file_types=list(app_run.ACCEPTED_SUFFIXES),
+        file_types=[*app_run.ACCEPTED_SUFFIXES, ".wma"],  # .wma is selectable, then explained
         type="filepath",
     )
     analyse = gr.Button(ui_text(lang, "practice.analyse_upload"), interactive=ctx.key_ok)
@@ -232,19 +348,36 @@ def build(ctx: AppContext, lang: Language, analyzer: app_run.Analyzer) -> None:
     with gr.Accordion(ui_text(lang, "practice.transcript"), open=False):
         transcript = gr.Textbox(show_label=False, interactive=False, lines=8, rtl=rtl)
 
-    def on_stop(sc: str, lg: Language) -> tuple[str, str, str]:
-        o = analyse_recording(
-            ctx, analyzer, lang, buffer.finish(), language=lg, scenario=sc,
-            extra_s=app_cfg.recording_extra_s,
+    def show(u: Update) -> tuple[Any, ...]:
+        enabled = ctx.key_ok and not u.busy
+        return (
+            u.status, u.report, u.transcript,
+            gr.Button(interactive=enabled), gr.Button(interactive=enabled),
         )  # fmt: skip
-        return o.status, o.report, o.transcript
 
-    def on_upload(path: str | None, sc: str, lg: Language) -> tuple[str, str, str, None]:
-        o = analyse_upload(ctx, analyzer, lang, path, language=lg, scenario=sc)
-        return o.status, o.report, o.transcript, None  # clear the file box
+    def on_stop(sc: str, lg: Language) -> Iterator[tuple[Any, ...]]:
+        recording = buffer.finish()
+        for u in run_recording(
+            ctx, analyzer, lang, recording, language=lg, scenario=sc,
+            extra_s=app_cfg.recording_extra_s,
+        ):  # fmt: skip
+            yield (*show(u), gr.Timer(active=False))
 
-    stop.click(on_stop, [scenario, language], [status, result, transcript], concurrency_limit=1)
-    analyse.click(
-        on_upload, [upload, scenario, language], [status, result, transcript, upload],
-        concurrency_limit=1,
+    def on_upload(path: str | None, sc: str, lg: Language) -> Iterator[tuple[Any, ...]]:
+        for u in run_upload(ctx, analyzer, lang, path, language=lg, scenario=sc):
+            yield (*show(u), None if not u.busy else gr.File())
+
+    def pressed() -> tuple[Any, ...]:
+        # instant feedback, outside the queue, before Gradio processes the inputs (an upload
+        # is copied first, which took ~3 s in the browser test)
+        return show(Update(ui_text(lang, "practice.preparing"), busy=True))
+
+    first = [status, result, transcript, stop, analyse]
+    stop.click(pressed, None, first, queue=False, show_progress="hidden").then(
+        on_stop, [scenario, language], [*first, timer],
+        concurrency_limit=1, show_progress="hidden",
+    )  # fmt: skip
+    analyse.click(pressed, None, first, queue=False, show_progress="hidden").then(
+        on_upload, [upload, scenario, language], [*first, upload],
+        concurrency_limit=1, show_progress="hidden",
     )  # fmt: skip
