@@ -135,6 +135,9 @@ class DimensionResult(_Frozen):
     missing: tuple[str, ...] = ()  # measures that could not, never counted as low
     # absent by the user's choice (camera off, opted out): left out of M ("N of M") and the cap
     excluded: tuple[str, ...] = ()
+    # why each `missing` measure could not be computed (report cards, P3-d); system wording
+    # from lang/, never the user's words. Not copied to the clear summary (ADR 0023 item 12).
+    missing_reasons: dict[str, str] = Field(default_factory=dict)
     conditions: tuple[ConditionResult, ...] = ()
     next_level: tuple[ConditionResult, ...] = ()  # unmet measured conditions of level + 1
     not_measurable: str | None = None

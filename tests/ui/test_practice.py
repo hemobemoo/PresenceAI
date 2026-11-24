@@ -13,7 +13,7 @@ from pydantic import SecretStr
 
 from presenceai.live.recorder import Recording
 from presenceai.pipeline import app_run
-from presenceai.schemas.storage import Consent, DimensionSummary, SessionSummary
+from presenceai.schemas.storage import Consent, DimensionSummary, MeasureValue, SessionSummary
 from presenceai.settings import Settings
 from presenceai.storage import media, reports
 from presenceai.storage.reports import ReportView
@@ -288,3 +288,68 @@ def test_windows_connection_resets_are_dropped_and_other_errors_kept():
     ignore_connection_resets(Loop(), other)  # type: ignore[arg-type]
     ignore_connection_resets(Loop(), {"message": "Task was destroyed"})  # type: ignore[arg-type]
     assert len(seen) == 2
+
+
+# --- report cards after the owner's real S1 runs (2026-11-25) ---------------------------------
+
+
+def test_long_quotes_are_shortened_on_the_card_only(ctx: AppContext, fake_assessment: Any):
+    long = " ".join(f"w{i}" for i in range(60))
+    assert report_page.shorten(long) == " ".join(f"w{i}" for i in range(25)) + " …"
+    assert report_page.shorten("a short quote") == "a short quote"
+    assert ctx.store is not None
+    s = ctx.db.new_session("s1_presentation", "en", "app", now=T0, keep_days=None)
+    reports.save(ctx.db, ctx.store, s.id, fake_assessment)
+    view = reports.open_report(ctx.db, ctx.store, s.id, lang="en")
+    md = report_page.render(view, "en", "s1_presentation")
+    quotes = [e.transcript.text for f in fake_assessment.assessment.findings
+              for e in f.evidence if e.transcript is not None]  # fmt: skip
+    longest = max(quotes, key=lambda q: len(q.split()))
+    assert len(longest.split()) > 25  # the fake talk has a quote long enough to shorten
+    assert report_page.escape(longest) not in md and " …”" in md
+    assert view.report is not None  # the full quote stays in the report data (and the export)
+    kept = [e.transcript.text for f in view.report.assessment.findings
+            for e in f.evidence if e.transcript is not None]  # fmt: skip
+    assert longest in kept
+
+
+def test_cards_name_unmeasured_measures_and_why(ctx: AppContext, analyzer: Any, m4a_file: Path):
+    second = m4a_file.with_name("again.m4a")
+    second.write_bytes(m4a_file.read_bytes())  # each upload's temp copy is deleted after reading
+    out = practice.analyse_upload(ctx, analyzer, "en", str(m4a_file), language="en",
+                                  scenario="s1_presentation")  # fmt: skip
+    md = out.report
+    assert r"Not measured: seconds over the time limit \(uploaded file: no time limit\)" in md
+    assert r"Not counted \(camera off\): share of speaking time looking toward the camera" in md
+    ar = practice.analyse_upload(ctx, analyzer, "ar", str(second), language="en",
+                                 scenario="s1_presentation")  # fmt: skip
+    assert "لم يُقَس" in ar.report and r"لم يُحسب \(الكاميرا متوقفة\)" in ar.report
+
+
+def test_central_message_level_1_without_a_thesis_gets_the_rules_hint():
+    def view(statements: float, level: int) -> ReportView:
+        return ReportView(summary=SessionSummary(
+            session_id="0" * 32,
+            dimensions=(DimensionSummary(dimension="central_message", level=level, score=0.0,
+                                         confidence="medium", measured=4, total=4),),
+            measures=(MeasureValue(measure="text.central_message.statements", value=statements),),
+        ))  # fmt: skip
+
+    md = report_page.render(view(0, 1), "en", "s1_presentation")
+    assert "No sentence stating your main point was found" in md
+    assert "Today I will talk about…" in md and "Try adding one sentence" in md
+    assert "فكرتك الرئيسية" in report_page.render(view(0, 1), "ar", "s1_presentation")
+    assert "No sentence stating" not in report_page.render(view(1, 1), "en", "s1_presentation")
+    assert "No sentence stating" not in report_page.render(view(0, 2), "en", "s1_presentation")
+
+
+def test_the_start_log_line_has_the_completeness_ratio(
+    ctx: AppContext, analyzer: Any, caplog: pytest.LogCaptureFixture
+):
+    rec = _recording(complete=False)
+    with caplog.at_level("INFO", logger="presenceai"):
+        practice.analyse_recording(
+            ctx, analyzer, "en", rec, language="en", scenario="s1_presentation", extra_s=60
+        )
+    (start,) = [r.getMessage() for r in caplog.records if "analysis started" in r.getMessage()]
+    assert "source=app" in start and "completeness=0.670" in start

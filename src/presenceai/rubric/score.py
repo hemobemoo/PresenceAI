@@ -144,6 +144,7 @@ def _dimension(
             skills=d.skills,
             missing=absent,
             excluded=left_out,
+            missing_reasons={k: missing[k] for k in absent if k in missing},
             conditions=results,
             not_measurable="; ".join(dict.fromkeys(missing[k] for k in absent)),
         )
@@ -162,6 +163,7 @@ def _dimension(
         measured=measured,
         missing=absent,
         excluded=left_out,
+        missing_reasons={k: missing[k] for k in absent if k in missing},
         conditions=results,
         next_level=nxt,
     )

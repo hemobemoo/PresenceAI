@@ -63,6 +63,15 @@
 1. ~~**Partial levels in the report (owner, 2026-11-22, for P3).**~~ **Closed 2026-11-24 (P3-a,
    below):** both. Every finding shows "based on N of M measures", and a level based on at most
    half of its measures is capped at level 3.
+2. **Central message floor effect (owner, 2026-11-25).** Central message is at **level 1 on all
+   12 real English talks so far**: the 10 B1 clips and the owner's 2 real S1 runs in the app.
+   Thesis sentences found: 0 on both S1 runs, although each opens with a topic announcement
+   ("Today I will talk about…"), which the cue lists count as an introduction cue, not a thesis
+   (ADR 0018, review). **No cue list is changed for this**: central-message lexicons may only be
+   tuned on C2 development items the owner labels by hand (ADR 0021 §4c), now planned before P5
+   (FINAL_12). Meanwhile the report card at level 1 says, in rules-only wording, what was
+   checked and how to state a main point (P3-d), and the engine must not let a floor-effect
+   skill keep winning "weakest skill" (FINAL_05 §3).
 
 ## P3-a amendment: partial levels, overrun, one failed finding (2026-11-24)
 

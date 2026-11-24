@@ -133,6 +133,7 @@ class Analyzer:
         limit_s: float | None,
         keep: bool,
         duration_s: float | None = None,
+        completeness: float | None = None,
         now: datetime | None = None,
     ) -> Generator[Step, None, AssessmentReport]:
         """Analyse one session, yielding each step as it starts; returns the report.
@@ -146,8 +147,9 @@ class Analyzer:
         current = "start"
         t0 = time.perf_counter()
         log.info(
-            "analysis started: session=%s source=%s audio_s=%s",
+            "analysis started: session=%s source=%s audio_s=%s completeness=%s",
             session.id, session.source, f"{duration_s:.1f}" if duration_s else "unknown",
+            f"{completeness:.3f}" if completeness is not None else "n/a",
         )  # fmt: skip
         try:
             cfg = self.settings
@@ -212,12 +214,14 @@ class Analyzer:
         limit_s: float | None,
         keep: bool,
         duration_s: float | None = None,
+        completeness: float | None = None,
         now: datetime | None = None,
     ) -> AssessmentReport:
         """`steps` without progress. Raises `AnalysisFailed` or `AnalysisBusy`."""
         gen = self.steps(
-            db, store, session, audio, limit_s=limit_s, keep=keep, duration_s=duration_s, now=now
-        )
+            db, store, session, audio, limit_s=limit_s, keep=keep, duration_s=duration_s,
+            completeness=completeness, now=now,
+        )  # fmt: skip
         while True:
             try:
                 next(gen)
