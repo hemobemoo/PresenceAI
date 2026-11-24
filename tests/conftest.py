@@ -182,3 +182,33 @@ def fake_assessment(sb: Any, fake_parser: Any, speech_cfg: Any) -> Any:
     return assess_report(
         speech, parser=fake_parser, cfg=speech_cfg, scenario="s1_presentation", limit_s=180.0
     )
+
+
+def encode_m4a(seconds: float = 2.0, rate: int = 48_000) -> bytes:
+    """An AAC `.m4a` (the format Windows Sound Recorder saves), built in memory with PyAV."""
+    import io
+
+    import av
+
+    buf = io.BytesIO()
+    with av.open(buf, "w", format="ipod") as container:
+        stream: Any = container.add_stream("aac", rate=rate, layout="mono")
+        t = np.arange(int(seconds * rate)) / rate
+        x = (0.3 * np.sin(2 * np.pi * 220 * t)).astype(np.float32)[None, :]
+        for i in range(0, x.shape[1], 1024):
+            frame = av.AudioFrame.from_ndarray(x[:, i : i + 1024], format="fltp", layout="mono")
+            frame.sample_rate = rate
+            for packet in stream.encode(frame):
+                container.mux(packet)
+        for packet in stream.encode(None):
+            container.mux(packet)
+    return buf.getvalue()
+
+
+@pytest.fixture
+def m4a_file(tmp_path: Path) -> Path:
+    """A 2 s AAC .m4a where Gradio would put an upload (its clear temp copy)."""
+    p = tmp_path / "gradio" / "Recording (3).m4a"
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_bytes(encode_m4a())
+    return p

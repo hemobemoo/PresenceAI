@@ -70,12 +70,13 @@ def load_model(
         str(folder),
         device=options.device,
         compute_type=options.compute_type,
+        cpu_threads=options.cpu_threads,  # 0: library default; the app uses 4 (ADR 0024)
         local_files_only=True,
     )
 
 
 def transcribe_file(
-    model: Any, path: str | Path, *, language: SpeechLanguage, options: AsrSettings
+    model: Any, path: audio.AudioSource, *, language: SpeechLanguage, options: AsrSettings
 ) -> Transcript:
     raw_segments, info = audio.transcribe(
         model,
