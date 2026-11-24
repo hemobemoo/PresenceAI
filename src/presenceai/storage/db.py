@@ -16,10 +16,13 @@ from sqlmodel import Field, Session, SQLModel, col, create_engine, select
 
 from presenceai.schemas.storage import (
     Consent,
+    DimensionSummary,
+    MeasureValue,
     MediaSource,
     ProfileRecord,
     SessionRecord,
     SessionStatus,
+    SessionSummary,
 )
 from presenceai.storage.layout import Layout, check_id
 
@@ -45,6 +48,30 @@ class _Session(SQLModel, table=True):
     status: str
     media_expires_at: datetime | None = None
     media_deleted_at: datetime | None = None
+
+
+class _DimensionRow(SQLModel, table=True):
+    """Text-free summary per session and dimension (ADR 0023 item 12): numbers and codes only."""
+
+    __tablename__ = "dimension_summary"  # pyright: ignore[reportAssignmentType]
+    session_id: str = Field(primary_key=True, foreign_key="practice_session.id")
+    dimension: str = Field(primary_key=True)
+    level: int | None = None
+    capped_from: int | None = None
+    score: float | None = None
+    confidence: str | None = None
+    measured: int
+    total: int
+    failed: bool = False
+
+
+class _MeasureRow(SQLModel, table=True):
+    __tablename__ = "measure_value"  # pyright: ignore[reportAssignmentType]
+    session_id: str = Field(primary_key=True, foreign_key="practice_session.id")
+    measure: str = Field(primary_key=True)
+    value: float
+    unit: str | None = None
+    confidence: str | None = None
 
 
 def _store(t: datetime) -> datetime:
@@ -185,8 +212,52 @@ class Database:
         self._update(session_id, media_deleted_at=_store(now))
 
     def delete_session(self, session_id: str) -> None:
+        sid = check_id(session_id)
         with Session(self._engine) as s:
-            row = s.get(_Session, check_id(session_id))
+            self._clear_summary(s, sid)
+            row = s.get(_Session, sid)
             if row is not None:
                 s.delete(row)
-                s.commit()
+            s.commit()
+
+    # --- text-free summaries (ADR 0023 item 12) -----------------------------------------------
+
+    @staticmethod
+    def _clear_summary(s: Session, session_id: str) -> None:
+        for d in s.exec(select(_DimensionRow).where(col(_DimensionRow.session_id) == session_id)):
+            s.delete(d)
+        for m in s.exec(select(_MeasureRow).where(col(_MeasureRow.session_id) == session_id)):
+            s.delete(m)
+
+    def save_summary(self, summary: SessionSummary) -> None:
+        """Replace the session's summary."""
+        sid = check_id(summary.session_id)
+        with Session(self._engine) as s:
+            self._clear_summary(s, sid)
+            s.flush()
+            for d in summary.dimensions:
+                s.add(_DimensionRow(session_id=sid, **d.model_dump()))
+            for m in summary.measures:
+                s.add(_MeasureRow(session_id=sid, **m.model_dump()))
+            s.commit()
+
+    def summary(self, session_id: str) -> SessionSummary:
+        sid = check_id(session_id)
+        with Session(self._engine) as s:
+            dims = s.exec(
+                select(_DimensionRow)
+                .where(col(_DimensionRow.session_id) == sid)
+                .order_by(col(_DimensionRow.dimension))
+            ).all()
+            rows = s.exec(
+                select(_MeasureRow)
+                .where(col(_MeasureRow.session_id) == sid)
+                .order_by(col(_MeasureRow.measure))
+            ).all()
+            dimensions = tuple(
+                DimensionSummary.model_validate(d.model_dump(exclude={"session_id"})) for d in dims
+            )
+            measures = tuple(
+                MeasureValue.model_validate(m.model_dump(exclude={"session_id"})) for m in rows
+            )
+        return SessionSummary(session_id=sid, dimensions=dimensions, measures=measures)

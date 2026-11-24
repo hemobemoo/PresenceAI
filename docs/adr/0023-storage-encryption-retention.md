@@ -1,6 +1,6 @@
 # 0023 — Storage, media encryption, retention, export and delete (P3-b)
 
-- Status: **proposed** (2026-11-24). It follows the approved P3 plan; the owner accepts it with the PR.
+- Status: **accepted** by the owner on 2026-11-24, with open item 1 decided (item 12).
 - Date: 2026-11-24
 - Decider: project owner
 - Plan reference: FINAL_02 §6–§7 (storage layout), FINAL_08 (runtime data), FINAL_11 §3–§4
@@ -20,9 +20,10 @@ makes stored media unreadable.
 ## Decision
 
 1. **Layout** under `PRESENCEAI_HOME` (default `~/.presenceai`, outside the repository and
-   outside OneDrive's default folders): `app.sqlite`; `sessions/<id>/media/*.enc` (raw media,
-   encrypted); `sessions/<id>/assessment.json` (derived data); `tmp/` (Gradio's upload folder,
-   P3-d); `exports/` (export zips). Session ids are 32 random hex characters and are checked
+   outside OneDrive's default folders): `app.sqlite` (with the text-free summaries, item 12);
+   `sessions/<id>/media/*.enc` (raw media, encrypted); `sessions/<id>/assessment.json.enc`
+   (the report, encrypted, item 12); `tmp/` (Gradio's upload folder, P3-d); `exports/`
+   (export zips). Session ids are 32 random hex characters and are checked
    before any path is built (`storage/layout.py`).
 2. **Database** (`storage/db.py`): SQLite through SQLModel (MIT; SQLAlchemy MIT). One profile per
    installation with a **random pseudonymous id and no personal details**, its consent switches
@@ -41,8 +42,9 @@ makes stored media unreadable.
    missing or not a Fernet key, the app refuses to store media and says only which variable is
    wrong (`MediaKeyMissing`, `MediaKeyInvalid`). Code refers to it by name only (rule 9).
 5. **Losing the key makes stored media unreadable.** There is no recovery and no back door:
-   a different key fails Fernet's authentication (`MediaUnreadable`). Derived data
-   (`assessment.json`, the database) stays readable, because it is not encrypted (item 7).
+   a different key fails Fernet's authentication (`MediaUnreadable`). **Reports lose their
+   text, but progress survives** (item 12): the report page says "Report text unavailable" and
+   still shows each dimension's level, N of M and the measure values from the clear summary.
    Changing the key (rotation) is not supported in P3; it would need `MultiFernet` and
    re-encryption, recorded in a later ADR.
 6. **What the encryption protects against:** the media files being read by someone who gets
@@ -52,9 +54,9 @@ makes stored media unreadable.
 7. **What it does not protect against:**
    - **anyone who can use the owner's account** on the laptop, or malware there: the key is in
      `.env` on the same machine;
-   - **derived data**: transcripts, quotes, measures and findings in `assessment.json`, and the
-     session metadata in `app.sqlite`, are **in the clear** (rule 5 covers raw media; see open
-     item 1);
+   - **the text-free summary** in `app.sqlite` (levels, scores, confidence, N of M, numeric
+     measure values) and the session metadata (scenario, language, times) are in the clear by
+     design (item 12); they hold no words the user said;
    - **metadata**: file sizes (about the recording length), times and the number of sessions;
    - **audio in memory** while recording or analysing, which the operating system may write to
      its page or hibernation file;
@@ -68,7 +70,7 @@ makes stored media unreadable.
    without (c), it is deleted after analysis (P3-d) and by every retention run. `tmp/` and
    `exports/` are emptied. Derived data stays until the user deletes it (FINAL_11 §3).
 9. **Export** (`storage/rights.py`): one zip in `exports/`: `session.json`, `assessment.json`
-   and the decrypted media while still retained; "export all" adds `profile.json` and every
+   (decrypted) and the decrypted media while still retained; "export all" adds `profile.json` and every
    session. This is the only deliberate clear copy, made on the user's request, and `exports/`
    is emptied at the next start.
 10. **Delete**: a session's folder and row are removed at once. **Delete everything** removes
@@ -76,23 +78,41 @@ makes stored media unreadable.
     empty profile.
 11. **Network:** storage opens no connection in Stage A. Supabase (Stage B) will be the only
     network use in `storage/media.py` (rule 2).
+12. **The report's text is encrypted; a text-free summary stays in the clear** (owner,
+    2026-11-24, open item 1).
+    - Every text-bearing part of the assessment (the transcript, evidence quotes, finding
+      text, not-measurable reasons, follow-up questions and answers: anything that can hold
+      the user's words) is stored in `assessment.json.enc`, encrypted with MEDIA_KEY like
+      media (`storage/reports.py: save`). It sits outside `media/`, so retention keeps it
+      until the session is deleted.
+    - A **text-free summary** is stored in SQLite in the clear, per session and dimension:
+      level, capped_from, score, confidence, N of M and whether the app could not check it
+      (`dimension_summary`), and per measure the numeric value, unit code and confidence
+      (`measure_value`). No quotes, no transcript, no finding text, no reasons.
+      **The progress page and the engine (P5) read only this summary.**
+    - **If the key is lost, reports lose their text but progress survives**: the session list
+      and the summaries still load, and the report shows "Report text unavailable" instead of
+      failing (`reports.open_report`).
+    - Export decrypts everything into the zip, as before.
 
 ## Consequences
 
 - Safety tests (`tests/safety/test_storage_safety.py`): no clear audio (no WAV header, no run
-  of the raw samples) anywhere under `PRESENCEAI_HOME` after a recording and an upload; delete
+  of the raw samples) anywhere under `PRESENCEAI_HOME` after a recording and an upload; no
+  transcript text in the clear anywhere under it, the SQLite file included (a known phrase
+  from a fake transcript, searched as UTF-8 and UTF-16); delete
   everything leaves no file and the app restarts empty; retention with a clock override (one
   second before and at 30 days); the key never appears in errors, logs or reprs; storage makes
   no non-loopback connection. `tests/safety/conftest.py: loopback_only` is the guard P3-d uses
   for recording and analysis.
 - Unit tests (`tests/unit/test_storage.py`): paths, key handling, round trips, profile and
-  consent, sessions, retention, export and delete.
+  consent, sessions, retention, export and delete; the summary is text-free and matches the
+  assessment; with a wrong key the sessions and summaries load and the report says its text
+  is unavailable.
 
 ### Open items
 
-1. **Derived data in the clear (owner to decide).** `assessment.json` holds the transcript, so
-   it says what was spoken. Rule 5 and FINAL_11 cover raw media only. Options: keep as is
-   (documented here), or also encrypt `assessment.json` with the same key, which makes reports
-   unreadable if the key is lost.
+1. ~~**Derived data in the clear.**~~ **Decided 2026-11-24 (item 12):** the report's text is
+   encrypted; a text-free summary stays in the clear.
 2. **Upload size.** Fernet encrypts in memory, so a very large upload (for example a long
    video) needs that much RAM. P3-d will set a size limit for uploads in `configs/`.

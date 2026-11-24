@@ -50,3 +50,32 @@ class SessionRecord(_Frozen):
 class RetentionResult(_Frozen):
     media_deleted: int = Field(ge=0)  # sessions whose media was deleted
     temp_files_deleted: int = Field(ge=0)  # files removed from tmp/ and exports/
+
+
+# --- the text-free session summary (owner, 2026-11-24, ADR 0023 item 12) ----------------------
+# Kept in the clear in SQLite so progress (P5) survives a lost MEDIA_KEY. Numbers and codes only:
+# no transcript, quote, finding text or not-measurable reason (those can hold the user's words).
+
+
+class DimensionSummary(_Frozen):
+    dimension: str = Field(min_length=1)
+    level: int | None = Field(default=None, ge=1, le=4)  # None: not measurable
+    capped_from: int | None = Field(default=None, ge=2, le=4)
+    score: float | None = Field(default=None, ge=0, le=1)
+    confidence: Literal["high", "medium", "low"] | None = None
+    measured: int = Field(ge=0)  # N of M
+    total: int = Field(ge=1)
+    failed: bool = False  # the app could not check this dimension (ADR 0019)
+
+
+class MeasureValue(_Frozen):
+    measure: str = Field(min_length=1)  # a measure key, e.g. "fillers.per_100_words"
+    value: float
+    unit: str | None = None  # a unit code, never free text
+    confidence: Literal["high", "medium", "low"] | None = None
+
+
+class SessionSummary(_Frozen):
+    session_id: str = Field(pattern=r"^[0-9a-f]{32}$")
+    dimensions: tuple[DimensionSummary, ...] = ()
+    measures: tuple[MeasureValue, ...] = ()

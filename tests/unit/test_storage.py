@@ -9,6 +9,7 @@ import json
 import zipfile
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import pytest
@@ -16,7 +17,7 @@ from cryptography.fernet import Fernet
 from pydantic import SecretStr
 
 from presenceai.schemas.storage import Consent
-from presenceai.storage import media, retention, rights
+from presenceai.storage import media, reports, retention, rights
 from presenceai.storage.db import Database
 from presenceai.storage.layout import Layout
 
@@ -153,7 +154,7 @@ def test_retention_deletes_expired_and_unkept_media(
     unkept = db.new_session("s1_presentation", "en", "app", now=T0, keep_days=None)
     for s in (kept, unkept):
         store.write_bytes(s.id, "talk.wav", b"x")
-        layout.assessment_path(s.id).write_text("{}", "utf-8")
+        store.write_assessment(s.id, b"{}")
     r = retention.run(db, store, now=T0 + timedelta(days=1))
     assert r.media_deleted == 1  # the unkept one: the user did not consent to keeping it
     assert store.media_names(kept.id) and not store.media_names(unkept.id)
@@ -161,7 +162,7 @@ def test_retention_deletes_expired_and_unkept_media(
     r = retention.run(db, store, now=T0 + timedelta(days=30))
     assert r.media_deleted == 1 and not store.media_names(kept.id)
     for s in (kept, unkept):
-        assert layout.assessment_path(s.id).exists()  # derived data stays until deleted
+        assert store.read_assessment(s.id) == b"{}"  # derived data stays until deleted
 
 
 def test_retention_clears_temp_and_exports(db: Database, store: media.MediaStore, layout: Layout):
@@ -183,13 +184,14 @@ def test_export_session_has_json_and_decrypted_media(
 ):
     s = db.new_session("s1_presentation", "en", "app", now=T0, keep_days=30)
     store.write_wav(s.id, "talk", _tone(0.5), 16_000)
-    layout.assessment_path(s.id).write_text('{"assessment": 1}', "utf-8")
+    store.write_assessment(s.id, b'{"assessment": 1}')
     out = rights.export_session(db, store, s.id)
     assert out.parent == layout.exports_dir
     with zipfile.ZipFile(out) as z:
         names = set(z.namelist())
         assert {"session.json", "assessment.json", "media/talk.wav"} <= names
         assert z.read("media/talk.wav").startswith(b"RIFF")
+        assert z.read("assessment.json") == b'{"assessment": 1}'  # decrypted
         meta = json.loads(z.read("session.json"))
         assert meta["id"] == s.id and meta["scenario"] == "s1_presentation"
 
@@ -214,9 +216,70 @@ def test_delete_session_removes_files_and_row(
 ):
     s = db.new_session("s1_presentation", "en", "app", now=T0, keep_days=30)
     store.write_bytes(s.id, "talk.wav", b"x")
-    layout.assessment_path(s.id).write_text("{}", "utf-8")
+    store.write_assessment(s.id, b"{}")
     rights.delete_session(db, s.id)
     assert not layout.session_dir(s.id).exists()
     assert db.list_sessions() == ()
     with pytest.raises(KeyError):
         db.get_session(s.id)
+
+
+# --- reports: encrypted text, clear text-free summary (ADR 0023 item 12) ----------------------
+
+
+def test_saved_report_round_trips_and_its_summary_is_text_free(
+    db: Database, store: media.MediaStore, fake_assessment: Any
+):
+    s = db.new_session("s1_presentation", "en", "app", now=T0, keep_days=30)
+    reports.save(db, store, s.id, fake_assessment)
+    assert db.get_session(s.id).status == "analysed"
+    view = reports.open_report(db, store, s.id, lang="en")
+    assert view.report == fake_assessment and view.text_note is None
+    summary = view.summary
+    dims = {d.dimension: d for d in summary.dimensions}
+    a = fake_assessment.assessment
+    assert set(dims) == {r.dimension for r in a.dimensions}
+    for r, f in zip(a.dimensions, a.findings, strict=True):
+        d = dims[r.dimension]
+        assert (d.level, d.capped_from, d.score, d.confidence) == (
+            r.level,
+            r.capped_from,
+            r.score,
+            r.confidence,
+        )
+        assert (d.measured, d.total) == (f.measured, f.total)
+    values = {m.measure: m.value for m in summary.measures}
+    assert values["timing.overrun_s"] == 0.0
+    assert "text.central_message.statements" in values
+    dumped = summary.model_dump_json()
+    for word in ("zebra", "lanterns", "practice", "Today"):
+        assert word not in dumped  # numbers and codes only
+
+
+def test_with_a_wrong_key_sessions_and_summaries_load_and_text_is_unavailable(
+    layout: Layout, fake_assessment: Any
+):
+    d = Database(layout)
+    good = media.MediaStore(layout, Fernet(Fernet.generate_key()))
+    s = d.new_session("s1_presentation", "en", "app", now=T0, keep_days=30)
+    reports.save(d, good, s.id, fake_assessment)
+    d.close()
+    d = Database(layout)
+    wrong = media.MediaStore(layout, Fernet(Fernet.generate_key()))
+    assert [x.id for x in d.list_sessions()] == [s.id]
+    for lang, note in (("en", "text unavailable"), ("ar", None)):
+        view = reports.open_report(d, wrong, s.id, lang=lang)  # type: ignore[arg-type]
+        assert view.report is None and view.summary.dimensions
+        assert view.text_note is not None
+        if note:
+            assert note in view.text_note
+    d.close()
+
+
+def test_deleting_a_session_removes_its_summary(
+    db: Database, store: media.MediaStore, fake_assessment: Any
+):
+    s = db.new_session("s1_presentation", "en", "app", now=T0, keep_days=30)
+    reports.save(db, store, s.id, fake_assessment)
+    rights.delete_session(db, s.id)
+    assert db.summary(s.id).dimensions == ()

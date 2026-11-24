@@ -1,8 +1,8 @@
 """Where runtime data lives under `PRESENCEAI_HOME` (default `~/.presenceai`, FINAL_08):
 
-    app.sqlite                      profile, consent, sessions
+    app.sqlite                      profile, consent, sessions, text-free summaries
     sessions/<id>/media/*.enc       raw media, Fernet-encrypted at write time
-    sessions/<id>/assessment.json   derived data (transcript, measures, findings)
+    sessions/<id>/assessment.json.enc  the report (transcript, quotes, findings), encrypted
     tmp/                            Gradio's upload folder (P3-d); emptied at every start
     exports/                        export zips on request; emptied at every start
 
@@ -52,6 +52,5 @@ class Layout:
         return self.session_dir(session_id) / "media"
 
     def assessment_path(self, session_id: str) -> Path:
-        d = self.session_dir(session_id)
-        d.mkdir(parents=True, exist_ok=True)
-        return d / "assessment.json"
+        """The assessment report, encrypted like media (ADR 0023 item 12)."""
+        return self.session_dir(session_id) / "assessment.json.enc"

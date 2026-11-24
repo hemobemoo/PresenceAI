@@ -1,9 +1,9 @@
 """Export and delete (FINAL_11 §3-§4, ADR 0023).
 
 - **Export** writes one zip to `exports/`: `session.json` (the session record),
-  `assessment.json` when analysed, and the media decrypted, if still retained. It is the one
-  deliberate clear copy of media, made only on the user's request; `exports/` is emptied at the
-  next start (retention).
+  `assessment.json` (decrypted) when analysed, and the media decrypted, if still retained. It
+  is the one deliberate clear copy, made only on the user's request; `exports/` is emptied at
+  the next start (retention).
 - **Delete** removes a session's folder (media and derived data) and its row at once.
   **Delete everything** removes the database file, every session, `exports/` and `tmp/`; the app
   then starts again with a new, empty profile.
@@ -21,9 +21,8 @@ from presenceai.storage.media import MediaStore
 
 def _add_session(z: zipfile.ZipFile, db: Database, store: MediaStore, sid: str, prefix: str):
     z.writestr(f"{prefix}session.json", db.get_session(sid).model_dump_json(indent=2))
-    assessment = store.layout.session_dir(sid) / "assessment.json"
-    if assessment.exists():
-        z.write(assessment, f"{prefix}assessment.json")
+    if store.has_assessment(sid):
+        z.writestr(f"{prefix}assessment.json", store.read_assessment(sid))
     for name in store.media_names(sid):
         z.writestr(f"{prefix}media/{name}", store.read_bytes(sid, name))
 

@@ -14,6 +14,8 @@ common:
 timing:
   overrun: "الثواني من الحد الزمني {limit:g} ث حتى نهاية آخر كلام"
   no_limit_upload: "ملف مرفوع: لا يوجد حد زمني"
+storage:
+  text_unavailable: "نص التقرير غير متاح: تعذّر فك تشفيره بالمفتاح MEDIA_KEY (مفتاح مختلف أو مفقود). ما زالت المستويات والمقاييس معروضة."
 pauses:
   count_ge: "فجوات VAD مدتها {threshold} ث أو أكثر"
   by_position: "فجوات VAD حسب الموضع: {position}"

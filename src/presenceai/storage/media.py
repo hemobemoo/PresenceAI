@@ -1,6 +1,7 @@
 """Encrypted raw media (AGENTS.md rule 5; FINAL_11 §3; ADR 0023).
 
-Raw media is encrypted **at write time**: bytes are encrypted in memory with Fernet (AES-128-CBC
+Raw media, and the assessment report (it holds the user's words; ADR 0023 item 12), are
+encrypted **at write time**: bytes are encrypted in memory with Fernet (AES-128-CBC
 plus HMAC-SHA256, from `cryptography`) and only the ciphertext reaches the disk, through a
 `.part` file renamed into place. Reading decrypts into memory; audio is handed to the analysis
 as an array (ADR 0006). The key is `MEDIA_KEY` (`.env`, backed up in a password manager,
@@ -66,19 +67,37 @@ class MediaStore:
     def _path(self, session_id: str, name: str) -> Path:
         return self.layout.media_dir(session_id) / f"{_check_name(name)}{SUFFIX}"
 
-    def write_bytes(self, session_id: str, name: str, data: bytes) -> Path:
-        path = self._path(session_id, name)
+    def _encrypt_to(self, path: Path, data: bytes) -> Path:
         path.parent.mkdir(parents=True, exist_ok=True)
         part = path.with_name(path.name + ".part")
         part.write_bytes(self._fernet.encrypt(data))
         os.replace(part, path)
         return path
 
-    def read_bytes(self, session_id: str, name: str) -> bytes:
+    def _decrypt_from(self, path: Path) -> bytes:
         try:
-            return self._fernet.decrypt(self._path(session_id, name).read_bytes())
+            return self._fernet.decrypt(path.read_bytes())
         except InvalidToken:
-            raise MediaUnreadable("stored media could not be decrypted with MEDIA_KEY") from None
+            raise MediaUnreadable("stored data could not be decrypted with MEDIA_KEY") from None
+
+    def write_bytes(self, session_id: str, name: str, data: bytes) -> Path:
+        return self._encrypt_to(self._path(session_id, name), data)
+
+    def read_bytes(self, session_id: str, name: str) -> bytes:
+        return self._decrypt_from(self._path(session_id, name))
+
+    # The assessment report holds the user's words (transcript, quotes, findings), so it is
+    # encrypted with the same key (owner, ADR 0023 item 12). It sits outside media/, so
+    # retention keeps it until the session is deleted.
+
+    def write_assessment(self, session_id: str, data: bytes) -> Path:
+        return self._encrypt_to(self.layout.assessment_path(session_id), data)
+
+    def read_assessment(self, session_id: str) -> bytes:
+        return self._decrypt_from(self.layout.assessment_path(session_id))
+
+    def has_assessment(self, session_id: str) -> bool:
+        return self.layout.assessment_path(session_id).exists()
 
     def write_wav(self, session_id: str, name: str, samples: np.ndarray, sample_rate: int) -> Path:
         """Mono float samples in [-1, 1] as 16-bit PCM WAV, encrypted (`<name>.wav.enc`)."""

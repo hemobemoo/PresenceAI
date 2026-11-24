@@ -7,6 +7,7 @@ import logging
 import socket
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import pytest
@@ -60,7 +61,7 @@ def test_delete_everything_leaves_no_file_or_row(tmp_path: Path):
     for scenario in ("s1_presentation", "s2_project_defense"):
         s = db.new_session(scenario, "en", "app", now=T0, keep_days=30)
         store.write_bytes(s.id, "talk.wav", b"x")
-        layout.assessment_path(s.id).write_text("{}", "utf-8")
+        store.write_assessment(s.id, b"{}")
     rights.export_all(db, store)
     rights.delete_everything(db)
     assert _files(layout.home) == []  # database, sessions, exports, temp: all gone
@@ -104,3 +105,22 @@ def test_the_loopback_guard_blocks_outside_addresses(loopback_only: list[str]):
     finally:
         s.close()
     assert loopback_only == ["203.0.113.5"]
+
+
+def test_no_transcript_text_in_the_clear_under_home(tmp_path: Path, fake_assessment: Any):
+    from presenceai.storage import reports
+
+    phrase = "zebra lanterns glow"  # in the fake transcript (tests/conftest.py SECRET_PHRASE)
+    layout = Layout(tmp_path / "home")
+    store = media.MediaStore(layout, Fernet(Fernet.generate_key()))
+    db = Database(layout)
+    s = db.new_session("s1_presentation", "en", "app", now=T0, keep_days=30)
+    reports.save(db, store, s.id, fake_assessment)
+    db.close()
+    files = _files(layout.home)
+    assert layout.db_path in files  # the SQLite file is searched too
+    for f in files:
+        data = f.read_bytes()
+        for needle in (phrase, "zebra", "lanterns"):
+            assert needle.encode("utf-8") not in data, f.name
+            assert needle.encode("utf-16-le") not in data, f.name
