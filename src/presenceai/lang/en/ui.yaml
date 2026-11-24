@@ -1,6 +1,13 @@
 app:
   title: "PresenceAI"
   tagline: "Practise presentations and see observable, evidence-based feedback."
+  other_language: "العربية"
+  other_language_path: "/ar"
+nav:
+  consent: "Consent"
+  practice: "Practice"
+  data: "My data"
+  about: "About"
 consent:
   heading: "Consent"
   subheading: "Choose what PresenceAI may do. You can change these at any time."
@@ -9,5 +16,78 @@ consent:
     camera: "Use the camera"
     keep_recordings: "Keep encrypted recordings temporarily"
     hosted_ai: "Send transcript text to a hosted AI model for feedback wording and content checks. The model provider stores this text and may use it to improve its models."
-    study_rating: "Study only: blind rating of my recordings"
-    study_release: "Study only: release of de-identified derived metrics"
+  camera_note: "The camera is not used yet; every report is measured from audio."
+  hosted_ai_note: "Not used yet: this version sends nothing to any AI model."
+  keep_note: "Recordings are kept encrypted for {days} days, then deleted. Without this switch they are deleted right after the analysis."
+  save: "Save"
+  saved_open: "Saved. Practice is available."
+  saved_locked: "Saved. Practice stays off until you allow \"Use the app\"."
+practice:
+  locked: "Practice is available after you allow \"Use the app\" on the Consent tab."
+  not_yet: "Recording and reports are not available in this version yet."
+  key_missing: "Recordings cannot be stored: MEDIA_KEY is not set or is not a valid key. See the setup guide."
+data:
+  heading: "My data"
+  intro: "Your sessions on this computer. Report text and recordings are encrypted; levels and measures are kept for your progress."
+  empty: "No sessions yet."
+  columns:
+    date: "Date (UTC)"
+    scenario: "Scenario"
+    language: "Language"
+    status: "Status"
+    recording: "Recording"
+  status:
+    recorded: "recorded"
+    analysed: "analysed"
+    failed: "analysis failed"
+  recording:
+    kept_until: "kept until {date}"
+    after_analysis: "deleted after analysis"
+    deleted: "deleted"
+  scenarios:
+    s1_presentation: "Short presentation"
+    s2_project_defense: "Project defense"
+  languages:
+    en: "English"
+    ar: "Arabic"
+  session: "Session"
+  export_session: "Export this session"
+  delete_session: "Delete this session"
+  export_all: "Export everything"
+  delete_all: "Delete everything"
+  confirm_delete_all: "I understand that deleting everything cannot be undone."
+  confirm_needed: "Tick the box first: deleting everything cannot be undone."
+  choose_session: "Choose a session first."
+  deleted_one: "The session, its recording and its report were deleted."
+  deleted_all: "Everything was deleted. The app starts again with all consent off."
+  export_ready: "Your export is ready to download. The file is removed from this computer the next time the app starts."
+  export_needs_key: "Export needs MEDIA_KEY to decrypt your recordings and report text."
+about:
+  heading: "About PresenceAI"
+  body: |
+    PresenceAI measures what can be observed in a practice talk: speech rate, pauses, fillers,
+    loudness and pitch variation, and how the content is organised. Every statement shows its
+    evidence (a quote or a time) and a confidence.
+
+    It describes only what was measured in the recording, never the person: it makes no
+    guess about what anyone feels or is like, and it is not a hiring or grading tool.
+
+    **Why a part of the report can say "not measurable"**
+
+    - **Camera off:** gaze is measured only with the camera on. Measures that need the camera
+      are left out of the count when it is off, so camera off is never penalised.
+    - **No time limit:** an uploaded file has no session time limit, so time over the limit
+      cannot be measured.
+    - **Arabic:** content measures (main message, organisation, language, supporting material)
+      and mid-sentence pauses are measured in English only for now.
+    - **Punctuation:** when the transcript has too few sentence marks, pause positions cannot
+      be told.
+    - **A check failed:** if one part of the report cannot be checked, it is shown as not
+      measurable and the rest of the report still appears.
+
+    Each part says "based on N of M measures". When half or fewer of its measures could be
+    computed, its level is limited to 3.
+
+    **Your data:** recordings and report text are encrypted on this computer with your key
+    (MEDIA_KEY). Without that key they cannot be read; levels and measures stay available for
+    your progress. You can export or delete everything on the "My data" tab.

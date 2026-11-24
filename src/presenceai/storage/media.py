@@ -57,9 +57,16 @@ def _check_name(name: str) -> str:
 
 
 class MediaStore:
-    def __init__(self, layout: Layout, fernet: Fernet) -> None:
+    def __init__(self, layout: Layout, fernet: Fernet | None) -> None:
+        """`fernet` None: no usable MEDIA_KEY. Listing and deleting still work (retention,
+        delete); anything that encrypts or decrypts raises `MediaKeyMissing`."""
         self.layout = layout
         self._fernet = fernet
+
+    def _key(self) -> Fernet:
+        if self._fernet is None:
+            raise MediaKeyMissing("MEDIA_KEY is not set; see the setup guide (FINAL_13, MEDIA_KEY)")
+        return self._fernet
 
     def __repr__(self) -> str:  # never the key
         return f"MediaStore(home={self.layout.home.name!r})"
@@ -70,13 +77,13 @@ class MediaStore:
     def _encrypt_to(self, path: Path, data: bytes) -> Path:
         path.parent.mkdir(parents=True, exist_ok=True)
         part = path.with_name(path.name + ".part")
-        part.write_bytes(self._fernet.encrypt(data))
+        part.write_bytes(self._key().encrypt(data))
         os.replace(part, path)
         return path
 
     def _decrypt_from(self, path: Path) -> bytes:
         try:
-            return self._fernet.decrypt(path.read_bytes())
+            return self._key().decrypt(path.read_bytes())
         except InvalidToken:
             raise MediaUnreadable("stored data could not be decrypted with MEDIA_KEY") from None
 
