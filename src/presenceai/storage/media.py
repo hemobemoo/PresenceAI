@@ -51,8 +51,13 @@ def fernet_from(key: SecretStr | None) -> Fernet:
 
 
 def wav_bytes(samples: np.ndarray, sample_rate: int) -> bytes:
-    """Mono float samples in [-1, 1] as a 16-bit PCM WAV, in memory (never written in the clear)."""
-    pcm = (np.clip(np.asarray(samples, dtype=np.float32), -1.0, 1.0) * 32767).astype("<i2")
+    """Mono float samples in [-1, 1] as a 16-bit PCM WAV, in memory (never written in the clear).
+
+    The scale is 32768, the one PyAV and the recorder use for int16 (x / 32768), so int16 frames
+    survive the recording path bit for bit and match the same audio uploaded as a WAV
+    (tests/unit/test_record_upload_parity.py). +1.0 maps to 32767, the largest int16."""
+    scaled = np.round(np.asarray(samples, dtype=np.float64) * 32768.0)
+    pcm = np.clip(scaled, -32768, 32767).astype("<i2")
     buf = io.BytesIO()
     with wave.open(buf, "wb") as w:
         w.setnchannels(1)
@@ -126,7 +131,7 @@ class MediaStore:
         with wave.open(io.BytesIO(self.read_bytes(session_id, f"{name}.wav")), "rb") as w:
             rate = w.getframerate()
             pcm = np.frombuffer(w.readframes(w.getnframes()), dtype="<i2")
-        return (pcm.astype(np.float32) / 32767).astype(np.float32), rate
+        return (pcm.astype(np.float32) / 32768).astype(np.float32), rate
 
     def ingest_upload(self, session_id: str, src: Path) -> str:
         """Encrypt an uploaded file (Gradio's temp copy) and delete the clear copy."""

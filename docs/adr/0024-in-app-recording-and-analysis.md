@@ -1,7 +1,7 @@
 # 0024 — In-app recording and analysis on the laptop (P3-d)
 
-- Status: **proposed** (2026-11-24). The values are the owner's P3 plan answers (2026-11-24); all
-  thresholds are **provisional**.
+- Status: **accepted** by the owner on 2026-11-24. The values are the owner's P3 plan answers;
+  all thresholds are **provisional**.
 - Date: 2026-11-24
 - Decider: project owner
 - Plan reference: FINAL_02 §3.1 (live loop, recording), FINAL_12 §2 (P3 exit: record → report
@@ -50,6 +50,13 @@ recording or analysing (P3 plan, 2026-11-24).
 10. **Failures:** a failed analysis marks the session failed and logs only the error class; the
     page says so. Without consent (c) the recording is deleted after the analysis, whether it
     succeeded or not.
+11. **The recording path and the upload path give the same audio** (owner, at acceptance):
+    the same int16 samples recorded through the FastRTC handler or uploaded as a 16-bit WAV
+    decode to the same float32 array, bit for bit, and give the same speech measures
+    (`tests/unit/test_record_upload_parity.py`). The test found a scale mismatch: recorded
+    audio was written back as WAV with a factor of 32767 while it had been read with 32768,
+    so recordings came out 0.003 % quieter than the same audio uploaded (99.8 % of samples
+    off by one step). `media.wav_bytes` now uses 32768 with rounding, the scale PyAV uses.
 
 ## Consequences
 
