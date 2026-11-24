@@ -15,14 +15,18 @@ from presenceai.settings import get_settings
 app = typer.Typer(
     name="presenceai",
     help="PresenceAI: adaptive, privacy-preserving presentation coach.",
-    no_args_is_help=True,
     add_completion=False,
 )
 
 
-@app.callback()
-def _main() -> None:
-    """PresenceAI command-line interface."""
+@app.callback(invoke_without_command=True)
+def _main(ctx: typer.Context) -> None:
+    """PresenceAI command-line interface. With no command, starts the app on
+    http://127.0.0.1:7860 (P3)."""
+    if ctx.invoked_subcommand is None:
+        from presenceai.ui.app import main as run_app
+
+        run_app()
 
 
 @app.command()

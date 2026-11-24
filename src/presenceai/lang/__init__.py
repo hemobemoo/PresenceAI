@@ -85,3 +85,18 @@ def language_name(lang: Language, code: str) -> str:
     names = report_texts(lang)
     key = f"language_names.{code}"
     return names[key] if key in names else text(lang, "language_names.other", code=code)
+
+
+@cache
+def ui_texts(lang: Language) -> dict[str, str]:
+    """All UI strings of one language (`lang/<lang>/ui.yaml`), flattened to dotted keys."""
+    return flatten(load_ui_strings(lang))
+
+
+def ui_text(lang: Language, key: str, **values: Any) -> str:
+    """The UI string `key` in `lang`, placeholders filled exactly as for `text`."""
+    template = ui_texts(lang)[key]
+    expected = placeholders(template)
+    if set(values) != expected:
+        raise ValueError(f"{lang}:{key} needs {sorted(expected)}, got {sorted(values)}")
+    return template.format(**values) if expected else template
