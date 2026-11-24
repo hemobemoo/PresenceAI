@@ -26,8 +26,10 @@ def save(
 
 
 def build(ctx: AppContext, lang: Language) -> Any:
-    """The page's components, inside the caller's Tab. Returns `wire(practice_tab)`, called once
-    the Practice tab exists, so saving can open or lock it."""
+    """The page's components, inside the caller's Tab. Returns `wire(practice_tab, blocks)`,
+    called once the Practice tab exists: saving opens or locks it, and every page load reads the
+    saved consent again (round-1 test: a reload showed Practice locked after consent was saved,
+    because the state was read once at app start)."""
     import gradio as gr
 
     rtl = lang == "ar"
@@ -57,7 +59,16 @@ def build(ctx: AppContext, lang: Language) -> Any:
         msg, is_open = save(ctx, lang, Consent(use_app=a, camera=b, keep_recordings=c, hosted_ai=d))
         return msg, gr.Tab(interactive=is_open)
 
-    def wire(practice_tab: Any) -> None:
+    def on_load() -> tuple[Any, ...]:
+        c = ctx.consent()
+        return (
+            c.use_app, c.camera, c.keep_recordings, c.hosted_ai,
+            gr.Tab(interactive=c.use_app),
+        )  # fmt: skip
+
+    def wire(practice_tab: Any, blocks: Any) -> None:
         button.click(on_save, [use_app, camera, keep, hosted], [status, practice_tab])
+        outputs = [use_app, camera, keep, hosted, practice_tab]
+        blocks.load(on_load, outputs=outputs, queue=False, show_progress="hidden")
 
     return wire

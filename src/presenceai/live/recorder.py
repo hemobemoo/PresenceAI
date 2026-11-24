@@ -10,6 +10,8 @@
   `app.completeness_min_ratio` (0.95, provisional) the page warns that the recording looks
   incomplete (frames were dropped on the way).
 
+A take starts with its first frame (`start`, called by the FastRTC handler) and stays in memory
+when the microphone stream closes (`end_stream`), until "Stop and analyse" takes it (`finish`).
 One recording at a time: the local app has one user. The clock is injectable for tests.
 """
 
@@ -80,6 +82,16 @@ class RecordingBuffer:
     @property
     def active(self) -> bool:
         return self._active
+
+    def end_stream(self) -> None:
+        """The microphone stream closed (the user stopped the microphone box). The take is
+        kept for "Stop and analyse"; no frame is added after this and the timer stops."""
+        with self._lock:
+            self._active = False
+
+    def has_audio(self) -> bool:
+        with self._lock:
+            return bool(self._chunks)
 
     def add(self, sample_rate: int, samples: np.ndarray) -> bool:
         """Keep a frame; False when it is ignored (not recording, or past the hard stop)."""

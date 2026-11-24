@@ -13,6 +13,8 @@
 
 from __future__ import annotations
 
+import asyncio
+import logging
 import os
 from typing import Any
 
@@ -60,9 +62,10 @@ def build_blocks(ctx: AppContext, lang: Language, analyzer: Analyzer | None = No
             practice_on = consent.practice_open(ctx)
             with gr.Tab(ui_text(lang, "nav.practice"), interactive=practice_on) as practice:
                 practice_page.build(ctx, lang, analyzer or default_analyzer())
-            wire(practice)
+            wire(practice, blocks)
             with gr.Tab(ui_text(lang, "nav.data")):
-                data.build(ctx, lang)
+                wire_data = data.build(ctx, lang)
+            wire_data(blocks)
             with gr.Tab(ui_text(lang, "nav.about")):
                 gr.Markdown(f"## {ui_text(lang, 'about.heading')}", rtl=rtl)
                 gr.Markdown(ui_text(lang, "about.body"), rtl=rtl)
@@ -88,10 +91,29 @@ def create_app(ctx: AppContext, analyzer: Analyzer | None = None) -> Any:
     return gr.mount_gradio_app(app, build_blocks(ctx, "en", analyzer), path="", show_api=False)
 
 
+def ignore_connection_resets(loop: asyncio.AbstractEventLoop, context: dict[str, Any]) -> None:
+    """Drop Windows' harmless WinError 10054 (the browser closed a connection; asyncio's Proactor
+    loop logs a traceback for each), so real errors stay visible (owner, round-1 test: 633 of
+    them buried the log). Everything else goes to asyncio's default handler."""
+    exc = context.get("exception")
+    if isinstance(exc, ConnectionResetError) and getattr(exc, "winerror", None) == 10054:
+        return
+    loop.default_exception_handler(context)
+
+
+def configure_logging() -> None:
+    """One line per analysis start and end (ADR 0024), never any user text."""
+    logging.basicConfig(
+        level=logging.WARNING, format="%(asctime)s %(levelname)s %(name)s: %(message)s"
+    )
+    logging.getLogger("presenceai").setLevel(logging.INFO)
+
+
 def main() -> None:
     """Start the app on 127.0.0.1:7860 (the `presenceai` command with no arguments)."""
     from presenceai.settings import get_settings
 
+    configure_logging()
     settings = get_settings()
     ctx = AppContext.open(
         settings.presenceai_home,
@@ -103,6 +125,12 @@ def main() -> None:
 
     try:
         app = create_app(ctx, Analyzer(settings))
-        uvicorn.run(app, host=HOST, port=PORT, log_level="warning")
+        server = uvicorn.Server(uvicorn.Config(app, host=HOST, port=PORT, log_level="warning"))
+        loop = asyncio.new_event_loop()
+        loop.set_exception_handler(ignore_connection_resets)
+        try:
+            loop.run_until_complete(server.serve())
+        finally:
+            loop.close()
     finally:
         ctx.close()
