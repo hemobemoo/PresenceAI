@@ -55,3 +55,6 @@ Thumbs.db
 Main_Project_Report.docx
 Project Template.docx
 ~$*.docx
+
+# Playwright MCP session logs (local only)
+.playwright-mcp/
