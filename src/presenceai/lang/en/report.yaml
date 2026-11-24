@@ -14,6 +14,8 @@ common:
 timing:
   overrun: "seconds from the {limit:g} s time limit to the end of the last speech"
   no_limit_upload: "uploaded file: no time limit"
+storage:
+  text_unavailable: "Report text unavailable: it could not be decrypted with MEDIA_KEY (a different or lost key). Levels and measures are still shown."
 pauses:
   count_ge: "VAD gaps >= {threshold} s"
   by_position: "VAD gaps by position: {position}"

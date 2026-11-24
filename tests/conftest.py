@@ -156,3 +156,29 @@ def fake_parser() -> Any:
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module.fake_parser
+
+
+SECRET_PHRASE = "zebra lanterns glow"  # noqa: S105  (not a password: a phrase no file may hold in the clear, ADR 0023)
+
+
+@pytest.fixture
+def fake_assessment(sb: Any, fake_parser: Any, speech_cfg: Any) -> Any:
+    """A real `AssessmentReport` from a hand-built speech report whose transcript contains
+    `SECRET_PHRASE`; no models."""
+    from presenceai.pipeline.assess import assess_report
+    from presenceai.schemas.speech import AsrQuality, SpeechRegion, SpeechReport
+
+    talk = (
+        f"Today I will show that {SECRET_PHRASE} at night. "
+        "First, practice builds memory. For example, 45 percent of students said it helped. "
+        f"In conclusion, {SECRET_PHRASE} and practice a little every day."
+    )
+    t = sb.spaced(talk, language="en", duration_s=30.0)
+    speech = SpeechReport(
+        source_name="talk.wav", model="whisper_small", transcript=t,
+        asr_quality=AsrQuality(word_count=len(t.words)),
+        speech_regions=(SpeechRegion(start_s=0.0, end_s=t.words[-1].end_s),),
+    )  # fmt: skip
+    return assess_report(
+        speech, parser=fake_parser, cfg=speech_cfg, scenario="s1_presentation", limit_s=180.0
+    )

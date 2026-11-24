@@ -13,7 +13,7 @@ features:
   keep_raw_media: false         # consent switch (c), FINAL_11 §3
 
 retention:
-  raw_media_days: 30            # source: FINAL_11 §3 — ADR pending
+  raw_media_days: 30            # source: FINAL_11 §3; ADR 0023 (storage, retention)
   study_media_max_days: 60      # not applicable: no human-participant study (ADR 0010); unused
 
 expressions:                    # FINAL_04 §4.3 — thresholds set from calibration data
