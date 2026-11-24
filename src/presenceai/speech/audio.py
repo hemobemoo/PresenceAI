@@ -7,13 +7,18 @@ PyAV 19 no longer accepts. So audio is always decoded here and handed over as an
 - `transcribe(model, path, **options)` is the only place in the code base that calls a
   faster-whisper model's `.transcribe`, always with `load_audio(path)`.
 
+A source is a file path or a `MemoryAudio` (P3-d): decrypted audio held in memory (ADR 0023),
+decoded by PyAV from a `BytesIO`, so the app never writes a clear copy to disk.
+
 `tests/unit/test_audio_loader.py` fails CI if any other module calls `.transcribe(` or uses
 faster-whisper's own `decode_audio`.
 """
 
 from __future__ import annotations
 
+import io
 from collections.abc import Iterable
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Protocol
 
@@ -23,17 +28,42 @@ import numpy as np
 SAMPLE_RATE = 16_000  # what Whisper models expect
 
 
+@dataclass(frozen=True, repr=False)
+class MemoryAudio:
+    """Encoded audio bytes in memory (any format PyAV reads, e.g. WAV or M4A) and a file name
+    for the report (no folders). `repr` never shows the bytes."""
+
+    name: str
+    data: bytes
+
+    def __repr__(self) -> str:
+        return f"MemoryAudio(name={self.name!r}, bytes={len(self.data)})"
+
+
+AudioSource = str | Path | MemoryAudio
+
+
+def source_name(source: AudioSource) -> str:
+    return source.name if isinstance(source, MemoryAudio) else Path(source).name
+
+
+def _open(source: AudioSource) -> Any:
+    if isinstance(source, MemoryAudio):
+        return av.open(io.BytesIO(source.data), mode="r")
+    return av.open(str(source), mode="r")
+
+
 class _WhisperModel(Protocol):
     def transcribe(self, audio: np.ndarray, /, **options: Any) -> tuple[Iterable[Any], Any]: ...
 
 
-def load_audio(path: str | Path) -> np.ndarray:
+def load_audio(path: AudioSource) -> np.ndarray:
     """Decode any file PyAV can read into float32 mono samples at 16 kHz."""
     resampler = av.AudioResampler(format="flt", layout="mono", rate=SAMPLE_RATE)
     chunks: list[np.ndarray] = []
-    with av.open(str(path), mode="r") as container:
+    with _open(path) as container:
         if not container.streams.audio:
-            raise ValueError(f"{Path(path).name}: no audio stream")
+            raise ValueError(f"{source_name(path)}: no audio stream")
         for frame in container.decode(audio=0):
             chunks.extend(f.to_ndarray().reshape(-1) for f in resampler.resample(frame))
         chunks.extend(f.to_ndarray().reshape(-1) for f in resampler.resample(None))  # flush
@@ -42,16 +72,16 @@ def load_audio(path: str | Path) -> np.ndarray:
     return np.concatenate(chunks).astype(np.float32, copy=False)
 
 
-def load_native(path: str | Path) -> tuple[np.ndarray, int]:
+def load_native(path: AudioSource) -> tuple[np.ndarray, int]:
     """Decode at the file's own sample rate and channel count, as float32 (channels, samples).
 
     Used for clipping checks (ADR 0013): resampling to 16 kHz smooths clipped peaks away, so
     clipping is detected on these original samples. Compressed formats (MP3, AAC) can decode to
     values slightly above 1.0 where the source was clipped; they are kept as they are.
     """
-    with av.open(str(path), mode="r") as container:
+    with _open(path) as container:
         if not container.streams.audio:
-            raise ValueError(f"{Path(path).name}: no audio stream")
+            raise ValueError(f"{source_name(path)}: no audio stream")
         stream = container.streams.audio[0]
         rate = int(stream.rate or stream.codec_context.sample_rate or SAMPLE_RATE)
         layout = stream.layout.name if stream.layout else "mono"
@@ -83,7 +113,7 @@ def detect_language(
     return str(language), float(probability), [(str(c), float(p)) for c, p in all_probs]
 
 
-def transcribe(model: _WhisperModel, path: str | Path, **options: Any) -> tuple[list[Any], Any]:
+def transcribe(model: _WhisperModel, path: AudioSource, **options: Any) -> tuple[list[Any], Any]:
     """Transcribe a file with a faster-whisper model; segments are fully decoded on return."""
     segments, info = model.transcribe(load_audio(path), **options)
     return list(segments), info

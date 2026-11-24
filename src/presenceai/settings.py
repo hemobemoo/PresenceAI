@@ -52,6 +52,16 @@ class RetentionPolicy(_Section):
     study_media_max_days: int = Field(default=60, ge=1)
 
 
+class AppSettings(_Section):
+    """The local app (P3-d): uploads (ADR 0023 item 2), recording and analysis (ADR 0024)."""
+
+    upload_max_mb: float = Field(default=50, gt=0)
+    upload_max_audio_s: float = Field(default=300, gt=0)
+    recording_extra_s: float = Field(default=60, ge=0)
+    completeness_min_ratio: float = Field(default=0.95, gt=0, le=1)
+    unload_models_after_analysis: bool = True
+
+
 class ExpressionThresholds(_Section):
     """Thresholds for the five expression labels; null until an ADR decides them."""
 
@@ -69,6 +79,7 @@ class AsrSettings(_Section):
     beam_size: int = Field(default=5, ge=1)
     temperature: float = Field(default=0.0, ge=0)
     condition_on_previous_text: bool = False
+    cpu_threads: int = Field(default=0, ge=0)  # 0: CTranslate2's default (ADR 0024)
 
 
 class VadSettings(_Section):
@@ -218,6 +229,7 @@ class Settings(BaseSettings):
 
     features: FeatureSwitches = FeatureSwitches()
     retention: RetentionPolicy = RetentionPolicy()
+    app: AppSettings = AppSettings()
     expressions: ExpressionThresholds = ExpressionThresholds()
     asr: AsrSettings = AsrSettings()
     speech: SpeechSettings  # required: comes from configs/default.yaml

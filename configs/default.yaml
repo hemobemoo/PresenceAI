@@ -12,6 +12,13 @@ features:
   ai_wording_enabled: false     # OpenRouter used only when the user enables it (AGENTS.md rule 2)
   keep_raw_media: false         # consent switch (c), FINAL_11 §3
 
+app:                            # P3-d (owner, 2026-11-24): ADR 0023 item 2 (uploads), ADR 0024 (recording)
+  upload_max_mb: 50             # PROVISIONAL: larger uploads are refused (Fernet encrypts in memory)
+  upload_max_audio_s: 300       # PROVISIONAL: 5 minutes of audio at most per upload
+  recording_extra_s: 60         # PROVISIONAL: in-app recording stops at the scenario limit + this
+  completeness_min_ratio: 0.95  # PROVISIONAL: received audio s / wall-clock s below this -> warning
+  unload_models_after_analysis: true  # free Whisper and e5 after each analysis (low-RAM laptop)
+
 retention:
   raw_media_days: 30            # source: FINAL_11 §3; ADR 0023 (storage, retention)
   study_media_max_days: 60      # not applicable: no human-participant study (ADR 0010); unused
@@ -28,6 +35,7 @@ asr:                            # FINAL_04 §2, FINAL_06 §1; decoding options a
   beam_size: 5
   temperature: 0.0
   condition_on_previous_text: false
+  cpu_threads: 4                # P3-d, ADR 0024: CTranslate2 threads on the laptop (heat); 0 = library default
 
 speech:                         # ADR 0011 (P1 slice 2: pauses and rate); FINAL_04 §2, §6
   vad:                          # Silero VAD bundled with faster-whisper (MIT); tuned only on C1 dev

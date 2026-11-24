@@ -114,5 +114,8 @@ makes stored media unreadable.
 
 1. ~~**Derived data in the clear.**~~ **Decided 2026-11-24 (item 12):** the report's text is
    encrypted; a text-free summary stays in the clear.
-2. **Upload size.** Fernet encrypts in memory, so a very large upload (for example a long
-   video) needs that much RAM. P3-d will set a size limit for uploads in `configs/`.
+2. ~~**Upload size.**~~ **Closed 2026-11-24 (owner, P3-d):** uploads are refused above
+   `app.upload_max_mb: 50` MB or `app.upload_max_audio_s: 300` s (5 minutes) of audio, both
+   provisional (`pipeline/app_run.py: check_upload`). The file is read into memory and Gradio's
+   clear temp copy is deleted before the checks; a refused upload stores nothing. M4A (Windows
+   Sound Recorder) is accepted and tested with an AAC fixture built in memory.

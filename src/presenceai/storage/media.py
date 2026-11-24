@@ -50,6 +50,23 @@ def fernet_from(key: SecretStr | None) -> Fernet:
         raise MediaKeyInvalid("MEDIA_KEY is not a valid Fernet key") from None
 
 
+def wav_bytes(samples: np.ndarray, sample_rate: int) -> bytes:
+    """Mono float samples in [-1, 1] as a 16-bit PCM WAV, in memory (never written in the clear).
+
+    The scale is 32768, the one PyAV and the recorder use for int16 (x / 32768), so int16 frames
+    survive the recording path bit for bit and match the same audio uploaded as a WAV
+    (tests/unit/test_record_upload_parity.py). +1.0 maps to 32767, the largest int16."""
+    scaled = np.round(np.asarray(samples, dtype=np.float64) * 32768.0)
+    pcm = np.clip(scaled, -32768, 32767).astype("<i2")
+    buf = io.BytesIO()
+    with wave.open(buf, "wb") as w:
+        w.setnchannels(1)
+        w.setsampwidth(2)
+        w.setframerate(sample_rate)
+        w.writeframes(pcm.tobytes())
+    return buf.getvalue()
+
+
 def _check_name(name: str) -> str:
     if not name or Path(name).name != name or name.startswith(".") or name.endswith(SUFFIX):
         raise ValueError("a media name is a plain file name")
@@ -108,20 +125,13 @@ class MediaStore:
 
     def write_wav(self, session_id: str, name: str, samples: np.ndarray, sample_rate: int) -> Path:
         """Mono float samples in [-1, 1] as 16-bit PCM WAV, encrypted (`<name>.wav.enc`)."""
-        pcm = (np.clip(np.asarray(samples, dtype=np.float32), -1.0, 1.0) * 32767).astype("<i2")
-        buf = io.BytesIO()
-        with wave.open(buf, "wb") as w:
-            w.setnchannels(1)
-            w.setsampwidth(2)
-            w.setframerate(sample_rate)
-            w.writeframes(pcm.tobytes())
-        return self.write_bytes(session_id, f"{name}.wav", buf.getvalue())
+        return self.write_bytes(session_id, f"{name}.wav", wav_bytes(samples, sample_rate))
 
     def read_wav(self, session_id: str, name: str) -> tuple[np.ndarray, int]:
         with wave.open(io.BytesIO(self.read_bytes(session_id, f"{name}.wav")), "rb") as w:
             rate = w.getframerate()
             pcm = np.frombuffer(w.readframes(w.getnframes()), dtype="<i2")
-        return (pcm.astype(np.float32) / 32767).astype(np.float32), rate
+        return (pcm.astype(np.float32) / 32768).astype(np.float32), rate
 
     def ingest_upload(self, session_id: str, src: Path) -> str:
         """Encrypt an uploaded file (Gradio's temp copy) and delete the clear copy."""

@@ -1,7 +1,8 @@
 """The PresenceAI web app (P3-c): `uv run presenceai` serves it on http://127.0.0.1:7860.
 
 - English at `/`, Arabic at `/ar/` (right-to-left text); each page links to the other.
-- Tabs: Consent, Practice (disabled until "use the app" is saved; recording arrives in P3-d),
+- Tabs: Consent, Practice (disabled until "use the app" is saved; record or upload, then the
+  report, P3-d),
   My data, About (with the note on why a part of the report can be "not measurable").
 - No outside connection: analytics are off before Gradio is imported (`presenceai.ui`), the
   theme uses system fonts only (no Google Fonts), Gradio's own outside `<link>`/`<script>` tags
@@ -17,9 +18,12 @@ from typing import Any
 
 import presenceai.ui  # noqa: F401  (analytics off before gradio is imported)
 from presenceai.lang import Language, ui_text
+from presenceai.pipeline.app_run import Analyzer
+from presenceai.settings import Settings
 from presenceai.ui.context import AppContext
 from presenceai.ui.offline import LocalAssetsOnly
 from presenceai.ui.pages import consent, data
+from presenceai.ui.pages import practice as practice_page
 
 HOST = "127.0.0.1"
 PORT = 7860
@@ -38,7 +42,7 @@ def theme() -> Any:
     )
 
 
-def build_blocks(ctx: AppContext, lang: Language) -> Any:
+def build_blocks(ctx: AppContext, lang: Language, analyzer: Analyzer | None = None) -> Any:
     import gradio as gr
 
     rtl = lang == "ar"
@@ -55,9 +59,7 @@ def build_blocks(ctx: AppContext, lang: Language) -> Any:
                 wire = consent.build(ctx, lang)
             practice_on = consent.practice_open(ctx)
             with gr.Tab(ui_text(lang, "nav.practice"), interactive=practice_on) as practice:
-                gr.Markdown(ui_text(lang, "practice.not_yet"), rtl=rtl)
-                if not ctx.key_ok:
-                    gr.Markdown(ui_text(lang, "practice.key_missing"), rtl=rtl)
+                practice_page.build(ctx, lang, analyzer or default_analyzer())
             wire(practice)
             with gr.Tab(ui_text(lang, "nav.data")):
                 data.build(ctx, lang)
@@ -67,15 +69,23 @@ def build_blocks(ctx: AppContext, lang: Language) -> Any:
     return blocks
 
 
-def create_app(ctx: AppContext) -> Any:
-    """FastAPI app with the English page at `/` and the Arabic page at `/ar`."""
+def default_analyzer() -> Analyzer:
+    """Config only, never the `.env` file: the analysis needs no secret."""
+    return Analyzer(Settings(_env_file=None))  # pyright: ignore[reportCallIssue]
+
+
+def create_app(ctx: AppContext, analyzer: Analyzer | None = None) -> Any:
+    """FastAPI app with the English page at `/` and the Arabic page at `/ar`. One analyser
+    for both pages, so only one analysis runs at a time (ADR 0024)."""
+    analyzer = analyzer or default_analyzer()
     import gradio as gr
     from fastapi import FastAPI
 
     app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
     app.add_middleware(LocalAssetsOnly)  # Gradio's page links Google Fonts and cdnjs
-    app = gr.mount_gradio_app(app, build_blocks(ctx, "ar"), path="/ar", show_api=False)
-    return gr.mount_gradio_app(app, build_blocks(ctx, "en"), path="", show_api=False)
+    ar = build_blocks(ctx, "ar", analyzer)
+    app = gr.mount_gradio_app(app, ar, path="/ar", show_api=False)
+    return gr.mount_gradio_app(app, build_blocks(ctx, "en", analyzer), path="", show_api=False)
 
 
 def main() -> None:
@@ -92,6 +102,7 @@ def main() -> None:
     import uvicorn
 
     try:
-        uvicorn.run(create_app(ctx), host=HOST, port=PORT, log_level="warning")
+        app = create_app(ctx, Analyzer(settings))
+        uvicorn.run(app, host=HOST, port=PORT, log_level="warning")
     finally:
         ctx.close()

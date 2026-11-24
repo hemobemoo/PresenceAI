@@ -14,7 +14,6 @@ before any measure or quote (ADR 0015).
 from __future__ import annotations
 
 from collections.abc import Callable
-from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -47,7 +46,7 @@ PitchTracker = Callable[[np.ndarray, int, PitchSettings], PitchTrack]
 
 
 def analyze_file(
-    path: str | Path,
+    path: audio.AudioSource,
     *,
     language: SpeechLanguage,
     model: Any,
@@ -103,7 +102,7 @@ def analyze_file(
     not_measurable |= nm_rate | nm_pace | nm_fill | nm_rep | nm_loud | nm_pitch
 
     return SpeechReport(
-        source_name=Path(path).name,
+        source_name=audio.source_name(path),
         model=model_name,
         transcript=transcript,
         asr_quality=asr.quality(transcript),
