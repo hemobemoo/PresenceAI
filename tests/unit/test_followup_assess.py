@@ -169,7 +169,7 @@ def test_arabic_answers_measure_latency_only(sb: Any, fake_parser: Any, speech_c
     # latency (1.5 s) and answered would meet level 4's other conditions, but the limitation cue
     # is required and not measured in Arabic: level 3, reached, not capped (owner, 2026-11-25)
     assert r.level == 3 and r.capped_from is None and f.capped_from is None
-    assert "المستوى 4 غير متاح بالعربية بعد" in f.statement
+    assert "المستوى 4 غير متاح بالعربية حتى الآن" in f.statement
 
 
 def test_the_same_fast_arabic_answers_give_level_3_not_4(sb: Any, fake_parser: Any,

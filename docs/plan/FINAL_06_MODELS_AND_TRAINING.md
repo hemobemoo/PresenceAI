@@ -25,8 +25,8 @@
 
 | Option | Use when | How | Cost |
 |---|---|---|---|
-| **Kaggle Notebooks** (default) | No NVIDIA GPU at home | Upload the notebook from `training/`, enable GPU (T4×2 or P100), attach your private dataset | $0, ~30 GPU-h/week ~ |
-| Google Colab free | Kaggle quota used up | Same notebook; Unsloth's Whisper notebook opens directly in Colab ✓ | $0, availability varies |
+| **Google Colab free** (default; owner's first choice, 2026-11-25) | No NVIDIA GPU at home | Open the notebook from `training/`, select a T4 GPU, read data from your Drive; Unsloth's Whisper notebook opens directly in Colab ✓ | $0, availability varies |
+| Kaggle Notebooks (fallback) | No Colab GPU available | Same notebook; enable GPU (T4×2 or P100), attach your private dataset | $0, ~30 GPU-h/week ~ |
 | **Unsloth Studio** (local) | Your machine has a supported GPU | macOS/Linux/WSL: `curl -fsSL https://unsloth.ai/install.sh \| sh` then `unsloth studio -H 0.0.0.0 -p 8888`; Windows: `irm https://unsloth.ai/install.ps1 \| iex` ✓ | $0 |
 
 Rules: every training run is a notebook in `training/` with fixed seed, logs its data manifest hash, and pushes the result to a **private** Hugging Face repo. Raw study recordings never go to Kaggle or Colab; only public data, synthetic data and your own pilot recordings (with your own consent) do.
@@ -71,7 +71,7 @@ Rules: every training run is a notebook in `training/` with fixed seed, logs its
 | Grounding text | Exercise wording draws on CC BY 4.0 text only (*Fundamentals of Public Speaking*, Lumen) so the trained adapter carries no share-alike or non-commercial obligation; CC BY-NC-SA texts are used for retrieval, not for training ~ (licence interpretation: confirm with supervisor) |
 | Teacher | **Decided in P4** (owner, 2026-11-22, ADR 0021). Leading option: Qwen3.8-27B (Apache-2.0) run as a batch job on a Kaggle TPU v5e-8 (kaggle-tpu-lab recipe, MIT), with no public endpoint. Hosted OpenRouter models are out: S4 found no provider that allows training on outputs |
 | Teacher terms | The teacher's weights must be Apache-2.0 or MIT (no restriction on training with its outputs); check the model card and LICENSE file, and verify the weight hashes against Hugging Face, before generating |
-| Method | QLoRA r=16 with Unsloth on Kaggle, 2–3 epochs, max length 2,048 |
+| Method | QLoRA r=16 with Unsloth on Colab, 2–3 epochs, max length 2,048 |
 | Export | Unsloth GGUF export (q4_k_m) → `llama-cpp-python` on the laptop |
 | Arabic wording | Teacher prompts for Arabic items use the code-switching rule in `lang/ar/coach_prompt.yaml` (FINAL_04 §5, ADR 0003). Arabic pairs are **kept only if** no quote contains Latin-script text missing from the transcript (`latin_outside_transcript`); hand-written gold pairs follow the same rule |
 | Feedback points | Teacher prompts in both languages add `feedback_point_rule` from `lang/<lang>/coach_prompt.yaml` (ADR 0003): each point says what was observed (with evidence), why it matters for the user, and what they gain by practising it. Pairs are **kept only if** every item has a non-empty observation, evidence quote and suggestion; whether the benefit is stated is checked by hand on the gold set and a sample of teacher pairs (no automatic check), and rated in E11 |
