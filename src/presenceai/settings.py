@@ -18,7 +18,7 @@ from pathlib import Path
 from typing import Literal
 
 import yaml
-from pydantic import AliasChoices, BaseModel, ConfigDict, Field, SecretStr
+from pydantic import AliasChoices, BaseModel, ConfigDict, Field, SecretStr, field_validator
 from pydantic_settings import (
     BaseSettings,
     PydanticBaseSettingsSource,
@@ -60,6 +60,8 @@ class AppSettings(_Section):
     recording_extra_s: float = Field(default=60, ge=0)
     completeness_min_ratio: float = Field(default=0.95, gt=0, le=1)
     unload_models_after_analysis: bool = True
+    answer_window_s: float = Field(default=60, gt=0)  # S2 answer window (P3-e, ADR 0022)
+    answer_preroll_s: float = Field(default=1.0, ge=0)  # running-speech look-back (P3-e)
 
 
 class ExpressionThresholds(_Section):
@@ -226,6 +228,16 @@ class Settings(BaseSettings):
     presenceai_home: Path = Field(
         default=Path.home() / ".presenceai", validation_alias=_named("PRESENCEAI_HOME")
     )
+
+    @field_validator("presenceai_home", mode="before")
+    @classmethod
+    def _empty_home_is_the_default(cls, value: object) -> object:
+        """`PRESENCEAI_HOME=` left empty (as in `.env.example`) means the default folder. Read as
+        a path, an empty value is the current folder, and the owner's S2 run (2026-11-25) wrote
+        the app's data, decrypted export included, into the repository."""
+        if value is None or (isinstance(value, str) and not value.strip()):
+            return Path.home() / ".presenceai"
+        return value
 
     features: FeatureSwitches = FeatureSwitches()
     retention: RetentionPolicy = RetentionPolicy()

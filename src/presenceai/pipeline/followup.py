@@ -41,8 +41,11 @@ def measure_answer(
     window_s: float,
     elapsed_s: float,
     embedder: Embedder | None,
+    running_until_s: float = 0.0,
 ) -> AnswerMeasures:
-    """`embedder` None: relevance is not computed (e.g. Arabic, ADR 0022 item 6)."""
+    """`embedder` None: relevance is not computed (e.g. Arabic, ADR 0022 item 6).
+    `running_until_s`: speech already going when the window opened ends here; it is not an
+    onset (P3-e, `speech/latency.py`)."""
     if not recording_ok:
         return AnswerMeasures(index=index, window_s=window_s, status="recording_failed")
     if not regions:
@@ -52,7 +55,7 @@ def measure_answer(
                 relevance=0.0,
             )  # fmt: skip
         return AnswerMeasures(index=index, window_s=window_s, status="incomplete")
-    latency = response_latency(regions)
+    latency = response_latency(regions, running_until_s)
     if not transcript.strip():
         return AnswerMeasures(
             index=index, window_s=window_s, status="speech_untranscribed", latency_s=latency
@@ -170,6 +173,7 @@ def followup_report(
     language: Literal["en", "ar"],
     embedder: Embedder | None,
     sources: Sequence[str] = (),
+    running_until: Sequence[float] = (),
 ) -> FollowupReport:
     """Measure every answer and build the follow-up rubric measures.
 
@@ -177,6 +181,9 @@ def followup_report(
     an Arabic talk: relevance is not computed (ADR 0022 item 6)."""
     if not (len(questions) == len(reports) == len(windows)) or not questions:
         raise ValueError("one question, one recording and one window per follow-up")
+    running = tuple(running_until) or (0.0,) * len(questions)
+    if len(running) != len(questions):
+        raise ValueError("one running-speech end per follow-up")
     answers = [
         measure_answer(
             i,
@@ -187,8 +194,9 @@ def followup_report(
             window_s=w,
             elapsed_s=r.transcript.duration_s if r is not None else 0.0,
             embedder=embedder if language == "en" else None,
+            running_until_s=run,
         )
-        for i, (q, r, w) in enumerate(zip(questions, reports, windows, strict=True))
+        for i, (q, r, w, run) in enumerate(zip(questions, reports, windows, running, strict=True))
     ]
     transcripts = tuple(r.transcript if r is not None else None for r in reports)
     summary = summarise(answers)

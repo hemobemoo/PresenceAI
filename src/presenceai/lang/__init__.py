@@ -88,6 +88,15 @@ def language_name(lang: Language, code: str) -> str:
 
 
 @cache
+def followup_questions(lang: Language) -> tuple[str, ...]:
+    """The S2 follow-up question bank (`lang/<lang>/followup_questions.yaml`, P3-e)."""
+    questions = load_pack_file(lang, "followup_questions.yaml")["questions"]
+    if not isinstance(questions, list) or not all(isinstance(q, str) and q for q in questions):
+        raise ValueError(f"{lang}/followup_questions.yaml: questions must be non-empty strings")
+    return tuple(cast("list[str]", questions))
+
+
+@cache
 def ui_texts(lang: Language) -> dict[str, str]:
     """All UI strings of one language (`lang/<lang>/ui.yaml`), flattened to dotted keys."""
     return flatten(load_ui_strings(lang))

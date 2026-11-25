@@ -109,6 +109,26 @@ def configure_logging() -> None:
     logging.getLogger("presenceai").setLevel(logging.INFO)
 
 
+URL = f"http://{HOST}:{PORT}/"
+
+
+def ready_message() -> str:
+    """The line printed once the server listens: Ctrl+click opens the app (owner, 2026-11-25)."""
+    return ui_text("en", "app.running", url=URL)
+
+
+def _server(app: Any) -> Any:
+    import uvicorn
+
+    class Server(uvicorn.Server):
+        async def startup(self, sockets: Any = None) -> None:
+            await super().startup(sockets)
+            if self.started:  # only once it really listens, so the link always works
+                print(ready_message(), flush=True)
+
+    return Server(uvicorn.Config(app, host=HOST, port=PORT, log_level="warning"))
+
+
 def main() -> None:
     """Start the app on 127.0.0.1:7860 (the `presenceai` command with no arguments)."""
     from presenceai.settings import get_settings
@@ -121,16 +141,16 @@ def main() -> None:
         raw_media_days=settings.retention.raw_media_days,
     )
     os.environ["GRADIO_TEMP_DIR"] = str(ctx.layout.tmp_dir / "gradio")
-    import uvicorn
-
     try:
         app = create_app(ctx, Analyzer(settings))
-        server = uvicorn.Server(uvicorn.Config(app, host=HOST, port=PORT, log_level="warning"))
+        server = _server(app)
         loop = asyncio.new_event_loop()
         loop.set_exception_handler(ignore_connection_resets)
         try:
             loop.run_until_complete(server.serve())
         finally:
             loop.close()
+        if not server.started:  # the port was taken: one clear line instead of tracebacks
+            print(ui_text("en", "app.port_busy", url=URL), flush=True)
     finally:
         ctx.close()

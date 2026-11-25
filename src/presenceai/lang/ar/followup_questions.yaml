@@ -1,0 +1,12 @@
+# Arabic wording reviewed by the owner (2026-11-25): Q2, Q3, Q5 and Q6 reworded, Q1 and Q4
+# kept as drafted.
+# S2 follow-up questions (P3-e): the same six questions as lang/en/followup_questions.yaml.
+# RULE: no question asks for limitations directly or invites a scope or future-work answer
+# (tests/unit/test_s2_questions.py).
+questions:
+  - "لماذا اخترت هذا النهج بدلًا من البدائل الواضحة؟"
+  - "كيف تتأكد من أن نتائجك صحيحة؟"
+  - "ما الدليل على أن حلّك ينجح فعلًا مع الفئة التي صُمّم لها؟"
+  - "ما أصعب جزء في المشروع، وكيف تعاملت معه؟"
+  - "كيف سيتغيّر تصميمك لو تضاعف عدد مستخدميه عشر مرات؟"
+  - "ما النتيجة التي فاجأتك أكثر من غيرها، ولماذا؟"

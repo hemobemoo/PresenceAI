@@ -126,6 +126,9 @@ def render(view: ReportView, lang: Language, scenario: str, *, max_evidence: int
     out: list[str] = [f"## {ui_text(lang, 'report.heading')}"]
     if view.text_note:
         out.append(f"> {escape(view.text_note)}")
+    if view.report is not None and view.report.followups is not None:  # S2 (P3-e)
+        out.append(f"**{ui_text(lang, 'report.questions')}**")
+        out.extend(f"{i}\\. {escape(q)}" for i, q in enumerate(view.report.followups.questions, 1))
     findings = {f.dimension: f for f in view.report.assessment.findings} if view.report else {}
     results = {r.dimension: r for r in view.report.assessment.dimensions} if view.report else {}
     order = {dim: i for i, dim in enumerate(names)}  # the rubric's order

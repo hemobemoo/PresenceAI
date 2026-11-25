@@ -19,13 +19,16 @@ import gc
 import logging
 import threading
 import time
-from collections.abc import Callable, Generator
+from collections.abc import Callable, Generator, Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+from av.error import FFmpegError
+
 from presenceai.pipeline.assess import assess_report, no_parser
+from presenceai.pipeline.followup import followup_report
 from presenceai.schemas.report import AssessmentReport
 from presenceai.schemas.storage import SessionRecord
 from presenceai.settings import AppSettings, Settings
@@ -84,7 +87,8 @@ class AnalysisFailed(RuntimeError):
     """The analysis could not finish; the session is marked failed. No user text inside."""
 
 
-STEPS = ("load_models", "speech", "content", "save")  # UI keys: practice.step.<name>
+STEPS = ("load_models", "speech", "content", "save")  # UI keys: practice.steps.<name>
+STEPS_S2 = ("load_models", "speech", "answers", "content", "save")  # S2: answers too (P3-e)
 
 
 @dataclass(frozen=True)
@@ -93,10 +97,24 @@ class Step:
 
     index: int
     name: str
+    total: int = len(STEPS)
 
-    @property
-    def total(self) -> int:
-        return len(STEPS)
+
+def _load_e5() -> Any:
+    from presenceai.knowledge.embed import E5Embedder  # heavy: only for English S2 analyses
+
+    return E5Embedder()
+
+
+@dataclass(frozen=True, repr=False)
+class AnswerInput:
+    """One S2 follow-up answer for the analysis (P3-e). `audio` None: not recorded (missing,
+    never low). `running_until_s`: speech already going when its window opened ends here."""
+
+    question: str
+    audio: MemoryAudio | None
+    window_s: float
+    running_until_s: float = 0.0
 
 
 @dataclass
@@ -105,15 +123,17 @@ class Analyzer:
     load_whisper: Callable[[str, Any], Any] = asr.load_model
     load_parser: Callable[[], Any] = nlp.spacy_parser
     analyze: Callable[..., Any] = speech_analyze.analyze_file
+    load_embedder: Callable[[], Any] = _load_e5
 
     def __post_init__(self) -> None:
         self._lock = threading.Lock()
         self._whisper: Any = None
         self._parser: Any = None
+        self._embedder: Any = None
 
     @property
     def models_loaded(self) -> bool:
-        return self._whisper is not None or self._parser is not None
+        return any(m is not None for m in (self._whisper, self._parser, self._embedder))
 
     def busy(self) -> bool:
         return self._lock.locked()
@@ -121,6 +141,7 @@ class Analyzer:
     def unload(self) -> None:
         self._whisper = None
         self._parser = None
+        self._embedder = None
         gc.collect()
 
     def steps(
@@ -135,6 +156,7 @@ class Analyzer:
         duration_s: float | None = None,
         completeness: float | None = None,
         now: datetime | None = None,
+        answers: Sequence[AnswerInput] | None = None,
     ) -> Generator[Step, None, AssessmentReport]:
         """Analyse one session, yielding each step as it starts; returns the report.
 
@@ -154,31 +176,49 @@ class Analyzer:
         try:
             cfg = self.settings
             language = session.language
+            names = STEPS_S2 if answers is not None else STEPS
 
-            def step(i: int) -> Step:
+            def step(name: str) -> Step:
                 nonlocal current, t0
                 now_t = time.perf_counter()
                 if current != "start":
                     timings[current] = round(now_t - t0, 2)
-                current, t0 = STEPS[i], now_t
-                return Step(index=i + 1, name=STEPS[i])
+                current, t0 = name, now_t
+                return Step(index=names.index(name) + 1, name=name, total=len(names))
 
-            yield step(0)
+            def speech_of(a: MemoryAudio) -> Any:
+                return self.analyze(
+                    a, language=language, model=self._whisper, model_name=cfg.asr.model,
+                    options=cfg.asr, speech=cfg.speech,
+                )  # fmt: skip
+
+            yield step("load_models")
             if self._whisper is None:
                 self._whisper = self.load_whisper(cfg.asr.model, cfg.asr)
             if language == "en" and self._parser is None:
                 self._parser = self.load_parser()
-            yield step(1)
-            speech = self.analyze(
-                audio, language=language, model=self._whisper, model_name=cfg.asr.model,
-                options=cfg.asr, speech=cfg.speech,
-            )  # fmt: skip
-            yield step(2)
+            if answers is not None and language == "en" and self._embedder is None:
+                self._embedder = self.load_embedder()  # relevance: English only (ADR 0022)
+            yield step("speech")
+            speech = speech_of(audio)
+            followups = None
+            if answers is not None:
+                yield step("answers")
+                answer_reports = [_answer_report(speech_of, a.audio) for a in answers]
+                followups = followup_report(
+                    [a.question for a in answers], answer_reports,
+                    [a.window_s for a in answers], language="ar" if language == "ar" else "en",
+                    embedder=self._embedder,
+                    sources=[f"answer_{i + 1}.wav" for i in range(len(answers))],
+                    running_until=[a.running_until_s for a in answers],
+                )  # fmt: skip
+            yield step("content")
             report = assess_report(
                 speech, parser=self._parser if language == "en" else no_parser, cfg=cfg.speech,
-                scenario=session.scenario, limit_s=limit_s, strict=False, camera_on=False,
+                scenario=session.scenario, followups=followups, limit_s=limit_s, strict=False,
+                camera_on=False,
             )  # fmt: skip
-            yield step(3)
+            yield step("save")
             reports.save(db, store, session.id, report)
             timings[current] = round(time.perf_counter() - t0, 2)
             log.info(
@@ -227,6 +267,17 @@ class Analyzer:
                 next(gen)
             except StopIteration as done:
                 return done.value
+
+
+def _answer_report(speech_of: Callable[[MemoryAudio], Any], audio: MemoryAudio | None) -> Any:
+    """An answer's speech report; None when it was not recorded or cannot be read (a failed
+    recording: its measures are missing, never low, ADR 0022)."""
+    if audio is None:
+        return None
+    try:
+        return speech_of(audio)
+    except (OSError, ValueError, FFmpegError):
+        return None
 
 
 class AnalysisBusy(RuntimeError):

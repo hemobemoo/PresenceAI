@@ -195,3 +195,29 @@ def test_every_page_load_reads_consent_and_sessions_again(ctx: AppContext):
     load = next(d for d in loads if any(o._id in tabs for o in d.outputs))
     values = load.fn()
     assert values[0] is True and values[-1].interactive is True
+
+
+def test_the_terminal_shows_a_clickable_link_once_the_server_listens(
+    capsys: pytest.CaptureFixture[str],
+):
+    """Owner, 2026-11-25: show http://127.0.0.1:7860/ in the terminal to click."""
+    import asyncio
+
+    from presenceai.ui.app import URL, _server, ready_message
+
+    assert URL == "http://127.0.0.1:7860/"
+    assert ready_message().startswith("PresenceAI is running at http://127.0.0.1:7860/")
+    server = _server(object())
+
+    async def fake_startup(self: Any, sockets: Any = None) -> None:
+        self.started = True
+
+    import uvicorn
+
+    original = uvicorn.Server.startup
+    uvicorn.Server.startup = fake_startup  # type: ignore[method-assign]
+    try:
+        asyncio.run(server.startup())
+    finally:
+        uvicorn.Server.startup = original  # type: ignore[method-assign]
+    assert "http://127.0.0.1:7860/" in capsys.readouterr().out
