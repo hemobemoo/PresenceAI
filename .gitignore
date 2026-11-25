@@ -34,6 +34,11 @@ models/*
 *.webm
 *.enc
 *.sqlite
+# the app's data folders, if PRESENCEAI_HOME ever points at the repository (never commit:
+# exports hold decrypted recordings and transcripts)
+/sessions/
+/exports/
+/tmp/
 *.duckdb
 *.gguf
 *.task

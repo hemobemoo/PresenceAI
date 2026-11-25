@@ -3,6 +3,8 @@ app:
   title: "PresenceAI"
   tagline: "تدرّب على العروض التقديمية واحصل على ملاحظات قابلة للملاحظة ومدعومة بالأدلة."
   other_language: "English"
+  running: "يعمل PresenceAI على {url}  (Ctrl+نقرة للفتح؛ Ctrl+C للإيقاف)"
+  port_busy: "المنفذ 7860 مستخدم بالفعل. ربما يعمل PresenceAI الآن: افتح {url}، أو أغلق النافذة الأخرى وابدأ من جديد."
   other_language_path: "/"
 nav:
   consent: "الموافقة"

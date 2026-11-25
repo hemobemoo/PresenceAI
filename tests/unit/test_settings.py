@@ -125,3 +125,18 @@ def test_dotenv_file_uses_same_names(monkeypatch: pytest.MonkeyPatch, tmp_path: 
     assert s.media_key is not None
     assert s.media_key.get_secret_value() == "sentinel-dotenv"
     assert s.language == "ar"
+
+
+@pytest.mark.parametrize("value", ["", "   "])
+def test_an_empty_presenceai_home_means_the_default_folder(
+    monkeypatch: pytest.MonkeyPatch, value: str
+):
+    """`.env.example` has `PRESENCEAI_HOME=` empty; read as a path that is the current folder,
+    and the app's data went into the repository (owner's S2 run, 2026-11-25)."""
+    from pathlib import Path
+
+    from presenceai.settings import Settings
+
+    monkeypatch.setenv("PRESENCEAI_HOME", value)
+    s = Settings(_env_file=None)  # pyright: ignore[reportCallIssue]
+    assert s.presenceai_home == Path.home() / ".presenceai"

@@ -18,7 +18,7 @@ from pathlib import Path
 from typing import Literal
 
 import yaml
-from pydantic import AliasChoices, BaseModel, ConfigDict, Field, SecretStr
+from pydantic import AliasChoices, BaseModel, ConfigDict, Field, SecretStr, field_validator
 from pydantic_settings import (
     BaseSettings,
     PydanticBaseSettingsSource,
@@ -228,6 +228,16 @@ class Settings(BaseSettings):
     presenceai_home: Path = Field(
         default=Path.home() / ".presenceai", validation_alias=_named("PRESENCEAI_HOME")
     )
+
+    @field_validator("presenceai_home", mode="before")
+    @classmethod
+    def _empty_home_is_the_default(cls, value: object) -> object:
+        """`PRESENCEAI_HOME=` left empty (as in `.env.example`) means the default folder. Read as
+        a path, an empty value is the current folder, and the owner's S2 run (2026-11-25) wrote
+        the app's data, decrypted export included, into the repository."""
+        if value is None or (isinstance(value, str) and not value.strip()):
+            return Path.home() / ".presenceai"
+        return value
 
     features: FeatureSwitches = FeatureSwitches()
     retention: RetentionPolicy = RetentionPolicy()
