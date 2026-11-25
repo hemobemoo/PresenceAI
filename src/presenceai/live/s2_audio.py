@@ -53,10 +53,13 @@ def session_inputs(
     answers: list[AnswerInput] = []
     for i, question in enumerate(session.questions):
         take = session.takes.get(i)
+        bank = bool(session.from_bank) and session.from_bank[i]
         if take is None or take.end <= take.start:
-            answers.append(AnswerInput(question, None, session.window_s))
+            answers.append(AnswerInput(question, None, session.window_s, relevance_scored=not bank))
             continue
         audio = MemoryAudio(f"answer_{i + 1}.wav", wav_bytes(window_audio(stream, take), rate))
         running = answer_running_until(stream, take, rate=rate, preroll_s=preroll_s, vad=vad)
-        answers.append(AnswerInput(question, audio, session.window_s, running))
+        answers.append(
+            AnswerInput(question, audio, session.window_s, running, relevance_scored=not bank)
+        )
     return explanation, answers

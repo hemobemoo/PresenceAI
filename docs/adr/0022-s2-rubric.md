@@ -264,6 +264,40 @@ Config keys: `configs/default.yaml: app.answer_window_s` (60, **provisional**),
    never low. **S2 uploads** carry no answers: an uploaded file is analysed as the explanation,
    and follow-up handling says "no follow-up answer recorded".
 
+## After the owner's first real S2 run (owner, 2026-11-25)
+
+**The run (numbers only):** 197.8 s of audio, analysed in 90.2 s; explanation 92.5 s.
+Answer 1: latency 6.53 s, relevance 0.851; answer 2: latency 4.93 s, relevance 0.876; no
+limitation stated; follow-up handling level 2 under the earlier rules. This is the first
+evidence, **not the basis** for the values below.
+
+1. **Relevance from bank questions is information-only** until relevance is recalibrated on
+   generic questions; **questions the user types keep scoring.** Reason: the gap is narrow
+   (the owner's answers 0.851 and 0.876 against unrelated talks at 0.77–0.81 in the browser
+   checks), and on generic questions evasive answers are likely to clear 0.82, as they did on
+   project-specific ones ("Relevance calibration": evasive 0.908–0.943). A bank answer's
+   similarity stays in the report with its value ("measured 0.851, 0.876 on questions from the
+   bank; not scored until relevance is recalibrated on generic questions"); it is left out of
+   `followup.relevance_min` and of the low-relevance note. A measured non-answer still scores 0
+   (it is decided from the audio, not the similarity). Calibration pairs for the bank are a
+   later task for the owner.
+2. **A reading allowance replaces raw latency** (`configs/rubric.yaml: s2_project_defense.
+   fu_reading_wps: 4`, provisional, the same for Arabic until there is data). Each answer's
+   allowance is its question's words ÷ 4 words per second; `followup.latency_max_s` is now the
+   longest **thinking time**, latency minus allowance (never below 0). **Level 4: latency ≤
+   allowance + 2 s; level 3: latency ≤ allowance + 4 s**: the 2 s and 4 s (`fu_latency_4`,
+   `fu_latency_3`) stay as thinking time. Reason: the window opens when the question appears,
+   so the raw latency includes reading it, and a 2 s limit cannot be met once reading time is
+   included (a 15-word question takes about 3.75 s to read). The level-4 and level-3 anchor
+   wording now names the allowance (English and Arabic; the review document is regenerated).
+   The evidence time span stays the raw latency in that answer's recording. Tested: a short
+   and a long question with the same latency give different results.
+3. **Consequence for the owner to decide:** level 2's only condition is relevance, so when
+   both questions come from the bank (relevance not scored) **level 2 cannot be reached**:
+   follow-up handling is then 1, 3 or 4. A test pins this behaviour; whether level 2 should get
+   a condition that is still scored (for example a latency or answered-both condition) is an
+   open question (open item 6).
+
 ## Supervisor review (2026-11-23)
 
 Approved, subject to five conditions, all met in this ADR's PR or bound to S2-b:
@@ -305,3 +339,7 @@ item 1 below.
    random, or the user's own; generic questions may share fewer words with a good answer, so
    the cut is re-checked on the first real spoken S2 answers together with item 2. No question
    in the bank may ask for limitations directly, since that would prompt the limitation cue.
+6. **Level 2 with bank questions** ("After the owner's first real S2 run", item 3): level 2 is
+   unreachable while bank relevance is unscored. Decide whether level 2 gets a scored condition.
+7. **Calibration pairs for the bank questions** (owner, later): until then bank relevance is
+   information-only.

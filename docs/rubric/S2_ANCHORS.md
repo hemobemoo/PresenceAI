@@ -85,8 +85,8 @@ VALUE dimension: none (S2 follow-up handling, FINAL_05 §1; not part of the VALU
 
 | Level | Anchor (observable) | Conditions | Arabic |
 |---|---|---|---|
-| 4 Capstone | Every answer has a similarity of at least 0.82 to its question, every answer starts within 2 s of the end of the question, and at least one answer names an explicit limitation of the project. | `followup.relevance_min` ≥ 0.82 (`fu_relevance_high`)<br>`followup.latency_max_s` ≤ 2 (`fu_latency_4`)<br>`followup.limitation_acknowledged` = yes | only `followup.latency_max_s` |
-| 3 Milestone 3 | Every answer has a similarity of at least 0.82 to its question, and every answer starts within 4 s of the end of the question. | `followup.relevance_min` ≥ 0.82 (`fu_relevance_mid`)<br>`followup.latency_max_s` ≤ 4 (`fu_latency_3`) | only `followup.latency_max_s` |
+| 4 Capstone | Every answer has a similarity of at least 0.82 to its question, every answer starts within 2 s after the time to read the question (its words at 4 words per second), and at least one answer names an explicit limitation of the project. | `followup.relevance_min` ≥ 0.82 (`fu_relevance_high`)<br>`followup.latency_max_s` ≤ 2 (`fu_latency_4`)<br>`followup.limitation_acknowledged` = yes | only `followup.latency_max_s` |
+| 3 Milestone 3 | Every answer has a similarity of at least 0.82 to its question, and every answer starts within 4 s after the time to read the question (its words at 4 words per second). | `followup.relevance_min` ≥ 0.82 (`fu_relevance_mid`)<br>`followup.latency_max_s` ≤ 4 (`fu_latency_3`) | only `followup.latency_max_s` |
 | 2 Milestone 2 | Every answer has a similarity of at least 0.82 to its question. | `followup.relevance_min` ≥ 0.82 (`fu_relevance_low`) | not measured (missing, not low) |
 | 1 Benchmark | At least one answer is less similar to its question than level 2 requires. | default | default when any measure is computable |
 
@@ -145,8 +145,8 @@ The Arabic anchors translate the reviewed English wording. They are a draft for 
 
 | Level | Arabic anchor |
 |---|---|
-| 4 متقدّم | تشابه كل إجابة مع سؤالها 0.82 على الأقل، وتبدأ كل إجابة خلال 2 ث على الأكثر من نهاية السؤال، وتذكر إجابة واحدة على الأقل حدًّا صريحًا للمشروع. |
-| 3 مرحلي 3 | تشابه كل إجابة مع سؤالها 0.82 على الأقل، وتبدأ كل إجابة خلال 4 ث على الأكثر من نهاية السؤال. |
+| 4 متقدّم | تشابه كل إجابة مع سؤالها 0.82 على الأقل، وتبدأ كل إجابة خلال 2 ث على الأكثر بعد وقت قراءة السؤال (كلماته مقسومة على 4 كلمات في الثانية)، وتذكر إجابة واحدة على الأقل حدًّا صريحًا للمشروع. |
+| 3 مرحلي 3 | تشابه كل إجابة مع سؤالها 0.82 على الأقل، وتبدأ كل إجابة خلال 4 ث على الأكثر بعد وقت قراءة السؤال (كلماته مقسومة على 4 كلمات في الثانية). |
 | 2 مرحلي 2 | تشابه كل إجابة مع سؤالها 0.82 على الأقل. |
 | 1 أساسي | إجابة واحدة على الأقل تشابه سؤالها أقل مما في المستوى 2. |
 

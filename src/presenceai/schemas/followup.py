@@ -37,6 +37,13 @@ class AnswerMeasures(_Frozen):
     latency_s: float | None = Field(default=None, ge=0)
     relevance: float | None = Field(default=None, ge=-1, le=1)  # None: not computed
     limitation: str | None = None  # the first limitation cue found, if any
+    # Reading allowance (owner, 2026-11-25): question words / fu_reading_wps. The latency
+    # conditions compare the thinking time, latency minus this, with the 2 s and 4 s limits.
+    reading_allowance_s: float = Field(default=0.0, ge=0)
+    # False for a question from the generic bank: its similarity is reported, not scored, until
+    # relevance is recalibrated on generic questions (owner, 2026-11-25). A measured non-answer
+    # (no_answer) is decided from the audio and always scores 0.
+    relevance_scored: bool = True
 
 
 class FollowupSummary(_Frozen):
@@ -45,7 +52,7 @@ class FollowupSummary(_Frozen):
     answers: tuple[AnswerMeasures, ...] = Field(min_length=1)
     relevance_min: float | None = None
     relevance_min_index: int | None = None
-    latency_max_s: float | None = None
+    latency_max_s: float | None = None  # the longest thinking time (latency - reading allowance)
     latency_max_index: int | None = None
     limitation_acknowledged: bool = False
     limitation_index: int | None = None

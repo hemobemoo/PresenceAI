@@ -109,6 +109,7 @@ assessment:
   missing_followups: "لم تُسجَّل إجابة عن أي سؤال متابعة"
   uncalibrated: "القيمة المقيسة {value:g}، ولا تدخل في التقييم حتى تُعايَر حدودها"
   followup_not_measured_language: "لا يُقاس لإجابات اللغة {language} (ADR 0022)"
+  followup_relevance_bank: "القيمة المقيسة {values} على أسئلة من بنك الأسئلة؛ لا تدخل في التقييم حتى يُعاد ضبط التشابه على الأسئلة العامة"
   followup_no_answer: "الإجابة {answer}: لا كلام خلال نافذة الإجابة البالغة {window:g} ث."
   followup_low_relevance: "الإجابة {answer} تشترك مع السؤال في القليل من الكلمات (التشابه {value:g}، أقل من {limit:g})."
   measures:
@@ -140,7 +141,7 @@ assessment:
       overrun_s: "ثوانٍ بعد الوقت المحدد"
     followup:
       relevance_min: "أدنى تشابه بين السؤال والإجابة في إجابات المتابعة"
-      latency_max_s: "أطول زمن حتى أول كلام في إجابة متابعة (ث)"
+      latency_max_s: "أطول زمن تفكير قبل إجابة متابعة، بعد احتساب وقت القراءة (ث)"
       limitation_acknowledged: "ذكر حدٍّ من حدود العمل في إجابة متابعة (1 = نعم)"
 units:
   count: "عدد"

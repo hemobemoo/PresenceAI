@@ -29,6 +29,7 @@ from av.error import FFmpegError
 
 from presenceai.pipeline.assess import assess_report, no_parser
 from presenceai.pipeline.followup import followup_report
+from presenceai.rubric.loader import load_thresholds
 from presenceai.schemas.report import AssessmentReport
 from presenceai.schemas.storage import SessionRecord
 from presenceai.settings import AppSettings, Settings
@@ -115,6 +116,7 @@ class AnswerInput:
     audio: MemoryAudio | None
     window_s: float
     running_until_s: float = 0.0
+    relevance_scored: bool = True  # False: a bank question (similarity reported, not scored)
 
 
 @dataclass
@@ -211,6 +213,8 @@ class Analyzer:
                     embedder=self._embedder,
                     sources=[f"answer_{i + 1}.wav" for i in range(len(answers))],
                     running_until=[a.running_until_s for a in answers],
+                    reading_wps=load_thresholds(session.scenario).values.get("fu_reading_wps"),
+                    relevance_scored=[a.relevance_scored for a in answers],
                 )  # fmt: skip
             yield step("content")
             report = assess_report(
