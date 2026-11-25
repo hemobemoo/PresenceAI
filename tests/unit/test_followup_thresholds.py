@@ -3,10 +3,13 @@ and relevance from bank questions reported but not scored."""
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from typing import Any
 
+import numpy as np
 import pytest
 
+from presenceai.knowledge.embed import Kind
 from presenceai.pipeline.assess import assess_report
 from presenceai.pipeline.followup import LATENCY, RELEVANCE, followup_report, reading_allowance
 from presenceai.schemas.speech import AsrQuality, SpeechRegion, SpeechReport
@@ -21,13 +24,13 @@ WINDOW = 60.0
 class Words:
     """Word-overlap embedder so relevance is computed without e5."""
 
+    name = "words-test"
+
     def count_tokens(self, text: str) -> int:
         return len(text.split())
 
-    def embed(self, texts: Any, kind: Any) -> Any:
+    def embed(self, texts: Sequence[str], kind: Kind) -> np.ndarray:
         import zlib
-
-        import numpy as np
 
         m = np.zeros((len(texts), 256))
         for i, t in enumerate(texts):
@@ -71,6 +74,7 @@ def test_a_short_and_a_long_question_with_the_same_latency_score_differently(sb:
         return fu.summary.latency_max_s
 
     short, long = thinking(SHORT), thinking(LONG)
+    assert short is not None and long is not None
     assert short == pytest.approx(4.75) and long == pytest.approx(1.0)
     assert short > 4 >= 2 >= long  # level 3 fails after the short one; level 4 holds after the long
 
