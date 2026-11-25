@@ -306,6 +306,58 @@ evidence, **not the basis** for the values below.
    a condition that is still scored (for example a latency or answered-both condition) is an
    open question (open item 6).
 
+## Level 2: every window answered (owner, 2026-11-25; open item 6)
+
+**Decision.** When relevance is information-only, level 2 means both answers contain speech:
+the status is "answered" in both windows. This is measurable, and it keeps ADR 0019's rule that a
+missing measure is never low. A real non-answer is still level 1.
+
+1. **New measure `followup.answered_all`** (`pipeline/followup.py`), decided from the audio and
+   measured in both languages:
+   - **1** when every answer's status is "answered", with each answer as evidence;
+   - **0** when a window had no new speech (`no_answer`, a measured non-answer), with that
+     window as evidence;
+   - **missing** for an early stop, untranscribed speech or a failed recording. These cannot
+     tell, so the measure is never read as low.
+2. **Level 2's conditions** are now `followup.relevance_min >= fu_relevance_low` **and**
+   `followup.answered_all` present. The level engine drops a missing measure, so:
+   - **Bank questions** (relevance missing, information-only): level 2 = every window
+     answered.
+   - **Questions the user types** (relevance scored): **no change in level**. A non-answer
+     already scores relevance 0, so the new condition holds whenever relevance holds.
+   - **Arabic** (relevance not measured, item 6 of the Decision): the same rule follows, so
+     level 2 is reachable for Arabic too. This was not part of the owner's decision; **flagged
+     for the owner** (revert by setting the measure's `languages` to `[en]`).
+3. **Consequence for "N of M"**: follow-up handling now has 4 measures, not 3. A typed-question
+   English run with everything measured shows "4 of 4"; a bank run shows "3 of 4" (relevance
+   reported, not scored). Arabic shows "2 of 4" and is still capped at 3 (ADR 0019 cap, share
+   ≤ 0.5), as it was at "1 of 3".
+4. **Anchor wording** (English and Arabic; Arabic is a draft for the owner) for levels 2 and 1
+   names the answered condition; `docs/rubric/S2_ANCHORS.md` is regenerated.
+5. **Tests** (`tests/unit/test_followup_thresholds.py`):
+   - bank questions, both answered and slow → level 2;
+   - a silent bank answer → level 1;
+   - an early stop → measure missing, not low;
+   - typed questions answered off-topic → still level 1.
+
+**The owner's first real run, re-scored** (latencies 6.53 s and 4.93 s, both answered, no
+limitation stated, bank relevance not scored). The first question was not recorded, so every
+ordered pair of the 6 bank questions was scored with the real rubric. Answer 1's thinking time
+decides in every case:
+
+| First question | Thinking time (answer 1) | Before (ADR 0022 "After the first run") | Now |
+|---|---|---|---|
+| Q1 (10 words) | 4.03 s | 1 | **2** |
+| Q2 (9 words) | 4.28 s | 1 | **2** |
+| Q6 (8 words) | 4.53 s | 1 | **2** |
+| Q3 (14 words) | 3.03 s | 3 | 3 |
+| Q4 (15 words) | 2.78–2.93 s | 3 | 3 |
+| Q5 (12 words) | 3.53 s | 3 | 3 |
+
+With Q1 first, the run misses level 3's 4 s by 0.03 s. That is inside the 0.1–0.3 s timing bias
+against the user ("P3-e" item 2), so open item 2's check of the mark timing matters for this
+case.
+
 ## Supervisor review (2026-11-23)
 
 Approved, subject to five conditions, all met in this ADR's PR or bound to S2-b:
@@ -347,7 +399,7 @@ item 1 below.
    random, or the user's own; generic questions may share fewer words with a good answer, so
    the cut is re-checked on the first real spoken S2 answers together with item 2. No question
    in the bank may ask for limitations directly, since that would prompt the limitation cue.
-6. **Level 2 with bank questions** ("After the owner's first real S2 run", item 3): level 2 is
-   unreachable while bank relevance is unscored. Decide whether level 2 gets a scored condition.
+6. ~~**Level 2 with bank questions**~~ **Decided (owner, 2026-11-25), "Level 2: every window
+   answered" below.**
 7. **Calibration pairs for the bank questions** (owner, later): until then bank relevance is
    information-only.

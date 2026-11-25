@@ -87,8 +87,8 @@ VALUE dimension: none (S2 follow-up handling, FINAL_05 §1; not part of the VALU
 |---|---|---|---|
 | 4 Capstone | Every answer has a similarity of at least 0.82 to its question, every answer starts within 2 s after the time to read the question (its words at 4 words per second), and at least one answer names an explicit limitation of the project. | `followup.relevance_min` ≥ 0.82 (`fu_relevance_high`)<br>`followup.latency_max_s` ≤ 2 (`fu_latency_4`)<br>`followup.limitation_acknowledged` = yes | only `followup.latency_max_s` |
 | 3 Milestone 3 | Every answer has a similarity of at least 0.82 to its question, and every answer starts within 4 s after the time to read the question (its words at 4 words per second). | `followup.relevance_min` ≥ 0.82 (`fu_relevance_mid`)<br>`followup.latency_max_s` ≤ 4 (`fu_latency_3`) | only `followup.latency_max_s` |
-| 2 Milestone 2 | Every answer has a similarity of at least 0.82 to its question. | `followup.relevance_min` ≥ 0.82 (`fu_relevance_low`) | not measured (missing, not low) |
-| 1 Benchmark | At least one answer is less similar to its question than level 2 requires. | default | default when any measure is computable |
+| 2 Milestone 2 | Every answer window holds an answer (speech that starts after the question appears), and every answer has a similarity of at least 0.82 to its question (questions you typed; for questions from the bank the similarity is shown, not scored). | `followup.relevance_min` ≥ 0.82 (`fu_relevance_low`)<br>`followup.answered_all` = yes | only `followup.answered_all` |
+| 1 Benchmark | At least one answer window has no new speech, or at least one answer is less similar to its question than level 2 requires. | default | default when any measure is computable |
 
 Left out (not observable by rules): whether the answer is correct, or actually answers the question (similarity of words only); honesty, confidence or composure under questioning (never inferred; AGENTS.md rule 3); limitations acknowledged without one of the listed phrases (lexicon match only).
 
@@ -147,8 +147,8 @@ The Arabic anchors translate the reviewed English wording. They are a draft for 
 |---|---|
 | 4 متقدّم | تشابه كل إجابة مع سؤالها 0.82 على الأقل، وتبدأ كل إجابة خلال 2 ث على الأكثر بعد وقت قراءة السؤال (كلماته مقسومة على 4 كلمات في الثانية)، وتذكر إجابة واحدة على الأقل حدًّا صريحًا للمشروع. |
 | 3 مرحلي 3 | تشابه كل إجابة مع سؤالها 0.82 على الأقل، وتبدأ كل إجابة خلال 4 ث على الأكثر بعد وقت قراءة السؤال (كلماته مقسومة على 4 كلمات في الثانية). |
-| 2 مرحلي 2 | تشابه كل إجابة مع سؤالها 0.82 على الأقل. |
-| 1 أساسي | إجابة واحدة على الأقل تشابه سؤالها أقل مما في المستوى 2. |
+| 2 مرحلي 2 | في كل نافذة إجابة كلامٌ يبدأ بعد ظهور السؤال، وتشابه كل إجابة مع سؤالها 0.82 على الأقل (لأسئلتك أنت؛ أسئلة البنك يُعرض تشابهها ولا يُحتسب). |
+| 1 أساسي | نافذة إجابة واحدة على الأقل بلا كلام جديد، أو إجابة واحدة على الأقل تشابه سؤالها أقل مما في المستوى 2. |
 
 ## Definitions
 
@@ -194,6 +194,7 @@ The Arabic anchors translate the reviewed English wording. They are a draft for 
 | `followup.relevance_min` | available | followups | en | Lowest question-answer similarity over the follow-up answers (see relevance). Not measured for Arabic until there are Arabic calibration pairs (ADR 0022). |
 | `followup.latency_max_s` | available | followups | en, ar | Longest response latency over the follow-up answers (see response latency). Missing for an answer whose recording has no speech onset; then only this condition is dropped. |
 | `followup.limitation_acknowledged` | available | followups | en | Yes if at least one follow-up answer contains a limitation cue. |
+| `followup.answered_all` | available | followups | en, ar | Yes if every answer window holds an answer (speech that starts after the question appears, transcribed); no if a window had no new speech. Missing for an early stop, untranscribed speech or a failed recording. Level 2's condition that is still scored when relevance is information-only (bank questions; owner, 2026-11-25, ADR 0022). |
 
 ## Source and licence
 

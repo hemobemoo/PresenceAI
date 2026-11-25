@@ -75,19 +75,22 @@ def test_followup_levels_weaker_answer_decides(rubric: Rubric):
                         ("followup.limitation_acknowledged", "present", None)}  # fmt: skip
     assert conds[3] == {("followup.relevance_min", ">=", "fu_relevance_mid"),
                         ("followup.latency_max_s", "<=", "fu_latency_3")}  # fmt: skip
-    # level 2 needs BOTH answers >= low: the minimum over the answers (owner, 2026-11-23)
-    assert conds[2] == {("followup.relevance_min", ">=", "fu_relevance_low")}
+    # level 2 needs BOTH answers >= low: the minimum over the answers (owner, 2026-11-23), and
+    # every window answered, the condition left when relevance is information-only (2026-11-25)
+    assert conds[2] == {("followup.relevance_min", ">=", "fu_relevance_low"),
+                        ("followup.answered_all", "present", None)}  # fmt: skip
     assert conds[1] == set()
 
 
 def test_followup_measures_need_followups_and_relevance_is_not_measured_in_arabic(rubric: Rubric):
     fu = {k: m for k, m in rubric.measures.items() if k.startswith("followup.")}
     assert set(fu) == {"followup.relevance_min", "followup.latency_max_s",
-                       "followup.limitation_acknowledged"}  # fmt: skip
+                       "followup.limitation_acknowledged", "followup.answered_all"}  # fmt: skip
     assert all(m.requires == "followups" and m.status == "available" for m in fu.values())
     assert fu["followup.relevance_min"].languages == ("en",)
     assert fu["followup.limitation_acknowledged"].languages == ("en",)
     assert set(fu["followup.latency_max_s"].languages) == {"en", "ar"}
+    assert set(fu["followup.answered_all"].languages) == {"en", "ar"}  # decided from the audio
 
 
 def test_no_followups_recorded_is_not_measurable_never_low(rubric: Rubric, thresholds: Any):

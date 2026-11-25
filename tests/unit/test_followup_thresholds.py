@@ -11,7 +11,13 @@ import pytest
 
 from presenceai.knowledge.embed import Kind
 from presenceai.pipeline.assess import assess_report
-from presenceai.pipeline.followup import LATENCY, RELEVANCE, followup_report, reading_allowance
+from presenceai.pipeline.followup import (
+    ANSWERED,
+    LATENCY,
+    RELEVANCE,
+    followup_report,
+    reading_allowance,
+)
 from presenceai.schemas.speech import AsrQuality, SpeechRegion, SpeechReport
 
 SHORT = "Why this model?"  # 3 words: 0.75 s to read at 4 words per second
@@ -102,16 +108,60 @@ def test_a_silent_bank_answer_still_scores_zero(sb: Any):
     assert fu.measurements[LATENCY].value == pytest.approx(WINDOW - reading_allowance("Why?", None))
 
 
-def test_with_bank_relevance_unscored_level_2_cannot_be_reached(
+def _level(fu: Any, fake_parser: Any, speech_cfg: Any, fake_assessment: Any) -> Any:
+    report = assess_report(fake_assessment.speech, parser=fake_parser, cfg=speech_cfg,
+                           scenario="s2_project_defense", followups=fu)  # fmt: skip
+    return next(d for d in report.assessment.dimensions if d.dimension == "followup_handling")
+
+
+def test_with_bank_relevance_unscored_level_2_is_both_answers_answered(
     sb: Any, fake_parser: Any, speech_cfg: Any, fake_assessment: Any
 ):
-    """Consequence for the owner to decide (ADR 0022): level 2's only condition is relevance, so
-    with bank relevance unscored follow-up handling is 1, 3 or 4, never 2."""
+    """Owner, 2026-11-25 (ADR 0022 open item 6): when relevance is information-only, level 2 is
+    reached when every answer window holds an answer (status "answered"). Here both answers
+    come too late for level 3 (5.25 s of thinking each)."""
     slow = followup_report(
         [SHORT, SHORT], [_answer(sb, "because it was small", 6.0)] * 2, [WINDOW] * 2,
         language="en", embedder=Words(), reading_wps=4, relevance_scored=[False, False],
     )  # fmt: skip
-    report = assess_report(fake_assessment.speech, parser=fake_parser, cfg=speech_cfg,
-                           scenario="s2_project_defense", followups=slow)  # fmt: skip
-    r = next(d for d in report.assessment.dimensions if d.dimension == "followup_handling")
-    assert r.level == 1 and RELEVANCE in r.missing
+    assert slow.measurements[ANSWERED].value == 1.0
+    assert len(slow.measurements[ANSWERED].evidence) == 2  # one per answer
+    r = _level(slow, fake_parser, speech_cfg, fake_assessment)
+    assert r.level == 2 and RELEVANCE in r.missing and ANSWERED in r.measured
+
+
+def test_a_real_non_answer_to_a_bank_question_stays_level_1(
+    sb: Any, fake_parser: Any, speech_cfg: Any, fake_assessment: Any
+):
+    fu = followup_report(
+        [SHORT, SHORT], [_answer(sb, "because it was small", 6.0), _silence(sb)], [WINDOW] * 2,
+        language="en", embedder=Words(), reading_wps=4, relevance_scored=[False, False],
+    )  # fmt: skip
+    assert fu.measurements[ANSWERED].value == 0.0
+    assert fu.measurements[ANSWERED].evidence[0].answer == fu.summary.answers[1].index  # silent
+    assert _level(fu, fake_parser, speech_cfg, fake_assessment).level == 1
+
+
+def test_an_answer_that_cannot_be_judged_leaves_answered_missing_never_low(sb: Any):
+    """An early stop or an untranscribed answer is not a non-answer (ADR 0019: missing, never
+    low), and not "answered" either: the measure is missing."""
+    early = SpeechReport(source_name="a.wav", model="whisper_small",
+                         transcript=sb.transcript([], language="en", duration_s=10.0),
+                         asr_quality=AsrQuality(word_count=0))  # fmt: skip
+    fu = followup_report(
+        [SHORT, SHORT], [_answer(sb, "because it was small", 1.0), early], [WINDOW] * 2,
+        language="en", embedder=Words(), reading_wps=4, relevance_scored=[False, False],
+    )  # fmt: skip
+    assert fu.summary.answers[1].status == "incomplete"
+    assert ANSWERED not in fu.measurements and ANSWERED in fu.not_measurable
+
+
+def test_own_questions_still_need_relevance_for_level_2(
+    sb: Any, fake_parser: Any, speech_cfg: Any, fake_assessment: Any
+):
+    off = followup_report(
+        ["Why did you use Gradio?"] * 2, [_answer(sb, "the weather was nice today", 6.0)] * 2,
+        [WINDOW] * 2, language="en", embedder=Words(), reading_wps=4,
+    )  # fmt: skip
+    assert off.measurements[ANSWERED].value == 1.0  # answered, but off the question
+    assert _level(off, fake_parser, speech_cfg, fake_assessment).level == 1

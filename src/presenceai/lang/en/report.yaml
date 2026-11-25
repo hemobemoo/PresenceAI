@@ -144,6 +144,7 @@ assessment:
       relevance_min: "lowest question-answer similarity over the follow-up answers"
       latency_max_s: "longest thinking time before a follow-up answer, after the reading allowance (s)"
       limitation_acknowledged: "limitation stated in a follow-up answer (1 = yes)"
+      answered_all: "every follow-up answer window holds an answer (1 = yes)"
 units:
   count: "count"
   "words/min": "words/min"

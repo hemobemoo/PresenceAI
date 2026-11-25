@@ -216,6 +216,15 @@ measures:
     requires: followups
     languages: [en]
     description: Yes if at least one follow-up answer contains a limitation cue.
+  followup.answered_all:
+    status: available
+    requires: followups
+    languages: [en, ar]
+    description: >-
+      Yes if every answer window holds an answer (speech that starts after the question
+      appears, transcribed); no if a window had no new speech. Missing for an early stop,
+      untranscribed speech or a failed recording. Level 2's condition that is still scored when
+      relevance is information-only (bank questions; owner, 2026-11-25, ADR 0022).
 
 dimensions:
   - id: central_message
@@ -445,13 +454,19 @@ dimensions:
           - {measure: followup.relevance_min, op: ">=", threshold: fu_relevance_mid}
           - {measure: followup.latency_max_s, op: "<=", threshold: fu_latency_3}
       - level: 2
-        text_ar: "تشابه كل إجابة مع سؤالها {fu_relevance_low:g} على الأقل."
-        text: Every answer has a similarity of at least {fu_relevance_low:g} to its question.
+        text_ar: "في كل نافذة إجابة كلامٌ يبدأ بعد ظهور السؤال، وتشابه كل إجابة مع سؤالها {fu_relevance_low:g} على الأقل (لأسئلتك أنت؛ أسئلة البنك يُعرض تشابهها ولا يُحتسب)."
+        text: >-
+          Every answer window holds an answer (speech that starts after the question appears),
+          and every answer has a similarity of at least {fu_relevance_low:g} to its question
+          (questions you typed; for questions from the bank the similarity is shown, not scored).
         conditions:
           - {measure: followup.relevance_min, op: ">=", threshold: fu_relevance_low}
+          - {measure: followup.answered_all, op: present}
       - level: 1
-        text_ar: "إجابة واحدة على الأقل تشابه سؤالها أقل مما في المستوى 2."
-        text: At least one answer is less similar to its question than level 2 requires.
+        text_ar: "نافذة إجابة واحدة على الأقل بلا كلام جديد، أو إجابة واحدة على الأقل تشابه سؤالها أقل مما في المستوى 2."
+        text: >-
+          At least one answer window has no new speech, or at least one answer is less similar
+          to its question than level 2 requires.
     left_out:
       - whether the answer is correct, or actually answers the question (similarity of words only)
       - honesty, confidence or composure under questioning (never inferred; AGENTS.md rule 3)
