@@ -1,0 +1,14 @@
+# S2 follow-up questions (P3-e, owner 2026-11-24): skeptical questions about the user's project.
+# Two are picked at random per session, unless the user types their own. Until P7 generates
+# questions from the talk, these are generic.
+# RULE: no question asks for limitations directly; that would prompt the limitation cue the
+# rubric measures (lang/en/text_cues.yaml: limitation). tests/unit/test_s2_questions.py checks it.
+# Note: the 0.82 relevance cut was calibrated on questions specific to one project (ADR 0022
+# item 5); generic questions may share fewer words with a good answer.
+questions:
+  - "Why did you choose this approach over the obvious alternatives?"
+  - "How do you know that your results are correct?"
+  - "What evidence shows that your solution works for the people it is meant for?"
+  - "Which part of the project was the hardest, and how did you deal with it?"
+  - "How would your design change if ten times more people used it?"
+  - "What did you decide not to build, and why?"

@@ -60,6 +60,8 @@ class AppSettings(_Section):
     recording_extra_s: float = Field(default=60, ge=0)
     completeness_min_ratio: float = Field(default=0.95, gt=0, le=1)
     unload_models_after_analysis: bool = True
+    answer_window_s: float = Field(default=60, gt=0)  # S2 answer window (P3-e, ADR 0022)
+    answer_preroll_s: float = Field(default=1.0, ge=0)  # running-speech look-back (P3-e)
 
 
 class ExpressionThresholds(_Section):

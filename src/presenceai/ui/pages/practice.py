@@ -21,7 +21,7 @@
 from __future__ import annotations
 
 import logging
-from collections.abc import Iterator
+from collections.abc import Iterator, Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
@@ -32,16 +32,19 @@ import yaml
 from presenceai.evalconfig import REPO_ROOT
 from presenceai.lang import Language, ui_text
 from presenceai.live.recorder import Recording, RecordingBuffer
+from presenceai.live.s2_audio import Vad, session_inputs
+from presenceai.live.s2_session import S2Session
 from presenceai.pipeline import app_run
 from presenceai.schemas.storage import MediaSource
 from presenceai.speech.audio import MemoryAudio
 from presenceai.storage import media, reports
 from presenceai.ui.context import AppContext
+from presenceai.ui.pages import practice_s2 as s2_page
 from presenceai.ui.pages import report as report_page
 
 log = logging.getLogger(__name__)
 
-SCENARIOS = ("s1_presentation",)  # S2 comes with its follow-up flow (P3-e)
+SCENARIOS = ("s1_presentation", "s2_project_defense")  # S2: follow-ups on one stream (P3-e)
 NO_ICE: dict[str, Any] = {"iceServers": []}  # no STUN/TURN in Stage A
 INPUT_RATE = 16_000
 
@@ -82,6 +85,7 @@ def _run(
     limit_s: float | None,
     notices: list[str],
     completeness: float | None = None,
+    answers: Sequence[app_run.AnswerInput] | None = None,
 ) -> Iterator[Update]:
     if ctx.store is None:
         yield Update(ui_text(lang, "practice.key_missing"))
@@ -92,9 +96,12 @@ def _run(
     keep = _keep_days(ctx)
     session = ctx.db.new_session(scenario, language, source, now=datetime.now(UTC), keep_days=keep)
     ctx.store.write_bytes(session.id, audio.name, audio.data)  # encrypted at write time
+    for a in answers or ():
+        if a.audio is not None:  # only the kept take of each question; a retried one is gone
+            ctx.store.write_bytes(session.id, a.audio.name, a.audio.data)
     steps = analyzer.steps(
         ctx.db, ctx.store, session, audio, limit_s=limit_s, keep=keep is not None,
-        duration_s=duration_s, completeness=completeness,
+        duration_s=duration_s, completeness=completeness, answers=answers,
     )  # fmt: skip
     try:
         while True:
@@ -167,6 +174,47 @@ def run_recording(
             ctx, analyzer, lang, language=language, scenario=scenario, source="app", audio=audio,
             duration_s=recording.received_s, limit_s=limit, notices=notices,
             completeness=recording.ratio,
+        )  # fmt: skip
+
+    return _guarded(lang, inner())
+
+
+def run_s2(
+    ctx: AppContext,
+    analyzer: app_run.Analyzer,
+    lang: Language,
+    recording: Recording | None,
+    session: S2Session | None,
+    *,
+    language: Language,
+    vad: Vad,
+) -> Iterator[Update]:
+    """An S2 session from its one stream: the explanation and each kept answer (P3-e)."""
+
+    def inner() -> Iterator[Update]:
+        yield Update(ui_text(lang, "practice.preparing"), busy=True)
+        if recording is None or session is None:
+            yield Update(ui_text(lang, "practice.no_audio"))
+            return
+        explanation, answers = session_inputs(
+            recording.samples, session, preroll_s=analyzer.settings.app.answer_preroll_s, vad=vad
+        )
+        notices: list[str] = []
+        if not recording.complete:
+            notices.append(
+                ui_text(
+                    lang, "practice.incomplete", received=recording.received_s,
+                    wall=recording.wall_s,
+                )
+            )  # fmt: skip
+        if session.explanation_hard_stopped:
+            hard = round(session.explanation_limit_s + session.extra_s)
+            notices.append(ui_text(lang, "practice.s2.hard_stopped", hard=hard))
+        yield from _run(
+            ctx, analyzer, lang, language=language, scenario=s2_page.SCENARIO, source="app",
+            audio=explanation, duration_s=recording.received_s,
+            limit_s=session.explanation_limit_s, notices=notices,
+            completeness=recording.ratio, answers=answers,
         )  # fmt: skip
 
     return _guarded(lang, inner())
@@ -304,7 +352,25 @@ def build(ctx: AppContext, lang: Language, analyzer: app_run.Analyzer) -> None:
         limit_s=limit, extra_s=app_cfg.recording_extra_s, min_ratio=app_cfg.completeness_min_ratio
     )
     hard = round(limit + app_cfg.recording_extra_s)
-    gr.Markdown(ui_text(lang, "practice.limit_note", limit=round(limit), hard=hard), rtl=rtl)
+    limit_note = gr.Markdown(
+        ui_text(lang, "practice.limit_note", limit=round(limit), hard=hard), rtl=rtl
+    )
+
+    def vad(samples: Any) -> Any:
+        from presenceai.speech.vad import detect_speech
+
+        return detect_speech(samples, analyzer.settings.speech.vad)
+
+    s2 = s2_page.S2Controller(
+        buffer, explanation_limit_s=scenario_limit_s(s2_page.SCENARIO),
+        extra_s=app_cfg.recording_extra_s, window_s=app_cfg.answer_window_s, vad=vad,
+    )  # fmt: skip
+    with gr.Group(visible=False) as s2_box:
+        gr.Markdown(ui_text(lang, "practice.s2.own_help"), rtl=rtl)
+        own = [
+            gr.Textbox(label=ui_text(lang, "practice.s2.own_question", n=i), rtl=rtl)
+            for i in (1, 2)
+        ]
 
     gr.Markdown(f"### {ui_text(lang, 'practice.record_heading')}", rtl=rtl)
     gr.Markdown(ui_text(lang, "practice.record_help"), rtl=rtl)
@@ -316,18 +382,76 @@ def build(ctx: AppContext, lang: Language, analyzer: app_run.Analyzer) -> None:
         rtc_configuration=NO_ICE,
         server_rtc_configuration=NO_ICE,
     )
-    mic.stream(make_handler(buffer), inputs=[mic], outputs=[mic], time_limit=hard)
+    # one stream limit for both scenarios: S1's hard stop or a whole S2 session, retries included
+    probe = S2Session(("", ""), rate=INPUT_RATE, explanation_limit_s=s2.explanation_limit_s,
+                      extra_s=s2.extra_s, window_s=s2.window_s)  # fmt: skip
+    stream_limit = max(hard, round(probe.stream_limit_s))
+    mic.stream(make_handler(buffer), inputs=[mic], outputs=[mic], time_limit=stream_limit)
     elapsed = gr.Markdown(elapsed_text(buffer, lang), rtl=rtl)
+    with gr.Group(visible=False) as s2_live:
+        s2_question = gr.Markdown(rtl=rtl)
+        s2_status = gr.Markdown(s2_page.view(None, 0, lang).status, rtl=rtl)
+        with gr.Row():
+            next_btn = gr.Button(ui_text(lang, "practice.s2.next"), interactive=False)
+            done_btn = gr.Button(ui_text(lang, "practice.s2.done_answering"), interactive=False)
+            retry_btn = gr.Button(ui_text(lang, "practice.s2.retry"), interactive=False)
+            keep_btn = gr.Button(ui_text(lang, "practice.s2.keep"), interactive=False)
     timer = gr.Timer(1.0, active=False)
-    timer.tick(
-        lambda: elapsed_text(buffer, lang), outputs=[elapsed], queue=False, show_progress="hidden"
-    )
-    mic.start_recording(lambda: gr.Timer(active=True), outputs=[timer], queue=False)
+    s2_outputs = [s2_status, s2_question, next_btn, done_btn, retry_btn, keep_btn]
+
+    def s2_render() -> tuple[Any, ...]:
+        v = s2.view(lang)
+        question = report_page.escape(v.question).replace("\\\n", "\n") if v.question else ""
+        return (
+            v.status, question, gr.Button(interactive=v.next_on),
+            gr.Button(interactive=v.done_on), gr.Button(interactive=v.retry_on),
+            gr.Button(interactive=v.retry_on),
+        )  # fmt: skip
+
+    def on_tick() -> tuple[Any, ...]:
+        # no inputs: the timer event sends none, and an input here made the browser warn
+        # "Too many arguments" on every tick; the scenario is known from the session
+        if s2.session is None:
+            return (elapsed_text(buffer, lang), *[gr.skip() for _ in s2_outputs])
+        s2.tick()
+        return ("", *s2_render())  # S2 shows its own timers, not the stream's limit
+
+    def on_start(sc: str, lg: Language, q1: str, q2: str) -> tuple[Any, ...]:
+        if sc == s2_page.SCENARIO:
+            s2.start(lg, [q1, q2], INPUT_RATE)
+        else:
+            s2.session = None
+            buffer.set_limits(limit_s=limit, extra_s=app_cfg.recording_extra_s)
+        return (gr.Timer(active=True), *s2_render())
+
+    def on_scenario(sc: str) -> tuple[Any, ...]:
+        is_s2 = sc == s2_page.SCENARIO
+        if is_s2:
+            s2_limit = scenario_limit_s(s2_page.SCENARIO)
+            s2_hard = round(s2_limit + app_cfg.recording_extra_s)
+            note = ui_text(lang, "practice.limit_note", limit=round(s2_limit), hard=s2_hard)
+        else:
+            note = ui_text(lang, "practice.limit_note", limit=round(limit), hard=hard)
+        return note, gr.Group(visible=is_s2), gr.Group(visible=is_s2)
+
+    def s2_action(action: str) -> Any:
+        def act() -> tuple[Any, ...]:
+            getattr(s2, action)()
+            return s2_render()
+
+        return act
+
+    timer.tick(on_tick, None, [elapsed, *s2_outputs], queue=False, show_progress="hidden")
+    mic.start_recording(on_start, [scenario, language, *own], [timer, *s2_outputs], queue=False)
     mic.stop_recording(
         lambda: (gr.Timer(active=False), elapsed_text(buffer, lang)),
         outputs=[timer, elapsed],
         queue=False,
     )
+    scenario.change(on_scenario, [scenario], [limit_note, s2_box, s2_live], queue=False)
+    for btn, action in ((next_btn, "next_question"), (done_btn, "done_answering"),
+                        (retry_btn, "retry"), (keep_btn, "keep_silent")):  # fmt: skip
+        btn.click(s2_action(action), None, s2_outputs, queue=False, show_progress="hidden")
     stop = gr.Button(
         ui_text(lang, "practice.stop_analyse"), variant="primary", interactive=ctx.key_ok
     )
@@ -359,10 +483,15 @@ def build(ctx: AppContext, lang: Language, analyzer: app_run.Analyzer) -> None:
 
     def on_stop(sc: str, lg: Language) -> Iterator[tuple[Any, ...]]:
         recording = buffer.finish()
-        for u in run_recording(
-            ctx, analyzer, lang, recording, language=lg, scenario=sc,
-            extra_s=app_cfg.recording_extra_s,
-        ):  # fmt: skip
+        if sc == s2_page.SCENARIO:
+            session, s2.session = s2.session, None
+            updates = run_s2(ctx, analyzer, lang, recording, session, language=lg, vad=vad)
+        else:
+            updates = run_recording(
+                ctx, analyzer, lang, recording, language=lg, scenario=sc,
+                extra_s=app_cfg.recording_extra_s,
+            )  # fmt: skip
+        for u in updates:
             yield (*show(u), gr.Timer(active=False))
 
     def on_upload(path: str | None, sc: str, lg: Language) -> Iterator[tuple[Any, ...]]:

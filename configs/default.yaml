@@ -18,6 +18,8 @@ app:                            # P3-d (owner, 2026-11-24): ADR 0023 item 2 (upl
   recording_extra_s: 60         # PROVISIONAL: in-app recording stops at the scenario limit + this
   completeness_min_ratio: 0.95  # PROVISIONAL: received audio s / wall-clock s below this -> warning
   unload_models_after_analysis: true  # free Whisper and e5 after each analysis (low-RAM laptop)
+  answer_window_s: 60           # PROVISIONAL (owner, P3-e): each S2 follow-up answer window (ADR 0022)
+  answer_preroll_s: 1.0         # look-back before a window's mark to find speech already running (P3-e)
 
 retention:
   raw_media_days: 30            # source: FINAL_11 §3; ADR 0023 (storage, retention)

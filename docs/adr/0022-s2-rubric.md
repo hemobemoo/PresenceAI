@@ -203,6 +203,56 @@ provisional.** `uncalibrated` is now empty, so relevance is scored.
 - **The pairs were written, not spoken.** The cut is re-checked on the first real spoken S2
   answers (open item 2, together with the 2 s latency caveat).
 
+## P3-e: S2 in the app (owner, 2026-11-25)
+
+Config keys: `configs/default.yaml: app.answer_window_s` (60, **provisional**),
+`app.answer_preroll_s` (1.0).
+
+1. **One microphone stream for the whole session** (`live/s2_session.py`, `live/s2_audio.py`,
+   `ui/pages/practice_s2.py`). The user presses Record once: explanation, then question 1,
+   then question 2. "Next: question 1" ends the explanation and shows question 1; "Done
+   answering" ends an answer early; otherwise a window ends after `app.answer_window_s` (60 s)
+   of audio. The next question appears as soon as a window ends, and its window opens then.
+2. **Marks are received-audio sample positions, not clock times** (owner). A button press
+   places its mark at the number of samples the server has received; window lengths and the
+   explanation hard stop are counted in samples. **Expected timing error:** the audio still in
+   flight when the press reaches the server (browser capture, WebRTC jitter buffer, network on
+   loopback; spike S1 measured under 300 ms from event to meter, ADR 0002) is not yet counted,
+   so a mark sits **about 0.1–0.3 s before** the moment the question appears on screen. The
+   measured latency is therefore **too long by about 0.1–0.3 s** (and by the page's render time,
+   a few ms), a bias against the user that matters next to the 2 s level-4 limit. Window ends
+   and the hard stop, counted in samples, have no such error. Check it on the owner's first
+   real S2 runs (item 2 below).
+3. **The explanation is not cut at 90 s** (owner): "Next: question 1" ends it, with a hard stop
+   at 90 s + `app.recording_extra_s` (150 s), so overrun stays measurable (ADR 0019); at the
+   hard stop question 1 is shown and the report says so. The stream's time limit covers the
+   whole session, retries included: 90 + 60 (explanation) + 2 questions × 2 attempts × 60 s +
+   60 s for reading prompts and pressing buttons = **450 s**.
+4. **Speech already going when a window opens is not an onset** (owner). The voice detector
+   looks back `app.answer_preroll_s` (1.0 s) before the mark; a speech region that began before
+   the mark and continues after it is running speech, and the latency is the first speech start
+   at or after its end (`speech/latency.py`). Tested: answer 1 running 2 s into question 2's
+   window gives question 2 the onset of the new speech, not 0 s. The running words stay in that
+   answer's transcript (they are part of its audio).
+5. **Retry before a non-answer is scored** (item 4 of "Empty answers", decided 2026-11-24): a
+   window that ran its full length is checked by voice activity detection only; with no speech
+   the page says "We didn't hear an answer to question N" with **Try again** (one retry per
+   question; the silent take is discarded and never stored) or **Keep (no answer)**. A second
+   silent window is kept as no answer. "Done answering" before the window ends is never a
+   non-answer (incomplete: missing, never low).
+6. **Questions:** a bank of 6 per language (`lang/{en,ar}/followup_questions.yaml`, Arabic a
+   draft), 2 picked at random per session, or the user's own (either box). **No bank question
+   asks for limitations directly** (tested against the limitation cues and a list of
+   limitation words), since that would prompt the cue the rubric measures. The 0.82 relevance
+   cut was calibrated on project-specific questions (item 5 of the open items); the bank is
+   generic.
+7. **Analysis:** the explanation and each kept answer are cut from the stream, encrypted
+   (`explanation.wav`, `answer_1.wav`, `answer_2.wav`) and analysed in five steps (models,
+   explanation, answers, content, save). e5 is loaded only for English S2 analyses and released
+   after it (ADR 0024). An answer that was not recorded (the user stopped early) is missing,
+   never low. **S2 uploads** carry no answers: an uploaded file is analysed as the explanation,
+   and follow-up handling says "no follow-up answer recorded".
+
 ## Supervisor review (2026-11-23)
 
 Approved, subject to five conditions, all met in this ADR's PR or bound to S2-b:
@@ -232,11 +282,11 @@ item 1 below.
    "based on 1 of 3 measures" and why it is limited.
 2. **Re-check on the first real spoken S2 answers:** the ≤ 2 s latency, which includes
    reading time (supervisor's condition 3, item 4), and the 0.82 relevance cut, which rests on
-   20 written pairs by one writer ("Relevance calibration").
+   20 written pairs by one writer ("Relevance calibration"). Also check the mark timing error (about
+   0.1–0.3 s, "P3-e" item 2) and the 60 s answer window.
 3. ~~Supervisor review~~: done 2026-11-23 (above).
-4. **P3: retry before a non-answer is scored** ("We didn't hear an answer"; "Empty answers"
-   item 4). Decided in the P3 plan (owner, 2026-11-24), built in P3-e: **one retry per
-   question**; a retry replaces the silent recording (the old encrypted file is deleted); a
+4. ~~**P3: retry before a non-answer is scored**~~ **Built in P3-e (2026-11-25, "P3-e"
+   above):** one retry per question; the silent take is discarded before anything is stored; a
    second silence is scored as no answer.
 5. **The 0.82 relevance cut was calibrated on project-specific questions** (owner, 2026-11-24):
    the 20 pairs ask about PresenceAI itself. In the app (P3-e, until P7 generates questions) the

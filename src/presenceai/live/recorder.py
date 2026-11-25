@@ -93,6 +93,27 @@ class RecordingBuffer:
         with self._lock:
             return bool(self._chunks)
 
+    def set_limits(self, *, limit_s: float, extra_s: float) -> None:
+        """S2 needs a longer stream than S1 (the whole session, retries included; P3-e)."""
+        with self._lock:
+            self.limit_s, self.hard_stop_s = limit_s, limit_s + extra_s
+
+    @property
+    def rate(self) -> int | None:
+        return self._rate
+
+    def position(self) -> int:
+        """Samples received so far: S2 marks are placed here, never at clock times (P3-e)."""
+        with self._lock:
+            return sum(len(c) for c in self._chunks)
+
+    def slice(self, start: int, end: int) -> np.ndarray:
+        """Samples [start, end) of the take, as float32 mono (a copy; the take goes on)."""
+        with self._lock:
+            if not self._chunks:
+                return np.zeros(0, dtype=np.float32)
+            return np.concatenate(self._chunks)[max(start, 0) : max(end, 0)].copy()
+
     def add(self, sample_rate: int, samples: np.ndarray) -> bool:
         """Keep a frame; False when it is ignored (not recording, or past the hard stop)."""
         now = self._clock()
