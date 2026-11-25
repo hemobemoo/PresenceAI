@@ -159,6 +159,11 @@
    - **Required before P5 (owner, 2026-11-25):** the owner hand-labels the **C2 development**
      items for central message, so its cues can be tuned on those labels (the floor effect in
      ADR 0019 open item 2). FINAL_12's P5 row records it.
+     Tool (owner, 2026-11-25): `experiments/c2_synth/dev_labels.py` (draw / status / score).
+     All 118 dev items in one seeded order shuffled across groups, blinded; per item
+     `main_point_stated`, `main_point_sentence` (required when yes) and
+     `restated_in_closing`; `score` writes counts only (detector vs owner, and how often
+     the detector's thesis sentence matches the owner's).
 5. **Design** (owner, unchanged from the P2-e proposal):
    - 400 transcripts: 5 groups of 80 (control, no central message, no conclusion, no supporting
      material, undefined jargon); each of 80 topics (`resources/c2/topics.yaml`, written for
@@ -167,7 +172,7 @@
      (in the no-supporting-material group the hook may not use numbers, a case or a story).
    - Prompts describe each defect in plain words and contain **no phrase from the detectors'
      cue lists** (tested; topic names excluded).
-   - Split 30/70 (dev/test) **by topic** (24 / 56 topics, 120 / 280 transcripts), hook balanced
+   - Split 30/70 (dev/test) **by topic** (24 / 56 topics; 120 / 280 transcripts planned, **118 / 279 accepted**, as in the Split line above and in `data/c2/generated.jsonl`), hook balanced
      within each group and part, seed 20261122. Lexicons are tuned on dev only, within the
      limits of 4c.
    - Checks: the quality loop (3a) and, after the run, automatic checks on all accepted
