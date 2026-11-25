@@ -24,7 +24,7 @@ from presenceai.lang import Language, ui_text
 from presenceai.pipeline.app_run import Analyzer
 from presenceai.settings import Settings
 from presenceai.ui.context import AppContext
-from presenceai.ui.offline import LocalAssetsOnly
+from presenceai.ui.offline import SILENT_URL, LocalAssetsOnly, silent_wav
 from presenceai.ui.pages import consent, data
 from presenceai.ui.pages import practice as practice_page
 
@@ -113,11 +113,12 @@ def create_app(ctx: AppContext, analyzer: Analyzer | None = None) -> Any:
     analyzer = analyzer or default_analyzer()
     import gradio as gr
     from fastapi import FastAPI
-    from fastapi.responses import FileResponse
+    from fastapi.responses import FileResponse, Response
     from fastapi.staticfiles import StaticFiles
 
     app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
-    app.add_middleware(LocalAssetsOnly)  # Gradio's page links Google Fonts and cdnjs
+    # outside tags removed, FastRTC's Hugging Face sound rewritten, CSP on every page
+    app.add_middleware(LocalAssetsOnly)
     app.mount(BRAND_URL, StaticFiles(directory=BRAND_DIR), name="brand")  # before Gradio's "/"
     favicon = BRAND_DIR / "favicon.ico"
 
@@ -128,6 +129,12 @@ def create_app(ctx: AppContext, analyzer: Analyzer | None = None) -> Any:
 
     for route in ("/favicon.ico", "/ar/favicon.ico"):
         app.add_api_route(route, serve_favicon, include_in_schema=False)
+
+    # the microphone component's sound, served here instead of from Hugging Face (ui/offline.py)
+    def serve_silence() -> Response:
+        return Response(silent_wav(), media_type="audio/wav")
+
+    app.add_api_route(SILENT_URL, serve_silence, include_in_schema=False)
     app = gr.mount_gradio_app(app, build_blocks(ctx, "ar", analyzer), path="/ar", show_api=False)
     return gr.mount_gradio_app(app, build_blocks(ctx, "en", analyzer), path="", show_api=False)
 

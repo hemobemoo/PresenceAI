@@ -59,6 +59,13 @@ def measure_answer(
             )  # fmt: skip
         return AnswerMeasures(index=index, window_s=window_s, status="incomplete", **extra)
     latency = response_latency(regions, running_until_s)
+    if latency is None and elapsed_s >= window_s:
+        # the only speech was already running when the window opened: no new answer started
+        # (the same rule as the retry check, live/s2_audio.py: answer_is_silent)
+        return AnswerMeasures(
+            index=index, window_s=window_s, status="no_answer", latency_s=window_s,
+            relevance=0.0, **extra,
+        )  # fmt: skip
     if not transcript.strip():
         return AnswerMeasures(
             index=index, window_s=window_s, status="speech_untranscribed", latency_s=latency,

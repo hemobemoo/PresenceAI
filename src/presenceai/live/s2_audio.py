@@ -17,7 +17,7 @@ from presenceai.live.s2_session import S2Session, Take
 from presenceai.pipeline.app_run import AnswerInput
 from presenceai.schemas.speech import SpeechRegion
 from presenceai.speech.audio import MemoryAudio
-from presenceai.speech.latency import running_until
+from presenceai.speech.latency import response_latency, running_until
 from presenceai.storage.media import wav_bytes
 
 Vad = Callable[[np.ndarray], Sequence[SpeechRegion]]
@@ -26,6 +26,25 @@ Vad = Callable[[np.ndarray], Sequence[SpeechRegion]]
 def is_silent(window: np.ndarray, vad: Vad) -> bool:
     """No speech region in the window's own audio (a measured non-answer if kept)."""
     return window.size == 0 or not vad(window)
+
+
+def answer_is_silent(audio: np.ndarray, preroll: int, rate: int, vad: Vad) -> bool:
+    """A window with no new speech: nothing starts after the speech that was already running
+    when the window opened. `audio` begins `preroll` samples before the window's mark.
+
+    The same rule as the latency (owner, P3-e: running speech is not an onset). Without it, the
+    audio still in flight when the question appears (about 0.1-0.3 s, ADR 0022) would make a
+    silent answer look answered (found by the browser journey test, 2026-11-25)."""
+    if audio.size <= preroll:
+        return True
+    regions = vad(audio)
+    run = running_until(regions, preroll / rate)
+    window = [
+        SpeechRegion(start_s=max(0.0, r.start_s - preroll / rate), end_s=r.end_s - preroll / rate)
+        for r in regions
+        if r.end_s > preroll / rate
+    ]
+    return response_latency(window, run) is None
 
 
 def window_audio(stream: np.ndarray, take: Take) -> np.ndarray:

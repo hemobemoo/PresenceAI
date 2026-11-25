@@ -240,6 +240,14 @@ Config keys: `configs/default.yaml: app.answer_window_s` (60, **provisional**),
    question; the silent take is discarded and never stored) or **Keep (no answer)**. A second
    silent window is kept as no answer. "Done answering" before the window ends is never a
    non-answer (incomplete: missing, never low).
+   - **Running speech is not an answer either (2026-11-25, found by the browser journey test,
+     ADR 0024 "Correction").** The silence check uses the same rule as the latency (item 4):
+     the window is checked with the 1 s look-back, and speech that was already running at the
+     mark does not count. Without this, the 0.1–0.3 s of audio still in flight when the question
+     appears made a silent answer look answered, so the retry was never offered. Scoring matches:
+     a full window whose only speech is running speech is a measured non-answer (relevance 0,
+     latency = window, `pipeline/followup.py: measure_answer`). Tested in
+     `tests/unit/test_latency_running.py`.
 6. **Questions:** a bank of 6 per language (`lang/{en,ar}/followup_questions.yaml`, Arabic a
    draft), 2 picked at random per session, or the user's own (either box). **No bank question
    asks for limitations directly** (tested against the limitation cues and a list of
