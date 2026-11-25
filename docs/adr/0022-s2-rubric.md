@@ -246,6 +246,17 @@ Config keys: `configs/default.yaml: app.answer_window_s` (60, **provisional**),
    limitation words), since that would prompt the cue the rubric measures. The 0.82 relevance
    cut was calibrated on project-specific questions (item 5 of the open items); the bank is
    generic.
+   - **Owner review (2026-11-25): bank questions must not invite scope or future-work answers
+     either**, not only avoid limitation words. "Out of scope" and "future work" are limitation
+     cues, so a question such as "What did you decide not to build, and why?" (the drafted Q6)
+     would hand whoever draws it the level-4 limitation condition almost for free. Q6 is now
+     "Which result surprised you the most, and why?". The test also rejects scope, future-work
+     and "not build" wording in both languages. Arabic Q2, Q3, Q5 and Q6 were reworded by the
+     owner; Q1 and Q4 kept.
+   - **Relevance with the generic bank:** in the browser check an unrelated talk scored 0.77
+     against the 0.82 cut. If the owner's real answers to bank questions come out near the cut,
+     relevance becomes information-only for bank questions (reported, not scored, as before
+     calibration) until it is recalibrated on bank questions.
 7. **Analysis:** the explanation and each kept answer are cut from the stream, encrypted
    (`explanation.wav`, `answer_1.wav`, `answer_2.wav`) and analysed in five steps (models,
    explanation, answers, content, save). e5 is loaded only for English S2 analyses and released

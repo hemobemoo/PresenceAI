@@ -19,7 +19,11 @@ def seeded(seed: int) -> random.Random:
 
 ASKS_FOR_LIMITS = re.compile(
     r"limitation|limit|weakness|weak point|shortcoming|drawback|downside|future work|"
-    r"improve|go wrong|did not|didn't|not test|out of scope|حدود|قيود|ضعف|عيوب|نقص",
+    r"improve|go wrong|did not|didn't|not test|out of scope|حدود|قيود|ضعف|عيوب|نقص|"
+    # nor a scope or future-work invitation (owner, 2026-11-25): "out of scope" and "future
+    # work" are limitation cues, so such a question hands out the level-4 condition
+    r"scope|future|next step|not to build|not build|left out|would you add|"
+    r"نطاق|المستقبل|مستقبلًا|لاحقًا|الخطوة التالية|ألّا تبنيه|لم تبنه",
     re.IGNORECASE,
 )
 
@@ -33,6 +37,16 @@ def test_six_questions_none_asking_for_limitations(lang: str):
         assert not ASKS_FOR_LIMITS.search(q), q
         if lang == "en":
             assert limitation_cue(q) is None, q  # no limitation cue inside a question
+
+
+def test_the_rule_catches_scope_and_future_work_invitations():
+    for q in (
+        "What did you decide not to build, and why?",  # the replaced Q6
+        "What would you add in future work?",
+        "What was out of scope?",
+        "ما الذي قررت ألّا تبنيه، ولماذا؟",
+    ):
+        assert ASKS_FOR_LIMITS.search(q), q
 
 
 def test_two_at_random_or_the_users_own():
