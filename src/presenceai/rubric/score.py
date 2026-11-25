@@ -46,7 +46,12 @@ from typing import Literal
 from presenceai.lang import text
 from presenceai.rubric import derived
 from presenceai.rubric.evidence import verify
-from presenceai.rubric.levels import condition_results, level_from, measures_of
+from presenceai.rubric.levels import (
+    condition_results,
+    level_from,
+    measures_of,
+    unavailable_levels,
+)
 from presenceai.rubric.loader import PartialCap, RubricThresholds, level_score, load_partial_cap
 from presenceai.schemas.assessment import Confidence, Evidence, Measurement, TimeSpan
 from presenceai.schemas.followup import FollowupReport
@@ -203,6 +208,17 @@ def _finding(
         measures=sep.join(labels.values()),
         values=values,
     )
+    # a level above the result that needs a measure this session could not compute
+    for level in unavailable_levels(r.conditions):
+        if level <= r.level:
+            continue
+        for k in dict.fromkeys(c.measure for c in r.conditions if c.level == level and c.required
+                               and c.value is None):  # fmt: skip
+            spec = rubric.measures[k]
+            key = ("assessment.level_unavailable_language"
+                   if lang_ not in spec.languages else "assessment.level_unavailable")  # fmt: skip
+            what = text(lang_, f"assessment.not_measured_what.{k}")
+            statement = f"{statement} {text(lang_, key, level=level, what=what)}"
     if r.capped_from is not None:
         capped = text(
             lang_, "assessment.capped", reached=r.capped_from, max_level=r.level,

@@ -104,6 +104,11 @@ assessment:
   missing_limit: "لم يُحدَّد وقت"
   missing_other: "لم يُحسب"
   capped: "بلغ المستوى {reached}، وحُدِّد بالمستوى {max_level} لأنه لم يُحسب إلا {measured} من {total} مقاييس."
+  level_unavailable_language: "المستوى {level} غير متاح بالعربية بعد ({what} لا تُقاس)."
+  level_unavailable: "المستوى {level} غير متاح ({what} لم تُقس)."
+  not_measured_what:
+    followup:
+      limitation_acknowledged: "عبارات ذكر الحدود"
   failed: "تعذّر التحقق منه"
   text_failed: "تعذّر تحليل النص"
   missing_followups: "لم تُسجَّل إجابة عن أي سؤال متابعة"

@@ -80,6 +80,9 @@ def test_followup_levels_weaker_answer_decides(rubric: Rubric):
     assert conds[2] == {("followup.relevance_min", ">=", "fu_relevance_low"),
                         ("followup.answered_all", "present", None)}  # fmt: skip
     assert conds[1] == set()
+    required = {(a.level, c.measure) for a in _dim(rubric, "followup_handling").levels
+                for c in a.conditions if c.required}  # fmt: skip
+    assert required == {(4, "followup.limitation_acknowledged")}  # owner, 2026-11-25
 
 
 def test_followup_measures_need_followups_and_relevance_is_not_measured_in_arabic(rubric: Rubric):
@@ -100,6 +103,8 @@ def test_no_followups_recorded_is_not_measurable_never_low(rubric: Rubric, thres
     values = {"followup.relevance_min": v["fu_relevance_high"], "followup.latency_max_s": None,
               "followup.limitation_acknowledged": 1.0}  # fmt: skip
     assert levels.dimension_level(d, values, thresholds) == 4  # latency missing: dropped, not low
+    no_cue = values | {"followup.limitation_acknowledged": None, "followup.latency_max_s": 0.5}
+    assert levels.dimension_level(d, no_cue, thresholds) == 3  # required cue missing: no level 4
     values["followup.latency_max_s"] = v["fu_latency_3"] + 1  # one answer late: 4 and 3 fail
     assert levels.dimension_level(d, values, thresholds) == 2
     values["followup.relevance_min"] = v["fu_relevance_low"] - 0.01  # weaker answer off-topic

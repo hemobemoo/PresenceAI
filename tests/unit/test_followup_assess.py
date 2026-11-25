@@ -166,8 +166,40 @@ def test_arabic_answers_measure_latency_only(sb: Any, fake_parser: Any, speech_c
     assert set(fu.not_measurable) == {RELEVANCE, LIMITATION}
     r, f = _part(_assess(sb, fake_parser, speech_cfg, fu, _calibrated(), language="ar"))
     assert r.level is not None and f.measured == 2 and f.total == 4
-    # latency (1.5 s) and answered meet level 4; 2 of 4 measures caps it at 3 (ADR 0022 item 1)
-    assert r.level == 3 and r.capped_from == 4 and f.capped_from == 4
+    # latency (1.5 s) and answered would meet level 4's other conditions, but the limitation cue
+    # is required and not measured in Arabic: level 3, reached, not capped (owner, 2026-11-25)
+    assert r.level == 3 and r.capped_from is None and f.capped_from is None
+    assert "المستوى 4 غير متاح بالعربية بعد" in f.statement
+
+
+def test_the_same_fast_arabic_answers_give_level_3_not_4(sb: Any, fake_parser: Any,
+                                                         speech_cfg: Any):  # fmt: skip
+    """Owner, 2026-11-25: the limitation lexicon is English-only, so Arabic follow-up handling
+    tops out at level 3 until Arabic limitation cues exist (ADR 0022 open item 8)."""
+    from presenceai.lang import text
+
+    fast: list[SpeechReport | None] = [_answer(sb, "نعم اختبرناه", language="ar")] * 2
+    fu = _fu(sb, fast, language="ar")
+    r, f = _part(_assess(sb, fake_parser, speech_cfg, fu, _calibrated(), language="ar"))
+    assert fu.summary.latency_max_s is not None and fu.summary.latency_max_s <= 2  # level-4 fast
+    assert r.level == 3 and r.capped_from is None
+    assert 4 in levels_unavailable(r)
+    note = text(
+        "en",
+        "assessment.level_unavailable_language",
+        level=4,
+        what=text("en", "assessment.not_measured_what.followup.limitation_acknowledged"),
+    )
+    assert note == "Level 4 not available in Arabic yet (limitation cues not measured)."
+    assert text("ar", "assessment.level_unavailable_language", level=4,
+                what=text("ar", "assessment.not_measured_what.followup.limitation_acknowledged")
+                ) in f.statement  # fmt: skip
+
+
+def levels_unavailable(r: Any) -> tuple[int, ...]:
+    from presenceai.rubric.levels import unavailable_levels
+
+    return unavailable_levels(r.conditions)
 
 
 def test_answer_evidence_is_checked_against_that_answer(sb: Any):

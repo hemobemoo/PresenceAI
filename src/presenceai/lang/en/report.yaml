@@ -105,6 +105,11 @@ assessment:
   missing_limit: "no time limit set"
   missing_other: "not computed"
   capped: "Reached level {reached}, limited to level {max_level} because only {measured} of {total} measures could be computed."
+  level_unavailable_language: "Level {level} not available in Arabic yet ({what} not measured)."
+  level_unavailable: "Level {level} not available ({what} not measured)."
+  not_measured_what:
+    followup:
+      limitation_acknowledged: "limitation cues"
   failed: "could not be checked"
   text_failed: "text analysis failed"
   missing_followups: "no follow-up answer recorded"

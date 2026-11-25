@@ -443,7 +443,9 @@ dimensions:
         conditions:
           - {measure: followup.relevance_min, op: ">=", threshold: fu_relevance_high}
           - {measure: followup.latency_max_s, op: "<=", threshold: fu_latency_4}
-          - {measure: followup.limitation_acknowledged, op: present}
+          # required (owner, 2026-11-25): without a measured limitation cue (Arabic: the lexicon
+          # is English-only) level 4 is not awarded, so it never reduces to the latency alone
+          - {measure: followup.limitation_acknowledged, op: present, required: true}
       - level: 3
         text_ar: "تشابه كل إجابة مع سؤالها {fu_relevance_mid:g} على الأقل، وتبدأ كل إجابة خلال {fu_latency_3:g} ث على الأكثر بعد وقت قراءة السؤال (كلماته مقسومة على {fu_reading_wps:g} كلمات في الثانية)."
         text: >-
