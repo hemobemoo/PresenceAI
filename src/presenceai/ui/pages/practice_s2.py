@@ -53,9 +53,11 @@ class S2Controller:
     def start(self, language: Language, own: Sequence[str | None], rate: int) -> S2Session:
         """Recording started: pick the questions and size the stream for the whole session."""
         questions = pick_questions(followup_questions(language), own, count=QUESTIONS, rng=self.rng)
+        mine = {q.strip() for q in own if q and q.strip()}
         self.session = S2Session(
             questions, rate=rate, explanation_limit_s=self.explanation_limit_s,
             extra_s=self.extra_s, window_s=self.window_s,
+            from_bank=tuple(q not in mine for q in questions),
         )  # fmt: skip
         self.session.begin()
         self.buffer.set_limits(limit_s=self.session.stream_limit_s, extra_s=0)

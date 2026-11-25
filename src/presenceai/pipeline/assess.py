@@ -123,6 +123,7 @@ def assess_file(
             [a.question for a in followups.answers], answers,
             [a.window_s for a in followups.answers], language="ar" if language == "ar" else "en",
             embedder=embedder, sources=[Path(a.file).name for a in followups.answers],
+            reading_wps=loader.load_thresholds(scenario).values.get("fu_reading_wps"),
         )  # fmt: skip
     return assess_report(
         report, parser=parser, cfg=speech, scenario=scenario, followups=fu, limit_s=limit_s,

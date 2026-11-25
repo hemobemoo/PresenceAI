@@ -43,11 +43,22 @@ def limitation_cue(answer: str) -> str | None:
 
 
 def summarise(answers: Sequence[AnswerMeasures]) -> FollowupSummary:
-    """The weaker answer decides; answers whose measure is None are left out of it."""
+    """The weaker answer decides; answers whose measure is None are left out of it. Latency is
+    the thinking time after the reading allowance; relevance from bank questions is left out
+    (reported, not scored; owner, 2026-11-25)."""
     if not answers:
         raise ValueError("a follow-up summary needs at least one answer")
-    rel = [(a.relevance, a.index) for a in answers if a.relevance is not None]
-    lat = [(a.latency_s, a.index) for a in answers if a.latency_s is not None]
+    rel = [
+        (a.relevance, a.index)
+        for a in answers
+        if a.relevance is not None and (a.relevance_scored or a.status == "no_answer")
+    ]
+    # thinking time: the latency minus the time to read the question (never below 0)
+    lat = [
+        (round(max(0.0, a.latency_s - a.reading_allowance_s), 3), a.index)
+        for a in answers
+        if a.latency_s is not None
+    ]
     lim = [a.index for a in answers if a.limitation is not None]
     low = min(rel) if rel else None
     slow = max(lat) if lat else None

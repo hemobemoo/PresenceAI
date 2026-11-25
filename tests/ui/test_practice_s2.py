@@ -208,6 +208,11 @@ def test_s2_analysis_end_to_end_with_fakes(
     assert ctx.store is not None
     assert ctx.store.media_names(s.id) == ("answer_1.wav", "answer_2.wav", "explanation.wav")
     values = {m.measure: m.value for m in ctx.db.summary(s.id).measures}
-    assert values["followup.latency_max_s"] == pytest.approx(3.0)  # the slower answer
-    assert "followup.relevance_min" in values
+    # thinking time: latency minus the reading allowance (question words / 4 per second)
+    from presenceai.pipeline.followup import reading_allowance
+
+    thinking = [max(0.0, 1.5 - reading_allowance(q1, 4)), max(0.0, 3.0 - reading_allowance(q2, 4))]
+    assert values["followup.latency_max_s"] == pytest.approx(max(thinking))
+    # both questions came from the bank: their relevance is reported, not scored
+    assert "followup.relevance_min" not in values
     assert not any("users asked" in r.getMessage() for r in caplog.records)

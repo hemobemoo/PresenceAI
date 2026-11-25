@@ -42,24 +42,28 @@ def measure_answer(
     elapsed_s: float,
     embedder: Embedder | None,
     running_until_s: float = 0.0,
+    reading_allowance_s: float = 0.0,
+    relevance_scored: bool = True,
 ) -> AnswerMeasures:
     """`embedder` None: relevance is not computed (e.g. Arabic, ADR 0022 item 6).
     `running_until_s`: speech already going when the window opened ends here; it is not an
     onset (P3-e, `speech/latency.py`)."""
+    extra = {"reading_allowance_s": reading_allowance_s, "relevance_scored": relevance_scored}
     if not recording_ok:
-        return AnswerMeasures(index=index, window_s=window_s, status="recording_failed")
+        return AnswerMeasures(index=index, window_s=window_s, status="recording_failed", **extra)
     if not regions:
         if elapsed_s >= window_s:
             return AnswerMeasures(
                 index=index, window_s=window_s, status="no_answer", latency_s=window_s,
-                relevance=0.0,
+                relevance=0.0, **extra,
             )  # fmt: skip
-        return AnswerMeasures(index=index, window_s=window_s, status="incomplete")
+        return AnswerMeasures(index=index, window_s=window_s, status="incomplete", **extra)
     latency = response_latency(regions, running_until_s)
     if not transcript.strip():
         return AnswerMeasures(
-            index=index, window_s=window_s, status="speech_untranscribed", latency_s=latency
-        )
+            index=index, window_s=window_s, status="speech_untranscribed", latency_s=latency,
+            **extra,
+        )  # fmt: skip
     return AnswerMeasures(
         index=index,
         window_s=window_s,
@@ -67,7 +71,16 @@ def measure_answer(
         latency_s=latency,
         relevance=relevance(question, transcript, embedder) if embedder is not None else None,
         limitation=limitation_cue(transcript),
+        **extra,
     )
+
+
+def reading_allowance(question: str, words_per_s: float | None) -> float:
+    """Seconds to read the question: its words / `words_per_s` (fu_reading_wps, provisional;
+    the same for Arabic until there is data). None: no allowance."""
+    if not words_per_s:
+        return 0.0
+    return round(len(question.split()) / words_per_s, 3)
 
 
 def _answer_evidence(a: AnswerMeasures, t: Transcript | None) -> Evidence:
@@ -120,10 +133,11 @@ def _measurements(
 
     if s.latency_max_s is not None and s.latency_max_index is not None:
         a = by_index[s.latency_max_index]
-        span = TimeSpan(start_s=0.0, end_s=s.latency_max_s)
+        span = TimeSpan(start_s=0.0, end_s=a.latency_s or 0.0)  # the raw latency in its recording
         found[LATENCY] = m(
             s.latency_max_s, "s", Confidence.MEDIUM,
-            "first speech onset (voice activity detection) after the question ends; the slowest "
+            "thinking time: first speech onset (voice activity detection) after the question "
+            "appears, minus the reading allowance (question words / fu_reading_wps); the slowest "
             "answer; a non-answer counts as its whole window",
             (Evidence(time=span, answer=a.index),),
         )  # fmt: skip
@@ -135,7 +149,11 @@ def _measurements(
         missing[RELEVANCE] = missing[LIMITATION] = why
         return found, missing
 
-    if s.relevance_min is not None and s.relevance_min_index is not None:
+    bank = [a for a in s.answers if not a.relevance_scored and a.status == "answered"]
+    if s.relevance_min is None and bank and any(a.relevance is not None for a in bank):
+        values = ", ".join(f"{a.relevance:.3f}" for a in bank if a.relevance is not None)
+        missing[RELEVANCE] = text(lang, "assessment.followup_relevance_bank", values=values)
+    elif s.relevance_min is not None and s.relevance_min_index is not None:
         a = by_index[s.relevance_min_index]
         found[RELEVANCE] = m(
             s.relevance_min, "similarity", Confidence.LOW,
@@ -174,6 +192,8 @@ def followup_report(
     embedder: Embedder | None,
     sources: Sequence[str] = (),
     running_until: Sequence[float] = (),
+    reading_wps: float | None = None,
+    relevance_scored: Sequence[bool] = (),
 ) -> FollowupReport:
     """Measure every answer and build the follow-up rubric measures.
 
@@ -182,8 +202,9 @@ def followup_report(
     if not (len(questions) == len(reports) == len(windows)) or not questions:
         raise ValueError("one question, one recording and one window per follow-up")
     running = tuple(running_until) or (0.0,) * len(questions)
-    if len(running) != len(questions):
-        raise ValueError("one running-speech end per follow-up")
+    scored = tuple(relevance_scored) or (True,) * len(questions)
+    if len(running) != len(questions) or len(scored) != len(questions):
+        raise ValueError("one running-speech end and one scoring flag per follow-up")
     answers = [
         measure_answer(
             i,
@@ -195,8 +216,12 @@ def followup_report(
             elapsed_s=r.transcript.duration_s if r is not None else 0.0,
             embedder=embedder if language == "en" else None,
             running_until_s=run,
+            reading_allowance_s=reading_allowance(q, reading_wps),
+            relevance_scored=ok,
         )
-        for i, (q, r, w, run) in enumerate(zip(questions, reports, windows, running, strict=True))
+        for i, (q, r, w, run, ok) in enumerate(
+            zip(questions, reports, windows, running, scored, strict=True)
+        )
     ]
     transcripts = tuple(r.transcript if r is not None else None for r in reports)
     summary = summarise(answers)

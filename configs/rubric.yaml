@@ -114,5 +114,7 @@ s2_project_defense:
     fu_relevance_high: 0.82
     fu_relevance_mid: 0.82
     fu_relevance_low: 0.82
-    fu_latency_4: 2             # seconds from the end of the question to speech onset (owner)
+    fu_latency_4: 2             # seconds of thinking time after the reading allowance (owner)
     fu_latency_3: 4             # (owner, 2026-11-23); no data
+    fu_reading_wps: 4           # PROVISIONAL (owner, 2026-11-25): reading allowance = question words / this;
+                                # the 2 s and 4 s above are thinking time after it; same for Arabic until data

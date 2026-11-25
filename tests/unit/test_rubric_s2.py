@@ -22,8 +22,9 @@ SCALED = {
     "org_transitions_high": 2, "org_transitions_mid": 1, "lang_undefined_max_2": 2,
     "del_overrun_3": 10, "del_overrun_2": 20,
 }  # fmt: skip
+# fu_reading_wps: the reading allowance (owner, 2026-11-25)
 FOLLOWUP = {"fu_relevance_high", "fu_relevance_mid", "fu_relevance_low", "fu_latency_4",
-            "fu_latency_3"}  # fmt: skip
+            "fu_latency_3", "fu_reading_wps"}  # fmt: skip
 
 
 @pytest.fixture(scope="module")

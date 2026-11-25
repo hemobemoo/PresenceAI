@@ -425,20 +425,22 @@ dimensions:
     skills: [followup_handling]
     levels:
       - level: 4
-        text_ar: "تشابه كل إجابة مع سؤالها {fu_relevance_high:g} على الأقل، وتبدأ كل إجابة خلال {fu_latency_4:g} ث على الأكثر من نهاية السؤال، وتذكر إجابة واحدة على الأقل حدًّا صريحًا للمشروع."
+        text_ar: "تشابه كل إجابة مع سؤالها {fu_relevance_high:g} على الأقل، وتبدأ كل إجابة خلال {fu_latency_4:g} ث على الأكثر بعد وقت قراءة السؤال (كلماته مقسومة على {fu_reading_wps:g} كلمات في الثانية)، وتذكر إجابة واحدة على الأقل حدًّا صريحًا للمشروع."
         text: >-
           Every answer has a similarity of at least {fu_relevance_high:g} to its question, every
-          answer starts within {fu_latency_4:g} s of the end of the question, and at least one
-          answer names an explicit limitation of the project.
+          answer starts within {fu_latency_4:g} s after the time to read the question (its words
+          at {fu_reading_wps:g} words per second), and at least one answer names an explicit
+          limitation of the project.
         conditions:
           - {measure: followup.relevance_min, op: ">=", threshold: fu_relevance_high}
           - {measure: followup.latency_max_s, op: "<=", threshold: fu_latency_4}
           - {measure: followup.limitation_acknowledged, op: present}
       - level: 3
-        text_ar: "تشابه كل إجابة مع سؤالها {fu_relevance_mid:g} على الأقل، وتبدأ كل إجابة خلال {fu_latency_3:g} ث على الأكثر من نهاية السؤال."
+        text_ar: "تشابه كل إجابة مع سؤالها {fu_relevance_mid:g} على الأقل، وتبدأ كل إجابة خلال {fu_latency_3:g} ث على الأكثر بعد وقت قراءة السؤال (كلماته مقسومة على {fu_reading_wps:g} كلمات في الثانية)."
         text: >-
           Every answer has a similarity of at least {fu_relevance_mid:g} to its question, and
-          every answer starts within {fu_latency_3:g} s of the end of the question.
+          every answer starts within {fu_latency_3:g} s after the time to read the question (its
+          words at {fu_reading_wps:g} words per second).
         conditions:
           - {measure: followup.relevance_min, op: ">=", threshold: fu_relevance_mid}
           - {measure: followup.latency_max_s, op: "<=", threshold: fu_latency_3}

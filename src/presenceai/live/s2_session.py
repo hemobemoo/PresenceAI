@@ -64,6 +64,9 @@ class S2Session:
     extra_s: float
     window_s: float
     retries: int = 1
+    # True for a question from the generic bank: its relevance is reported, not scored (owner,
+    # 2026-11-25); the user's own questions keep scoring. Empty: all the user's own.
+    from_bank: tuple[bool, ...] = ()
     phase: Phase = Phase.READY
     explanation_end: int | None = None
     explanation_hard_stopped: bool = False

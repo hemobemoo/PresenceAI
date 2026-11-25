@@ -247,6 +247,7 @@ def _with_followup_notes(
         if "followup.relevance_min" in found
         and limit is not None
         and a.status == "answered"
+        and a.relevance_scored
         and a.relevance is not None
         and a.relevance < limit
     ]

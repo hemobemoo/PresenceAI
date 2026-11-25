@@ -110,6 +110,7 @@ assessment:
   missing_followups: "no follow-up answer recorded"
   uncalibrated: "measured {value:g}, not scored until its thresholds are calibrated"
   followup_not_measured_language: "not measured for {language} answers (ADR 0022)"
+  followup_relevance_bank: "measured {values} on questions from the bank; not scored until relevance is recalibrated on generic questions"
   followup_no_answer: "Answer {answer}: no speech in the {window:g} s answer window."
   followup_low_relevance: "Answer {answer} shares little wording with the question (similarity {value:g}, below {limit:g})."
   measures:
@@ -141,7 +142,7 @@ assessment:
       overrun_s: "seconds over the time limit"
     followup:
       relevance_min: "lowest question-answer similarity over the follow-up answers"
-      latency_max_s: "longest time to the first speech in a follow-up answer (s)"
+      latency_max_s: "longest thinking time before a follow-up answer, after the reading allowance (s)"
       limitation_acknowledged: "limitation stated in a follow-up answer (1 = yes)"
 units:
   count: "count"
