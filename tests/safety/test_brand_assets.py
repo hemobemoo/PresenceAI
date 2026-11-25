@@ -77,3 +77,12 @@ def test_the_svgs_fetch_nothing_from_outside():
 def test_nothing_logo_related_is_left_in_the_repository_root():
     for name in (*FILES, "preview.png", "Logo.png", "Logo.svg"):
         assert not (REPO_ROOT / name).exists(), name
+
+
+@pytest.mark.parametrize("name", [f for f in FILES if f.endswith(".svg")])
+def test_svg_files_carry_no_embedded_metadata(name: str):
+    # owner, 2026-11-25: the C2PA content credential added on delivery was stripped; the
+    # drawing is shapes and gradients only
+    text = (BRAND_DIR / name).read_text("utf-8").lower()
+    assert "c2pa" not in text and "<metadata" not in text
+    assert len(text) < 10_000  # a 7.7 KB base64 block would push the files past this

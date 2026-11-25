@@ -11,6 +11,10 @@ Owner's logo files (2026-11-25), in `src/presenceai/ui/static/brand/`:
 
 The app serves them from its own folder (`/brand/…`); nothing is loaded from outside.
 
+Logo designed by the owner with AI tools; the SVG versions were cleaned up and finished with
+Claude (Anthropic). The SVG files carry no embedded metadata (the C2PA content credential added
+when the files were delivered was removed; the drawing is unchanged).
+
 ## Colours
 
 | Name | Hex | Use |
