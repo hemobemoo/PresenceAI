@@ -14,7 +14,7 @@ from dataclasses import dataclass
 
 from presenceai.lang import Language, followup_questions, ui_text
 from presenceai.live.recorder import RecordingBuffer
-from presenceai.live.s2_audio import Vad, is_silent
+from presenceai.live.s2_audio import Vad, answer_is_silent
 from presenceai.live.s2_session import Phase, S2Session, pick_questions
 from presenceai.ui.pages.report import clock
 
@@ -41,12 +41,14 @@ class S2Controller:
         window_s: float,
         vad: Vad,
         rng: random.Random | None = None,
+        preroll_s: float = 1.0,
     ) -> None:
         self.buffer = buffer
         self.explanation_limit_s = explanation_limit_s
         self.extra_s = extra_s
         self.window_s = window_s
         self.vad = vad
+        self.preroll_s = preroll_s  # app.answer_preroll_s: running speech look-back
         self.rng = rng or random.Random()  # noqa: S311  (picking questions, not security)
         self.session: S2Session | None = None
 
@@ -69,7 +71,9 @@ class S2Controller:
             return
         take = s.tick(self.buffer.position())
         if take is not None:
-            s.checked(is_silent(self.buffer.slice(take.start, take.end), self.vad))
+            pre = min(round(self.preroll_s * s.rate), take.start)
+            audio = self.buffer.slice(take.start - pre, take.end)
+            s.checked(answer_is_silent(audio, pre, s.rate, self.vad))
 
     def next_question(self) -> None:
         if self.session is not None and self.session.phase is Phase.EXPLANATION:

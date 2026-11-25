@@ -152,3 +152,57 @@ def test_outside_tags_are_stripped_and_local_ones_kept():
     out = strip_outside_assets(html)
     assert "googleapis" not in out and "gstatic" not in out and "cdnjs" not in out
     assert "./assets/index.css" in out and "./assets/index.js" in out and "127.0.0.1" in out
+
+
+# --- FastRTC's outside sound and the Content-Security-Policy (ADR 0024 correction) ------------
+
+
+@pytest.fixture
+def served(tmp_path: Path) -> Any:
+    from fastapi.testclient import TestClient
+
+    from presenceai.ui.app import create_app
+    from presenceai.ui.context import AppContext
+
+    ctx = AppContext.open(
+        tmp_path / "home", SecretStr(Fernet.generate_key().decode()), raw_media_days=30
+    )
+    yield TestClient(create_app(ctx))
+    ctx.close()
+
+
+def _fastrtc_scripts(client: Any) -> list[str]:
+    """The microphone component's served scripts: its entry file and the chunks it imports."""
+    cfg = client.get("/config").json()
+    (cid,) = {c["component_class_id"] for c in cfg["components"] if c.get("type") == "webrtc"}
+    base = f"/gradio_api/custom_component/{cid}/client/component"
+    entry = client.get(f"{base}/index.js").text
+    chunks = set(re.findall(r"""["'](?:\./)?(index-[\w-]+\.js)["']""", entry))
+    return [entry, *(client.get(f"{base}/{name}").text for name in chunks)]
+
+
+def test_fastrtc_sound_is_fetched_from_this_computer_not_hugging_face(served: Any):
+    from presenceai.ui.offline import POP_SOUND, SILENT_URL
+
+    scripts = _fastrtc_scripts(served)
+    joined = "\n".join(scripts)
+    assert "new Audio(" in joined  # the component that played the sound was served
+    assert POP_SOUND not in joined and "huggingface.co" not in joined
+    assert f'new Audio("{SILENT_URL}")' in joined
+    sound = served.get(SILENT_URL)
+    assert sound.status_code == 200 and sound.headers["content-type"] == "audio/wav"
+    assert sound.content[:4] == b"RIFF"
+
+
+@pytest.mark.parametrize("path", ["/", "/ar/"])
+def test_every_page_carries_a_csp_that_allows_only_this_server(served: Any, path: str):
+    csp = served.get(path).headers["content-security-policy"]
+    rules = dict(r.strip().split(" ", 1) for r in csp.split(";"))
+    for name in ("default-src", "script-src", "style-src", "font-src", "media-src",
+                 "connect-src", "img-src"):  # fmt: skip
+        sources = rules[name].split()
+        assert sources[0] == "'self'", name
+        assert not any(s.startswith(("http", "*", "ws:", "wss:")) or "." in s for s in sources), (
+            name, sources,
+        )  # fmt: skip
+    assert rules["object-src"] == "'none'"

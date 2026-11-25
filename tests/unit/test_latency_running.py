@@ -38,3 +38,34 @@ def test_only_running_speech_and_no_new_onset_gives_no_latency():
     run = running_until((R(0.0, 4.0),), 1.0)  # still talking 3 s into the window, then silence
     assert run == 3.0
     assert response_latency((R(0.0, 3.0),), run) is None  # missing, never low
+
+
+def test_a_window_with_only_in_flight_speech_is_silent():
+    """Found in the browser (2026-11-25): the audio still in flight when the question appears
+    carries the end of what was said before; a window with nothing new is still silent."""
+    import numpy as np
+
+    from presenceai.live.s2_audio import answer_is_silent
+
+    rate = 16_000
+
+    def vad(x: np.ndarray) -> tuple[SpeechRegion, ...]:
+        """Each run of loud samples is one speech region."""
+        loud = np.concatenate(([False], np.abs(x) > 0.01, [False]))
+        edges = np.flatnonzero(np.diff(loud.astype(int)))
+        return tuple(R(a / rate, b / rate) for a, b in zip(edges[::2], edges[1::2], strict=True))
+
+    preroll = rate  # 1 s before the mark
+    audio = np.zeros(preroll + 6 * rate, dtype=np.float32)
+    audio[: preroll + rate // 4] = 0.3  # speech up to 0.25 s after the mark, then silence
+    assert answer_is_silent(audio, preroll, rate, vad)
+    audio[preroll + 3 * rate : preroll + 4 * rate] = 0.3  # a new answer 3 s into the window
+    assert not answer_is_silent(audio, preroll, rate, vad)
+
+
+def test_a_full_window_with_only_running_speech_scores_as_no_answer():
+    a = measure_answer(
+        0, question="Why?", transcript="and that is why", regions=(R(0.0, 0.25),),
+        recording_ok=True, window_s=60.0, elapsed_s=60.0, embedder=None, running_until_s=0.25,
+    )  # fmt: skip
+    assert a.status == "no_answer" and a.latency_s == 60.0 and a.relevance == 0.0
