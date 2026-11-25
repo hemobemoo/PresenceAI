@@ -16,6 +16,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import os
+from pathlib import Path
 from typing import Any
 
 import presenceai.ui  # noqa: F401  (analytics off before gradio is imported)
@@ -44,17 +45,46 @@ def theme() -> Any:
     )
 
 
+BRAND_DIR = Path(__file__).parent / "static" / "brand"
+BRAND_URL = "/brand"  # served from BRAND_DIR by this app; never an outside URL
+LOGO_HEIGHT_PX = 40
+# The dark logo shows only under Gradio's dark theme (the `.dark` class it sets); the light one
+# otherwise. A fixed height, so the header never pushes the page down.
+HEADER_CSS = f"""
+.pai-logo {{ display: flex; }}  /* starts at the page's start edge: right on the Arabic page */
+.pai-logo img {{ height: {LOGO_HEIGHT_PX}px; width: auto; display: block; }}
+.pai-logo .pai-logo-dark {{ display: none; }}
+.dark .pai-logo .pai-logo-light {{ display: none; }}
+.dark .pai-logo .pai-logo-dark {{ display: block; }}
+"""
+
+
+def header_html(lang: Language) -> str:
+    """The logo, light and dark, from the local static folder; alt text from lang/."""
+    alt = ui_text(lang, "app.logo_alt")
+    direction = "rtl" if lang == "ar" else "ltr"
+    return (
+        f'<div class="pai-logo" dir="{direction}">'
+        f'<img class="pai-logo-light" src="{BRAND_URL}/presenceai-logo.svg" alt="{alt}"'
+        f' height="{LOGO_HEIGHT_PX}">'
+        f'<img class="pai-logo-dark" src="{BRAND_URL}/presenceai-logo-dark.svg" alt="{alt}"'
+        f' height="{LOGO_HEIGHT_PX}">'
+        "</div>"
+    )
+
+
 def build_blocks(ctx: AppContext, lang: Language, analyzer: Analyzer | None = None) -> Any:
     import gradio as gr
 
     rtl = lang == "ar"
     with gr.Blocks(
-        theme=theme(), analytics_enabled=False, title=ui_text(lang, "app.title")
+        theme=theme(), analytics_enabled=False, title=ui_text(lang, "app.title"), css=HEADER_CSS
     ) as blocks:
         other = ui_text(lang, "app.other_language")
         path = ui_text(lang, "app.other_language_path")
-        title, tagline = ui_text(lang, "app.title"), ui_text(lang, "app.tagline")
-        gr.Markdown(f"# {title}\n\n{tagline}\n\n[{other}]({path})", rtl=rtl)
+        tagline = ui_text(lang, "app.tagline")
+        gr.HTML(header_html(lang))
+        gr.Markdown(f"{tagline}\n\n[{other}]({path})", rtl=rtl)
         with gr.Tabs():
             with gr.Tab(ui_text(lang, "nav.consent")):
                 gr.Markdown(ui_text(lang, "practice.locked"), rtl=rtl)
@@ -83,19 +113,29 @@ def create_app(ctx: AppContext, analyzer: Analyzer | None = None) -> Any:
     analyzer = analyzer or default_analyzer()
     import gradio as gr
     from fastapi import FastAPI
-    from fastapi.responses import Response
+    from fastapi.responses import FileResponse, Response
+    from fastapi.staticfiles import StaticFiles
 
     app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
     # outside tags removed, FastRTC's Hugging Face sound rewritten, CSP on every page
     app.add_middleware(LocalAssetsOnly)
+    app.mount(BRAND_URL, StaticFiles(directory=BRAND_DIR), name="brand")  # before Gradio's "/"
+    favicon = BRAND_DIR / "favicon.ico"
+
+    # Gradio ignores `favicon_path` for a mounted app (it warns at every start), so the favicon
+    # is served here, for both pages, from the local static folder.
+    def serve_favicon() -> FileResponse:
+        return FileResponse(favicon, media_type="image/x-icon")
+
+    for route in ("/favicon.ico", "/ar/favicon.ico"):
+        app.add_api_route(route, serve_favicon, include_in_schema=False)
 
     # the microphone component's sound, served here instead of from Hugging Face (ui/offline.py)
     def serve_silence() -> Response:
         return Response(silent_wav(), media_type="audio/wav")
 
     app.add_api_route(SILENT_URL, serve_silence, include_in_schema=False)
-    ar = build_blocks(ctx, "ar", analyzer)
-    app = gr.mount_gradio_app(app, ar, path="/ar", show_api=False)
+    app = gr.mount_gradio_app(app, build_blocks(ctx, "ar", analyzer), path="/ar", show_api=False)
     return gr.mount_gradio_app(app, build_blocks(ctx, "en", analyzer), path="", show_api=False)
 
 

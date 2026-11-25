@@ -1,3 +1,11 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="src/presenceai/ui/static/brand/presenceai-logo-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="src/presenceai/ui/static/brand/presenceai-logo.svg">
+    <img alt="PresenceAI" src="src/presenceai/ui/static/brand/presenceai-logo.svg" height="80">
+  </picture>
+</p>
+
 # PresenceAI
 
 Adaptive, privacy-preserving presentation and communication coach (graduation project, Al-Balqa Applied University, Faculty of Artificial Intelligence).

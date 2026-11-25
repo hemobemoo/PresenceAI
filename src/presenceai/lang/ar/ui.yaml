@@ -5,6 +5,7 @@ app:
   other_language: "English"
   running: "يعمل PresenceAI على {url}  (Ctrl+نقرة للفتح؛ Ctrl+C للإيقاف)"
   port_busy: "المنفذ 7860 مستخدم بالفعل. ربما يعمل PresenceAI الآن: افتح {url}، أو أغلق النافذة الأخرى وابدأ من جديد."
+  logo_alt: "PresenceAI"
   other_language_path: "/"
 nav:
   consent: "الموافقة"

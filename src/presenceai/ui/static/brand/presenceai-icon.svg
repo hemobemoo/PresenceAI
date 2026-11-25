@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="75 38 256 256" role="img" aria-labelledby="pai-i-title">
+  <title id="pai-i-title">PresenceAI</title>
+  <defs>
+    <linearGradient id="pai-i-wave" x1="90" y1="200" x2="317" y2="115" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FF7A00"/>
+      <stop offset="1" stop-color="#FF9A32"/>
+    </linearGradient>
+    <linearGradient id="pai-i-ai" x1="0" y1="105" x2="0" y2="208" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FF9A32"/>
+      <stop offset="1" stop-color="#FF7A00"/>
+    </linearGradient>
+  </defs>
+  <g id="pai-i-icon">
+    <path fill="#142B43" d="
+      M 96 175
+      L 96 108
+      C 96 68 134 45 170 62
+      L 279 113
+      L 241 124
+      C 237 125 237 129 240 131
+      L 251 137
+      L 237 148
+      C 226 156 212 155 203 145
+      L 193 134
+      C 175 114 147 115 129 135
+      C 117 148 106 162 96 175
+      Z" />
+    <path fill="#142B43" d="
+      M 96 218
+      C 110 201 128 187 149 182
+      C 158 180 166 186 166 195
+      L 166 234
+      C 166 244 160 253 151 258
+      L 111 282
+      C 103 287 96 281 96 272
+      Z" />
+    <path fill="url(#pai-i-wave)" d="
+      M 90 202
+      C 108 179 124 159 138 144
+      C 152 129 173 129 187 144
+      L 198 156
+      C 211 170 232 171 246 159
+      L 281 133
+      L 271 128
+      C 267 126 268 122 272 121
+      L 308 113
+      C 312 112 315 115 315 119
+      L 317 156
+      C 317 160 312 162 309 159
+      L 301 151
+      L 255 187
+      C 234 207 201 206 181 184
+      L 172 174
+      C 161 162 143 161 130 171
+      C 116 181 103 192 90 202
+      Z" />
+    </g>
+</svg>
