@@ -27,6 +27,9 @@ from presenceai.text.followup import limitation_cue, relevance, summarise
 RELEVANCE = "followup.relevance_min"
 LATENCY = "followup.latency_max_s"
 LIMITATION = "followup.limitation_acknowledged"
+# Every answer window holds an answer (owner, 2026-11-25): level 2's condition that is still
+# scored when relevance is information-only (bank questions, ADR 0022 open item 6).
+ANSWERED = "followup.answered_all"
 # Measured statuses for the text measures: an answer with a transcript, or a measured non-answer.
 _TEXT_MEASURED = ("answered", "no_answer")
 
@@ -126,7 +129,7 @@ def _cue_evidence(a: AnswerMeasures, t: Transcript, cue: str) -> Evidence:
 def _measurements(
     s: FollowupSummary, transcripts: Sequence[Transcript | None], lang: Literal["en", "ar"]
 ) -> tuple[dict[str, Measurement], dict[str, str]]:
-    """The three rubric measures, each with evidence from the answer that decides it."""
+    """The four rubric measures, each with evidence from the answer that decides it."""
     found: dict[str, Measurement] = {}
     missing: dict[str, str] = {}
     by_index = {a.index: a for a in s.answers}
@@ -150,6 +153,20 @@ def _measurements(
         )  # fmt: skip
     else:
         missing[LATENCY] = not_computed
+
+    # decided from the audio, so in both languages: 0 if a window had no speech (a measured
+    # non-answer), 1 if every answer is "answered"; an early stop, untranscribed speech or a
+    # failed recording cannot tell, so the measure is then missing (never low, ADR 0019)
+    silent = [a for a in s.answers if a.status == "no_answer"]
+    if silent:
+        a = silent[0]
+        ev = (Evidence(time=TimeSpan(start_s=0.0, end_s=a.latency_s or 0.0), answer=a.index),)
+        found[ANSWERED] = m(0.0, "yes/no", Confidence.MEDIUM, _ANSWERED_METHOD, ev)
+    elif all(a.status == "answered" for a in s.answers):
+        ev = tuple(_answer_evidence(a, transcripts[a.index]) for a in s.answers)
+        found[ANSWERED] = m(1.0, "yes/no", Confidence.MEDIUM, _ANSWERED_METHOD, ev)
+    else:
+        missing[ANSWERED] = not_computed
 
     if lang != "en":
         why = text(lang, "assessment.followup_not_measured_language", language=lang)
@@ -188,6 +205,10 @@ def _measurements(
 
 
 _LIMITATION_METHOD = "explicit limitation phrase (lexicon lang/en/text_cues.yaml: limitation)"
+_ANSWERED_METHOD = (
+    "every answer window holds an answer: speech starts after the question appears "
+    "(voice activity detection) and is transcribed"
+)
 
 
 def followup_report(

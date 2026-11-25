@@ -104,6 +104,11 @@ assessment:
   missing_limit: "لم يُحدَّد وقت"
   missing_other: "لم يُحسب"
   capped: "بلغ المستوى {reached}، وحُدِّد بالمستوى {max_level} لأنه لم يُحسب إلا {measured} من {total} مقاييس."
+  level_unavailable_language: "المستوى {level} غير متاح بالعربية بعد ({what} لا تُقاس)."
+  level_unavailable: "المستوى {level} غير متاح ({what} لم تُقس)."
+  not_measured_what:
+    followup:
+      limitation_acknowledged: "عبارات ذكر الحدود"
   failed: "تعذّر التحقق منه"
   text_failed: "تعذّر تحليل النص"
   missing_followups: "لم تُسجَّل إجابة عن أي سؤال متابعة"
@@ -143,6 +148,7 @@ assessment:
       relevance_min: "أدنى تشابه بين السؤال والإجابة في إجابات المتابعة"
       latency_max_s: "أطول زمن تفكير قبل إجابة متابعة، بعد احتساب وقت القراءة (ث)"
       limitation_acknowledged: "ذكر حدٍّ من حدود العمل في إجابة متابعة (1 = نعم)"
+      answered_all: "في كل نافذة إجابة متابعة إجابة (1 = نعم)"
 units:
   count: "عدد"
   "words/min": "كلمة/دقيقة"

@@ -28,6 +28,11 @@ class Condition(_Frozen):
     measure: str = Field(min_length=1)  # a Measurement key, e.g. "fillers.per_100_words"
     op: Literal[">=", "<=", "present"]  # "present": a yes/no measure is yes (value >= 1)
     threshold: str | None = None  # a key in configs/rubric.yaml <rubric>.values
+    # required: when the measure is missing the level is NOT awarded (instead of dropping the
+    # condition). For a condition that defines the level, such as the limitation cue of
+    # follow-up level 4 (owner, 2026-11-25, ADR 0022): without it the level would reduce to
+    # its other conditions.
+    required: bool = False
 
     @model_validator(mode="after")
     def _threshold_unless_present(self) -> Condition:
@@ -121,6 +126,7 @@ class ConditionResult(_Frozen):
     limit: float | None = None  # the threshold's value; None for "present"
     value: float | None = None  # None: the measure is missing (never read as low)
     holds: bool | None = None  # None when the measure is missing
+    required: bool = False  # missing -> this level is not awarded (Condition.required)
 
 
 class DimensionResult(_Frozen):

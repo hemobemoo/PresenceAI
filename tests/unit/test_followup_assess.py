@@ -13,7 +13,7 @@ from typing import Any
 import pytest
 
 from presenceai.pipeline.assess import no_parser
-from presenceai.pipeline.followup import LATENCY, LIMITATION, RELEVANCE, followup_report
+from presenceai.pipeline.followup import ANSWERED, LATENCY, LIMITATION, RELEVANCE, followup_report
 from presenceai.rubric import evidence, loader, score
 from presenceai.schemas.assessment import Evidence, TimeSpan
 from presenceai.schemas.followup import FollowupReport
@@ -97,7 +97,7 @@ def _part(a: Any, dim: str = "followup_handling") -> tuple[Any, Any]:
 def test_answered_followups_are_scored_with_answer_evidence(sb: Any, fake_parser: Any,
                                                             speech_cfg: Any):  # fmt: skip
     fu = _fu(sb, [_answer(sb, A1, onset=1.5), _answer(sb, A2, onset=3.0)])
-    assert set(fu.measurements) == {RELEVANCE, LATENCY, LIMITATION}
+    assert set(fu.measurements) == {RELEVANCE, LATENCY, LIMITATION, ANSWERED}
     lat = fu.measurements[LATENCY]
     assert lat.value == 3.0 and lat.evidence == (
         Evidence(time=TimeSpan(start_s=0.0, end_s=3.0), answer=1),
@@ -108,7 +108,7 @@ def test_answered_followups_are_scored_with_answer_evidence(sb: Any, fake_parser
     assert quote is not None and quote.text == "One limitation"
     a = _assess(sb, fake_parser, speech_cfg, fu, _calibrated())
     r, f = _part(a)
-    assert r.level is not None and f.measured == 3 and f.total == 3
+    assert r.level is not None and f.measured == 4 and f.total == 4
     assert {e.answer for e in f.evidence} <= {0, 1} and all(e.answer is not None
                                                             for e in f.evidence)  # fmt: skip
     assert a.evidence_verified
@@ -119,7 +119,7 @@ def test_relevance_is_reported_but_not_scored_while_uncalibrated(sb: Any, fake_p
     fu = _fu(sb, [_answer(sb, A1), _answer(sb, A2)])
     r, f = _part(_assess(sb, fake_parser, speech_cfg, fu, _gated()))
     assert RELEVANCE in r.missing and RELEVANCE not in r.measured
-    assert f.measured == 2 and f.total == 3  # "based on 2 of 3 measures"
+    assert f.measured == 3 and f.total == 4  # "based on 3 of 4 measures"
     held = [c for c in r.conditions if c.measure == RELEVANCE]
     assert held and all(c.value is None and c.holds is None for c in held)
 
@@ -162,12 +162,44 @@ def test_no_followups_is_not_measurable(sb: Any, fake_parser: Any, speech_cfg: A
 
 def test_arabic_answers_measure_latency_only(sb: Any, fake_parser: Any, speech_cfg: Any):
     fu = _fu(sb, [_answer(sb, "نعم اختبرناه", language="ar")], language="ar")
-    assert set(fu.measurements) == {LATENCY}
+    assert set(fu.measurements) == {LATENCY, ANSWERED}  # both decided from the audio
     assert set(fu.not_measurable) == {RELEVANCE, LIMITATION}
     r, f = _part(_assess(sb, fake_parser, speech_cfg, fu, _calibrated(), language="ar"))
-    assert r.level is not None and f.measured == 1 and f.total == 3
-    # latency alone (1.5 s) meets level 4; 1 of 3 measures caps it at 3 (ADR 0022 open item 1)
-    assert r.level == 3 and r.capped_from == 4 and f.capped_from == 4
+    assert r.level is not None and f.measured == 2 and f.total == 4
+    # latency (1.5 s) and answered would meet level 4's other conditions, but the limitation cue
+    # is required and not measured in Arabic: level 3, reached, not capped (owner, 2026-11-25)
+    assert r.level == 3 and r.capped_from is None and f.capped_from is None
+    assert "المستوى 4 غير متاح بالعربية بعد" in f.statement
+
+
+def test_the_same_fast_arabic_answers_give_level_3_not_4(sb: Any, fake_parser: Any,
+                                                         speech_cfg: Any):  # fmt: skip
+    """Owner, 2026-11-25: the limitation lexicon is English-only, so Arabic follow-up handling
+    tops out at level 3 until Arabic limitation cues exist (ADR 0022 open item 8)."""
+    from presenceai.lang import text
+
+    fast: list[SpeechReport | None] = [_answer(sb, "نعم اختبرناه", language="ar")] * 2
+    fu = _fu(sb, fast, language="ar")
+    r, f = _part(_assess(sb, fake_parser, speech_cfg, fu, _calibrated(), language="ar"))
+    assert fu.summary.latency_max_s is not None and fu.summary.latency_max_s <= 2  # level-4 fast
+    assert r.level == 3 and r.capped_from is None
+    assert 4 in levels_unavailable(r)
+    note = text(
+        "en",
+        "assessment.level_unavailable_language",
+        level=4,
+        what=text("en", "assessment.not_measured_what.followup.limitation_acknowledged"),
+    )
+    assert note == "Level 4 not available in Arabic yet (limitation cues not measured)."
+    assert text("ar", "assessment.level_unavailable_language", level=4,
+                what=text("ar", "assessment.not_measured_what.followup.limitation_acknowledged")
+                ) in f.statement  # fmt: skip
+
+
+def levels_unavailable(r: Any) -> tuple[int, ...]:
+    from presenceai.rubric.levels import unavailable_levels
+
+    return unavailable_levels(r.conditions)
 
 
 def test_answer_evidence_is_checked_against_that_answer(sb: Any):
@@ -226,7 +258,7 @@ def test_config_scores_relevance_once_calibrated(sb: Any, fake_parser: Any, spee
     fu = _fu(sb, [_answer(sb, A1), _answer(sb, A2)])
     assert fu.measurements[RELEVANCE].confidence.value == "low"  # relevance stays low confidence
     r, f = _part(_assess(sb, fake_parser, speech_cfg, fu, loader.load_thresholds(S2)))
-    assert RELEVANCE in r.measured and f.measured == 3
+    assert RELEVANCE in r.measured and f.measured == 4
 
 
 def test_low_relevance_is_described_as_what_was_measured(sb: Any, fake_parser: Any,

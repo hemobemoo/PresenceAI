@@ -15,7 +15,7 @@ _OPS = {">=": "≥", "<=": "≤"}
 
 def _condition(c: Condition, t: RubricThresholds) -> str:
     if c.threshold is None:
-        return f"`{c.measure}` = yes"
+        return f"`{c.measure}` = yes" + (" (required)" if c.required else "")
     return f"`{c.measure}` {_OPS[c.op]} {t.values[c.threshold]:g} (`{c.threshold}`)"
 
 
@@ -24,6 +24,14 @@ def arabic_status(rubric: Rubric, anchor: LevelAnchor) -> str:
     if not anchor.conditions:
         return "default when any measure is computable"
     arabic = [c.measure for c in anchor.conditions if "ar" in rubric.measures[c.measure].languages]
+    needed = [
+        c.measure
+        for c in anchor.conditions
+        if c.required and "ar" not in rubric.measures[c.measure].languages
+    ]
+    if needed:
+        names = ", ".join(f"`{m}`" for m in needed)
+        return f"**not available in Arabic yet** ({names} required, not measured)"
     if not arabic:
         return "not measured (missing, not low)"
     if len(arabic) == len(anchor.conditions):

@@ -5,6 +5,9 @@ computable; the dimension gets the highest level reached. A measure that is miss
 off, no time limit, Arabic content, unreliable punctuation) is dropped from the conditions; it is
 never read as a low value. A dimension with no computable measure at all is not measurable
 (None), never level 1.
+
+A **required** condition is the exception: when its measure is missing, its level is not
+awarded (the level is unavailable, not failed); lower levels are still reachable.
 """
 
 from __future__ import annotations
@@ -43,9 +46,15 @@ def condition_results(
                     limit=t.values[c.threshold] if c.threshold else None,
                     value=value,
                     holds=None if value is None else _holds(c, value, t),
+                    required=c.required,
                 )
             )
     return tuple(out)
+
+
+def unavailable_levels(results: tuple[ConditionResult, ...]) -> tuple[int, ...]:
+    """Levels that cannot be awarded because a required measure is missing."""
+    return tuple(sorted({r.level for r in results if r.required and r.value is None}))
 
 
 def level_from(results: tuple[ConditionResult, ...]) -> int | None:
@@ -53,6 +62,8 @@ def level_from(results: tuple[ConditionResult, ...]) -> int | None:
     if all(r.value is None for r in results):
         return None
     for level in (4, 3, 2):
+        if level in unavailable_levels(results):
+            continue
         computed = [r for r in results if r.level == level and r.holds is not None]
         if computed and all(r.holds for r in computed):
             return level

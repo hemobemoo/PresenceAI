@@ -105,6 +105,11 @@ assessment:
   missing_limit: "no time limit set"
   missing_other: "not computed"
   capped: "Reached level {reached}, limited to level {max_level} because only {measured} of {total} measures could be computed."
+  level_unavailable_language: "Level {level} not available in Arabic yet ({what} not measured)."
+  level_unavailable: "Level {level} not available ({what} not measured)."
+  not_measured_what:
+    followup:
+      limitation_acknowledged: "limitation cues"
   failed: "could not be checked"
   text_failed: "text analysis failed"
   missing_followups: "no follow-up answer recorded"
@@ -144,6 +149,7 @@ assessment:
       relevance_min: "lowest question-answer similarity over the follow-up answers"
       latency_max_s: "longest thinking time before a follow-up answer, after the reading allowance (s)"
       limitation_acknowledged: "limitation stated in a follow-up answer (1 = yes)"
+      answered_all: "every follow-up answer window holds an answer (1 = yes)"
 units:
   count: "count"
   "words/min": "words/min"
