@@ -364,6 +364,7 @@ def build(ctx: AppContext, lang: Language, analyzer: app_run.Analyzer) -> None:
     s2 = s2_page.S2Controller(
         buffer, explanation_limit_s=scenario_limit_s(s2_page.SCENARIO),
         extra_s=app_cfg.recording_extra_s, window_s=app_cfg.answer_window_s, vad=vad,
+        preroll_s=app_cfg.answer_preroll_s,
     )  # fmt: skip
     with gr.Group(visible=False) as s2_box:
         gr.Markdown(ui_text(lang, "practice.s2.own_help"), rtl=rtl)

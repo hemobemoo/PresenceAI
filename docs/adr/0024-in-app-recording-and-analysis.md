@@ -131,3 +131,49 @@ Browser re-run on the laptop (whisper_small, 4 threads, models unloaded after ea
      FINAL_02 §3.2's "under 60 s for a 3-minute talk", at no thermal cost; the speech step is
      about 95 % of it.
    - Still open: the completeness ratio on a real recording (now in the start log line).
+
+## Correction (owner, 2026-11-25): the browser made an outside request until this fix
+
+**The "no outside connection" claims for P3-d and P3-e were wrong until this fix.** The tests
+named above (`test_recording_network.py`, ADR 0023's `loopback_only`) watch the **server**
+process only; the **browser** was never watched. FastRTC 0.0.34's microphone component runs
+`new Audio("https://huggingface.co/datasets/freddyaboulton/bucket/resolve/main/pop-sounds.mp3")`
+on every load of the page (`/` and `/ar/`, each reload included). Gradio 5.23's page sets no
+referrer policy, so the browser's default applied.
+
+**What reached Hugging Face:** one `GET` for that public sound file per page load, with an
+empty body. It carried what any such request carries: **the IP address and the time of the page
+load**, plus the browser's standard headers. These were checked by intercepting the same request
+in Chromium and aborting it locally:
+- `User-Agent` and client hints (browser name and version, Windows);
+- `Referer: http://127.0.0.1:7860/` (the origin only; it shows that a local app was open on
+  that port);
+- `Accept: */*` and `Range: bytes=0-`.
+
+**Nothing from the app was in it**: no audio, transcript, report, consent setting, file name or
+session id. Cookies: the test browser had none. If the browser was signed in to huggingface.co,
+it may also have sent Hugging Face's own cookies, depending on how Hugging Face sets them; that
+was not checked (it would mean reading the owner's browser profile).
+
+**Fix** (`ui/offline.py`):
+1. The URL is rewritten in the served script to `/local/silent.wav`, 0.1 s of silence served
+   by the app.
+2. Every page now carries a Content-Security-Policy that allows scripts, styles, fonts, images,
+   media and connections from this server only. A browser that still holds the old script in
+   its cache is blocked by it ("violates media-src", seen in the owner's browser before the
+   cache was cleared). Any outside fetch a later Gradio or FastRTC adds is blocked the same way.
+   WebRTC is not governed by CSP; it has no ICE server (item 2).
+
+**Tests:**
+- `tests/safety/test_app_network.py`: the served FastRTC scripts contain no Hugging Face URL;
+  the sound is fetched from this computer; both pages carry the CSP.
+- `tests/ui/test_browser_journey.py` (slow, needs_browser): a full S2 session in Chromium with
+  a fake microphone. It covers page load, consent, recording, explanation, a silent first
+  answer, the retry, both answers, stop, and analyse. It logs every request and fails on any
+  host other than this computer or any CSP violation. Run on 2026-11-25: **148 requests, hosts
+  `127.0.0.1` only, no CSP violation.**
+
+**Found by the same test:** the retry check counted audio still in flight when the question
+appeared (about 0.1–0.3 s, ADR 0022 "P3-e" item 2) as an answer. A silent answer therefore
+never got the retry offer. It now uses the latency rule, so running speech is not an onset
+(ADR 0022 "P3-e" item 5).
