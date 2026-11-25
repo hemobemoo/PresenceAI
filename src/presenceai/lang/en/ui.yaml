@@ -4,6 +4,7 @@ app:
   other_language: "العربية"
   running: "PresenceAI is running at {url}  (Ctrl+click to open; Ctrl+C to stop)"
   port_busy: "Port 7860 is already in use. PresenceAI may already be running: open {url}, or close the other window and start again."
+  logo_alt: "PresenceAI"
   other_language_path: "/ar"
 nav:
   consent: "Consent"
