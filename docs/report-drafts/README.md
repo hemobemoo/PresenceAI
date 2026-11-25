@@ -38,3 +38,4 @@ these drafts are not edited into it automatically.
 | `S3_summary.md` | Spike S3, Unsloth Whisper fine-tuning on Colab, CTranslate2 export, laptop CPU check (pass) | `docs/adr/0005-unsloth-whisper-kaggle.md` |
 | `S4_summary.md` | Spike S4, OpenRouter free model choice and hosted-LLM privacy decision | `docs/adr/0003-openrouter-model-and-privacy.md` |
 | `S5_summary.md` | Spike S5, gaze zones from webcam landmarks (pass with fallback: three zones) | `docs/adr/0004-gaze-zone-spike.md` |
+| `Chapter3_Methodology_skeleton.md` | Chapter 3 skeleton: the method as a whole, section by section, with sources (chapter structure, not the six spike headings) | ADRs 0010–0024 |
