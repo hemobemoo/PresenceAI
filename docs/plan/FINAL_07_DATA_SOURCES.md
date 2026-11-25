@@ -87,6 +87,7 @@ uv run presenceai data synth-speech --n 300 --seed 7
 uv run python experiments/c2_synth/build_prompts.py      # 400 prompts -> resources/c2/prompts.jsonl (ADR 0021)
 # generation: notebooks/c2_colab.ipynb runs experiments/c2_synth/generate_c2.py on Colab (T4, resumable); output -> data/c2/
 uv run python experiments/c2_synth/check_c2.py data/c2/generated.jsonl
+uv run python experiments/c2_synth/dev_labels.py draw     # all 118 dev items, one blinded shuffled order -> data/c2/dev_labels/ (owner labels central message; ADR 0021 §4c)
 uv run python experiments/c2_synth/hand_check.py draw     # blinded 50-item test sample -> data/c2/hand_check/ (owner fills it)
 ```
 
