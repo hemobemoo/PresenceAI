@@ -1,8 +1,8 @@
 # 0025 — Central-message detection: a fair comparison of methods on the owner's dev labels
 
-- Status: **proposed** (2026-11-26). Comparison protocol approved by the owner on 2026-11-26,
-  with additions 1–5. Written **before any method is scored**. The method and its values are
-  decided after the results, in an amendment to this ADR.
+- Status: **accepted** (protocol; owner, 2026-11-26), with additions 1–5 and item 10. Written
+  **before any method is scored**. The method and its values are decided after the results, in
+  an amendment to this ADR.
 - Date: 2026-11-26
 - Decider: project owner
 - Plan reference: FINAL_04 §3 (central message), FINAL_10 E4, FINAL_12 P5 row (central-message
@@ -76,6 +76,11 @@ as in the app.
    is in ADR 0021 §4d.
 9. **Language.** Central message stays English-only. Arabic central message is **still not
    measured** and is shown as "not measured" with its reason (ADR 0017, ADR 0019).
+
+10. **If a position-only method (B) wins** (owner, 2026-11-26): the amendment states that the
+    result reflects how the C2 generator places main points (87 of 90 in the opening,
+    `dev_positions.json`), and the method is **not trusted in the app until it is confirmed on
+    B1 and on the E4 public talks**.
 
 ## Consequences
 
