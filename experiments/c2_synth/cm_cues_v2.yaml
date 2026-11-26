@@ -1,0 +1,50 @@
+# Method A (ADR 0025 item 11): thesis-statement features from the open textbooks in the knowledge
+# base, written and frozen before any scoring, without reading the owner's sentences or the dev
+# texts. Phrases are matched on normalised words (presenceai.text.document.plain).
+#
+# Sources (knowledge-base chunk ids, data/texts/kb/chunks.jsonl):
+# - stand_up_speak_out/00539 (CC BY-NC-SA 4.0): a thesis statement is a short, declarative
+#   sentence that states the purpose, intent or main idea of a speech.
+# - stand_up_speak_out/00540: it tells the audience "in a nutshell" what the talk is about and
+#   provides a way to organise the main points.
+# - stand_up_speak_out/00542: it appears toward the end of the introduction.
+# - stand_up_speak_out/00543: a focused thesis previews its main points (a number of factors,
+#   then a list).
+# - speak_out_call_in_2e/00079: one sentence, not a question; examples state a position with
+#   "should" or give reasons.
+# The preview and claim families are rules in experiments/c2_synth/cm_compare.py.
+
+purpose:
+  - my main point is
+  - the main point is
+  - my main message is
+  - my message today is
+  - my point is
+  - the point is
+  - the key idea is
+  - the main idea
+  - the central idea
+  - my thesis
+  - in a nutshell
+  - my purpose
+  - the purpose of this
+  - my goal
+  - our goal
+  - i will show that
+  - i want to show
+  - i will show
+  - i will explain
+  - i want to explain
+  - i would like to show
+  - i would like to explain
+  - i want to convince
+  - i want to persuade
+  - i will argue that
+  - i argue that
+
+claim:            # a stated position or reason (textbook examples)
+  - should
+  - must
+  - need to
+  - needs to
+  - because

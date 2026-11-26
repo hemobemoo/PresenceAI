@@ -100,6 +100,31 @@ as in the app.
     result reflects how the C2 generator places main points (87 of 90 in the opening,
     `dev_positions.json`), and the method is **not trusted in the app until it is confirmed on
     B1 and on the E4 public talks**.
+11. **Pre-registered details for A, B and C0** (written 2026-11-26, before any of them was
+    scored; committed before `cm_compare.py`):
+    - **Candidates:** sentences of the app's sentence split (`text.document.build`, spaCy) that
+      start in the opening window W % of the words. Questions (ending in "?") are never
+      candidates: a thesis is not a question (textbook guideline, `cm_cues_v2.yaml`).
+    - **Grids.** All methods: W in {10, 15, 20, 25, 30}.
+      A: families in {purpose}, {purpose, preview}, {purpose, preview, claim}; pick the first
+      or the last matching candidate (the textbooks place the thesis toward the end of the
+      introduction). Purpose and claim are the phrase lists in `cm_cues_v2.yaml`. Preview is
+      a number word or digit 2–5 followed by a plural noun, or a sentence with a colon or at
+      least two commas followed by "and" (a list).
+      B: the 1st, 2nd or 3rd candidate, or the last one. B always says "stated" when the window
+      has a candidate.
+      C0: score(s) = share of the sentence's content-lemma types (NOUN, PROPN, VERB, ADJ, not
+      stop words) that occur in at least one other sentence of the talk. The candidate with
+      the highest score wins (ties: the earlier one). "Stated" if that score minus the median
+      score over all sentences of the talk is at least m, m in {0.00, 0.05, …, 0.40}.
+    - **Tuning objective** on the training folds: correct items = the owner's "yes" items whose
+      chosen sentence matches the owner's sentence, plus the owner's "no" items with no
+      sentence chosen. Ties go to fewer false positives, then to the first entry in the order
+      listed above.
+    - **Folds:** the 24 dev topics (the number at the end of each item id) shuffled with seed
+      20261126 and dealt round-robin into 5 folds.
+    - **Reference rows:** "always yes" (no sentence, so headline 0) and the current detector
+      (thesis cue v1, `lang/en/text_cues.yaml`), both scored on all 118 with no tuning.
 
 ## Consequences
 
