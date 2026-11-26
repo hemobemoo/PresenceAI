@@ -220,3 +220,22 @@ def test_relabel_score_refuses_unfinished_or_flagged():
     re_sheet, re_key = dl.relabel_draw(sheet, key)
     with pytest.raises(ValueError, match="not finished"):
         dl.relabel_score(re_sheet, re_key, sheet, key)
+
+
+def test_relabel_draw_is_stratified_15_first_yes_5_first_no():
+    # ADR 0025 item 7 (owner, 2026-11-26): an unstratified draw gave only 1 first "no".
+    sheet, key = _first_sheet()  # 30 yes, 10 no
+    re_sheet, re_key = dl.relabel_draw(sheet, key)
+    first = {s["key"]: dl.yes_no(s["main_point_stated"]) for s in sheet}
+    picked = Counter(first[re_key[s["key"]]["first"]] for s in re_sheet)
+    assert picked == {True: 15, False: 5}
+    order = [first[re_key[s["key"]]["first"]] for s in re_sheet]
+    assert order != sorted(order) and order != sorted(order, reverse=True)  # shuffled together
+
+
+def test_relabel_draw_refuses_too_few_items_in_a_stratum():
+    sheet, key = _first_sheet()
+    for s in sheet:
+        s.update(main_point_stated="yes", main_point_sentence=THESIS)
+    with pytest.raises(ValueError, match="first 'no'"):
+        dl.relabel_draw(sheet, key)

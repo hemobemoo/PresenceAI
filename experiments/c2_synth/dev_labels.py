@@ -9,7 +9,8 @@
     uv run python experiments/c2_synth/dev_labels.py relabel status
     uv run python experiments/c2_synth/dev_labels.py relabel score
 
-- **relabel** (ADR 0025 item 7): 20 random items of the finished sheet, new neutral keys and a
+- **relabel** (ADR 0025 item 7): 20 items of the finished sheet, 15 first "yes" and 5 first
+  "no", random within each, new neutral keys and a
   new order, no first labels shown (`relabel_sheet.yaml`, `relabel_key.json`). Label them about
   a week after the first sheet, without opening `sheet.yaml`. `relabel score` writes agreement
   counts only to `experiments/results/c2/dev_relabel.json` (Cohen's kappa marked unreliable).
@@ -53,7 +54,7 @@ OUT_DIR = ROOT / "data" / "c2" / "dev_labels"
 RESULTS = ROOT / "experiments" / "results" / "c2" / "dev_labels.json"
 POSITIONS = ROOT / "experiments" / "results" / "c2" / "dev_positions.json"
 RELABEL_RESULTS = ROOT / "experiments" / "results" / "c2" / "dev_relabel.json"
-RELABEL_N = 20  # owner, 2026-11-26 (ADR 0025 item 7)
+RELABEL_N = {True: 15, False: 5}  # first "stated" yes / no (owner, 2026-11-26; ADR 0025 item 7)
 RELABEL_SEED = 20261203
 SEED = 20261125
 FIELDS = ("main_point_stated", "main_point_sentence", "restated_in_closing")
@@ -205,15 +206,27 @@ def score(
 
 
 def relabel_draw(
-    sheet: Sheet, key: dict[str, Any], *, n: int = RELABEL_N, seed: int = RELABEL_SEED
+    sheet: Sheet,
+    key: dict[str, Any],
+    *,
+    n: dict[bool, int] = RELABEL_N,
+    seed: int = RELABEL_SEED,
 ) -> tuple[Sheet, dict[str, Any]]:
-    """The owner's consistency check (ADR 0025 item 7): `n` random items of the finished first
-    sheet, new neutral keys, a new order, none of the first labels shown."""
+    """The owner's consistency check (ADR 0025 item 7): of the finished first sheet, `n[True]`
+    items first marked "stated: yes" and `n[False]` first marked "no", each at random within its
+    stratum, shuffled together; new neutral keys, none of the first labels shown. (An
+    unstratified draw of 20 held only 1 first "no".)"""
     st = status(sheet, key)
     if st["flags"] or st["done"] < len(sheet):
         raise ValueError("the first sheet must be finished and unflagged before the relabel draw")
     rng = random.Random(seed)  # noqa: S311 - reproducible sample, not security
-    chosen = rng.sample(sorted(s["key"] for s in sheet), n)
+    chosen: list[str] = []
+    for stratum in (True, False):
+        pool = sorted(s["key"] for s in sheet if _item(s)[0]["main_point_stated"] is stratum)
+        if len(pool) < n[stratum]:
+            word = "yes" if stratum else "no"
+            raise ValueError(f"only {len(pool)} first '{word}' items; {n[stratum]} needed")
+        chosen += rng.sample(pool, n[stratum])
     rng.shuffle(chosen)
     by_key = {s["key"]: s for s in sheet}
     re_sheet, re_key = [], {}
