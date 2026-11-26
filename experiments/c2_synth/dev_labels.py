@@ -4,6 +4,7 @@
     uv run python experiments/c2_synth/dev_labels.py status          # progress and flags
     uv run python experiments/c2_synth/dev_labels.py score           # after the sheet is done
     uv run python experiments/c2_synth/dev_labels.py score --partial # done items only
+    uv run python experiments/c2_synth/dev_labels.py positions       # where main points sit
 
 Required before P5 (owner, 2026-11-25): the central-message cues are tuned only on these labels,
 never on the planted labels (ADR 0021 §4b-4c).
@@ -42,6 +43,7 @@ ROOT = Path(__file__).resolve().parents[2]
 GENERATED = ROOT / "data" / "c2" / "generated.jsonl"
 OUT_DIR = ROOT / "data" / "c2" / "dev_labels"
 RESULTS = ROOT / "experiments" / "results" / "c2" / "dev_labels.json"
+POSITIONS = ROOT / "experiments" / "results" / "c2" / "dev_positions.json"
 SEED = 20261125
 FIELDS = ("main_point_stated", "main_point_sentence", "restated_in_closing")
 SENTENCE_COUNTS = ("owner_yes", "detector_found", "matches", "owner_sentence_among_statements")
@@ -191,6 +193,50 @@ def score(
     }
 
 
+def _sublist(hay: list[str], needle: list[str]) -> int | None:
+    n = len(needle)
+    return next((i for i in range(len(hay) - n + 1) if hay[i : i + n] == needle), None)
+
+
+def positions(
+    sheet: Sheet, key: dict[str, Any], *, opening_pct: float = 20, closing_pct: float = 15
+) -> dict[str, Any]:
+    """Where the owner's main-point sentences sit, by word share; counts only. Regions follow the
+    app's rule (`Document.in_opening` / `in_closing`): opening if the sentence starts in the first
+    `opening_pct` % of the words, else closing if it ends in the last `closing_pct` %, else
+    middle. Words are the normalised words (`words_of`) of the text and of the sentence."""
+    from presenceai.text.document import words_of
+
+    status(sheet, key)  # refuses a changed text
+    regions, deciles, located = Counter(), Counter(), 0
+    for s in sheet:
+        labels, flags = _item(s)
+        if flags or labels["main_point_stated"] is not True:
+            continue
+        words, mine = words_of(s["text"]), words_of(s["main_point_sentence"])
+        start = _sublist(words, mine)
+        if start is None or not mine:
+            regions["not_located"] += 1
+            continue
+        located += 1
+        n, last = len(words), start + len(mine) - 1
+        opening_end = max(1, round(n * opening_pct / 100))
+        closing_start = n - max(1, round(n * closing_pct / 100))
+        region = "opening" if start < opening_end else "middle"
+        if region == "middle" and last >= closing_start:
+            region = "closing"
+        regions[region] += 1
+        deciles[min(9, start * 10 // n)] += 1
+    return {
+        "sentences": sum(regions.values()),
+        "opening_pct": opening_pct,
+        "closing_pct": closing_pct,
+        "regions": {k: regions[k] for k in ("opening", "middle", "closing", "not_located")},
+        "start_share_decile": {f"{d * 10}-{d * 10 + 10}%": deciles[d] for d in range(10)},
+        "located": located,
+    }
+
+
 def app_detector(parser: Any = None) -> Callable[[str], Detected]:
     """The app's central-message detector on a text: whitespace words with synthetic times
     (punctuation is kept, so sentences split as in a transcript), the local spaCy parser."""
@@ -262,7 +308,16 @@ def main(argv: list[str]) -> int:
         RESULTS.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
         print(json.dumps(result, indent=2))
         return 0
-    raise SystemExit(f"unknown action {action!r}: draw | status | score [--partial]")
+    if action == "positions":
+        from presenceai.rubric.loader import load_thresholds
+
+        values = load_thresholds("s1_presentation").values
+        result = positions(sheet, key, opening_pct=values["opening_share_pct"],
+                           closing_pct=values["closing_share_pct"])  # fmt: skip
+        POSITIONS.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+        print(json.dumps(result, indent=2))
+        return 0
+    raise SystemExit(f"unknown action {action!r}: draw | status | score [--partial] | positions")
 
 
 if __name__ == "__main__":

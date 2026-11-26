@@ -150,3 +150,19 @@ def _same_plain(a: str, b: str) -> bool:
     from presenceai.text.document import plain
 
     return plain(a) == plain(b)
+
+
+def test_positions_counts_regions_by_word_share_without_text():
+    filler = " ".join(f"Word{i} here." for i in range(20))  # 40 words
+    first, last = "Alpha point is clear.", "Omega point is clear."
+    rows = [{"id": f"x-dev-{i}", "group": GROUPS[i % 5], "part": "dev", "hook": False,
+             "text": f"{first} {filler} {last}"} for i in range(4)]  # fmt: skip
+    sheet, key = dl.draw(rows)
+    for n, s in enumerate(sheet):
+        s.update(main_point_stated="yes", restated_in_closing="no",
+                 main_point_sentence=[first, last, "Word10 here.", first][n])  # fmt: skip
+    sheet[3].update(main_point_stated="no", main_point_sentence=None)
+    r = dl.positions(sheet, key)
+    assert r["regions"] == {"opening": 1, "middle": 1, "closing": 1, "not_located": 0}
+    assert r["sentences"] == 3 and sum(r["start_share_decile"].values()) == 3
+    assert json.dumps(r).find("Alpha") == -1
