@@ -468,7 +468,7 @@ def test_central_message_is_shown_not_scored_with_the_possible_main_point(build:
     assert f.level is None and f.confidence == Confidence.LOW
     quote = "Today I will show that short daily practice improves presentation skills."
     assert f.statement.endswith(f"Possible main point (low confidence): “{quote}”")
-    assert "ADR 0025" in f.statement and "not scored" in f.statement
+    assert "not scored" in f.statement and "hand-labelled practice talks" in f.statement
     assert [e.transcript.text for e in f.evidence if e.transcript] == [quote]
     assert all(e.time is not None for e in f.evidence)
     evidence.verify(f.evidence, report.transcript, report.transcript.duration_s)
@@ -489,7 +489,8 @@ def test_without_a_possible_main_point_the_card_says_nothing_about_one(
     for wording in ("no main point", "not found", "No sentence"):
         assert wording.lower() not in f.statement.lower()
     reason = text(lang, "assessment.information_only.central_message", dimension="x")
-    assert "ADR 0025" in reason and "P7" in reason
+    assert "ADR" not in reason and "P7" not in reason  # owner, 2026-11-26: no plan codes
+    assert ("language-model check" if lang == "en" else "فحص بالنموذج اللغوي") in reason
 
 
 def test_information_only_is_config_driven_for_both_scenarios():

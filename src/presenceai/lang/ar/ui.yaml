@@ -97,9 +97,9 @@ report:
   questions: "الأسئلة"
   not_measured: "لم يُقَس: {measure} ({reason})"
   not_counted_camera: "لم يُحسب (الكاميرا متوقفة): {measures}"
-  information_only: "للاطلاع فقط، لا يدخل في التقييم"
-  dimensions_line: "المستويات مبنية على {measured} من {total} أبعاد."
-  not_scored_line: "غير مقيَّم: {names} (للاطلاع فقط)."
+  information_only: "للاطلاع فقط، لا يُحتسب في التقييم"
+  dimensions_line: "تستند المستويات إلى {measured} من {total} أبعاد."
+  not_scored_line: "خارج التقييم: {names} (للاطلاع فقط)."
 data:
   heading: "بياناتي"
   intro: "جلساتك على هذا الحاسوب. نص التقارير والتسجيلات مشفّرة؛ وتُحفظ المستويات والمقاييس لمتابعة تقدّمك."

@@ -353,10 +353,10 @@ def test_the_level_1_hint_is_gone_and_the_card_never_says_no_main_point(
     for wording in ("No sentence stating", "main point was found", "Try adding one sentence",
                     "لم يُعثر على جملة", "جرّب إضافة جملة"):  # fmt: skip
         assert wording not in md
-    badge = "Information only, not scored" if lang == "en" else "للاطلاع فقط، لا يدخل في التقييم"
+    badge = "Information only, not scored" if lang == "en" else "للاطلاع فقط، لا يُحتسب في التقييم"
     assert f"**{badge}**" in md
     line = ("Levels based on 1 of 2 dimensions" if lang == "en"
-            else "المستويات مبنية على 1 من 2 أبعاد")  # fmt: skip
+            else "تستند المستويات إلى 1 من 2 أبعاد")  # fmt: skip
     assert report_page.escape(line) in md
 
 
@@ -370,6 +370,22 @@ def test_no_report_text_tells_the_user_no_main_point_was_found():
             for wording in ("no main point", "main point was found", "no sentence stating",
                             "لم يُعثر على جملة تذكر فكرتك"):  # fmt: skip
                 assert wording not in dumped, (lang, name, wording)
+
+
+def test_information_only_wording_names_no_plan_codes():
+    """Owner, 2026-11-26: no "ADR 0025" or "phase P7" in what the user reads."""
+    from presenceai.lang import text, ui_text
+
+    for lang in ("en", "ar"):
+        shown = [text(lang, "assessment.information_only.central_message", dimension="x"),
+                 text(lang, "assessment.possible_main_point", quote="q"),
+                 ui_text(lang, "report.information_only"),
+                 ui_text(lang, "report.dimensions_line", measured=1, total=2),
+                 ui_text(lang, "report.not_scored_line", names="x"),
+                 ui_text(lang, "practice.tip_main_point")]  # fmt: skip
+        for s in shown:
+            assert "ADR" not in s and "P7" not in s and "phase" not in s.lower(), (lang, s)
+    assert ui_text("ar", "report.not_scored_line", names="x") == "خارج التقييم: x (للاطلاع فقط)."
 
 
 def test_the_practice_page_has_the_main_point_tip():

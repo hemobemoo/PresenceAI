@@ -112,7 +112,7 @@ assessment:
   missing_followups: "no follow-up answer recorded"
   uncalibrated: "measured {value:g}, not scored until its thresholds are calibrated"
   information_only:
-    central_message: "{dimension}: shown for information, not scored. No detection method reached the accuracy bar set in advance on labelled practice talks (ADR 0025); scoring waits for the language-model check planned for phase P7."
+    central_message: "{dimension}: shown for information, not scored. No detection method reached the accuracy bar set in advance on hand-labelled practice talks; scoring will start once a language-model check is added."
   possible_main_point: "Possible main point (low confidence): “{quote}”"
   followup_not_measured_language: "not measured for {language} answers (ADR 0022)"
   followup_relevance_bank: "measured {values} on questions from the bank; not scored until relevance is recalibrated on generic questions"
