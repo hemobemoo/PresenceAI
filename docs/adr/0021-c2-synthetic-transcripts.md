@@ -190,6 +190,10 @@
      tool **after** the detector is frozen (ADR 0025), and scored once. Both scores are
      reported with the planted-vs-owner disagreement rate on the sample.
    - Central message is English-only; Arabic central message is still not measured.
+   - **Postponed (owner, 2026-11-26; ADR 0025):** no rule-based method reached the bar, so
+     central message is information-only until the P7 judge. The 60-item test draw is made
+     **only once the P7 judge is frozen**, and the judge is scored once on it and on the 50
+     hand-checked items. Until then nothing in the test part is used.
 5. **Design** (owner, unchanged from the P2-e proposal):
    - 400 transcripts: 5 groups of 80 (control, no central message, no conclusion, no supporting
      material, undefined jargon); each of 80 topics (`resources/c2/topics.yaml`, written for
