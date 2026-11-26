@@ -174,7 +174,22 @@
      19/4, no supporting material 20/3, undefined jargon 23/1. The planted central-message
      label disagrees with the owner on 14 of 118 dev talks (11.9 %). The detector misses
      almost every stated main point, consistent with the floor effect (ADR 0019 open
-     item 2). Tuning the cues on these labels is the next step and needs its own plan.
+     item 2). Tuning the cues on these labels follows the protocol in ADR 0025.
+4d. **Planted central-message labels and E4** (owner, 2026-11-26).
+   - **Record:** on the dev part the planted central-message label disagrees with the owner's
+     labels on **14 of 118 talks (11.9 %)**. In the no-central-message group the owner found a
+     stated main point in **5 of 24** talks: the generator leaked a main point despite the
+     prompt. In the other four groups 9 of 94 talks had no stated main point by the owner's
+     labels. The test hand check (4b) found 30 % on a sample stratified 10 per group, so the
+     two rates are not directly comparable; the owner's re-label check (ADR 0025 item 7) helps
+     separate label noise from labelling drift.
+   - **E4 for central message** does not score against the planted labels; their
+     disagreement rate is reported as label noise only. Central-message F1 is scored on the
+     owner's labels: the 50 hand-checked test items (4b) and **one new random sample of 60
+     test items** (fixed seed, the 50 excluded), drawn and labelled once with the same blind
+     tool **after** the detector is frozen (ADR 0025), and scored once. Both scores are
+     reported with the planted-vs-owner disagreement rate on the sample.
+   - Central message is English-only; Arabic central message is still not measured.
 5. **Design** (owner, unchanged from the P2-e proposal):
    - 400 transcripts: 5 groups of 80 (control, no central message, no conclusion, no supporting
      material, undefined jargon); each of 80 topics (`resources/c2/topics.yaml`, written for
