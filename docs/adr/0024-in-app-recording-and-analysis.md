@@ -130,7 +130,32 @@ Browser re-run on the laptop (whisper_small, 4 threads, models unloaded after ea
    - **Decision (owner): keep `cpu_threads: 4`.** About 69 s for 2:40 of audio is 15 % over
      FINAL_02 §3.2's "under 60 s for a 3-minute talk", at no thermal cost; the speech step is
      about 95 % of it.
-   - Still open: the completeness ratio on a real recording (now in the start log line).
+   - ~~Still open: the completeness ratio on a real recording~~ **Recorded: the owner's S2
+     confirmation run (2026-11-27)**, live recording, English, whisper_small int8, 4 threads,
+     one answer window left silent on purpose. From the owner's terminal log (session
+     43a41f50…):
+
+     | Audio | Completeness | Analysis | load_models | speech | answers | content | save |
+     |---|---|---|---|---|---|---|---|
+     | 269.5 s | **1.000** | 89.6 s | 8.83 s | 41.03 s | 38.97 s | 0.68 s | 0.07 s |
+
+     - **Completeness 1.000** on a real loopback WebRTC recording, above the provisional 0.95,
+       so `completeness_min_ratio` stays 0.95 (one recording; re-check if a warning ever
+       appears without a real gap).
+     - **Retry:** the silent answer window got the retry prompt ("We didn't hear an answer"), and
+       the second attempt was answered (owner); the report's follow-up card shows every answer
+       window answered (1).
+     - **Follow-up card** (owner's report): longest thinking time after the reading allowance
+       **2.806 s**; relevance **0.883 and 0.823**, shown, not scored (bank questions, ADR 0022);
+       no limitation stated (0); level **3 of 4**, based on 3 of 4 measures. Level 3, not 4,
+       because level 4 requires the limitation cue (ADR 0022 open item 8), as expected.
+     - **Central message** (ADR 0025): the information-only card and the possible main point
+       (low confidence, with its time 00:04–00:15) appeared as designed; "Levels based on 5 of 6
+       dimensions".
+     - No errors in the terminal log (only the two analysis lines).
+     - Found in this run: the "العربية" link under the tagline went to `/ar`, which returned
+       `{"detail":"Not Found"}` (the Arabic page is served at `/ar/`). Fixed: the link points to
+       `/ar/`, and `/ar` redirects there (tested).
 
 ## Correction (owner, 2026-11-25): the browser made an outside request until this fix
 

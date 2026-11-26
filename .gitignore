@@ -63,3 +63,6 @@ Project Template.docx
 
 # Playwright MCP session logs (local only)
 .playwright-mcp/
+
+# a session export saved into the repo root by the browser (decrypted user data; never commit)
+presenceai-session-*.zip

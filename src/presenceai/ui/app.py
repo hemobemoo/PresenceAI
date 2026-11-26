@@ -113,7 +113,7 @@ def create_app(ctx: AppContext, analyzer: Analyzer | None = None) -> Any:
     analyzer = analyzer or default_analyzer()
     import gradio as gr
     from fastapi import FastAPI
-    from fastapi.responses import FileResponse, Response
+    from fastapi.responses import FileResponse, RedirectResponse, Response
     from fastapi.staticfiles import StaticFiles
 
     app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
@@ -135,6 +135,13 @@ def create_app(ctx: AppContext, analyzer: Analyzer | None = None) -> Any:
         return Response(silent_wav(), media_type="audio/wav")
 
     app.add_api_route(SILENT_URL, serve_silence, include_in_schema=False)
+
+    # Gradio's mount at "/ar" serves "/ar/"; a bare "/ar" fell through to the English app's
+    # 404 (owner's S2 run, 2026-11-27), so it redirects, for links and typed addresses alike
+    def arabic_page() -> RedirectResponse:
+        return RedirectResponse("/ar/", status_code=307)
+
+    app.add_api_route("/ar", arabic_page, include_in_schema=False)
     app = gr.mount_gradio_app(app, build_blocks(ctx, "ar", analyzer), path="/ar", show_api=False)
     return gr.mount_gradio_app(app, build_blocks(ctx, "en", analyzer), path="", show_api=False)
 
