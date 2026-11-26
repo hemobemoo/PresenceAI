@@ -259,6 +259,10 @@ detector is frozen.
      With n = 19 the Wilson 95 % interval is about 0.69–0.97, so the lower bound is below 80 %.
      For the record: with the item 11 objective ("correct") the folds give 18 of 26 (69.2 %);
      the fixed display values on all 118 dev talks give 17 of 18 (94.4 %), in-sample.
+   - **Real-speech check (B1, counts only, 2026-11-26):** on the owner's 10 English B1 talks
+     (saved reports, spaCy only) the card shows a possible main point for **1 of 10**. Its
+     precision there is unknown: B1 has no main-point labels. A is built to be precise rather
+     than to find most main points (17 of 90 on C2 dev), so most real talks will show none.
 4. **The v1 thesis-cue detector is no longer computed.** A's output per session (fired or not,
    and the sentence's character span and time) is stored in the text-free summary for a later
    comparison with the P7 judge. The span holds offsets only, never the words.

@@ -373,6 +373,7 @@ def build(ctx: AppContext, lang: Language, analyzer: app_run.Analyzer) -> None:
             for i in (1, 2)
         ]
 
+    gr.Markdown(ui_text(lang, "practice.tip_main_point"), rtl=rtl)  # ADR 0025: advice, not feedback
     gr.Markdown(f"### {ui_text(lang, 'practice.record_heading')}", rtl=rtl)
     gr.Markdown(ui_text(lang, "practice.record_help"), rtl=rtl)
     mic = WebRTC(

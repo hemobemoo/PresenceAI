@@ -31,6 +31,7 @@ practice:
   scenario: "Scenario"
   language: "Language you will speak"
   limit_note: "Time limit: {limit} s. Recording stops by itself at {hard} s."
+  tip_main_point: "Tip: state your main point in one sentence near the start, and say it again at the end."
   record_heading: "Record in the app"
   record_help: "Press the record button on the microphone box, speak, then press \"Stop and analyse\"."
   microphone: "Microphone"
@@ -95,8 +96,9 @@ report:
   questions: "Questions"
   not_measured: "Not measured: {measure} ({reason})"
   not_counted_camera: "Not counted (camera off): {measures}"
-  hints:
-    central_message_no_statement: "No sentence stating your main point was found (phrases like 'My main point is…'). A topic announcement such as 'Today I will talk about…' counts as an introduction. Try adding one sentence that states your main point."
+  information_only: "Information only, not scored"
+  dimensions_line: "Levels based on {measured} of {total} dimensions."
+  not_scored_line: "Not scored: {names} (information only)."
 data:
   heading: "My data"
   intro: "Your sessions on this computer. Report text and recordings are encrypted; levels and measures are kept for your progress."

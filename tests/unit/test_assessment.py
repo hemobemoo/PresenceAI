@@ -130,7 +130,8 @@ def test_levels_and_partial_evidence(build: Any):
     assert gap == {"pauses.mid_sentence_per_min"}  # what level 4 still needs, as data
     f = _finding(a, "delivery")
     assert "based on 2 of 3 measures" in f.statement and f.measured == 2 and f.total == 3
-    assert _dim(a, "central_message").level == 4  # stated, restated, 2 recurrences
+    cm = _dim(a, "central_message")  # information-only (ADR 0025): no level, score or cap
+    assert cm.information_only and cm.level is None and cm.score is None and cm.capped_from is None
     assert _dim(a, "organization").level == 3  # 2 transitions (< 3 for level 4)
 
 
@@ -152,10 +153,13 @@ def test_missing_measures_are_dropped_not_read_as_low(build: Any):
 def test_arabic_content_not_measurable_and_delivery_from_fillers(build: Any):
     _, a = build("اليوم سأتحدث عن التدريب اليومي. " * 12, language="ar",
                  filler_conf=Confidence.LOW)  # fmt: skip
-    for dim in ("central_message", "organization", "language", "supporting_material"):
+    for dim in ("organization", "language", "supporting_material"):
         r = _dim(a, dim)
         assert r.level is None and r.not_measurable and r.score is None
         assert _finding(a, dim).measured == 0 and not _finding(a, dim).evidence
+    cm = _finding(a, "central_message")  # information-only; no possible main point in Arabic
+    assert _dim(a, "central_message").information_only and not cm.evidence
+    assert "فكرة رئيسية محتملة" not in cm.statement
     delivery = _dim(a, "delivery")
     assert delivery.measured == ("fillers.per_100_words",)
     assert delivery.level == 3 and delivery.capped_from == 4  # 1 of 3 measures: capped
@@ -356,13 +360,14 @@ def test_every_finding_states_n_of_m_measures(build: Any):
         _, a = build(**kwargs)
         for f in a.findings:
             assert f.total >= 1 and 0 <= f.measured <= f.total
-            if f.level is not None:
+            if _dim(a, f.dimension).information_only:
+                assert "not scored" in f.statement and "measures" not in f.statement
+            elif f.level is not None:
                 assert f"based on {f.measured} of {f.total} measures" in f.statement
             else:
                 assert f"none of its {f.total} measures" in f.statement
     _, a = build()
-    cm = _finding(a, "central_message")
-    assert cm.measured == cm.total  # all computed: still shown ("4 of 4")
+    assert _finding(a, "central_message").measured == 0  # information-only: nothing scored
 
 
 def test_overrun_against_the_session_limit(build: Any):
@@ -405,7 +410,8 @@ def test_in_the_app_one_failed_finding_does_not_crash_the_report(
     f = _finding(a, "delivery")
     assert f.level is None and not f.evidence and "not measurable" in f.statement
     assert a.failed_dimensions == ("delivery",)
-    assert _dim(a, "central_message").level == 4  # the rest of the report stands
+    assert _dim(a, "organization").level == 3  # the rest of the report stands
+    assert _dim(a, "central_message").information_only
     logged = caplog.text
     assert "delivery" in logged and "EvidenceError" in logged
     assert "practice" not in logged.lower()  # counts only, never transcript text
@@ -442,9 +448,65 @@ def test_in_the_app_a_failed_text_analysis_leaves_delivery(build: Any, speech_cf
         report, parser=broken, cfg=speech_cfg, scenario="s1_presentation", strict=False
     )
     a = out.assessment
-    for dim in ("central_message", "organization", "language", "supporting_material"):
+    for dim in ("organization", "language", "supporting_material"):
         assert _dim(a, dim).level is None
         assert "text analysis failed" in (_dim(a, dim).not_measurable or "")
+    assert _dim(a, "central_message").information_only  # no text: nothing quoted
+    assert not _finding(a, "central_message").evidence
     assert _dim(a, "delivery").level is not None
     with pytest.raises(RuntimeError):
         assess_report(report, parser=broken, cfg=speech_cfg, scenario="s1_presentation")
+
+
+# --- central message information-only (owner, 2026-11-26, ADR 0025) ---------------------------
+
+
+def test_central_message_is_shown_not_scored_with_the_possible_main_point(build: Any):
+    report, a = build()
+    r, f = _dim(a, "central_message"), _finding(a, "central_message")
+    assert r.information_only and r.level is None and r.score is None and r.not_measurable is None
+    assert f.level is None and f.confidence == Confidence.LOW
+    quote = "Today I will show that short daily practice improves presentation skills."
+    assert f.statement.endswith(f"Possible main point (low confidence): “{quote}”")
+    assert "ADR 0025" in f.statement and "not scored" in f.statement
+    assert [e.transcript.text for e in f.evidence if e.transcript] == [quote]
+    assert all(e.time is not None for e in f.evidence)
+    evidence.verify(f.evidence, report.transcript, report.transcript.duration_s)
+
+
+@pytest.mark.parametrize("lang", ["en", "ar"])
+def test_without_a_possible_main_point_the_card_says_nothing_about_one(
+    build: Any, lang: Literal["en", "ar"]
+):
+    from presenceai.lang import text
+
+    talk = "We met. We talked. It was fine. We left. We slept. We woke. We ate. We went home. " * 3
+    _, a = build(talk)
+    f = _finding(a, "central_message")
+    assert not f.evidence and f.confidence is None
+    assert f.statement == text("en", "assessment.information_only.central_message",
+                               dimension="Central message")  # fmt: skip
+    for wording in ("no main point", "not found", "No sentence"):
+        assert wording.lower() not in f.statement.lower()
+    reason = text(lang, "assessment.information_only.central_message", dimension="x")
+    assert "ADR 0025" in reason and "P7" in reason
+
+
+def test_information_only_is_config_driven_for_both_scenarios():
+    from presenceai.rubric.loader import load_thresholds
+
+    for scenario in ("s1_presentation", "s2_project_defense"):
+        assert load_thresholds(scenario).information_only == ("central_message",)
+
+
+def test_information_only_must_name_a_rubric_dimension(tmp_path: Any):
+    import yaml
+
+    from presenceai.rubric import loader
+
+    data = yaml.safe_load(loader.CONFIG.read_text("utf-8"))
+    data["s1_presentation"]["information_only"] = ["no_such_dimension"]
+    cfg = tmp_path / "rubric.yaml"
+    cfg.write_text(yaml.safe_dump(data), encoding="utf-8")
+    with pytest.raises(ValueError, match="unknown dimensions"):
+        loader.load_rubric("s1_presentation", config=cfg)

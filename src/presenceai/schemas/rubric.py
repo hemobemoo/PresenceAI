@@ -147,9 +147,15 @@ class DimensionResult(_Frozen):
     conditions: tuple[ConditionResult, ...] = ()
     next_level: tuple[ConditionResult, ...] = ()  # unmet measured conditions of level + 1
     not_measurable: str | None = None
+    # shown, not scored (ADR 0025): no level, score, cap or not-measurable reason
+    information_only: bool = False
 
     @model_validator(mode="after")
     def _level_or_reason(self) -> DimensionResult:
+        if self.information_only:
+            if self.level is not None or self.score is not None or self.not_measurable is not None:
+                raise ValueError("an information-only dimension has no level, score or reason")
+            return self
         if (self.level is None) != (self.not_measurable is not None):
             raise ValueError("a dimension has either a level or a not-measurable reason")
         if self.level is not None and (self.score is None or self.confidence is None):

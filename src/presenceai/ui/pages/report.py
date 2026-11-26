@@ -11,8 +11,13 @@ images or formatting to the page.
 
 After the owner's real S1 runs (2026-11-25): a long quote shows its first `QUOTE_WORDS` words and
 "…" (the full quote stays in the report data and the export); each card names the measures that
-were not measured and why, and those left out because the camera was off; and a Central message
-card at level 1 with no thesis sentence says what was checked (rules-only wording from lang/).
+were not measured and why, and those left out because the camera was off.
+
+ADR 0025 (owner, 2026-11-26): a line above the cards counts the scored dimensions ("Levels based
+on N of M dimensions") and names the information-only ones; an information-only card has an
+"Information only, not scored" badge instead of a level and N of M measures. The level-1
+central-message hint is gone (the detector cannot support "no main point found"); the general
+tip is on the practice page.
 """
 
 from __future__ import annotations
@@ -28,7 +33,6 @@ from presenceai.storage.reports import ReportView
 
 _MD = re.compile(r"([\\`*_{}\[\]()#+\-.!|<>~])")
 QUOTE_WORDS = 25  # longer quotes are shortened on the card only
-THESIS = "text.central_message.statements"
 
 
 def escape(text: str) -> str:
@@ -56,6 +60,8 @@ def _names(scenario: str, lang: Language) -> dict[str, str]:
 
 
 def _badges(d: DimensionSummary, lang: Language) -> str:
+    if d.information_only:
+        return f"**{ui_text(lang, 'report.information_only')}**"
     parts: list[str] = []
     if d.level is None:
         key = "report.failed" if d.failed else "report.not_measurable"
@@ -110,14 +116,16 @@ def _unmeasured(r: DimensionResult, lang: Language) -> list[str]:
     return lines
 
 
-def _hint(d: DimensionSummary, summary: SessionSummary, lang: Language) -> str | None:
-    """Rules-only coaching for a Central message at level 1 with no thesis sentence found."""
-    if d.dimension != "central_message" or d.level != 1:
-        return None
-    statements = {m.measure: m.value for m in summary.measures}.get(THESIS)
-    if statements != 0:
-        return None
-    return ui_text(lang, "report.hints.central_message_no_statement")
+def dimensions_line(summary: SessionSummary, names: dict[str, str], lang: Language) -> str:
+    """ "Levels based on N of M dimensions." and the information-only ones by name."""
+    dims = summary.dimensions
+    scored = sum(d.level is not None for d in dims)
+    line = ui_text(lang, "report.dimensions_line", measured=scored, total=len(dims))
+    info = [names.get(d.dimension, d.dimension) for d in dims if d.information_only]
+    if info:
+        sep = text(lang, "assessment.separator")
+        line = f"{line} {ui_text(lang, 'report.not_scored_line', names=sep.join(info))}"
+    return line
 
 
 def render(view: ReportView, lang: Language, scenario: str, *, max_evidence: int = 5) -> str:
@@ -133,12 +141,11 @@ def render(view: ReportView, lang: Language, scenario: str, *, max_evidence: int
     results = {r.dimension: r for r in view.report.assessment.dimensions} if view.report else {}
     order = {dim: i for i, dim in enumerate(names)}  # the rubric's order
     dims = sorted(view.summary.dimensions, key=lambda d: order.get(d.dimension, len(order)))
+    if dims:
+        out.append(escape(dimensions_line(view.summary, names, lang)))
     for d in dims:
         out.append(f"### {escape(names.get(d.dimension, d.dimension))}")
         out.append(_badges(d, lang))
-        hint = _hint(d, view.summary, lang)
-        if hint:
-            out.append(f"> {escape(hint)}")
         f = findings.get(d.dimension)
         if f is None:
             continue

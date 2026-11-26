@@ -82,10 +82,7 @@ text:
   not_measured_language: "content measures cover English only (FINAL_04 §5); this recording is in {language}"
   unreliable_punctuation: "not measurable: the transcript has too few sentence marks to count sentence length"
   central_message:
-    statements: "sentences that match the thesis-cue lexicon"
-    in_opening: "a thesis-cue sentence within the first {share:g} % of the words"
-    in_closing: "a sentence in the last {share:g} % of the words with a key noun of the thesis sentence (by lemma)"
-    recurrences: "sentences between the first {opening:g} % and the last {closing:g} % with a key noun of the thesis sentence (by lemma)"
+    possible_main_point: "the first sentence within the first {share:g} % of the words that is not a question and contains a purpose phrase such as 'my main point is' (lexicon)"
   organization:
     framing: "introduction cue in the first {opening:g} % and conclusion cue in the last {closing:g} % (lexicon)"
     transitions: "sentences with a transition cue in their first 3 words (lexicon)"
@@ -114,6 +111,9 @@ assessment:
   text_failed: "text analysis failed"
   missing_followups: "no follow-up answer recorded"
   uncalibrated: "measured {value:g}, not scored until its thresholds are calibrated"
+  information_only:
+    central_message: "{dimension}: shown for information, not scored. No detection method reached the accuracy bar set in advance on labelled practice talks (ADR 0025); scoring waits for the language-model check planned for phase P7."
+  possible_main_point: "Possible main point (low confidence): “{quote}”"
   followup_not_measured_language: "not measured for {language} answers (ADR 0022)"
   followup_relevance_bank: "measured {values} on questions from the bank; not scored until relevance is recalibrated on generic questions"
   followup_no_answer: "Answer {answer}: no speech in the {window:g} s answer window."
@@ -125,6 +125,7 @@ assessment:
         in_opening: "main point stated in the opening (1 = yes)"
         in_closing: "main point restated in the closing (1 = yes)"
         key_phrase_recurrences: "body sentences with a key phrase"
+        possible_main_point: "possible main point found (1 = yes; shown, not scored)"
       organization:
         framing_parts: "introduction and conclusion cues found"
         transitions: "sentences with a transition"

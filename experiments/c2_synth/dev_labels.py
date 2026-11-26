@@ -350,7 +350,11 @@ def text_transcript(text: str) -> Any:
 
 def app_detector(parser: Any = None) -> Callable[[str], Detected]:
     """The app's central-message detector on a text: whitespace words with synthetic times
-    (punctuation is kept, so sentences split as in a transcript), the local spaCy parser."""
+    (punctuation is kept, so sentences split as in a transcript), the local spaCy parser.
+
+    Since ADR 0025 the app runs method A (the possible main point) and no restatement check, so
+    `in_closing` is always False. `dev_labels.json` was written with the v1 detector at e21b0d1;
+    a new `score` run measures method A instead."""
     from presenceai.settings import get_settings
     from presenceai.text import central_message
     from presenceai.text.analyze import analyze_text
@@ -358,19 +362,14 @@ def app_detector(parser: Any = None) -> Callable[[str], Detected]:
 
     parser = parser or spacy_parser()  # tests pass a fake parser
     pauses = get_settings().speech.pauses
-    k_statements, k_opening, k_closing = central_message.KEYS[:3]
 
     def detect(text: str) -> Detected:
         m = analyze_text(text_transcript(text), parser=parser, pauses=pauses).measurements
-
-        def spans(k: str) -> tuple[str, ...]:
-            if k not in m or not m[k].value:
-                return ()
-            return tuple(e.transcript.text for e in m[k].evidence if e.transcript is not None)
-
-        thesis = spans(k_opening)
-        return Detected(thesis=thesis[0] if thesis else None, statements=spans(k_statements),
-                        in_closing=bool(spans(k_closing)))  # fmt: skip
+        found = m.get(central_message.KEY)
+        quotes = () if found is None or not found.value else tuple(
+            e.transcript.text for e in found.evidence if e.transcript is not None
+        )  # fmt: skip
+        return Detected(thesis=quotes[0] if quotes else None, statements=quotes, in_closing=False)
 
     return detect
 

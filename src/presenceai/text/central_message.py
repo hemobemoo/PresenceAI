@@ -1,69 +1,67 @@
-"""Central message (rubric dimension, ADR 0017 definitions).
+"""Central message: a possible main point, shown and never scored (ADR 0025).
 
-- statements: sentences matching the thesis-cue lexicon, anywhere;
-- in_opening: the thesis sentence (the first thesis-cue sentence in the opening) exists;
-- in_closing: a closing sentence other than the thesis sentence contains a key phrase;
-- key_phrase_recurrences: body sentences that contain a key phrase.
+No rule-based or embedding method reached the pre-set bar on the owner's labelled C2 talks
+(ADR 0025), so the central-message dimension is information-only until the P7 judge, and the v1
+thesis-cue measures are no longer computed. What runs is method A as the owner accepted it for
+display:
 
-A key phrase is the lemma of a noun-phrase head (NOUN or PROPN, not a stop word) of the thesis
-sentence; matching is by lemma, not exact string and not meaning.
+- candidates: sentences that start in the first `window_pct` % of the words (configs/rubric.yaml
+  `possible_main_point`) and are not questions;
+- the first candidate that contains a phrase of `main_point_purpose` (lang/en/text_cues.yaml),
+  as whole words after normalisation, is the possible main point.
+
+The measurement is 1 (a sentence found, its span and time as evidence) or 0 (the searched
+opening as evidence, never shown as "no main point found"). Confidence is always low.
 """
 
 from __future__ import annotations
 
 from presenceai.lang import text
-from presenceai.schemas.assessment import Measurement
-from presenceai.text.document import Document, Sentence, match
-from presenceai.text.measure import NOMINAL, measurement
+from presenceai.schemas.assessment import Confidence, Evidence, Measurement, TimeSpan
+from presenceai.text.document import Document, Sentence, find
 
-KEYS = (
-    "text.central_message.statements",
-    "text.central_message.in_opening",
-    "text.central_message.in_closing",
-    "text.central_message.key_phrase_recurrences",
-)
+KEY = "text.central_message.possible_main_point"
+KEYS = (KEY,)
+CUE = "main_point_purpose"
 
 
-def key_phrases(thesis: Sentence | None) -> frozenset[str]:
-    if thesis is None:
-        return frozenset()
-    return frozenset(
-        t.lemma.casefold()
-        for t in thesis.tokens
-        if t.chunk_head and t.pos in NOMINAL and not t.is_stop
-    )
+def window_end(doc: Document, window_pct: float) -> int:
+    """First word index after the opening window (at least one word)."""
+    return max(1, round(doc.n_words * window_pct / 100)) if doc.n_words else 0
 
 
-def has_key(s: Sentence, keys: frozenset[str]) -> bool:
-    return any(t.pos in NOMINAL and t.lemma.casefold() in keys for t in s.tokens)
+def possible_main_point(doc: Document, window_pct: float) -> Sentence | None:
+    end = window_end(doc, window_pct)
+    for s in doc.sentences:
+        if s.first_word >= end:
+            break
+        if s.text.rstrip().endswith("?"):
+            continue
+        if find(s.text, CUE):
+            return s
+    return None
 
 
-def measure(doc: Document, values: dict[str, float]) -> dict[str, Measurement]:
-    opening, closing = values["opening_share_pct"], values["closing_share_pct"]
-    statements = [s for s in doc.sentences if match(s.text, "thesis")]
-    thesis = next((s for s in statements if doc.in_opening(s)), None)
-    keys = key_phrases(thesis)
-    others = [s for s in doc.sentences if s is not thesis and has_key(s, keys)]
-    in_closing = [s for s in others if doc.in_closing(s)]
-    recurrences = [s for s in others if doc.in_body(s)]
+def measure(doc: Document, window_pct: float) -> dict[str, Measurement]:
+    s = possible_main_point(doc, window_pct)
+    words = doc.transcript.words
+    if s is not None:
+        evidence = (
+            Evidence(
+                transcript=doc.span(s),
+                time=TimeSpan(start_s=words[s.first_word].start_s, end_s=words[s.last_word].end_s),
+            ),
+        )
+    else:
+        evidence = (Evidence(transcript=doc.transcript.span(0, window_end(doc, window_pct))),)
     return {
-        KEYS[0]: measurement(
-            doc, len(statements), "sentences", text("en", "text.central_message.statements"),
-            (doc.span(s) for s in statements), "all",
-        ),
-        KEYS[1]: measurement(
-            doc, thesis is not None, "yes/no",
-            text("en", "text.central_message.in_opening", share=opening),
-            [doc.span(thesis)] if thesis else [], "opening",
-        ),
-        KEYS[2]: measurement(
-            doc, bool(in_closing), "yes/no",
-            text("en", "text.central_message.in_closing", share=closing),
-            (doc.span(s) for s in in_closing), "closing",
-        ),
-        KEYS[3]: measurement(
-            doc, len(recurrences), "sentences",
-            text("en", "text.central_message.recurrences", opening=opening, closing=closing),
-            (doc.span(s) for s in recurrences), "body",
-        ),
-    }  # fmt: skip
+        KEY: Measurement(
+            value=1.0 if s is not None else 0.0,
+            unit="yes/no",
+            confidence=Confidence.LOW,
+            method=text("en", "text.central_message.possible_main_point", share=window_pct),
+            evidence=evidence,
+            language="en",
+            live=False,
+        )
+    }

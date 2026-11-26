@@ -21,11 +21,13 @@ CONFIG = REPO_ROOT / "configs" / "rubric.yaml"
 
 __all__ = [
     "PartialCap",
+    "PossibleMainPoint",
     "RubricThresholds",
     "anchor_text",
     "fill",
     "level_score",
     "load_partial_cap",
+    "load_possible_main_point",
     "load_rubric",
     "load_thresholds",
     "placeholders",
@@ -40,6 +42,8 @@ class RubricThresholds(BaseModel):
     # Threshold keys whose values are placeholders: a measure with a condition on one of them
     # is reported with its value but not scored (its conditions are dropped; ADR 0022).
     uncalibrated: tuple[str, ...] = ()
+    # Dimensions shown, not scored (ADR 0025): no level, score or cap; checked against the rubric
+    information_only: tuple[str, ...] = ()
 
     @model_validator(mode="after")
     def _uncalibrated_exist(self) -> Self:
@@ -47,6 +51,15 @@ class RubricThresholds(BaseModel):
         if unknown:
             raise ValueError(f"uncalibrated names unknown thresholds: {sorted(unknown)}")
         return self
+
+
+class PossibleMainPoint(BaseModel):
+    """Method A on the central-message card (ADR 0025): shown when it fires, never scored."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+    status: Literal["proposed", "provisional", "decided"]
+    decided_in: str = Field(min_length=1)
+    window_pct: float = Field(gt=0, le=100)
 
 
 class PartialCap(BaseModel):
@@ -77,13 +90,21 @@ def load_partial_cap(*, config: Path = CONFIG) -> PartialCap:
     return PartialCap.model_validate(_yaml(config)["partial_cap"])
 
 
+def load_possible_main_point(*, config: Path = CONFIG) -> PossibleMainPoint:
+    return PossibleMainPoint.model_validate(_yaml(config)["possible_main_point"])
+
+
 def load_rubric(rubric_id: str, *, resources: Path = RESOURCES, config: Path = CONFIG) -> Rubric:
     """The rubric, validated against its thresholds."""
     try:
         rubric = Rubric.model_validate(_yaml(resources / f"{rubric_id}.yaml"))
     except ValueError as e:  # pydantic's ValidationError is a ValueError
         raise ValueError(f"{rubric_id}: {e}") from e
-    values = load_thresholds(rubric_id, config=config).values
+    thresholds = load_thresholds(rubric_id, config=config)
+    values = thresholds.values
+    unknown = set(thresholds.information_only) - {d.id for d in rubric.dimensions}
+    if unknown:
+        raise ValueError(f"information_only names unknown dimensions: {sorted(unknown)}")
     used: set[str] = set()
     for name, definition in rubric.definitions.items():
         missing = placeholders(definition) - set(values)

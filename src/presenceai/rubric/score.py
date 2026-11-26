@@ -31,6 +31,10 @@ P3-a (ADR 0019 amendment, owner 2026-11-24):
   stage) stay in M.
 - **Overrun** (`timing.overrun_s`) is measured against `limit_s`, the session's time limit, for
   recordings made in the app; `limit_s` None is an uploaded file.
+- **Information-only dimensions** (owner, 2026-11-26, ADR 0025; `RubricThresholds.
+  information_only`): no level, score or cap; the finding says why, and for central message it
+  quotes the possible main point when method A found one (low confidence, verified evidence).
+  When A found none, the finding says nothing about a main point.
 - **One failed finding must not crash the report** (`strict=False`, the app): an error while
   scoring, wording or verifying one dimension makes that dimension "not measurable" and is
   logged as the dimension id and error class only, never transcript text. With `strict=True`
@@ -59,6 +63,7 @@ from presenceai.schemas.rubric import Assessment, Dimension, DimensionResult, Fi
 from presenceai.schemas.speech import SpeechReport
 from presenceai.schemas.text import TextReport
 from presenceai.settings import SpeechSettings
+from presenceai.text import central_message
 
 log = logging.getLogger(__name__)
 _RANK = {Confidence.LOW: 0, Confidence.MEDIUM: 1, Confidence.HIGH: 2}
@@ -298,6 +303,27 @@ def _with_followup_notes(
     )
 
 
+def _information_only(
+    d: Dimension, text_report: TextReport, lang: str, total: int
+) -> tuple[DimensionResult, Finding]:
+    """Shown, not scored (ADR 0025): the reason, and the possible main point when A fired."""
+    lang_ = _report_lang(lang)
+    name = d.name_ar if lang_ == "ar" else d.name
+    statement = text(lang_, f"assessment.information_only.{d.id}", dimension=name)
+    evidence: tuple[Evidence, ...] = ()
+    confidence = None
+    m = text_report.measurements.get(central_message.KEY) if d.id == "central_message" else None
+    if m is not None and m.value == 1 and m.evidence and m.evidence[0].transcript is not None:
+        quote = m.evidence[0].transcript.text
+        statement = f"{statement} {text(lang_, 'assessment.possible_main_point', quote=quote)}"
+        evidence, confidence = m.evidence, m.confidence
+    return (
+        DimensionResult(dimension=d.id, skills=d.skills, information_only=True),
+        Finding(dimension=d.id, statement=statement, confidence=confidence, measured=0,
+                total=total, evidence=evidence),
+    )  # fmt: skip
+
+
 def _failed(d: Dimension, lang: str, total: int) -> tuple[DimensionResult, Finding]:
     """A dimension whose scoring failed, shown as not measurable (app mode, ADR 0019)."""
     lang_ = _report_lang(lang)
@@ -340,8 +366,18 @@ def assess(
     results: list[DimensionResult] = []
     findings: list[Finding] = []
     failed: list[str] = []
+    info_only = frozenset(thresholds.information_only)
     for d in rubric.dimensions:
         try:
+            if d.id in info_only:
+                every = measures_of(d)
+                total = sum(k not in excluded for k in every) or len(every)
+                r, f = _information_only(d, text_report, lang, total)
+                if f.evidence:
+                    verify(f.evidence, speech.transcript, speech.transcript.duration_s, answers)
+                results.append(r)
+                findings.append(f)
+                continue
             r = _dimension(d, found, missing, thresholds, cap, excluded)
             f = _finding(rubric, d, r, found, missing, lang)
             f = _with_followup_notes(f, d, followups, lang, found, thresholds)

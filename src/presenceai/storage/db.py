@@ -11,7 +11,7 @@ from __future__ import annotations
 import uuid
 from datetime import UTC, datetime, timedelta
 
-from sqlalchemy import Engine
+from sqlalchemy import Engine, text
 from sqlmodel import Field, Session, SQLModel, col, create_engine, select
 
 from presenceai.schemas.storage import (
@@ -63,6 +63,7 @@ class _DimensionRow(SQLModel, table=True):
     measured: int
     total: int
     failed: bool = False
+    information_only: bool = False  # ADR 0025 (column added by `_upgrade` in older files)
 
 
 class _MeasureRow(SQLModel, table=True):
@@ -121,6 +122,15 @@ class Database:
         layout.home.mkdir(parents=True, exist_ok=True)
         self._engine: Engine = create_engine(f"sqlite:///{layout.db_path.as_posix()}")
         SQLModel.metadata.create_all(self._engine)
+        self._upgrade()
+
+    def _upgrade(self) -> None:
+        """Add columns that newer versions need to a database made by an older one."""
+        with self._engine.begin() as conn:
+            cols = {row[1] for row in conn.execute(text("PRAGMA table_info(dimension_summary)"))}
+            if "information_only" not in cols:  # ADR 0025, 2026-11-26
+                add = "ADD COLUMN information_only BOOLEAN NOT NULL DEFAULT 0"
+                conn.execute(text(f"ALTER TABLE dimension_summary {add}"))
 
     def close(self) -> None:
         """Release the file (needed before deleting it on Windows)."""
