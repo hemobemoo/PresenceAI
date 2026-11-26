@@ -166,3 +166,76 @@ def test_positions_counts_regions_by_word_share_without_text():
     assert r["regions"] == {"opening": 1, "middle": 1, "closing": 1, "not_located": 0}
     assert r["sentences"] == 3 and sum(r["start_share_decile"].values()) == 3
     assert json.dumps(r).find("Alpha") == -1
+
+
+def _first_sheet() -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    sheet, key = dl.draw(_rows(per_group=8))  # 40 dev items
+    _fill(sheet)
+    for s in sheet[::4]:
+        s.update(main_point_stated="no", main_point_sentence=None)
+    return sheet, key
+
+
+def test_relabel_draw_is_20_items_new_keys_new_order_no_first_labels():
+    sheet, key = _first_sheet()
+    re_sheet, re_key = dl.relabel_draw(sheet, key)
+    assert len(re_sheet) == 20 and len(set(re_key[s["key"]]["first"] for s in re_sheet)) == 20
+    for s in re_sheet:  # blind to the first labels and to the first keys
+        assert set(s) == {"key", "text", *dl.FIELDS}
+        assert all(s[f] is None for f in dl.FIELDS)
+        assert s["key"].startswith("r")
+    firsts = [re_key[s["key"]]["first"] for s in re_sheet]
+    assert firsts != sorted(firsts, key=[s["key"] for s in sheet].index)  # new order
+    assert dl.relabel_draw(sheet, key) == (re_sheet, re_key)  # seeded
+
+
+def test_relabel_draw_needs_a_finished_first_sheet():
+    sheet, key = _first_sheet()
+    sheet[0]["restated_in_closing"] = None
+    with pytest.raises(ValueError, match="finished"):
+        dl.relabel_draw(sheet, key)
+
+
+def test_relabel_score_counts_agreement_with_the_first_labels():
+    sheet, key = _first_sheet()
+    re_sheet, re_key = dl.relabel_draw(sheet, key)
+    first = {s["key"]: s for s in sheet}
+    for s in re_sheet:  # the owner gives the same labels again ...
+        f = first[re_key[s["key"]]["first"]]
+        s.update({k: f[k] for k in dl.FIELDS})
+    r = dl.relabel_score(re_sheet, re_key, sheet, key)
+    assert r["items"] == 20 and r["stated"]["agree"] == 20
+    assert r["stated"]["kappa"] == 1.0 and r["kappa_reliable"] is False
+    assert r["sentence"]["both_yes"] == r["sentence"]["same"]
+    s0 = next(s for s in re_sheet if dl.yes_no(s["main_point_stated"]))
+    s0["restated_in_closing"] = "yes"  # ... except one flipped "restated" (first label: no)
+    r = dl.relabel_score(re_sheet, re_key, sheet, key)
+    assert r["stated"]["agree"] == 20 and r["restated_in_closing"]["agree"] == 19
+    assert r["restated_in_closing"]["first_no_now_yes"] == 1
+    assert json.dumps(r).find("solar") == -1  # counts only
+
+
+def test_relabel_score_refuses_unfinished_or_flagged():
+    sheet, key = _first_sheet()
+    re_sheet, re_key = dl.relabel_draw(sheet, key)
+    with pytest.raises(ValueError, match="not finished"):
+        dl.relabel_score(re_sheet, re_key, sheet, key)
+
+
+def test_relabel_draw_is_stratified_15_first_yes_5_first_no():
+    # ADR 0025 item 7 (owner, 2026-11-26): an unstratified draw gave only 1 first "no".
+    sheet, key = _first_sheet()  # 30 yes, 10 no
+    re_sheet, re_key = dl.relabel_draw(sheet, key)
+    first = {s["key"]: dl.yes_no(s["main_point_stated"]) for s in sheet}
+    picked = Counter(first[re_key[s["key"]]["first"]] for s in re_sheet)
+    assert picked == {True: 15, False: 5}
+    order = [first[re_key[s["key"]]["first"]] for s in re_sheet]
+    assert order != sorted(order) and order != sorted(order, reverse=True)  # shuffled together
+
+
+def test_relabel_draw_refuses_too_few_items_in_a_stratum():
+    sheet, key = _first_sheet()
+    for s in sheet:
+        s.update(main_point_stated="yes", main_point_sentence=THESIS)
+    with pytest.raises(ValueError, match="first 'no'"):
+        dl.relabel_draw(sheet, key)

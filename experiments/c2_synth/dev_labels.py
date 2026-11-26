@@ -5,6 +5,15 @@
     uv run python experiments/c2_synth/dev_labels.py score           # after the sheet is done
     uv run python experiments/c2_synth/dev_labels.py score --partial # done items only
     uv run python experiments/c2_synth/dev_labels.py positions       # where main points sit
+    uv run python experiments/c2_synth/dev_labels.py relabel draw    # owner consistency check
+    uv run python experiments/c2_synth/dev_labels.py relabel status
+    uv run python experiments/c2_synth/dev_labels.py relabel score
+
+- **relabel** (ADR 0025 item 7): 20 items of the finished sheet, 15 first "yes" and 5 first
+  "no", random within each, new neutral keys and a
+  new order, no first labels shown (`relabel_sheet.yaml`, `relabel_key.json`). Label them about
+  a week after the first sheet, without opening `sheet.yaml`. `relabel score` writes agreement
+  counts only to `experiments/results/c2/dev_relabel.json` (Cohen's kappa marked unreliable).
 
 Required before P5 (owner, 2026-11-25): the central-message cues are tuned only on these labels,
 never on the planted labels (ADR 0021 §4b-4c).
@@ -44,6 +53,9 @@ GENERATED = ROOT / "data" / "c2" / "generated.jsonl"
 OUT_DIR = ROOT / "data" / "c2" / "dev_labels"
 RESULTS = ROOT / "experiments" / "results" / "c2" / "dev_labels.json"
 POSITIONS = ROOT / "experiments" / "results" / "c2" / "dev_positions.json"
+RELABEL_RESULTS = ROOT / "experiments" / "results" / "c2" / "dev_relabel.json"
+RELABEL_N = {True: 15, False: 5}  # first "stated" yes / no (owner, 2026-11-26; ADR 0025 item 7)
+RELABEL_SEED = 20261203
 SEED = 20261125
 FIELDS = ("main_point_stated", "main_point_sentence", "restated_in_closing")
 SENTENCE_COUNTS = ("owner_yes", "detector_found", "matches", "owner_sentence_among_statements")
@@ -193,6 +205,88 @@ def score(
     }
 
 
+def relabel_draw(
+    sheet: Sheet,
+    key: dict[str, Any],
+    *,
+    n: dict[bool, int] = RELABEL_N,
+    seed: int = RELABEL_SEED,
+) -> tuple[Sheet, dict[str, Any]]:
+    """The owner's consistency check (ADR 0025 item 7): of the finished first sheet, `n[True]`
+    items first marked "stated: yes" and `n[False]` first marked "no", each at random within its
+    stratum, shuffled together; new neutral keys, none of the first labels shown. (An
+    unstratified draw of 20 held only 1 first "no".)"""
+    st = status(sheet, key)
+    if st["flags"] or st["done"] < len(sheet):
+        raise ValueError("the first sheet must be finished and unflagged before the relabel draw")
+    rng = random.Random(seed)  # noqa: S311 - reproducible sample, not security
+    chosen: list[str] = []
+    for stratum in (True, False):
+        pool = sorted(s["key"] for s in sheet if _item(s)[0]["main_point_stated"] is stratum)
+        if len(pool) < n[stratum]:
+            word = "yes" if stratum else "no"
+            raise ValueError(f"only {len(pool)} first '{word}' items; {n[stratum]} needed")
+        chosen += rng.sample(pool, n[stratum])
+    rng.shuffle(chosen)
+    by_key = {s["key"]: s for s in sheet}
+    re_sheet, re_key = [], {}
+    for i, k in enumerate(chosen, start=1):
+        rk = f"r{i:02d}"
+        re_sheet.append({"key": rk, "text": by_key[k]["text"], **dict.fromkeys(FIELDS)})
+        re_key[rk] = {"first": k, "sha256": key[k]["sha256"]}
+    return re_sheet, re_key
+
+
+def _kappa(c: Counter[tuple[bool, bool]]) -> float | None:
+    n = sum(c.values())
+    if not n:
+        return None
+    po = (c[True, True] + c[False, False]) / n
+    a1, b1 = (c[True, True] + c[True, False]) / n, (c[True, True] + c[False, True]) / n
+    pe = a1 * b1 + (1 - a1) * (1 - b1)
+    return None if pe == 1 else round((po - pe) / (1 - pe), 4)
+
+
+def _agreement(pairs: list[tuple[bool, bool]]) -> dict[str, Any]:
+    """pairs: (first, now)."""
+    c = Counter(pairs)
+    return {"agree": c[True, True] + c[False, False], "both_yes": c[True, True],
+            "both_no": c[False, False], "first_yes_now_no": c[True, False],
+            "first_no_now_yes": c[False, True], "kappa": _kappa(c)}  # fmt: skip
+
+
+def relabel_score(
+    re_sheet: Sheet, re_key: dict[str, Any], sheet: Sheet, key: dict[str, Any]
+) -> dict[str, Any]:
+    """Agreement of the relabel with the first labels; counts only."""
+    st = status(re_sheet, re_key)
+    if st["flags"]:
+        raise ValueError(f"{len(st['flags'])} flagged items; fix them first (relabel status)")
+    if st["done"] < len(re_sheet):
+        raise ValueError(f"relabel not finished: {st['done']} of {len(re_sheet)} done")
+    status(sheet, key)
+    first = {s["key"]: s for s in sheet}
+    stated, closing, sent = [], [], Counter()
+    for s in re_sheet:
+        f = first[re_key[s["key"]]["first"]]
+        now, _ = _item(s)
+        was, _ = _item(f)
+        stated.append((bool(was["main_point_stated"]), bool(now["main_point_stated"])))
+        closing.append((bool(was["restated_in_closing"]), bool(now["restated_in_closing"])))
+        if was["main_point_stated"] and now["main_point_stated"]:
+            sent["both_yes"] += 1
+            sent["same"] += _same(f["main_point_sentence"], s["main_point_sentence"])
+    n = len(re_sheet)
+    return {
+        "items": n,
+        "stated": _agreement(stated),
+        "restated_in_closing": _agreement(closing),
+        "sentence": {"both_yes": sent["both_yes"], "same": sent["same"]},
+        "kappa_reliable": False,  # ADR 0025 item 7: kappa at n = 20 is marked unreliable
+        "note": f"Cohen's kappa at n = {n} is reported but unreliable (ADR 0025 item 7)",
+    }
+
+
 def _sublist(hay: list[str], needle: list[str]) -> int | None:
     n = len(needle)
     return next((i for i in range(len(hay) - n + 1) if hay[i : i + n] == needle), None)
@@ -281,6 +375,33 @@ def _read(path: Path) -> Any:
     return yaml.safe_load(path.read_text("utf-8"))
 
 
+def _relabel(action: str, sheet: Sheet, key: dict[str, Any]) -> int:
+    re_path, re_key_path = OUT_DIR / "relabel_sheet.yaml", OUT_DIR / "relabel_key.json"
+    if action == "draw":
+        if re_path.exists():
+            raise SystemExit(f"{re_path} exists; the relabel sheet is drawn once")
+        re_sheet, re_key = relabel_draw(sheet, key)
+        re_path.write_text(yaml.safe_dump(re_sheet, allow_unicode=True, sort_keys=False,
+                                          width=100), encoding="utf-8")  # fmt: skip
+        re_key_path.write_text(json.dumps(re_key, indent=2) + "\n", encoding="utf-8")
+        print(f"wrote {len(re_sheet)} items to {re_path.relative_to(ROOT)}; "
+              "label them without looking at sheet.yaml")  # fmt: skip
+        return 0
+    re_sheet, re_key = _read(re_path), json.loads(re_key_path.read_text("utf-8"))
+    if action == "status":
+        st = status(re_sheet, re_key)
+        print(f"{st['done']} of {st['items']} done; {len(st['flags'])} flagged")
+        for k, f in st["flags"].items():
+            print(f"  {k}: {f}")
+        return 1 if st["flags"] else 0
+    if action == "score":
+        result = relabel_score(re_sheet, re_key, sheet, key)
+        RELABEL_RESULTS.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+        print(json.dumps(result, indent=2))
+        return 0
+    raise SystemExit(f"unknown relabel action {action!r}: draw | status | score")
+
+
 def main(argv: list[str]) -> int:
     action = argv[1] if len(argv) > 1 else "status"
     sheet_path, key_path = OUT_DIR / "sheet.yaml", OUT_DIR / "key.json"
@@ -296,6 +417,8 @@ def main(argv: list[str]) -> int:
         print(f"wrote {len(sheet)} dev items to {sheet_path.relative_to(ROOT)} (key kept apart)")
         return 0
     sheet, key = _read(sheet_path), json.loads(key_path.read_text("utf-8"))
+    if action == "relabel":
+        return _relabel(argv[2] if len(argv) > 2 else "status", sheet, key)
     if action == "status":
         st = status(sheet, key)
         print(f"{st['done']} of {st['items']} done; {len(st['flags'])} flagged")
@@ -317,7 +440,10 @@ def main(argv: list[str]) -> int:
         POSITIONS.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
         print(json.dumps(result, indent=2))
         return 0
-    raise SystemExit(f"unknown action {action!r}: draw | status | score [--partial] | positions")
+    raise SystemExit(
+        f"unknown action {action!r}: draw | status | score [--partial] | positions"
+        " | relabel draw|status|score"
+    )
 
 
 if __name__ == "__main__":

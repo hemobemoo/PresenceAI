@@ -68,10 +68,18 @@ as in the app.
 6. **If e5 is ever used in S1:** it is loaded only after Whisper has been unloaded, never both
    at once. The analysis order is transcription, unload Whisper, then e5, then unload e5
    (ADR 0024 one-analysis-at-a-time and unload rules).
-7. **Owner consistency.** About 2026-12-03 the owner re-labels 20 random dev items on a separate
+7. **Owner consistency.** About 2026-12-03 the owner re-labels 20 dev items on a separate
    sheet, blind to the first labels (`dev_labels.py relabel`). Agreement on "stated", on the
    sentence (same strict rule) and on "restated" is reported as counts, with Cohen's κ marked
    unreliable at n = 20. It is the realistic ceiling for every method.
+   - **Sampling rule (owner, 2026-11-26, decided before the draw):** stratified by the first
+     "stated" label: **15 items the owner first marked "yes" and 5 first marked "no"**, each
+     drawn at random within its stratum with the fixed seed 20261203, then shuffled together.
+     15 / 5 matches the first sheet's 90 / 28 proportions, so agreement needs no reweighting.
+   - **Reason:** an unstratified random draw of 20 (dry run in memory, nothing written or
+     shown) held only 1 first-"no" item, which leaves agreement on "no" and κ almost
+     meaningless. The seed was not changed to find a better sample. The relabel sheet shows no
+     labels, so stratifying does not unblind the owner.
 8. **The test part stays untouched** until the method is frozen in the amendment. E4 handling
    is in ADR 0021 §4d.
 9. **Language.** Central message stays English-only. Arabic central message is **still not
