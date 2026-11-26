@@ -125,8 +125,8 @@ as in the app.
       20261126 and dealt round-robin into 5 folds.
     - **Reference rows:** "always yes" (no sentence, so headline 0) and the current detector
       (thesis cue v1, `lang/en/text_cues.yaml`), both scored on all 118 with no tuning.
-12. **Amendment (owner, 2026-11-26): changed after the spaCy-only results, before e5 was
-    scored.** Reason: the headline rewards calling every talk "stated" (B: 27 of 28 false
+12. **Amendment (owner, 2026-11-26, except the tuning-objective bullet; see its record):
+    changed after the spaCy-only results, before e5 was scored.** Reason: the headline rewards calling every talk "stated" (B: 27 of 28 false
     positives). Items 3–5 are amended as follows; everything else stands.
     - **Ranking: the average of two rates**, right sentence (hits / 90) and correct "not
       stated" (true negatives / 28). From the step 3 table: A 0.511 (0.200, 0.821), v1 0.506
@@ -136,6 +136,13 @@ as in the app.
       (replaces the item 11 objective; ties: fewer false positives, then the earlier grid
       entry). A, B and C0 are re-run with it; both runs are kept. "Best spaCy-only" is the
       highest average among all spaCy-only rows (A, B, C0 under either objective, and v1).
+      **Record of this bullet:** it was **not** in the owner's amendment. Claude added it when
+      writing item 12, in commit d19f501 (2026-11-26 15:18:21 +0300), **before** the harness was
+      changed, before A, B and C0 were re-run with it, and **before e5 was scored** (e5 results
+      in commit 0378a3d, 15:25:52). The owner learned of it with the results and did not
+      decide it in advance. Its effect: A re-tuned on the average scores 0.577 instead of
+      0.511, which raised the e5 bar from the owner's 0.61 to 0.677. It does not change the
+      outcome (see the step 4 results).
     - **e5 rule (replaces item 4):** an e5 method (C or D) is adopted only if its average is
       **at least the best spaCy-only average + 0.10, with at most 7 of 28 false positives**.
       Otherwise the spaCy-only choice stands and S1 stays without e5.
