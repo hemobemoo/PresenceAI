@@ -125,6 +125,38 @@ as in the app.
       20261126 and dealt round-robin into 5 folds.
     - **Reference rows:** "always yes" (no sentence, so headline 0) and the current detector
       (thesis cue v1, `lang/en/text_cues.yaml`), both scored on all 118 with no tuning.
+12. **Amendment (owner, 2026-11-26): changed after the spaCy-only results, before e5 was
+    scored.** Reason: the headline rewards calling every talk "stated" (B: 27 of 28 false
+    positives). Items 3–5 are amended as follows; everything else stands.
+    - **Ranking: the average of two rates**, right sentence (hits / 90) and correct "not
+      stated" (true negatives / 28). From the step 3 table: A 0.511 (0.200, 0.821), v1 0.506
+      (0.011, 1.000), B 0.390 (0.744, 0.036), C0 0.358 (0.467, 0.250), always yes 0.000. The
+      headline and false-positive columns stay in the table.
+    - **Tuning objective = the same average** for every method, so tuning matches ranking
+      (replaces the item 11 objective; ties: fewer false positives, then the earlier grid
+      entry). A, B and C0 are re-run with it; both runs are kept. "Best spaCy-only" is the
+      highest average among all spaCy-only rows (A, B, C0 under either objective, and v1).
+    - **e5 rule (replaces item 4):** an e5 method (C or D) is adopted only if its average is
+      **at least the best spaCy-only average + 0.10, with at most 7 of 28 false positives**.
+      Otherwise the spaCy-only choice stands and S1 stays without e5.
+    - **Minimum bar for any method:** at least **45 of 90 right sentences and at most 7 of 28
+      false positives** (held out). **If no method reaches it, central message becomes
+      information-only in the rubric until the P7 language-model judge**: shown, not scored,
+      with the report saying why (wording in `lang/`, observable terms).
+    - **Method C, pre-registered here:** every sentence embedded with the e5 prefix "query: "
+      (e5's guidance for symmetric similarity); talk vector = the normalised mean of all its
+      sentence vectors (a whole talk exceeds 512 tokens); score = cosine of each sentence with
+      the talk vector; the candidate with the highest score wins (ties: the earlier one);
+      "stated" if that score minus the median score of all sentences of the talk is at least
+      m. Grid: W in {10, 15, 20, 25, 30}, m in {0.000, 0.005, …, 0.060}.
+    - **Method D, pre-registered here:** A combined with C. Mode "or": A's sentence when A
+      finds one, else C's (with C's margin). Mode "and": A's sentence only when C also says
+      "stated" for that talk. Grid: mode × A's grid × C's grid.
+    - **e5 cache:** sentence vectors computed once and stored in git-ignored
+      `data/c2/cm_e5_cache.npz`; folds reuse them. Wall time is logged.
+    - **Restatement (replaces item 5):** information-only, not tuned. The owner's relabel
+      agreement on it is 14 of 20 (κ 0.40), too low to tune a rule against, and the measure
+      depends on the main-point sentence, which may itself be information-only.
 
 ## Results so far: spaCy-only methods (step 3, 2026-11-26)
 
