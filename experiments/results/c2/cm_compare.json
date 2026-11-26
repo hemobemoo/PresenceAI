@@ -1,0 +1,243 @@
+{
+  "owner": {
+    "yes": 90,
+    "no": 28
+  },
+  "folds": 5,
+  "fold_seed": 20261126,
+  "methods": {
+    "A": {
+      "headline": 18,
+      "false_positives": 5,
+      "held_out": {
+        "hit": 18,
+        "wrong_sentence": 3,
+        "fn": 69,
+        "fp": 5,
+        "tn": 23
+      },
+      "per_fold": [
+        {
+          "params": {
+            "window": 20,
+            "families": [
+              "purpose"
+            ],
+            "pick": "first"
+          },
+          "items": 25,
+          "headline": 4,
+          "false_positives": 1
+        },
+        {
+          "params": {
+            "window": 15,
+            "families": [
+              "purpose"
+            ],
+            "pick": "first"
+          },
+          "items": 24,
+          "headline": 2,
+          "false_positives": 0
+        },
+        {
+          "params": {
+            "window": 15,
+            "families": [
+              "purpose"
+            ],
+            "pick": "first"
+          },
+          "items": 25,
+          "headline": 5,
+          "false_positives": 0
+        },
+        {
+          "params": {
+            "window": 15,
+            "families": [
+              "purpose"
+            ],
+            "pick": "first"
+          },
+          "items": 25,
+          "headline": 5,
+          "false_positives": 0
+        },
+        {
+          "params": {
+            "window": 10,
+            "families": [
+              "purpose",
+              "preview",
+              "claim"
+            ],
+            "pick": "first"
+          },
+          "items": 19,
+          "headline": 2,
+          "false_positives": 4
+        }
+      ],
+      "fit_on_all_dev_reported_not_adopted": {
+        "window": 15,
+        "families": [
+          "purpose"
+        ],
+        "pick": "first"
+      }
+    },
+    "B": {
+      "headline": 67,
+      "false_positives": 27,
+      "held_out": {
+        "hit": 67,
+        "wrong_sentence": 23,
+        "fn": 0,
+        "fp": 27,
+        "tn": 1
+      },
+      "per_fold": [
+        {
+          "params": {
+            "window": 10,
+            "rule": 1
+          },
+          "items": 25,
+          "headline": 14,
+          "false_positives": 4
+        },
+        {
+          "params": {
+            "window": 10,
+            "rule": 1
+          },
+          "items": 24,
+          "headline": 12,
+          "false_positives": 8
+        },
+        {
+          "params": {
+            "window": 10,
+            "rule": 1
+          },
+          "items": 25,
+          "headline": 15,
+          "false_positives": 4
+        },
+        {
+          "params": {
+            "window": 10,
+            "rule": 1
+          },
+          "items": 25,
+          "headline": 17,
+          "false_positives": 4
+        },
+        {
+          "params": {
+            "window": 10,
+            "rule": 1
+          },
+          "items": 19,
+          "headline": 9,
+          "false_positives": 7
+        }
+      ],
+      "fit_on_all_dev_reported_not_adopted": {
+        "window": 10,
+        "rule": 1
+      }
+    },
+    "C0": {
+      "headline": 42,
+      "false_positives": 21,
+      "held_out": {
+        "hit": 42,
+        "wrong_sentence": 35,
+        "fn": 13,
+        "fp": 21,
+        "tn": 7
+      },
+      "per_fold": [
+        {
+          "params": {
+            "window": 10,
+            "margin": 0.0
+          },
+          "items": 25,
+          "headline": 7,
+          "false_positives": 4
+        },
+        {
+          "params": {
+            "window": 10,
+            "margin": 0.0
+          },
+          "items": 24,
+          "headline": 6,
+          "false_positives": 8
+        },
+        {
+          "params": {
+            "window": 10,
+            "margin": 0.0
+          },
+          "items": 25,
+          "headline": 11,
+          "false_positives": 2
+        },
+        {
+          "params": {
+            "window": 10,
+            "margin": 0.0
+          },
+          "items": 25,
+          "headline": 13,
+          "false_positives": 2
+        },
+        {
+          "params": {
+            "window": 10,
+            "margin": 0.0
+          },
+          "items": 19,
+          "headline": 5,
+          "false_positives": 5
+        }
+      ],
+      "fit_on_all_dev_reported_not_adopted": {
+        "window": 10,
+        "margin": 0.0
+      }
+    }
+  },
+  "reference": {
+    "always_yes": {
+      "headline": 0,
+      "false_positives": 28,
+      "held_out": {
+        "hit": 0,
+        "wrong_sentence": 0,
+        "fn": 90,
+        "fp": 28,
+        "tn": 0
+      },
+      "note": "says stated, names no sentence"
+    },
+    "current_v1": {
+      "headline": 1,
+      "false_positives": 0,
+      "held_out": {
+        "hit": 1,
+        "wrong_sentence": 0,
+        "fn": 89,
+        "fp": 0,
+        "tn": 28
+      },
+      "note": "no tuning, all items"
+    }
+  },
+  "note": "headline = stated with the owner's sentence (strict match: a lower bound)"
+}

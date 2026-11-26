@@ -126,6 +126,37 @@ as in the app.
     - **Reference rows:** "always yes" (no sentence, so headline 0) and the current detector
       (thesis cue v1, `lang/en/text_cues.yaml`), both scored on all 118 with no tuning.
 
+## Results so far: spaCy-only methods (step 3, 2026-11-26)
+
+`experiments/results/c2/cm_compare.json` (`cm_compare.py`, counts only; 5-fold CV grouped by
+topic, seed 20261126; the owner's labels: 90 yes, 28 no). Headline = stated with the owner's
+sentence (strict match, a lower bound). Correct = headline + true negatives (the tuning
+objective, item 11).
+
+| Method | Headline /90 | False positives /28 | Wrong sentence | Missed (fn) | True neg. | Correct /118 | Parameters chosen in the folds |
+|---|---|---|---|---|---|---|---|
+| A textbook features | 18 | 5 | 3 | 69 | 23 | 41 | purpose only, first, window 15 % (3 folds), 20 % (1), and purpose + preview + claim at 10 % (1) |
+| B position only | 67 | 27 | 23 | 0 | 1 | 68 | 1st candidate, window 10 % (all 5 folds) |
+| C0 lemma centrality | 42 | 21 | 35 | 13 | 7 | 49 | window 10 %, margin 0.00 (all 5 folds) |
+| *Always yes* | 0 | 28 | 0 | 90 | 0 | 0 | — |
+| *Current detector (v1)* | 1 | 0 | 0 | 89 | 28 | 29 | — (no tuning) |
+
+Per-fold headline: A 4 / 2 / 5 / 5 / 2; B 14 / 12 / 15 / 17 / 9; C0 7 / 6 / 11 / 13 / 5.
+
+Reading (no decision yet; the decision follows step 4 and the owner):
+- **No spaCy-only method separates "stated" from "not stated".** B and C0 say "stated" for
+  nearly every talk (B 27 of 28 false positives; C0 21 of 28); A keeps false positives low
+  (5 of 28) but finds 18 of 90.
+- **B is "the first non-question sentence is the main point".** It wins the headline only
+  because the generator puts the main point first (87 of 90 in the opening, 77 in the first
+  10 %). This is the case item 10 describes: not trusted without B1 and E4 confirmation.
+- **The pre-registered e5 rule (item 4) compares C/D with B**, the spaCy-only headline
+  winner: an e5 method needs a headline of at least 76 of 90 (B's 67 / 90 = 74.4 % plus 10
+  points = 84.4 %) and at most 27 false positives. Because B's false-positive count is close to
+  "always yes", the "no more false positives" part of the rule is weak here. The rule is left as
+  written; the owner may decide whether to add a condition before the e5 run, which has not
+  been scored.
+
 ## Consequences
 
 - Order of work: `relabel` tool; comparison harness with A, B, C0 (spaCy only); e5 cache and
