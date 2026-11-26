@@ -189,6 +189,46 @@ Reading (no decision yet; the decision follows step 4 and the owner):
   written; the owner may decide whether to add a condition before the e5 run, which has not
   been scored.
 
+## Results: item 12 ranking and e5 (step 4, 2026-11-26)
+
+`experiments/results/c2/cm_compare_v2.json` (`cm_compare.py --e5`, counts only; same folds).
+Average = mean of hits / 90 and true negatives / 28. Minimum bar: hits >= 45 and false
+positives <= 7. All rows held out.
+
+| Method (objective) | Average | Right sentence /90 | False positives /28 | Wrong sentence | Missed | True neg. | Minimum bar |
+|---|---|---|---|---|---|---|---|
+| D: A or C (average) | **0.651** | 40 | 4 | 8 | 42 | 24 | no |
+| C: e5 centrality (average) | 0.626 | 42 | 6 | 12 | 36 | 22 | no |
+| A (average) | 0.577 | 17 | 1 | 1 | 72 | 27 | no |
+| A (correct) | 0.511 | 18 | 5 | 3 | 69 | 23 | no |
+| *current v1* | 0.506 | 1 | 0 | 0 | 89 | 28 | no |
+| C0 (average) | 0.493 | 2 | 1 | 0 | 88 | 27 | no |
+| B (average) | 0.417 | 14 | 9 | 19 | 57 | 19 | no |
+| B (correct) | 0.390 | 67 | 27 | 23 | 0 | 1 | no |
+| C0 (correct) | 0.358 | 42 | 21 | 35 | 13 | 7 | no |
+| *always yes* | 0.000 | 0 | 28 | 0 | 90 | 0 | no |
+
+- Parameters chosen in all five folds: C window 10 %, margin 0.015; D mode "or", A purpose
+  phrases (first, window 15 % in four folds, 20 % in one) with C (window 10 %, margin 0.02 in
+  four folds, 0.015 in one); A (average) purpose phrases, first, window 15 % (four folds) or
+  20 % (one). Per-fold right sentences: C 6 / 7 / 12 / 11 / 6; D 8 / 6 / 11 / 10 / 5.
+- **e5 rule: not met.** The best spaCy-only average is A (average), 0.577, so an e5 method
+  needed at least 0.677 with at most 7 false positives; D reached 0.651, C 0.626. The owner's
+  item 12 text named A at 0.51 (the item 11 tuning); with A re-tuned on the average, as item
+  12 prescribes, the bar is 0.677. **At 0.61 both C and D would have passed the e5 rule, but
+  neither meets the minimum bar** (C 42, D 40 of the 45 right sentences needed), so the
+  outcome below does not depend on which bar is used.
+- **Minimum bar: no method reaches it.**
+- **Laptop cost of the e5 run:** model load 1.6 s, 2,435 sentences embedded in 20.7 s, whole
+  run 55 s; vectors cached in git-ignored `data/c2/cm_e5_cache.npz`.
+
+**Outcome under the pre-registered rules (items 4 and 12):** S1 stays without e5, and
+**central message becomes information-only in the rubric until the P7 language-model judge**:
+shown, not scored, with the report saying why. The rubric and report change is a separate
+slice with its own plan; no config or rubric file changes in this ADR update. The test part
+stays untouched (item 8). E4's central-message sample (ADR 0021 §4d) is drawn only once a
+detector is frozen.
+
 ## Consequences
 
 - Order of work: `relabel` tool; comparison harness with A, B, C0 (spaCy only); e5 cache and
