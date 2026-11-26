@@ -39,3 +39,4 @@ these drafts are not edited into it automatically.
 | `S4_summary.md` | Spike S4, OpenRouter free model choice and hosted-LLM privacy decision | `docs/adr/0003-openrouter-model-and-privacy.md` |
 | `S5_summary.md` | Spike S5, gaze zones from webcam landmarks (pass with fallback: three zones) | `docs/adr/0004-gaze-zone-spike.md` |
 | `Chapter3_Methodology_skeleton.md` | Chapter 3 skeleton: the method as a whole, section by section, with sources (chapter structure, not the six spike headings) | ADRs 0010–0024 |
+| `CM_comparison_summary.md` | Central-message detection: pre-registered comparison of five methods on owner dev labels (negative result) | `docs/adr/0025-central-message-detection-comparison.md` |

@@ -53,6 +53,8 @@ Every call returns a `Decision`: chosen exercise, skill, alternatives with their
 
 **To handle in P5 (owner, 2026-11-25): floor effects.** A skill whose measure sits at the floor for nearly everyone must not keep winning "weakest skill". Central message is at rubric level 1 on all 12 real English talks so far (ADR 0019 open item 2): with the policy above it would be chosen every time, whatever the user does. P5 decides how the engine detects a floor effect (for example, a skill at the lowest level on every attempt, including after its targeted exercise) and what it does then (for example, mark the skill as "not yet reliably measured", leave it out of the argmax, and say so in the `Decision` reason). A property test checks that a skill held at the floor is not selected on every call.
 
+**Information-only skills (owner, 2026-11-26; ADR 0025):** a skill whose rubric dimension is information-only (`DimensionSummary.information_only`; central message until the P7 judge) never enters the weakest-skill argmax, and the `Decision` reason says it is not scored yet. A property test checks that it is never selected, whatever its stored values.
+
 ## 4. Difficulty ladder (from the concept)
 
 | Level | Condition |

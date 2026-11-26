@@ -236,6 +236,39 @@ slice with its own plan; no config or rubric file changes in this ADR update. Th
 stays untouched (item 8). E4's central-message sample (ADR 0021 §4d) is drawn only once a
 detector is frozen.
 
+## Decision after the comparison (owner, 2026-11-26)
+
+1. **Central message is information-only** in S1 and S2 (`configs/rubric.yaml`, a per-scenario
+   list of information-only dimensions with a reason key), **until the P7 language-model judge**
+   is built, frozen and scored (E4, ADR 0021 §4d). No level, no score, no cap. Its restatement
+   (`text.central_message.in_closing`) and recurrence (`cm_recurrences_min`) conditions go with
+   it. S1 stays without e5.
+2. **The report counts dimensions:** "Levels based on N of M dimensions", naming the
+   information-only one; the per-dimension "based on N of M measures" line stays. The card
+   says why central message is unscored, in observable terms: no detection method reached the
+   pre-set accuracy bar on labelled practice talks (this ADR), until the P7 check.
+3. **Possible main point.** Method A (purpose phrases of `cm_cues_v2.yaml`, the first match,
+   opening window **15 %**, provisional) runs in the app. When it fires, the card shows
+   "Possible main point: '…'" with the transcript span, the time and low confidence. When it
+   does not fire, the card says nothing about a main point (never "no main point found").
+   - **Condition (owner):** shown only if, in the folds, A's shown sentence is the owner's
+     sentence in **at least 80 %** of the talks where A fires.
+   - **Which applies: shown.** Held-out folds of the adopted tuning (item 12, objective
+     "average", `cm_compare_v2.json`): A fires in 19 talks and shows the owner's sentence in
+     **17 (89.5 %)**; the other 2 are 1 wrong sentence and 1 talk the owner marked "no".
+     With n = 19 the Wilson 95 % interval is about 0.69–0.97, so the lower bound is below 80 %.
+     For the record: with the item 11 objective ("correct") the folds give 18 of 26 (69.2 %);
+     the fixed display values on all 118 dev talks give 17 of 18 (94.4 %), in-sample.
+4. **The v1 thesis-cue detector is no longer computed.** A's output per session (fired or not,
+   and the sentence's character span and time) is stored in the text-free summary for a later
+   comparison with the P7 judge. The span holds offsets only, never the words.
+5. **Arabic:** central message stays not measured (English-only); A runs on English only.
+6. **The level-1 central-message hint is removed from the report**; a general preparation tip
+   (state the main point in one sentence early, and repeat it at the end) goes on the practice
+   page, where it is advice, not feedback on a recording.
+7. **Engine (P5):** an information-only skill never enters the weakest-skill choice
+   (FINAL_05 §3).
+
 ## Consequences
 
 - Order of work: `relabel` tool; comparison harness with A, B, C0 (spaCy only); e5 cache and
