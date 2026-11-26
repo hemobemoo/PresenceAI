@@ -80,6 +80,17 @@ as in the app.
      shown) held only 1 first-"no" item, which leaves agreement on "no" and κ almost
      meaningless. The seed was not changed to find a better sample. The relabel sheet shows no
      labels, so stratifying does not unblind the owner.
+   - **Done 2026-11-26, about one day after the first labels** (not 2026-12-03; owner). Date
+     and seed unchanged. With a one-day gap the agreement may be inflated by recall, so it is
+     reported as an **upper bound on the owner's consistency**.
+   - **Result** (`experiments/results/c2/dev_relabel.json`, counts only; κ unreliable at
+     n = 20): main point stated, agreement **19 of 20** (both yes 15, both no 4, first no now
+     yes 1; κ 0.86); the same sentence in **14 of the 15** both-yes items; restated in
+     closing, agreement **14 of 20** (both yes 5, both no 9, first yes now no 1, first no now
+     yes 5; κ 0.40). Consequences: the "stated" labels and sentences are consistent enough to
+     be the reference for the main-point comparison. The "restated in closing" labels are
+     much less consistent, so the restatement step (item 5) reads its numbers against this
+     ceiling and does not tune a margin to them finely.
 8. **The test part stays untouched** until the method is frozen in the amendment. E4 handling
    is in ADR 0021 §4d.
 9. **Language.** Central message stays English-only. Arabic central message is **still not
@@ -89,6 +100,134 @@ as in the app.
     result reflects how the C2 generator places main points (87 of 90 in the opening,
     `dev_positions.json`), and the method is **not trusted in the app until it is confirmed on
     B1 and on the E4 public talks**.
+11. **Pre-registered details for A, B and C0** (written 2026-11-26, before any of them was
+    scored; committed before `cm_compare.py`):
+    - **Candidates:** sentences of the app's sentence split (`text.document.build`, spaCy) that
+      start in the opening window W % of the words. Questions (ending in "?") are never
+      candidates: a thesis is not a question (textbook guideline, `cm_cues_v2.yaml`).
+    - **Grids.** All methods: W in {10, 15, 20, 25, 30}.
+      A: families in {purpose}, {purpose, preview}, {purpose, preview, claim}; pick the first
+      or the last matching candidate (the textbooks place the thesis toward the end of the
+      introduction). Purpose and claim are the phrase lists in `cm_cues_v2.yaml`. Preview is
+      a number word or digit 2–5 followed by a plural noun, or a sentence with a colon or at
+      least two commas followed by "and" (a list).
+      B: the 1st, 2nd or 3rd candidate, or the last one. B always says "stated" when the window
+      has a candidate.
+      C0: score(s) = share of the sentence's content-lemma types (NOUN, PROPN, VERB, ADJ, not
+      stop words) that occur in at least one other sentence of the talk. The candidate with
+      the highest score wins (ties: the earlier one). "Stated" if that score minus the median
+      score over all sentences of the talk is at least m, m in {0.00, 0.05, …, 0.40}.
+    - **Tuning objective** on the training folds: correct items = the owner's "yes" items whose
+      chosen sentence matches the owner's sentence, plus the owner's "no" items with no
+      sentence chosen. Ties go to fewer false positives, then to the first entry in the order
+      listed above.
+    - **Folds:** the 24 dev topics (the number at the end of each item id) shuffled with seed
+      20261126 and dealt round-robin into 5 folds.
+    - **Reference rows:** "always yes" (no sentence, so headline 0) and the current detector
+      (thesis cue v1, `lang/en/text_cues.yaml`), both scored on all 118 with no tuning.
+12. **Amendment (owner, 2026-11-26): changed after the spaCy-only results, before e5 was
+    scored.** Reason: the headline rewards calling every talk "stated" (B: 27 of 28 false
+    positives). Items 3–5 are amended as follows; everything else stands.
+    - **Ranking: the average of two rates**, right sentence (hits / 90) and correct "not
+      stated" (true negatives / 28). From the step 3 table: A 0.511 (0.200, 0.821), v1 0.506
+      (0.011, 1.000), B 0.390 (0.744, 0.036), C0 0.358 (0.467, 0.250), always yes 0.000. The
+      headline and false-positive columns stay in the table.
+    - **Tuning objective = the same average** for every method, so tuning matches ranking
+      (replaces the item 11 objective; ties: fewer false positives, then the earlier grid
+      entry). A, B and C0 are re-run with it; both runs are kept. "Best spaCy-only" is the
+      highest average among all spaCy-only rows (A, B, C0 under either objective, and v1).
+    - **e5 rule (replaces item 4):** an e5 method (C or D) is adopted only if its average is
+      **at least the best spaCy-only average + 0.10, with at most 7 of 28 false positives**.
+      Otherwise the spaCy-only choice stands and S1 stays without e5.
+    - **Minimum bar for any method:** at least **45 of 90 right sentences and at most 7 of 28
+      false positives** (held out). **If no method reaches it, central message becomes
+      information-only in the rubric until the P7 language-model judge**: shown, not scored,
+      with the report saying why (wording in `lang/`, observable terms).
+    - **Method C, pre-registered here:** every sentence embedded with the e5 prefix "query: "
+      (e5's guidance for symmetric similarity); talk vector = the normalised mean of all its
+      sentence vectors (a whole talk exceeds 512 tokens); score = cosine of each sentence with
+      the talk vector; the candidate with the highest score wins (ties: the earlier one);
+      "stated" if that score minus the median score of all sentences of the talk is at least
+      m. Grid: W in {10, 15, 20, 25, 30}, m in {0.000, 0.005, …, 0.060}.
+    - **Method D, pre-registered here:** A combined with C. Mode "or": A's sentence when A
+      finds one, else C's (with C's margin). Mode "and": A's sentence only when C also says
+      "stated" for that talk. Grid: mode × A's grid × C's grid.
+    - **e5 cache:** sentence vectors computed once and stored in git-ignored
+      `data/c2/cm_e5_cache.npz`; folds reuse them. Wall time is logged.
+    - **Restatement (replaces item 5):** information-only, not tuned. The owner's relabel
+      agreement on it is 14 of 20 (κ 0.40), too low to tune a rule against, and the measure
+      depends on the main-point sentence, which may itself be information-only.
+
+## Results so far: spaCy-only methods (step 3, 2026-11-26)
+
+`experiments/results/c2/cm_compare.json` (`cm_compare.py`, counts only; 5-fold CV grouped by
+topic, seed 20261126; the owner's labels: 90 yes, 28 no). Headline = stated with the owner's
+sentence (strict match, a lower bound). Correct = headline + true negatives (the tuning
+objective, item 11).
+
+| Method | Headline /90 | False positives /28 | Wrong sentence | Missed (fn) | True neg. | Correct /118 | Parameters chosen in the folds |
+|---|---|---|---|---|---|---|---|
+| A textbook features | 18 | 5 | 3 | 69 | 23 | 41 | purpose only, first, window 15 % (3 folds), 20 % (1), and purpose + preview + claim at 10 % (1) |
+| B position only | 67 | 27 | 23 | 0 | 1 | 68 | 1st candidate, window 10 % (all 5 folds) |
+| C0 lemma centrality | 42 | 21 | 35 | 13 | 7 | 49 | window 10 %, margin 0.00 (all 5 folds) |
+| *Always yes* | 0 | 28 | 0 | 90 | 0 | 0 | — |
+| *Current detector (v1)* | 1 | 0 | 0 | 89 | 28 | 29 | — (no tuning) |
+
+Per-fold headline: A 4 / 2 / 5 / 5 / 2; B 14 / 12 / 15 / 17 / 9; C0 7 / 6 / 11 / 13 / 5.
+
+Reading (no decision yet; the decision follows step 4 and the owner):
+- **No spaCy-only method separates "stated" from "not stated".** B and C0 say "stated" for
+  nearly every talk (B 27 of 28 false positives; C0 21 of 28); A keeps false positives low
+  (5 of 28) but finds 18 of 90.
+- **B is "the first non-question sentence is the main point".** It wins the headline only
+  because the generator puts the main point first (87 of 90 in the opening, 77 in the first
+  10 %). This is the case item 10 describes: not trusted without B1 and E4 confirmation.
+- **The pre-registered e5 rule (item 4) compares C/D with B**, the spaCy-only headline
+  winner: an e5 method needs a headline of at least 76 of 90 (B's 67 / 90 = 74.4 % plus 10
+  points = 84.4 %) and at most 27 false positives. Because B's false-positive count is close to
+  "always yes", the "no more false positives" part of the rule is weak here. The rule is left as
+  written; the owner may decide whether to add a condition before the e5 run, which has not
+  been scored.
+
+## Results: item 12 ranking and e5 (step 4, 2026-11-26)
+
+`experiments/results/c2/cm_compare_v2.json` (`cm_compare.py --e5`, counts only; same folds).
+Average = mean of hits / 90 and true negatives / 28. Minimum bar: hits >= 45 and false
+positives <= 7. All rows held out.
+
+| Method (objective) | Average | Right sentence /90 | False positives /28 | Wrong sentence | Missed | True neg. | Minimum bar |
+|---|---|---|---|---|---|---|---|
+| D: A or C (average) | **0.651** | 40 | 4 | 8 | 42 | 24 | no |
+| C: e5 centrality (average) | 0.626 | 42 | 6 | 12 | 36 | 22 | no |
+| A (average) | 0.577 | 17 | 1 | 1 | 72 | 27 | no |
+| A (correct) | 0.511 | 18 | 5 | 3 | 69 | 23 | no |
+| *current v1* | 0.506 | 1 | 0 | 0 | 89 | 28 | no |
+| C0 (average) | 0.493 | 2 | 1 | 0 | 88 | 27 | no |
+| B (average) | 0.417 | 14 | 9 | 19 | 57 | 19 | no |
+| B (correct) | 0.390 | 67 | 27 | 23 | 0 | 1 | no |
+| C0 (correct) | 0.358 | 42 | 21 | 35 | 13 | 7 | no |
+| *always yes* | 0.000 | 0 | 28 | 0 | 90 | 0 | no |
+
+- Parameters chosen in all five folds: C window 10 %, margin 0.015; D mode "or", A purpose
+  phrases (first, window 15 % in four folds, 20 % in one) with C (window 10 %, margin 0.02 in
+  four folds, 0.015 in one); A (average) purpose phrases, first, window 15 % (four folds) or
+  20 % (one). Per-fold right sentences: C 6 / 7 / 12 / 11 / 6; D 8 / 6 / 11 / 10 / 5.
+- **e5 rule: not met.** The best spaCy-only average is A (average), 0.577, so an e5 method
+  needed at least 0.677 with at most 7 false positives; D reached 0.651, C 0.626. The owner's
+  item 12 text named A at 0.51 (the item 11 tuning); with A re-tuned on the average, as item
+  12 prescribes, the bar is 0.677. **At 0.61 both C and D would have passed the e5 rule, but
+  neither meets the minimum bar** (C 42, D 40 of the 45 right sentences needed), so the
+  outcome below does not depend on which bar is used.
+- **Minimum bar: no method reaches it.**
+- **Laptop cost of the e5 run:** model load 1.6 s, 2,435 sentences embedded in 20.7 s, whole
+  run 55 s; vectors cached in git-ignored `data/c2/cm_e5_cache.npz`.
+
+**Outcome under the pre-registered rules (items 4 and 12):** S1 stays without e5, and
+**central message becomes information-only in the rubric until the P7 language-model judge**:
+shown, not scored, with the report saying why. The rubric and report change is a separate
+slice with its own plan; no config or rubric file changes in this ADR update. The test part
+stays untouched (item 8). E4's central-message sample (ADR 0021 §4d) is drawn only once a
+detector is frozen.
 
 ## Consequences
 

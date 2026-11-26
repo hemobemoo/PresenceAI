@@ -331,10 +331,26 @@ def positions(
     }
 
 
+def text_transcript(text: str) -> Any:
+    """A written text as a Transcript: whitespace words with synthetic times; punctuation is kept,
+    so sentences split as in a transcript."""
+    from presenceai.schemas.speech import Segment, Transcript, Word
+
+    out, words = "", []
+    for i, token in enumerate(text.split()):
+        out += " " if out else ""
+        start = len(out)
+        out += token
+        words.append(Word(text=token, start_s=i * 0.4, end_s=i * 0.4 + 0.3, probability=0.95,
+                          start_char=start, end_char=len(out)))  # fmt: skip
+    seg = Segment(start_s=0.0, end_s=words[-1].end_s, words=tuple(words), avg_logprob=-0.1,
+                  no_speech_prob=0.0)  # fmt: skip
+    return Transcript(language="en", duration_s=words[-1].end_s, text=out, segments=(seg,))
+
+
 def app_detector(parser: Any = None) -> Callable[[str], Detected]:
     """The app's central-message detector on a text: whitespace words with synthetic times
     (punctuation is kept, so sentences split as in a transcript), the local spaCy parser."""
-    from presenceai.schemas.speech import Segment, Transcript, Word
     from presenceai.settings import get_settings
     from presenceai.text import central_message
     from presenceai.text.analyze import analyze_text
@@ -344,20 +360,8 @@ def app_detector(parser: Any = None) -> Callable[[str], Detected]:
     pauses = get_settings().speech.pauses
     k_statements, k_opening, k_closing = central_message.KEYS[:3]
 
-    def transcript(text: str) -> Transcript:
-        out, words = "", []
-        for i, token in enumerate(text.split()):
-            out += " " if out else ""
-            start = len(out)
-            out += token
-            words.append(Word(text=token, start_s=i * 0.4, end_s=i * 0.4 + 0.3, probability=0.95,
-                              start_char=start, end_char=len(out)))  # fmt: skip
-        seg = Segment(start_s=0.0, end_s=words[-1].end_s, words=tuple(words), avg_logprob=-0.1,
-                      no_speech_prob=0.0)  # fmt: skip
-        return Transcript(language="en", duration_s=words[-1].end_s, text=out, segments=(seg,))
-
     def detect(text: str) -> Detected:
-        m = analyze_text(transcript(text), parser=parser, pauses=pauses).measurements
+        m = analyze_text(text_transcript(text), parser=parser, pauses=pauses).measurements
 
         def spans(k: str) -> tuple[str, ...]:
             if k not in m or not m[k].value:
