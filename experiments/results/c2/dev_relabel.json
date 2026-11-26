@@ -1,0 +1,25 @@
+{
+  "items": 20,
+  "stated": {
+    "agree": 19,
+    "both_yes": 15,
+    "both_no": 4,
+    "first_yes_now_no": 0,
+    "first_no_now_yes": 1,
+    "kappa": 0.8571
+  },
+  "restated_in_closing": {
+    "agree": 14,
+    "both_yes": 5,
+    "both_no": 9,
+    "first_yes_now_no": 1,
+    "first_no_now_yes": 5,
+    "kappa": 0.4
+  },
+  "sentence": {
+    "both_yes": 15,
+    "same": 14
+  },
+  "kappa_reliable": false,
+  "note": "Cohen's kappa at n = 20 is reported but unreliable (ADR 0025 item 7)"
+}

@@ -80,6 +80,17 @@ as in the app.
      shown) held only 1 first-"no" item, which leaves agreement on "no" and κ almost
      meaningless. The seed was not changed to find a better sample. The relabel sheet shows no
      labels, so stratifying does not unblind the owner.
+   - **Done 2026-11-26, about one day after the first labels** (not 2026-12-03; owner). Date
+     and seed unchanged. With a one-day gap the agreement may be inflated by recall, so it is
+     reported as an **upper bound on the owner's consistency**.
+   - **Result** (`experiments/results/c2/dev_relabel.json`, counts only; κ unreliable at
+     n = 20): main point stated, agreement **19 of 20** (both yes 15, both no 4, first no now
+     yes 1; κ 0.86); the same sentence in **14 of the 15** both-yes items; restated in
+     closing, agreement **14 of 20** (both yes 5, both no 9, first yes now no 1, first no now
+     yes 5; κ 0.40). Consequences: the "stated" labels and sentences are consistent enough to
+     be the reference for the main-point comparison. The "restated in closing" labels are
+     much less consistent, so the restatement step (item 5) reads its numbers against this
+     ceiling and does not tune a margin to them finely.
 8. **The test part stays untouched** until the method is frozen in the amendment. E4 handling
    is in ADR 0021 §4d.
 9. **Language.** Central message stays English-only. Arabic central message is **still not
