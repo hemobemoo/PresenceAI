@@ -221,3 +221,21 @@ def test_the_terminal_shows_a_clickable_link_once_the_server_listens(
     finally:
         uvicorn.Server.startup = original  # type: ignore[method-assign]
     assert "http://127.0.0.1:7860/" in capsys.readouterr().out
+
+
+@pytest.mark.parametrize("lang", LANGUAGES)
+def test_the_other_language_link_opens_the_other_page(client: Any, lang: str):
+    """The link under the tagline (owner's S2 run, 2026-11-27: "/ar" was a 404 page)."""
+    from presenceai.lang import ui_text
+
+    path = ui_text(lang, "app.other_language_path")  # pyright: ignore[reportArgumentType]
+    other = "ar" if lang == "en" else "en"
+    r = client.get(path)  # the test client follows redirects, as a browser does
+    assert r.status_code == 200, (lang, path, r.status_code)
+    title = ui_text(other, "app.tagline")  # pyright: ignore[reportArgumentType]
+    assert title in r.text, (lang, path)
+
+
+def test_a_bare_ar_address_redirects_to_the_arabic_page(client: Any):
+    r = client.get("/ar", follow_redirects=False)
+    assert r.status_code == 307 and r.headers["location"] == "/ar/"
