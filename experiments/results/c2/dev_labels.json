@@ -1,0 +1,44 @@
+{
+  "items": 118,
+  "of": 118,
+  "stated": {
+    "tp": 1,
+    "fp": 0,
+    "fn": 89,
+    "tn": 28
+  },
+  "restated_in_closing": {
+    "tp": 0,
+    "fp": 1,
+    "fn": 36,
+    "tn": 81
+  },
+  "sentence": {
+    "owner_yes": 90,
+    "detector_found": 1,
+    "matches": 1,
+    "owner_sentence_among_statements": 2
+  },
+  "owner_stated_by_planted_group": {
+    "control": {
+      "yes": 23,
+      "no": 1
+    },
+    "no_central_message": {
+      "no": 19,
+      "yes": 5
+    },
+    "no_conclusion": {
+      "yes": 19,
+      "no": 4
+    },
+    "no_supporting_material": {
+      "yes": 20,
+      "no": 3
+    },
+    "undefined_jargon": {
+      "yes": 23,
+      "no": 1
+    }
+  }
+}
