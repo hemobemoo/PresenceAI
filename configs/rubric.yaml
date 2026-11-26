@@ -13,9 +13,22 @@ partial_cap:
   max_share: 0.5
   max_level: 3
 
+# Possible main point (owner, 2026-11-26, ADR 0025 "Decision after the comparison" item 3):
+# method A shown on the central-message card when it fires, never scored. The sentence must start
+# in the first `window_pct` % of the words, not be a question, and contain a phrase of
+# lang/en/text_cues.yaml `main_point_purpose`; the first such sentence is shown. PROVISIONAL.
+possible_main_point:
+  status: provisional
+  decided_in: ADR 0025
+  window_pct: 15
+
 s1_presentation:
   status: provisional
   decided_in: ADR 0017
+  # Dimensions shown, not scored (owner, 2026-11-26, ADR 0025): no level, score or cap, until
+  # the P7 language-model judge. The reason is lang/<lang>/report.yaml
+  # assessment.information_only.<dimension>.
+  information_only: [central_message]
   values:
     opening_share_pct: 20       # FINAL_04 §3: thesis cue in the first 20 %
     closing_share_pct: 15       # FINAL_04 §3: closing cues in the last 15 %
@@ -65,6 +78,7 @@ s2_project_defense:
   # S1's values unchanged.
   status: provisional
   decided_in: ADR 0022
+  information_only: [central_message]  # as S1 (ADR 0025)
   # Placeholder thresholds (reported, not scored) would be listed here; none since 2026-11-24.
   uncalibrated: []
   values:

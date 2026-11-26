@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 import numpy as np
 import pytest
@@ -63,8 +63,14 @@ def test_report_cards_show_level_n_of_m_confidence_and_evidence(ctx: AppContext,
     md = report_page.render(reports.open_report(ctx.db, ctx.store, s.id, lang="en"), "en",
                             "s1_presentation")  # fmt: skip
     assert "### Delivery" in md and "### Central message" in md
+    info = {r.dimension for r in fake_assessment.assessment.dimensions if r.information_only}
+    assert info == {"central_message"}  # ADR 0025
     for f in fake_assessment.assessment.findings:
-        assert f"based on {f.measured} of {f.total} measures" in md
+        if f.dimension not in info:
+            assert f"based on {f.measured} of {f.total} measures" in md
+    assert "Levels based on 4 of 5 dimensions" in md
+    assert r"Not scored: Central message \(information only\)" in md
+    assert "**Information only, not scored**" in md
     assert "Level " in md and "confidence: " in md
     assert "zebra lanterns glow" in md and "(00:" in md  # a quote and its time
     assert md.index("### Central message") < md.index("### Delivery")  # rubric order
@@ -326,21 +332,69 @@ def test_cards_name_unmeasured_measures_and_why(ctx: AppContext, analyzer: Any, 
     assert "لم يُقَس" in ar.report and r"لم يُحسب \(الكاميرا متوقفة\)" in ar.report
 
 
-def test_central_message_level_1_without_a_thesis_gets_the_rules_hint():
-    def view(statements: float, level: int) -> ReportView:
-        return ReportView(summary=SessionSummary(
-            session_id="0" * 32,
-            dimensions=(DimensionSummary(dimension="central_message", level=level, score=0.0,
-                                         confidence="medium", measured=4, total=4),),
-            measures=(MeasureValue(measure="text.central_message.statements", value=statements),),
-        ))  # fmt: skip
+def _cm_view(*, information_only: bool = True) -> ReportView:
+    return ReportView(summary=SessionSummary(
+        session_id="0" * 32,
+        dimensions=(
+            DimensionSummary(dimension="central_message", measured=0, total=4,
+                             information_only=information_only),
+            DimensionSummary(dimension="delivery", level=3, score=2 / 3, confidence="low",
+                             measured=2, total=3),
+        ),
+        measures=(MeasureValue(measure="text.central_message.possible_main_point", value=0),),
+    ))  # fmt: skip
 
-    md = report_page.render(view(0, 1), "en", "s1_presentation")
-    assert "No sentence stating your main point was found" in md
-    assert "Today I will talk about…" in md and "Try adding one sentence" in md
-    assert "فكرتك الرئيسية" in report_page.render(view(0, 1), "ar", "s1_presentation")
-    assert "No sentence stating" not in report_page.render(view(1, 1), "en", "s1_presentation")
-    assert "No sentence stating" not in report_page.render(view(0, 2), "en", "s1_presentation")
+
+@pytest.mark.parametrize("lang", ["en", "ar"])
+def test_the_level_1_hint_is_gone_and_the_card_never_says_no_main_point(
+    lang: Literal["en", "ar"],
+):
+    md = report_page.render(_cm_view(), lang, "s1_presentation")
+    for wording in ("No sentence stating", "main point was found", "Try adding one sentence",
+                    "لم يُعثر على جملة", "جرّب إضافة جملة"):  # fmt: skip
+        assert wording not in md
+    badge = "Information only, not scored" if lang == "en" else "للاطلاع فقط، لا يُحتسب في التقييم"
+    assert f"**{badge}**" in md
+    line = ("Levels based on 1 of 2 dimensions" if lang == "en"
+            else "تستند المستويات إلى 1 من 2 أبعاد")  # fmt: skip
+    assert report_page.escape(line) in md
+
+
+def test_no_report_text_tells_the_user_no_main_point_was_found():
+    """ADR 0025 item 3: never "no main point found", in any language pack."""
+    from presenceai.lang import load_pack_file
+
+    for lang in ("en", "ar"):
+        for name in ("report.yaml", "ui.yaml"):
+            dumped = str(load_pack_file(lang, name)).lower()
+            for wording in ("no main point", "main point was found", "no sentence stating",
+                            "لم يُعثر على جملة تذكر فكرتك"):  # fmt: skip
+                assert wording not in dumped, (lang, name, wording)
+
+
+def test_information_only_wording_names_no_plan_codes():
+    """Owner, 2026-11-26: no "ADR 0025" or "phase P7" in what the user reads."""
+    from presenceai.lang import text, ui_text
+
+    for lang in ("en", "ar"):
+        shown = [text(lang, "assessment.information_only.central_message", dimension="x"),
+                 text(lang, "assessment.possible_main_point", quote="q"),
+                 ui_text(lang, "report.information_only"),
+                 ui_text(lang, "report.dimensions_line", measured=1, total=2),
+                 ui_text(lang, "report.not_scored_line", names="x"),
+                 ui_text(lang, "practice.tip_main_point")]  # fmt: skip
+        for s in shown:
+            assert "ADR" not in s and "P7" not in s and "phase" not in s.lower(), (lang, s)
+    assert ui_text("ar", "report.not_scored_line", names="x") == "خارج التقييم: x (للاطلاع فقط)."
+
+
+def test_the_practice_page_has_the_main_point_tip():
+    from presenceai.lang import ui_text
+
+    assert "state your main point in one sentence" in ui_text("en", "practice.tip_main_point")
+    assert "فكرتك الرئيسية" in ui_text("ar", "practice.tip_main_point")
+    src = (Path(practice.__file__)).read_text("utf-8")
+    assert '"practice.tip_main_point"' in src
 
 
 def test_the_start_log_line_has_the_completeness_ratio(

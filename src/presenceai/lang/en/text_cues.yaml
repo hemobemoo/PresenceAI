@@ -204,3 +204,33 @@ limitation:        # S2 follow-up answers (ADR 0022): EXPLICIT limitation phrase
   - not yet validated
   - has not been validated
   - future work
+
+main_point_purpose:  # possible main point (ADR 0025, method A): the "purpose" list of
+                    # experiments/c2_synth/cm_cues_v2.yaml (textbook sources there), unchanged;
+                    # a test keeps the two equal. Shown, never scored.
+  - my main point is
+  - the main point is
+  - my main message is
+  - my message today is
+  - my point is
+  - the point is
+  - the key idea is
+  - the main idea
+  - the central idea
+  - my thesis
+  - in a nutshell
+  - my purpose
+  - the purpose of this
+  - my goal
+  - our goal
+  - i will show that
+  - i want to show
+  - i will show
+  - i will explain
+  - i want to explain
+  - i would like to show
+  - i would like to explain
+  - i want to convince
+  - i want to persuade
+  - i will argue that
+  - i argue that

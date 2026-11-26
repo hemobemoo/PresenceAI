@@ -136,13 +136,14 @@ def test_score_refuses_flagged_or_unfinished_sheets_unless_partial():
         dl.score(sheet, key, _detect(THESIS, closing=False), partial=True)
 
 
-def test_app_detector_finds_the_thesis_sentence_without_a_model(fake_parser):
+def test_app_detector_is_the_possible_main_point_without_a_model(fake_parser):
+    # ADR 0025: method A in the app; no restatement check, so in_closing is always False
     detect = dl.app_detector(parser=fake_parser)
     talk = (f"{THESIS} " + " ".join(f"{OTHER}" for _ in range(12))
             + " In the end, solar roofs pay back for every home.")  # fmt: skip
     d = detect(talk)
     assert d.thesis is not None and _same_plain(d.thesis, THESIS)
-    assert d.statements and d.in_closing
+    assert d.statements == (d.thesis,) and d.in_closing is False
     assert detect(" ".join(OTHER for _ in range(10))).thesis is None
 
 

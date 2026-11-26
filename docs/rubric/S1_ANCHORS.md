@@ -150,10 +150,10 @@ The Arabic anchors translate the reviewed English wording. They are a draft for 
 
 | Measure | Status | Needs | Languages | Description |
 |---|---|---|---|---|
-| `text.central_message.statements` | available | none | en | Sentences that match the thesis-cue lexicon, anywhere in the talk. |
-| `text.central_message.in_opening` | available | none | en | Yes if the thesis sentence is in the opening. |
-| `text.central_message.in_closing` | available | none | en | Yes if a sentence of the closing contains at least one key phrase. |
-| `text.central_message.key_phrase_recurrences` | available | none | en | Key-phrase recurrences in the body (sentences, not occurrences). |
+| `text.central_message.statements` | planned (P7) | none | en | Sentences that match the thesis-cue lexicon, anywhere in the talk. |
+| `text.central_message.in_opening` | planned (P7) | none | en | Yes if the thesis sentence is in the opening. |
+| `text.central_message.in_closing` | planned (P7) | none | en | Yes if a sentence of the closing contains at least one key phrase. |
+| `text.central_message.key_phrase_recurrences` | planned (P7) | none | en | Key-phrase recurrences in the body (sentences, not occurrences). |
 | `text.organization.framing_parts` | available | none | en | 0-2: one for an introduction cue in the opening, one for a conclusion cue in the closing (lexicon matches). |
 | `text.organization.transitions` | available | none | en | Transitions in the talk, at most one per sentence. |
 | `text.hook.present` | available | none | en | Yes if a hook is found (see the definition). |

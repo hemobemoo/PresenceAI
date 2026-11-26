@@ -23,6 +23,7 @@ from presenceai.schemas.report import AssessmentReport
 from presenceai.schemas.storage import DimensionSummary, MeasureValue, SessionSummary
 from presenceai.storage.db import Database
 from presenceai.storage.media import MediaStore, MediaUnreadable
+from presenceai.text import central_message
 
 
 class ReportView(BaseModel):
@@ -48,6 +49,7 @@ def summarise(session_id: str, report: AssessmentReport) -> SessionSummary:
             measured=f.measured,
             total=f.total,
             failed=r.dimension in failed,
+            information_only=r.information_only,
         )
         for r, f in zip(a.dimensions, a.findings, strict=True)
     )
@@ -62,6 +64,20 @@ def summarise(session_id: str, report: AssessmentReport) -> SessionSummary:
             found[key] = MeasureValue(
                 measure=key, value=m.value, unit=m.unit, confidence=m.confidence.value
             )
+    # the possible main point's span, as numbers only (ADR 0025: for a later comparison with the
+    # P7 judge); never the words
+    m = report.text.measurements.get(central_message.KEY)
+    if m is not None and m.value == 1 and m.evidence:
+        e = m.evidence[0]
+        spans: dict[str, tuple[float, str]] = {}
+        if e.transcript is not None:
+            spans |= {"start_char": (e.transcript.start_char, "char"),
+                      "end_char": (e.transcript.end_char, "char")}  # fmt: skip
+        if e.time is not None:
+            spans |= {"start_s": (e.time.start_s, "s"), "end_s": (e.time.end_s, "s")}
+        for name, (value, unit) in spans.items():
+            key = f"{central_message.KEY}.{name}"
+            found[key] = MeasureValue(measure=key, value=value, unit=unit)
     for r in a.dimensions:  # measures the rubric derives (mid-sentence pauses, overrun)
         for c in r.conditions:
             if c.value is not None and c.measure not in found:

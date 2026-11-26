@@ -66,6 +66,7 @@ class DimensionSummary(_Frozen):
     measured: int = Field(ge=0)  # N of M
     total: int = Field(ge=1)
     failed: bool = False  # the app could not check this dimension (ADR 0019)
+    information_only: bool = False  # shown, not scored (ADR 0025); the engine never picks it
 
 
 class MeasureValue(_Frozen):

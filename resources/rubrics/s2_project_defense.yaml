@@ -111,22 +111,26 @@ scale_ar:
 
 measures:
   text.central_message.statements:
-    status: available
+    status: planned
+    planned_in: P7  # v1 cues not computed: central message is information-only (ADR 0025)
     requires: none
     languages: [en]
     description: Sentences that match the thesis-cue lexicon, anywhere in the talk.
   text.central_message.in_opening:
-    status: available
+    status: planned
+    planned_in: P7  # v1 cues not computed: central message is information-only (ADR 0025)
     requires: none
     languages: [en]
     description: Yes if the thesis sentence is in the opening.
   text.central_message.in_closing:
-    status: available
+    status: planned
+    planned_in: P7  # v1 cues not computed: central message is information-only (ADR 0025)
     requires: none
     languages: [en]
     description: Yes if a sentence of the closing contains at least one key phrase.
   text.central_message.key_phrase_recurrences:
-    status: available
+    status: planned
+    planned_in: P7  # v1 cues not computed: central message is information-only (ADR 0025)
     requires: none
     languages: [en]
     description: Key-phrase recurrences in the body (sentences, not occurrences).

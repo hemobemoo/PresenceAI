@@ -8,7 +8,7 @@ from the scenario's rubric thresholds (`configs/rubric.yaml`).
 from __future__ import annotations
 
 from presenceai.lang import language_name, text
-from presenceai.rubric.loader import load_thresholds
+from presenceai.rubric.loader import load_possible_main_point, load_thresholds
 from presenceai.schemas.assessment import Measurement
 from presenceai.schemas.speech import FillerEvent, FillerKind, Transcript
 from presenceai.schemas.text import TextReport
@@ -66,7 +66,7 @@ def analyze_text(
         ),
     )
     found: dict[str, Measurement | None] = {
-        **central_message.measure(doc, values),
+        **central_message.measure(doc, load_possible_main_point().window_pct),
         **organization.measure(doc, values),
         **supporting_material.measure(doc),
         **language.measure(doc, values),

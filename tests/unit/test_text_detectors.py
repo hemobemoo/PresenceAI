@@ -13,7 +13,7 @@ import pytest
 from presenceai.coach.guardrails import contains_banned_term, contains_verdict_term
 from presenceai.rubric import loader
 from presenceai.schemas.assessment import Confidence
-from presenceai.text import analyze
+from presenceai.text import analyze, central_message
 
 # 7 sentences, 67 words: opening = first 13 words (S1, S2), closing = last 10 words (S7)
 TALK = (
@@ -47,10 +47,10 @@ def _quotes(report: Any, key: str) -> list[str]:
 def test_the_sample_talk(run: Any):
     r = run(TALK)
     assert r.sentences == 7 and r.punctuation_reliable
-    assert _v(r, "text.central_message.statements") == 1
-    assert _v(r, "text.central_message.in_opening") == 1
-    assert _v(r, "text.central_message.in_closing") == 1
-    assert _v(r, "text.central_message.key_phrase_recurrences") == 2
+    assert _v(r, central_message.KEY) == 1  # "I will show that" in the opening 15 %
+    assert _quotes(r, central_message.KEY) == [
+        "Today I will show that short daily practice improves presentation skills."
+    ]
     assert _v(r, "text.organization.framing_parts") == 2
     assert _v(r, "text.organization.transitions") == 2
     assert _v(r, "text.hook.present") == 1
@@ -61,13 +61,58 @@ def test_the_sample_talk(run: Any):
         r, "text.language.undefined_terms"
     ) == ["rehearse"]
     assert _v(r, "text.language.mean_sentence_words") == round(67 / 7, 2)
-    assert {m.confidence for m in r.measurements.values()} == {Confidence.MEDIUM}
+    assert {m.confidence for k, m in r.measurements.items() if k != central_message.KEY} == {
+        Confidence.MEDIUM
+    }
+    assert r.measurements[central_message.KEY].confidence == Confidence.LOW  # shown, not scored
+    assert r.measurements[central_message.KEY].evidence[0].time is not None
 
 
-def test_key_phrases_match_by_lemma_not_exact_string(run: Any):
-    r = run(TALK)
-    quotes = _quotes(r, "text.central_message.key_phrase_recurrences")
-    assert any("the skill that matters" in q for q in quotes)  # thesis said "skills"
+FILL = " ".join(f"We ran {i} laps." for i in range(30))  # 120 words of body
+
+
+def test_possible_main_point_needs_a_purpose_phrase_early_and_is_never_a_question(run: Any):
+    r = run(f"My main point is that we run. {FILL}")
+    assert _v(r, central_message.KEY) == 1
+    r = run(f"Is my main point that we run? {FILL}")  # a question is never the main point
+    assert _v(r, central_message.KEY) == 0
+    r = run(f"{FILL} My main point is that we run.")  # outside the opening 15 %
+    assert _v(r, central_message.KEY) == 0
+    r = run(f"Is this hard? My main point is that we run. {FILL}")
+    assert _quotes(r, central_message.KEY) == ["My main point is that we run."]
+
+
+def test_app_detector_is_method_a_with_the_accepted_values(run: Any, fake_parser: Any):
+    """The app runs the method A the owner accepted (ADR 0025): same phrases, same rule."""
+    import importlib.util
+    import sys
+
+    import yaml
+
+    from presenceai.evalconfig import REPO_ROOT
+    from presenceai.lang import load_pack_file
+    from presenceai.rubric.loader import load_possible_main_point
+
+    exp = yaml.safe_load((REPO_ROOT / "experiments/c2_synth/cm_cues_v2.yaml").read_text("utf-8"))
+    assert load_pack_file("en", "text_cues.yaml")["main_point_purpose"] == exp["purpose"]
+    assert load_possible_main_point().window_pct == 15
+    path = REPO_ROOT / "experiments" / "c2_synth" / "cm_compare.py"
+    spec = importlib.util.spec_from_file_location("c2_cm_compare", path)
+    assert spec is not None and spec.loader is not None
+    cm = importlib.util.module_from_spec(spec)
+    sys.modules["c2_cm_compare"] = cm
+    spec.loader.exec_module(cm)
+    params = {"window": 15, "families": ("purpose",), "pick": "first"}
+    for talk in (
+        TALK,
+        f"Is this hard? My main point is that we run. {FILL}",
+        f"{FILL} My main point is that we run.",
+        f"We will see. I want to show {FILL}",
+    ):
+        app = _quotes(run(talk), central_message.KEY) if _v(run(talk), central_message.KEY) else []
+        t = cm.talk_from_text("k", 0, talk, True, None, parser=fake_parser)
+        i = cm.method_a(t, params)
+        assert app == ([] if i is None else [t.sents[i].text]), talk
 
 
 def test_every_quote_is_exact_and_zero_counts_quote_the_searched_part(run: Any, sb: Any):
@@ -78,8 +123,8 @@ def test_every_quote_is_exact_and_zero_counts_quote_the_searched_part(run: Any, 
         for e in m.evidence:
             assert e.transcript is not None, key
             assert text[e.transcript.start_char : e.transcript.end_char] == e.transcript.text
-    assert _v(r, "text.central_message.in_closing") == 0
-    assert _quotes(r, "text.central_message.in_closing") == ["We went home."]  # the closing
+    assert _v(r, central_message.KEY) == 0
+    assert _quotes(r, central_message.KEY) == ["We met. We"]  # the searched opening 15 %
 
 
 def test_transitions_count_once_per_sentence_and_only_near_its_start(run: Any):
@@ -139,10 +184,18 @@ def test_arabic_content_is_not_measurable_never_low(run: Any):
 
 
 def test_measures_cover_the_rubric(run: Any):
+    # ADR 0025: the v1 central-message measures are planned for P7 (information-only dimension);
+    # the possible main point is computed for the card and is not a rubric measure
     rubric = loader.load_rubric("s1_presentation")
-    planned_here = {k for k, m in rubric.measures.items() if k.startswith("text.")}
-    assert planned_here == set(analyze.MEASURES)
-    assert all(rubric.measures[k].status == "available" for k in planned_here)
+    available = {k for k, m in rubric.measures.items()
+                 if k.startswith("text.") and m.status == "available"}  # fmt: skip
+    assert available == set(analyze.MEASURES) - {central_message.KEY}
+    planned = {
+        k for k, m in rubric.measures.items() if k.startswith("text.") and k not in available
+    }
+    v1 = ("statements", "in_opening", "in_closing", "key_phrase_recurrences")
+    assert planned == {f"text.central_message.{k}" for k in v1}
+    assert all(rubric.measures[k].planned_in == "P7" for k in planned)
 
 
 def test_methods_are_observable_wording(run: Any):
@@ -162,7 +215,7 @@ def test_real_spacy_on_the_sample_talk(sb: Any, speech_cfg: Any):
     except ModelNotAvailable:
         pytest.skip("en_core_web_sm not downloaded (scripts/download_models.py --only spacy_en)")
     r = analyze.analyze_text(sb.spaced(TALK), parser=parser, pauses=speech_cfg.pauses)
-    assert _v(r, "text.central_message.in_opening") == 1
+    assert _v(r, central_message.KEY) == 1
     assert _v(r, "text.organization.transitions") == 2
     assert _v(r, "text.hook.present") == 1
     assert _v(r, "text.support.types") == 4
@@ -200,7 +253,7 @@ def test_contractions_are_expanded(said: str, expanded: str):
 
 def test_topic_announcement_is_introduction_not_thesis(run: Any):
     r = run("Today I'll talk about habits. Habits matter. We sleep. We eat. We rest. Thanks.")
-    assert _v(r, "text.central_message.statements") == 0
+    assert _v(r, central_message.KEY) == 0  # a topic announcement is not a main point
     assert _v(r, "text.organization.framing_parts") == 1  # introduction cue
     r = run("Today we will cover sleep. Sleep matters. We rest. We eat. We go. Thanks.")
     assert _v(r, "text.organization.framing_parts") == 1

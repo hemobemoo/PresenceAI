@@ -248,9 +248,23 @@ def test_saved_report_round_trips_and_its_summary_is_text_free(
             r.confidence,
         )
         assert (d.measured, d.total) == (f.measured, f.total)
+        assert d.information_only == r.information_only
+    assert dims["central_message"].information_only  # ADR 0025
     values = {m.measure: m.value for m in summary.measures}
     assert values["timing.overrun_s"] == 0.0
-    assert "text.central_message.statements" in values
+    # method A's output, as numbers only, for the later comparison with the P7 judge
+    key = "text.central_message.possible_main_point"
+    assert values[key] == 1.0
+    cm = next(f for f in a.findings if f.dimension == "central_message")
+    span = cm.evidence[0]
+    assert span.transcript is not None and span.time is not None
+    assert (values[f"{key}.start_char"], values[f"{key}.end_char"]) == (
+        span.transcript.start_char, span.transcript.end_char)  # fmt: skip
+    assert (values[f"{key}.start_s"], values[f"{key}.end_s"]) == (
+        span.time.start_s,
+        span.time.end_s,
+    )
+    assert "text.central_message.statements" not in values  # v1 is no longer computed
     dumped = summary.model_dump_json()
     for word in ("zebra", "lanterns", "practice", "Today"):
         assert word not in dumped  # numbers and codes only
@@ -283,3 +297,28 @@ def test_deleting_a_session_removes_its_summary(
     reports.save(db, store, s.id, fake_assessment)
     rights.delete_session(db, s.id)
     assert db.summary(s.id).dimensions == ()
+
+
+def test_an_older_database_gets_the_information_only_column(layout: Layout):
+    """A file made before ADR 0025 has no information_only column; opening it adds one."""
+    import sqlite3
+
+    layout.home.mkdir(parents=True, exist_ok=True)
+    con = sqlite3.connect(layout.db_path)
+    con.execute("CREATE TABLE dimension_summary (session_id VARCHAR NOT NULL, dimension VARCHAR "
+                "NOT NULL, level INTEGER, capped_from INTEGER, score FLOAT, confidence VARCHAR, "
+                "measured INTEGER NOT NULL, total INTEGER NOT NULL, failed BOOLEAN NOT NULL, "
+                "PRIMARY KEY (session_id, dimension))")  # fmt: skip
+    con.execute("INSERT INTO dimension_summary VALUES ('a', 'delivery', 3, NULL, 0.67, 'low', "
+                "2, 3, 0)")  # fmt: skip
+    con.commit()
+    con.close()
+    d = Database(layout)
+    try:
+        with sqlite3.connect(layout.db_path) as c:
+            cols = {row[1] for row in c.execute("PRAGMA table_info(dimension_summary)")}
+            assert "information_only" in cols
+            assert c.execute("SELECT information_only FROM dimension_summary").fetchone() == (0,)
+        Database(layout).close()  # a second open does not add it again
+    finally:
+        d.close()
