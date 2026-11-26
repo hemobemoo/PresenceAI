@@ -164,6 +164,17 @@
      `main_point_stated`, `main_point_sentence` (required when yes) and
      `restated_in_closing`; `score` writes counts only (detector vs owner, and how often
      the detector's thesis sentence matches the owner's).
+     **Result (owner labels complete, 2026-11-26; `experiments/results/c2/dev_labels.json`,
+     detector at e21b0d1):** the owner marked the main point stated in 90 of 118 dev talks.
+     The detector found a thesis sentence in 1 of them (tp 1, fp 0, fn 89, tn 28); its
+     sentence matched the owner's in that 1, and the owner's sentence was among the
+     detector's thesis-cue statements in 2 of 90. Restated in closing: owner yes in 36,
+     detector yes in 1, which the owner marked no (tp 0, fp 1, fn 36, tn 81). By planted
+     group, owner "stated" yes/no: control 23/1, no central message 5/19, no conclusion
+     19/4, no supporting material 20/3, undefined jargon 23/1. The planted central-message
+     label disagrees with the owner on 14 of 118 dev talks (11.9 %). The detector misses
+     almost every stated main point, consistent with the floor effect (ADR 0019 open
+     item 2). Tuning the cues on these labels is the next step and needs its own plan.
 5. **Design** (owner, unchanged from the P2-e proposal):
    - 400 transcripts: 5 groups of 80 (control, no central message, no conclusion, no supporting
      material, undefined jargon); each of 80 topics (`resources/c2/topics.yaml`, written for
