@@ -127,6 +127,7 @@ t1:                                  # ADR 0027 (proposed): T1 data preparation 
                                      # transcript_a (S3 / ADR 0005 used transcript_a)
   ami:
     train_speech_hours: 10.0         # owner P1: speech KEPT in the manifest, after the crosstalk filter
+    manifest_sha256: fd51f6614bbf8e13c40894ead6f754ac4cbb3fa851c6d9b9e76aeaa7e8a693a8  # run d3; T1-r2 checks it
     meeting_kind: scenario           # ES / IS / TS sessions only, so the three sites alternate
     sites: [ES, IS, TS]              # round-robin over sites, seeded shuffle within each site
     exclude_sessions_from: e3.ami_split.pool   # the ten disfluency-layer sessions never train
@@ -158,7 +159,8 @@ public_data:                         # ADR 0026 §1 / DATA_SOURCES §1-4; fetche
     licence_must_state: CC BY 4.0    # read FIRST; stop before any other AMI file otherwise
   ami_headset:
     url: https://groups.inf.ed.ac.uk/ami/AMICorpusMirror/amicorpus/{meeting}/audio/{meeting}.Headset-{channel}.wav
-    sha256: {}                       # per file, recorded by the first data run, then pinned
+    sha256_file: configs/pins/ami_headsets.json   # 140 files, run d3 (ADR 0027 §6); loaded into sha256
   librispeech_test_clean:
     url: https://www.openslr.org/resources/12/test-clean.tar.gz
-    sha256: null                     # recorded by the first data run, then pinned
+    sha256: 39fde525e59672dc6d1551919b1478f724438a95aa55f874b576be21967e6c23  # run d3, 346,663,984 bytes
+    licence: CC BY 4.0               # OpenSLR 12 page, checked 2026-11-27

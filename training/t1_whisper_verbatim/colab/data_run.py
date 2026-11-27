@@ -135,31 +135,24 @@ def ds_check(t1cfg, hes, back):
     }
     for split in sorted(tables):
         rows = [r for t in tables[split] for r in t.to_pylist()]
-        same = len_diff = word_diff = fillers = partials = 0
+        kinds = {"same": 0, "punctuation_only": 0, "partials_only": 0, "words_differ": 0}
+        fillers = partials = 0
         examples = []
         for row in rows:
             ours = t1text.build_ds_text(row["transcript_annotated"])
             a = row["transcript_a"]
-            ot, at = ours.split(), a.split()
             fillers += t1text.count_fillers(ours, hes, back)
             partials += t1text.count_partials(ours, hes)
-            if len(ot) != len(at):
-                len_diff += 1
-                bad = True
-            else:
-                bad = any(x != y and not t1text.is_partial(x) for x, y in zip(ot, at, strict=True))
-                word_diff += bad
-            same += not bad
-            if bad and len(examples) < 20:
+            kind = t1text.compare_with_transcript_a(ours, a)
+            kinds[kind] += 1
+            if kind == "words_differ" and len(examples) < 30:  # punctuation-only rows are fine
                 examples.append({"ours": ours, "transcript_a": a})
         report["splits"][split] = {
             "rows": len(rows),
-            "equal_except_partials": same,
-            "length_differs": len_diff,
-            "word_differs": word_diff,
+            **kinds,
             "fillers": fillers,
             "partials": partials,
-            "examples": examples,
+            "words_differ_examples": examples,
         }
     return report
 
@@ -269,6 +262,11 @@ def main():
             k: summary[k] for k in ("speech_hours_kept", "segments", "manifest_sha256")
         }
         info["steps"]["speaker_check_passed"] = read_json("t1/speaker_check.json")["passed"]
+        pinned = t1cfg["ami"].get("manifest_sha256")
+        if pinned and summary["manifest_sha256"] != pinned:  # run d3 pinned it (ADR 0027 §6)
+            info["status"] = "manifest_changed"
+            info["steps"]["manifest_pinned"] = pinned
+            return info
         probe = read_json("t1/format_probe.json")
         if summary["segments"] == 0 or probe["unknown_elements"]:
             info["steps"]["format_warning"] = probe["unknown_elements"] or "no segments"

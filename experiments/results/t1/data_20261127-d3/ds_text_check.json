@@ -1,0 +1,228 @@
+{
+  "files": [
+    "test-00000-of-00001.parquet",
+    "train-00000-of-00003.parquet",
+    "train-00001-of-00003.parquet",
+    "train-00002-of-00003.parquet",
+    "validation-00000-of-00001.parquet"
+  ],
+  "read_with": "token",
+  "repo": "amaai-lab/DisfluencySpeech",
+  "revision": "b7da294fe3a70dd96df6640893f2a5dfc2c87638",
+  "splits": {
+    "test": {
+      "equal_except_partials": 234,
+      "examples": [
+        {
+          "ours": "Well, McNeil, Neil-, and Lehrer, I guess he's leaving, one of them is leaving.",
+          "transcript_a": "Well, McNeil. Neil-, and Lehrer, I guess he's leaving, one of them is leaving."
+        },
+        {
+          "ours": "I'll be thinking in mind the address is, um, is there anything you can do about that like give out a phony phone number?",
+          "transcript_a": "I'll be thinking in mind the address is. um, is there anything you can do about that like give out a phony phone number?"
+        },
+        {
+          "ours": "Well, To tell you the truth I haven't paid too much attention to that.",
+          "transcript_a": " Well , To tell you the truth I haven't paid too much attention to that."
+        },
+        {
+          "ours": "Uh, but, You know, they're not very old, so they couldn't do a whole lot, yet.",
+          "transcript_a": "Uh , but, You know, they're not very old, so they couldn't do a whole lot, yet."
+        },
+        {
+          "ours": "Now, I've always done those kinds of things because I just didn't like messes, and...",
+          "transcript_a": "Now, I've always done those kinds of things because I just didn't like messes, and"
+        },
+        {
+          "ours": "And then, and then, uh,, uh, the blond headed girl that used to be on NEWHART.",
+          "transcript_a": "And then, and then, uh, , uh, the blond headed girl that used to be on NEWHART."
+        },
+        {
+          "ours": "I've got a Bachelor's in electrical engineering so, And I'm not, like, a hugely advanced degree or any ((of that stuff)).",
+          "transcript_a": "I've got a Bachelor's in electrical engineering so, And I'm not, like, a hugely advanced degree or any of that stuff."
+        },
+        {
+          "ours": "That thing, that thing will last forever I mean, Oh, yeah, that thing's, uh, it's got a boat engine in it.",
+          "transcript_a": "That thing, that thing will last forever I mean. Oh, yeah, that thing's, uh, it's got a boat engine in it."
+        },
+        {
+          "ours": "Whenever they, they made that into a movie, I was thinking oh, my gosh if they show that, I'll just die. For some reason that scared me more than anything.",
+          "transcript_a": "Whenever they , they made that into a movie, I was thinking oh, my gosh if they show that, I'll just die. For some reason that scared me more than anything."
+        },
+        {
+          "ours": "So so it And they're... And you know, I feel guilty cause I'm driving a,",
+          "transcript_a": " So so it And they're And you know, I feel guilty cause I'm driving a ,"
+        },
+        {
+          "ours": "Or, you know, to find a job where they can learn how to support themselves, I mean, I guess we're getting kind of off the subject,, here, but.",
+          "transcript_a": "Or, you know, to find a job where they can learn how to support themselves, I mean, I guess we're getting kind of off the subject, , here, but."
+        },
+        {
+          "ours": "Well, I think I would start with a -bout, with getting rid of about two-thirds of the administrators.",
+          "transcript_a": " Well, I think I would start with about, with getting rid of about two-thirds of the administrators."
+        },
+        {
+          "ours": "But it, it was not necessarily local, it was, But I, I mean, so what's,,",
+          "transcript_a": "But it, it was not necessarily local, it was, But I, I mean, so what's,."
+        },
+        {
+          "ours": "And that we, I, I've never been on a jury, I've never had that experience, I'm not sure I'd look forward to making that kind of decision about a man's life.",
+          "transcript_a": "And that we-, I, I've never been on a jury, I've never had that experience, I'm not sure I'd look forward to making that kind of decision about a man's life."
+        },
+        {
+          "ours": "Just ((that)), you know, you don't feel guilty when you eat that cake after dinner,.",
+          "transcript_a": "Just that. you know, you don't feel guilty when you eat that cake after dinner,."
+        },
+        {
+          "ours": "Oh, well. Well... but we like L A LAW. We like, that. We're just, I'm sorry they're breaking the team up, because we liked all the ones that were on there.",
+          "transcript_a": "Oh, well. Well but we like L A LAW. We like, that. We're just, I'm sorry they're breaking the team up, because we liked all the ones that were on there."
+        }
+      ],
+      "fillers": 130,
+      "length_differs": 7,
+      "partials": 21,
+      "rows": 250,
+      "word_differs": 9
+    },
+    "train": {
+      "equal_except_partials": 4332,
+      "examples": [
+        {
+          "ours": "I'm telling you, go one way or the other. That, that's probably an expensive trial. ((Uh)), Six months so far they said.",
+          "transcript_a": " I'm telling you, go one way or the other. That, that's probably an expensive trial. Uh. Six months so far they said."
+        },
+        {
+          "ours": "I mean as you're walking through that little tour in, uh, Munich, it's kind of, they're trying to brainwash you, too.",
+          "transcript_a": "I mean as you're walking through that little tour in, uh, Munich, it's kind of , they're trying to brainwash you, too."
+        },
+        {
+          "ours": "I'll throw it in there, but I don't really, I don't ever take anything.",
+          "transcript_a": "I'll throw it in there , but I don't really, I don't ever take anything."
+        },
+        {
+          "ours": "But, uh, I have a eighteen year old son. The ((rest)) of my girls are like twenty-three, twenty-six, twenty-eight, and twenty-nine.",
+          "transcript_a": "But, uh, I have a eighteen year old son. The rest of my girls are like twenty-three, twenty-six, twenty-eight, and twenty-nine."
+        },
+        {
+          "ours": "So, that's what they do. They buy all, all the things that I B M throws away and they, and that's why they're so compatible.",
+          "transcript_a": " So, that's what they do. They buy all, all the things that I B M throws away and they. and that's why they're so compatible."
+        },
+        {
+          "ours": "It was about, uh, a, French Foreign Legion fellow who deserts to go help his brother's wife who got, who became a widow because he was selling drugs, and he got killed.",
+          "transcript_a": "It was about, uh, a, French Foreign Legion fellow who deserts to go help his brother's wife who got, who became a widow because he was selling drugs , and he got killed."
+        },
+        {
+          "ours": "And, uh, and, and using makeup and using the all the props and whatever to get to where he needs to go.",
+          "transcript_a": "And, uh, and. and using makeup and using the all the props and whatever to get to where he needs to go."
+        },
+        {
+          "ours": "Well, I, uh, when ((John)) ((Stallworth)) played he was from my hometown in Alabama, so I kind of grabbed on to that team, ((That's pretty nice)).",
+          "transcript_a": "Well, I, uh, when John Stallworth played he was from my hometown in Alabama, so I kind of grabbed on to that team, That's pretty nice."
+        },
+        {
+          "ours": "((Yeah,)) that's good. I, I used to watch them a lot when they were playing the big iron curtain, or steel curtain.",
+          "transcript_a": "Yeah, that's good. I, I used to watch them a lot when they were playing the big iron curtain, or steel curtain."
+        },
+        {
+          "ours": "I could see where that would be a problem, and I think that's, I think it's...",
+          "transcript_a": "I could see where that would be a problem, and I think that's, I think it's"
+        },
+        {
+          "ours": "Just change our pr-, but that's, just change our priorities a little bit.",
+          "transcript_a": "Just change our p-, but that's , just change our priorities a little bit."
+        },
+        {
+          "ours": "So they hold their, you take care of them, they hold their value real well.",
+          "transcript_a": "So they hold their, you take care of them. they hold their value real well."
+        },
+        {
+          "ours": "but I did enjoy owning a boat, would recommend it to anybody. And, uh, uh,, but, uh, and now sailing, I've never been sailing. Have you been sailing?",
+          "transcript_a": "but I did enjoy owning a boat, would recommend it to anybody. And, uh, uh, , but, uh, and now sailing, I've never been sailing. Have you been sailing?"
+        },
+        {
+          "ours": "And, uh, it just, we just moved down here a couple years ago, so, Where did you all move from?",
+          "transcript_a": "And, uh, it just , we just moved down here a couple years ago, so, Where did you all move from?"
+        },
+        {
+          "ours": "People would always bring them when they go to the countries, and, um, and I did that when I went to Europe one summer. I bought a doll everywhere we went, so.",
+          "transcript_a": "People would always bring them when they go to the countries, and, um, and I did that when I went to Europe one summer. I bought a doll everywhere we went , so."
+        },
+        {
+          "ours": "Yeah, the, their, their backfield is really impressive. Haywood ((Jeffreys)) and Drew Hill and ((Allen)) )), they really impress me.",
+          "transcript_a": "Yeah, the, their, their backfield is really impressive. Haywood Jeffreys and Drew Hill and Allen. they really impress me."
+        },
+        {
+          "ours": "And, and, and it, it obviously makes no sense that we're practically alone in the world in, in using the old system.",
+          "transcript_a": "And, and, and it , it obviously makes no sense that we're practically alone in the world in, in using the old system."
+        },
+        {
+          "ours": "Yeah, I think so. Your, your average guy jogging down the highway wants to know how many miles it is to his destination.",
+          "transcript_a": " Yeah , I think so. Your, your average guy jogging down the highway wants to know how many miles it is to his destination."
+        },
+        {
+          "ours": "No. It, Rodney got beat up because he, he, you know, he pur-, you know, he involved himself in some sub, self-destructive behavior.",
+          "transcript_a": "No. It. Rodney got beat up because he, he, you know, he pur-, you know, he involved himself in some sub, self-destructive behavior."
+        },
+        {
+          "ours": "Uh, so I guess my experience is, is just with what we did and, and so they didn't really go through the child care route.",
+          "transcript_a": "Uh , so I guess my experience is, is just with what we did and, and so they didn't really go through the child care route."
+        }
+      ],
+      "fillers": 2800,
+      "length_differs": 79,
+      "partials": 511,
+      "rows": 4500,
+      "word_differs": 89
+    },
+    "validation": {
+      "equal_except_partials": 240,
+      "examples": [
+        {
+          "ours": "And where his, old evidence was there, the witnesses were there, the, everything was conclusively pointing to this individual yet,",
+          "transcript_a": "And where his, old evidence was there, the witnesses were there, the, everything was conclusively pointing to this individual yet."
+        },
+        {
+          "ours": "Yeah, I heard that. It's, it's daughter, it's his daughter that, they just had the baby's christening so, It was really nice so, He's a little boy.",
+          "transcript_a": "Yeah, I heard that. It's, it's daughter, it's his daughter that, they just had the baby's christening so, It was really nice so. He's a little boy."
+        },
+        {
+          "ours": "Um, they, they went through engineering companies, and, uh, we're communications. I, I work in a communications company.",
+          "transcript_a": "Um, they. they went through engineering companies, and, uh, we're communications. I, I work in a communications company."
+        },
+        {
+          "ours": "That's, I think they did a pretty good job, but, they didn't follow it exactly, but they did give it, you know, do it justice.",
+          "transcript_a": "That's, I think they did a pretty good job, but , they didn't follow it exactly, but they did give it, you know, do it justice."
+        },
+        {
+          "ours": "Uh-huh. That's, uh, some pretty good ideas. Why don't you do something with those?",
+          "transcript_a": "Uh-huh. That's, uh, some pretty good ideas. Why don't you do something with those ?"
+        },
+        {
+          "ours": "Uh, but he picked the right songs and and that, that's about all he had going for him. Or still has, for that matter.",
+          "transcript_a": " Uh, but he picked the right songs and and that , that's about all he had going for him. Or still has, for that matter."
+        },
+        {
+          "ours": "You know, the scr-, both, yeah, both females, they're both spayed, um, or whatever it is, neutered, you know,, um, and they're, they're both declawed at least on the, the front claws.",
+          "transcript_a": "You know, the scr-, both, yeah, both females, they're both spayed, um, or whatever it is, neutered, you know, , um, and they're, they're both declawed at least on the, the front claws."
+        },
+        {
+          "ours": "Well, good luck on your graduation and your... well, thank you. It was nice talking to you.",
+          "transcript_a": "Well, good luck on your graduation and your well, thank you. It was nice talking to you."
+        },
+        {
+          "ours": "Yeah. It seems like crime is turning into a pastime instead of like, you know, be...",
+          "transcript_a": "Yeah. It seems like crime is turning into a pastime instead of like, you know, be"
+        },
+        {
+          "ours": "No, we can, after you go to somewhere between five and ten minutes, they'll get a little master recording ((on)), this.",
+          "transcript_a": "No, we can, after you go to somewhere between five and ten minutes, they'll get a little master recording on. this."
+        }
+      ],
+      "fillers": 171,
+      "length_differs": 4,
+      "partials": 29,
+      "rows": 250,
+      "word_differs": 6
+    }
+  }
+}

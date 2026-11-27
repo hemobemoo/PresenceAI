@@ -153,14 +153,52 @@ Results: `experiments/results/t1/data_20261127-d2/` (ingest checked all 9 files)
 - DisfluencySpeech and LibriSpeech were not reached. The code changed, so the next run is a new
   build (`20261127-d3`, a new Drive folder; a resumed folder must come from the same build).
 
+### 6. Run `20261127-d3` (Colab CPU, 2026-11-27): complete
+
+Results: `experiments/results/t1/data_20261127-d3/` (ingest checked all 11 files). Status `ok`,
+694.5 s, no resumed stage.
+
+- **Licence** passed again; the annotation zip matched its pin from d2.
+- **Speaker check** passed: 12 dev / 28 test speakers, none shared, **no missing session** (the
+  report fix works).
+- **Format probe:** same elements as d2; no unknown element now that `transformerror` is known.
+- **Manifest (final, pinned):** **10.0001 h of speech kept**, 4,445 segments, 35 meetings, 140
+  headsets, 99,604 words, **5,784 fillers** (d2: 5,845; the 61 one-letter partials are no longer
+  counted) and **1,718 partial words** (d2: 1,657). Dropped of 41,623 candidates: too short 14,139,
+  crosstalk 12,811, gap or transformerror 2,380 (one segment moved from crosstalk to gap). Same
+  meetings as d2. `t1.ami.manifest_sha256 = fd51f661…a693a8`; T1-r2 checks it before training, and
+  a data run that rebuilds a different manifest stops with `manifest_changed`.
+- **Headsets:** all 140 downloaded and hashed (8.43 GB, 16 kHz mono, every segment inside its
+  file), 5 retries in total, no failure. The 50 files hashed in d2 have **identical** hashes in d3.
+  Pins: `configs/pins/ami_headsets.json` (`public_data.ami_headset.sha256_file`).
+- **LibriSpeech test-clean:** 346,663,984 bytes, SHA-256 `39fde525…967e6c23` (pinned), 2,620 FLAC
+  files and 87 transcript files. Its OpenSLR page states **CC BY 4.0** (checked 2026-11-27).
+- **DisfluencySpeech text check** (read with the token; only the two text columns of the 5 parquet
+  files): of 5,000 rows, **4,806 (96.1 %)** gave the same words as `transcript_a` except at partial
+  words (train 4,332 of 4,500, validation 240 of 250, test 234 of 250). The old check compared exact
+  tokens, so punctuation counted as a difference. Reading the 60 saved examples:
+  - **most are punctuation only** (`transcript_a` ends a clause with "." where the annotation has
+    ",", or detaches a comma). E3 strips punctuation, so they do not matter;
+  - **a builder gap:** Switchboard's uncertain-word marks were kept (`((of … stuff)).`,
+    `((Uh)),`), and a doubled comma (`know,,`). **Fixed**: the marks are removed and the words kept;
+    `,,` becomes `,`. Tests added;
+  - with the fix, **2 of the 60** still differ in words. Both are rare partial-word notations: `a
+    -bout` (hyphen in front) and a `we-` that only `transcript_a` marks. Left as they are, as
+    label noise.
+  - The data run's check now sorts every row into `same`, `punctuation_only`, `partials_only` and
+    `words_differ`. **The fixed builder has not yet been checked on all 5,000 rows.** That check runs
+    as the first step of PR-3's Colab run, which loads DisfluencySpeech anyway, so no extra data
+    run is needed. T1 training (PR-4) uses only the checked builder.
+
 ## Consequences
 
 - E3 (PR-3) scores DisfluencySpeech against the same text style T1 learns, so partial words are not
   counted as errors against `transcript_a`.
 - T1 can count false starts (partial words), which `speech/repetitions.py` left for T1.
-- **Recorded from run d2 (§5):** licence wording, speaker check, probe findings (no spelling-map
-  change), annotation-zip hash. **Still open, from run d3:** final hours, segments and manifest
-  hash, headset and LibriSpeech hashes, and the DisfluencySpeech text check.
+- **Recorded:** licence wording, speaker check, probe findings (no spelling-map change) and the
+  annotation-zip hash (d2, §5); final manifest, every headset hash, LibriSpeech hash and licence,
+  and the DisfluencySpeech text check (d3, §6). **Still open:** the fixed builder's check on all
+  5,000 DisfluencySpeech rows, run as the first step of PR-3's Colab run.
 - **This decision is wrong if** the text check shows many DisfluencySpeech rows that differ from
   `transcript_a` outside partial words (the builder misreads the markup), or if the probe shows AMI
   marks partial words in a way the parser does not read.

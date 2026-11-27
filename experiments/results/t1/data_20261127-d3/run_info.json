@@ -1,0 +1,73 @@
+{
+  "build": {
+    "repo_commit": "758e25eebf1a32df92502885a4298906676537fe",
+    "repo_dirty": false,
+    "run_id": "20261127-d3"
+  },
+  "elapsed_s": 694.5,
+  "platform": "Linux-6.6.159+-x86_64-with-glibc2.39",
+  "python": "3.13.18 (main, Oct 26 2026, 15:28:15) [GCC 13.3.0]",
+  "resumed_stages": [],
+  "run_id": "20261127-d3",
+  "script_sha256": "547f5fa8c72cc9afa597c4e683ae6684f7756acf2de51f632c31d1a330ede549",
+  "sha256": {
+    "ds_text_check.json": {
+      "bytes": 14656,
+      "sha256": "b5304d220788092335cf717d2d58bd60efea8444b6f2b748e913e156427f635a"
+    },
+    "licence/AMI_LICENCE.txt": {
+      "bytes": 13197,
+      "sha256": "d52fd9c7c19eec9f0bec3107554c10937203e261259d73b01637a61501fec7f7"
+    },
+    "licence/licence_check.json": {
+      "bytes": 77,
+      "sha256": "99d4eb17ca5e46a676339f50ee40b8f5c92b4ec4d5e6dfe83c64fb71cec9ebde"
+    },
+    "pins/ami_annotations.json": {
+      "bytes": 231,
+      "sha256": "24b377e04a25a6397ad30656d5731ecb3f4fb9d8826c26f92a59594d87f70a8e"
+    },
+    "pins/headsets.jsonl": {
+      "bytes": 48112,
+      "sha256": "eb4de451aedb7d5ff32d8f928b4e6d2847f77de5811de19c3ebbd2bc5cb00107"
+    },
+    "pins/librispeech_test_clean.json": {
+      "bytes": 255,
+      "sha256": "62cb982de5f5ce7626c6f92ec2bbffba852fa7edd107b53f31d6d710114ceba6"
+    },
+    "progress.json": {
+      "bytes": 176,
+      "sha256": "4cc8de817492a9a5d0898002145f0850d26d324185cfaf5dd501a01f3d87e352"
+    },
+    "t1/format_probe.json": {
+      "bytes": 624,
+      "sha256": "8f725dff43677886c849a25a90100d1521687061f29120584b9065819e7802ea"
+    },
+    "t1/manifest.jsonl": {
+      "bytes": 1283379,
+      "sha256": "fd51f6614bbf8e13c40894ead6f754ac4cbb3fa851c6d9b9e76aeaa7e8a693a8"
+    },
+    "t1/manifest_summary.json": {
+      "bytes": 4570,
+      "sha256": "25f561dd727cfd12ea0234817dc46bb7d60461a4c731fe7155a696f457f46a60"
+    },
+    "t1/speaker_check.json": {
+      "bytes": 306,
+      "sha256": "1525d699e07e5a6eb467efcd5e92589724f4d7255f85cdb33f5ac756427a448d"
+    }
+  },
+  "status": "ok",
+  "steps": {
+    "disfluencyspeech": "checked",
+    "headset_problems": [],
+    "headsets": 140,
+    "librispeech": "checked",
+    "licence": "passed",
+    "manifest": {
+      "manifest_sha256": "fd51f6614bbf8e13c40894ead6f754ac4cbb3fa851c6d9b9e76aeaa7e8a693a8",
+      "segments": 4445,
+      "speech_hours_kept": 10.0001
+    },
+    "speaker_check_passed": true
+  }
+}

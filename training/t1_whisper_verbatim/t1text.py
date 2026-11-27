@@ -32,18 +32,45 @@ _BRACE_OPEN = re.compile(r"\{[A-Z]\s")  # {F , {D , {C , {E , {A  (filler, disco
 _MARKUP_ONLY = re.compile(r"^[-/#+\[\]{}()]+$")
 _SPACE = re.compile(r"\s+")
 _SPACE_BEFORE_PUNCT = re.compile(r"\s+([,.?!;:])")
+_COMMAS = re.compile(r",{2,}")
+_EDGE = ",.?!;:\"'"
 
 
 def build_ds_text(annotated: str) -> str:
     """DisfluencySpeech `transcript_annotated` -> T1 text: markup out, fillers and partials kept.
 
     `{F uh, }` -> `uh,`; `[ the, + the ]` -> `the, the`; `--`, lone `-`, `<tags>` removed;
-    `th-` kept. Equals `transcript_a` except that partial words keep their hyphen.
+    Switchboard's uncertain-word marks `((of stuff))` -> `of stuff` (found by data run d3);
+    `,,` -> `,`; `th-` kept. Same words as `transcript_a` except that partial words keep their
+    hyphen (punctuation may differ: `transcript_a` sometimes ends a clause with "." where the
+    annotation has ",").
     """
-    text = _TAG.sub(" ", annotated)
+    text = _TAG.sub(" ", annotated).replace("((", " ").replace("))", " ")
     text = _BRACE_OPEN.sub(" ", text).replace("}", " ")
     kept = [t for t in _SPACE.split(text) if t and not _MARKUP_ONLY.match(t)]
-    return _SPACE_BEFORE_PUNCT.sub(r"\1", " ".join(kept)).strip()
+    return _COMMAS.sub(",", _SPACE_BEFORE_PUNCT.sub(r"\1", " ".join(kept))).strip()
+
+
+def words(text: str) -> list[str]:
+    """Lower-cased words without edge punctuation (the hyphen of a partial word is kept)."""
+    out = []
+    for t in text.split():
+        w = t.casefold().strip(_EDGE)
+        if w:
+            out.append(w)
+    return out
+
+
+def compare_with_transcript_a(ours: str, transcript_a: str) -> str:
+    """'same' | 'punctuation_only' | 'partials_only' | 'words_differ' (data-run text check)."""
+    if ours == transcript_a:
+        return "same"
+    a, b = words(ours), words(transcript_a)
+    if a == b:
+        return "punctuation_only"
+    if len(a) == len(b) and all(x == y or is_partial(x) for x, y in zip(a, b, strict=True)):
+        return "partials_only"
+    return "words_differ"
 
 
 def _key(token: str) -> str:

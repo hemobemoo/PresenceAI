@@ -52,6 +52,10 @@ TIMEOUT_S = 3 * 3600
 def load_config() -> dict[str, Any]:
     ev = yaml.safe_load(EVAL_CONFIG.read_text(encoding="utf-8"))
     fil = yaml.safe_load(FILLERS.read_text(encoding="utf-8"))
+    for src in ev["public_data"].values():  # per-file pins live in configs/pins/ (ADR 0027 §6)
+        if "sha256_file" in src:
+            pins = json.loads((REPO / src.pop("sha256_file")).read_text(encoding="utf-8"))
+            src["sha256"] = dict(pins["sha256"])
     return {
         "t1": ev["t1"],
         "e3": ev["e3"],

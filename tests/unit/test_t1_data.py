@@ -11,6 +11,7 @@ import base64
 import hashlib
 import importlib.util
 import json
+import re
 import shutil
 import sys
 import zipfile
@@ -72,6 +73,22 @@ def test_t1_config_matches_adr_0027_and_owner_answers():
     assert set(SPELL.values()) <= set(HES)  # every mapped filler is in the E3 lexicon
 
 
+def test_pins_from_data_runs_load_into_the_build_config():
+    cfg = cdata.load_config()
+    pd = cfg["public_data"]
+    sha = re.compile(r"[0-9a-f]{64}")
+    assert sha.fullmatch(pd["ami_annotations"]["sha256"])  # run d2
+    assert sha.fullmatch(pd["librispeech_test_clean"]["sha256"])  # run d3
+    heads = pd["ami_headset"]["sha256"]  # run d3, from configs/pins/ami_headsets.json
+    assert len(heads) == 140 and all(sha.fullmatch(v) for v in heads.values())
+    assert all(k.endswith(".wav") and ".Headset-" in k for k in heads)
+    assert "sha256_file" not in pd["ami_headset"]
+    assert sha.fullmatch(cfg["t1"]["ami"]["manifest_sha256"])  # run d3; T1-r2 checks it
+    # every pinned headset belongs to a meeting outside the ten E3 sessions
+    e3 = set(EV["e3"]["ami_split"]["pool"])
+    assert not {k.split(".")[0][:-1] for k in heads} & e3
+
+
 # --- text rules (owner P2, P3) ----------------------------------------------------------------
 
 
@@ -92,10 +109,28 @@ def test_t1_config_matches_adr_0027_and_owner_answers():
             "Man, I'm, What time is it over th-, are you, are you there?",
         ),
         ("{C And } <laughter> that is it.", "And that is it."),
+        # found by data run d3: Switchboard's uncertain-word marks, and doubled commas
+        ("the rest ((of the stuff)).", "the rest of the stuff."),
+        ("((Uh)), I ((rest)) it", "Uh, I rest it"),
+        ("you {D you know, }, yes", "you you know, yes"),
     ],
 )
 def test_ds_builder_removes_markup_keeps_fillers_and_partials(annotated, expected):
     assert t1text.build_ds_text(annotated) == expected
+
+
+@pytest.mark.parametrize(
+    ("ours", "a", "kind"),
+    [
+        ("It was, yet.", "It was, yet.", "same"),
+        ("It was yet,", "It was yet.", "punctuation_only"),  # d3: most differences look like this
+        ("but, that", "but , that", "punctuation_only"),
+        ("over th-, are you", "over the, are you", "partials_only"),
+        ("the rest of stuff", "the rest stuff", "words_differ"),
+    ],
+)
+def test_compare_with_transcript_a(ours, a, kind):
+    assert t1text.compare_with_transcript_a(ours, a) == kind
 
 
 def test_backchannels_count_zero_fillers_and_are_not_split():
