@@ -499,3 +499,65 @@ def test_ingest_default_inbox_is_data_colab_results():
     assert ci.INBOX == REPO / "data" / "colab_results"
     with pytest.raises(FileNotFoundError, match="colab_results"):
         cdata.ingest("does-not-exist")
+
+
+# --- Drive cache of pinned public files (owner, 2026-11-28; ADR 0028 §9) --------------------------
+
+
+def test_cache_hit_needs_no_request_and_verifies(tmp_path, monkeypatch):
+    data = b"pinned audio"
+    pin = hashlib.sha256(data).hexdigest()
+    cache = tmp_path / "cache"
+    cache.mkdir()
+    (cache / "a.wav").write_bytes(data)
+
+    def no_network(url, dest):
+        raise AssertionError("a verified cached file must not be downloaded")
+
+    monkeypatch.setattr(fetch, "_fetch_once", no_network)
+    rec = fetch.download(
+        "https://example.org/a.wav", tmp_path / "w" / "a.wav", pin, cache_dir=cache
+    )
+    assert rec["from_cache"] and (tmp_path / "w" / "a.wav").read_bytes() == data
+
+
+def test_bad_cached_copy_is_deleted_and_downloaded_again(tmp_path, monkeypatch):
+    good = b"pinned audio"
+    pin = hashlib.sha256(good).hexdigest()
+    cache = tmp_path / "cache"
+    cache.mkdir()
+    (cache / "a.wav").write_bytes(b"corrupted")
+    calls = []
+
+    def fetch_once(url, dest):
+        calls.append(url)
+        dest.write_bytes(good)
+        return pin, len(good)
+
+    monkeypatch.setattr(fetch, "_fetch_once", fetch_once)
+    rec = fetch.download(
+        "https://example.org/a.wav", tmp_path / "w" / "a.wav", pin, cache_dir=cache
+    )
+    assert not rec["from_cache"] and len(calls) == 1
+    assert (cache / "a.wav").read_bytes() == good  # replaced by the verified download
+    manifest = json.loads((cache / "cache_manifest.json").read_text())
+    assert manifest["a.wav"]["sha256"] == pin
+
+
+def test_unpinned_files_are_never_cached(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        fetch,
+        "_fetch_once",
+        lambda url, dest: (dest.write_bytes(b"x"), (hashlib.sha256(b"x").hexdigest(), 1))[1],
+    )
+    cache = tmp_path / "cache"
+    fetch.download("https://example.org/b.wav", tmp_path / "w" / "b.wav", None, cache_dir=cache)
+    assert not cache.exists()
+    assert fetch.cache_put(cache, "c.wav", "0" * 64, tmp_path / "w" / "b.wav", "x") is False
+
+
+def test_cache_put_refuses_a_file_that_does_not_match_its_pin(tmp_path):
+    src = tmp_path / "a.wav"
+    src.write_bytes(b"abc")
+    assert not fetch.cache_put(tmp_path / "cache", "a.wav", "0" * 64, src, "test")
+    assert not (tmp_path / "cache" / "a.wav").exists()

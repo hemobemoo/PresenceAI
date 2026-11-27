@@ -79,12 +79,15 @@ def notebook(
     out_env: str = "P4_OUT",
     secrets: Sequence[str] = (),
     setup: str | None = None,
+    cache_folder: str | None = None,
 ) -> dict[str, Any]:
     """A notebook that runs `body` as /content/<script_name> and downloads <zip_stem>.zip.
 
-    drive_folder: results (never datasets, ADR 0026 D2) are written to
-    /content/drive/MyDrive/<drive_folder>/<out_dir>, passed to the script as `out_env`, so a
-    disconnect loses nothing and a rerun resumes; the zip is also saved there.
+    drive_folder: results are written to /content/drive/MyDrive/<drive_folder>/<out_dir>, passed
+    to the script as `out_env`, so a disconnect loses nothing and a rerun resumes; the zip is also
+    saved there.
+    cache_folder: /content/drive/MyDrive/<cache_folder> holds the owner's private cache of PINNED
+    public datasets (ADR 0028 §9, amends ADR 0026 D2), passed as P4_CACHE; needs drive_folder.
     secrets: Colab Secrets names passed to the script as environment variables; their values are
     never printed or written.
     The last cell (delete the runtime) never runs under Run all: it would cut the download off.
@@ -94,15 +97,23 @@ def notebook(
     if drive_folder:
         base = f"/content/drive/MyDrive/{drive_folder}"
         res = f"{base}/{out_dir}"
+        cache_lines = ""
+        if cache_folder:
+            cdir = f"/content/drive/MyDrive/{cache_folder}"
+            cache_lines = (
+                f"os.makedirs({cdir!r}, exist_ok=True)\n"
+                f"os.environ['P4_CACHE'] = {cdir!r}  # pinned public datasets only\n"
+                f"print('dataset cache:', {cdir!r})\n"
+            )
         cells.append(
             _code(
-                "# Results (not datasets) go to your Google Drive, so a disconnect loses nothing.\n"
+                "# Results go to your Google Drive, so a disconnect loses nothing.\n"
                 "import os\n"
                 "from google.colab import drive\n"
                 "drive.mount('/content/drive')\n"
                 f"os.makedirs({res!r}, exist_ok=True)\n"
                 f"os.environ[{out_env!r}] = {res!r}\n"
-                f"print('results folder:', {res!r})\n"
+                f"print('results folder:', {res!r})\n" + cache_lines
             )
         )
     else:

@@ -1,0 +1,49 @@
+{
+  "columns": [
+    "clip_name",
+    "pfID",
+    "label_full_vocab",
+    "label_consolidated_vocab",
+    "podcast_filename",
+    "event_start_inepisode",
+    "event_end_inepisode",
+    "event_start_inclip",
+    "event_end_inclip",
+    "clip_start_inepisode",
+    "clip_end_inepisode",
+    "duration",
+    "confidence",
+    "n_annotators",
+    "episode_split_subset",
+    "clip_split_subset",
+    "pitch_cent"
+  ],
+  "label_values": {
+    "Agree": 3755,
+    "Breath": 8288,
+    "Laughter": 6623,
+    "Like": 157,
+    "Music": 5060,
+    "Noise": 2735,
+    "Other": 315,
+    "Overlap": 1484,
+    "Repetitions": 9024,
+    "Uh": 17907,
+    "Um": 17078,
+    "Words": 12709,
+    "You know": 668
+  },
+  "mapped": {
+    "end": "event_end_inepisode",
+    "episode": "podcast_filename",
+    "label": "label_full_vocab",
+    "start": "event_start_inepisode",
+    "subset": "episode_split_subset"
+  },
+  "rows": 85803,
+  "subset_values": {
+    "test": 10398,
+    "train": 72752,
+    "validation": 2653
+  }
+}

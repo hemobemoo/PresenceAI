@@ -207,7 +207,7 @@ public_data:                         # ADR 0026 §1 / DATA_SOURCES §1-4; fetche
     access: range_requests           # owner E1: only the test WAVs; fallback: all four parts
     test_wav_dir: audio/episode_wav/test/
     licence_members: [LICENSE_ANNOTATIONS_ADOBE_RESEARCH_LICENSE.txt, LICENSE_AUDIO.csv]  # read first
-    test_wav_sha256_file: null       # per WAV, checked against its CRC32, pinned after the first run
+    sha256_file: configs/pins/podcastfillers_test_wav.json   # 20 test WAVs, run b4 (ADR 0028 §9); CRC32 also checked
   ami_annotations:
     url: https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip
     sha256: b56e5babb2496b8795deeeda7e71178d7fbc9963f94276cf2a3f4b56ebbc9f9d  # run d2, 22,887,865 bytes

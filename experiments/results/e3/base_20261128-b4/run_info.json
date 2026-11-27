@@ -1,0 +1,60 @@
+{
+  "build": {
+    "repo_commit": "b5fd6dedf1ff8037a930d0c6aac79764c7d99b4e",
+    "repo_dirty": false,
+    "run_id": "20261128-b4"
+  },
+  "elapsed_s": 5646.4,
+  "error": "Traceback (most recent call last):\n  File \"/content/e3_run.py\", line 720, in main\n    why = stage_data()\n  File \"/content/e3_run.py\", line 478, in stage_data\n    rec = fetch.download(url, dest, (PD[\"ami_headset\"].get(\"sha256\") or {}).get(name))\n  File \"/content/e3work/lib/fetch_public_data.py\", line 90, in download\n    digest, n = _fetch_once(url, dest)\n                ~~~~~~~~~~~^^^^^^^^^^^\n  File \"/content/e3work/lib/fetch_public_data.py\", line 67, in _fetch_once\n    with urllib.request.urlopen(req, timeout=120) as r, dest.open(\"wb\") as f:  # noqa: S310\n         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.13/urllib/request.py\", line 189, in urlopen\n    return opener.open(url, data, timeout)\n           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.13/urllib/request.py\", line 495, in open\n    response = meth(req, response)\n  File \"/usr/lib/python3.13/urllib/request.py\", line 604, in http_response\n    response = self.parent.error(\n        'http', request, response, code, msg, hdrs)\n  File \"/usr/lib/python3.13/urllib/request.py\", line 533, in error\n    return self._call_chain(*args)\n           ~~~~~~~~~~~~~~~~^^^^^^^\n  File \"/usr/lib/python3.13/urllib/request.py\", line 466, in _call_chain\n    result = func(*args)\n  File \"/usr/lib/python3.13/urllib/request.py\", line 613, in http_error_default\n    raise HTTPError(req.full_url, code, msg, hdrs, fp)\nurllib.error.HTTPError: HTTP Error 503: Service Unavailable\n",
+  "platform": "Linux-6.6.159+-x86_64-with-glibc2.39",
+  "python": "3.13.16 (main, Oct  1 2026, 15:40:24) [GCC 13.3.0]",
+  "resumed_stages": [],
+  "run_id": "20261128-b4",
+  "script_sha256": "340cac9cf9371fd85602448cf7b27112fa77a150f1796c0dd7935cd3ca308fc3",
+  "sha256": {
+    "ds_text_check.json": {
+      "bytes": 6909,
+      "sha256": "5477513095773417781c6aa827218e0dfab7ff545809c078e36e2679c384b727"
+    },
+    "items/ami_test.json": {
+      "bytes": 2579561,
+      "sha256": "ebd0b89de79e7f9666042c3bc7930a63d0c9cbc79d122ed757e3b6c5df73b184"
+    },
+    "items/podcastfillers_test_events.json": {
+      "bytes": 302359,
+      "sha256": "6b74b3966ef32537c74efab6bd34904df91b7f1ab3b01ec7e0b18245660b69e2"
+    },
+    "licence/podcastfillers/LICENSE_ANNOTATIONS_ADOBE_RESEARCH_LICENSE.txt": {
+      "bytes": 3282,
+      "sha256": "8540d54c7b5b80d0cfc4dd8a09039cfde64f706a31f379dd6232fd7d9e1b4242"
+    },
+    "licence/podcastfillers/LICENSE_AUDIO.csv": {
+      "bytes": 15533,
+      "sha256": "19d5384432c077fb000d122001eb140ce4fab0938555d7b190526d729f60e356"
+    },
+    "model_check.json": {
+      "bytes": 1660,
+      "sha256": "2931cd92dbd810da2555116b42ecd87ee11bf4d15e6afa59185dbc820eef30ba"
+    },
+    "pins/podcastfillers.json": {
+      "bytes": 4811,
+      "sha256": "1c7f5965ff0fbf2c96decafae35c4327aa80edbcdd8f4f7c8c70687004eaa763"
+    },
+    "probes/ami_disfluency_probe.json": {
+      "bytes": 2293,
+      "sha256": "64a1ad5f5ca9949a3126708282564159ccf586f50467a627248a86ea4be1f308"
+    },
+    "probes/podcastfillers_csv_probe.json": {
+      "bytes": 996,
+      "sha256": "e1cbf98796ff1fbfbbc1996c202667677474ff7564cab35425fb7dbe5c6873f4"
+    },
+    "progress.json": {
+      "bytes": 135,
+      "sha256": "3f83791eb80f187f6e1b912b395daee786febc3037d004c9c440554cc5672bc9"
+    }
+  },
+  "status": "error",
+  "steps": {
+    "ds_check": "passed"
+  }
+}

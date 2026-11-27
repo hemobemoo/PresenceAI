@@ -146,6 +146,7 @@ def build(run_id: str, out: Path = BUILD_DIR) -> Path:
         out_env="P4_OUT",
         secrets=("HF_TOKEN",),
         setup=SETUP,
+        cache_folder="presenceai_data",  # owner 2026-11-28, ADR 0028 §9
     )
     return ci.write_build(out, "e3_run.py", body, f"E3BASE_{run_id}.ipynb", nb)
 

@@ -174,7 +174,47 @@ Record: `experiments/results/e3/base_20261128-b3/`. 1,443 s, status `error` in t
   the same runtime reuses the model and the AMI headsets already on its disk (only results are
   checked against the build).
 
+### 9. Run `20261128-b4` (Colab T4, 2026-11-28) and the Drive dataset cache
+
+Record: `experiments/results/e3/base_20261128-b4/`. 5,646 s, status `error` in the data stage.
+
+- **PodcastFillers solved.** The label column is `label_full_vocab` (the alias list found it).
+  The test split has **20 episodes and 5,044 scored Uh/Um events**. All 20 test WAVs (1.93 GB)
+  were read by range requests, CRC32-checked and hashed, then **pinned** in
+  `configs/pins/podcastfillers_test_wav.json`. Label counts over all splits: Uh 17,907,
+  Um 17,078, Words 12,709, Repetitions 9,024, Breath 8,288, …
+- **AMI disfluency types resolved, but there is no repetition type.** The pointers
+  (`dsfl-type` 26,045) lead into `ontologies/dsfl-types.xml`, whose types are: Hesitation 6,318,
+  Reparandum 5,883, Reparans 4,779, Discourse Marker 2,989, Disruption 2,267, Slip of the tongue
+  1,455, Omission 1,159, Stuttering 859, Explicit Editing Term 211, Other 125. The other pointer
+  roles (`da-ref` to dialogue acts, `extension`) are not types. So "repet" matched nothing (0
+  repetitions), and repetitions would have been reported as not scored. **Open, owner's
+  decision:** how a repetition is defined from Reparandum/Reparans (see Consequences).
+- **Stop:** AMI test headset `IS1003a.Headset-3.wav` still got HTTP 503 after its 6th retry (about
+  16 min in total). 51 of the 112 test headsets had arrived.
+- **Owner's decision (2026-11-28), amends ADR 0026 D2: a private Drive cache of pinned public
+  datasets.** The owner has 400 GB of Google Drive until October 2027.
+  - **What:** only pinned public files the owner approved (AMI, PodcastFillers test WAVs,
+    LibriSpeech, the AMI annotation zip), in `MyDrive/presenceai_data/<set>/`, private, not
+    shared, never redistributed. **Never the owner's own recordings** (ADR 0016).
+  - **How:** `fetch_public_data.cache_get` / `cache_put`. A cached copy is used only if its
+    SHA-256 matches the pin (a bad copy is deleted and fetched again). A downloaded pinned file is
+    saved to the cache **as soon as it verifies**, so a later failure loses nothing. Unpinned
+    files are never cached. Files are copied to Colab's local disk before use. Tested.
+  - **First fill:** after b4, a one-off cell copied the runtime's verified files: 51 AMI test
+    headsets, 20 PodcastFillers WAVs and the AMI annotation zip (every one matched its pin; none
+    skipped).
+  - **Delete list:** `data/README.md` lists each cached set; the owner deletes a set when it is
+    no longer needed, and all of them by the end of the project.
+
 ## Consequences
+
+- **Open (owner): the repetition definition for ADR 0026 §4 condition 4.** AMI marks a repair as
+  a Reparandum (the words being corrected) and a Reparans (the correction); there is no repetition
+  type. Proposed: **a repetition is a Reparandum whose normalised words equal the start of the
+  Reparans that follows it** ("the the" → reparandum "the", reparans "the"). It is taken from the
+  annotation only, with nothing guessed. The alternative is to report repetitions descriptively and
+  drop condition 4.
 
 - PR-4 (T1-r1) and later T1 runs are scored by this exact protocol; only the model changes.
 - Open after the run: the DisfluencySpeech builder check result, the model-identity check, the

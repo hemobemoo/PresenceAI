@@ -41,6 +41,8 @@ MODULES = json.loads(r"""__MODULES_JSON__""")
 
 OUT = Path(os.environ.get("P4_OUT", "/content/e3base"))
 WORK = Path("/content/e3work")  # datasets and the model: local disk only
+# Owner's private Drive cache of PINNED public datasets (ADR 0028 §9); None if not mounted.
+CACHE = Path(os.environ["P4_CACHE"]) if os.environ.get("P4_CACHE") else None
 LIB = WORK / "lib"
 LIB.mkdir(parents=True, exist_ok=True)
 for name, b64 in MODULES.items():
@@ -113,6 +115,10 @@ def mark(p, stage):
 
 def log(*a):
     print(*a, flush=True)
+
+
+def cache(name):
+    return CACHE / name if CACHE is not None else None
 
 
 def hf_token():
@@ -285,7 +291,7 @@ def ami_root():
         return root
     ann = PD["ami_annotations"]
     z = WORK / "ami" / Path(ann["url"]).name
-    fetch.download(ann["url"], z, ann["sha256"])  # pinned in PR-2
+    fetch.download(ann["url"], z, ann["sha256"], cache_dir=cache("ami_annotations"))
     with zipfile.ZipFile(z) as zf:
         for n in zf.namelist():
             if n.startswith("/") or ".." in n.split("/") or ":" in n or "\\" in n:
@@ -462,9 +468,17 @@ def stage_data():
         if name is None:
             raise ValueError(f"no test WAV for {ep}; first members: {sorted(idx)[:5]}")
         dest = WORK / "pf_wav" / f"{ep}.wav"
-        if not dest.exists():
-            wavs[ep] = splitzip.extract(parts, idx[name], dest)
-            log(f"PodcastFillers {ep}: {wavs[ep]['bytes']} bytes, CRC32 ok")
+        pin = (pf.get("sha256") or {}).get(f"{ep}.wav")
+        if dest.exists():
+            continue
+        if fetch.cache_get(cache("podcastfillers_test_wav"), f"{ep}.wav", pin, dest):
+            wavs[ep] = {"bytes": dest.stat().st_size, "sha256": pin, "from_cache": True}
+            continue
+        wavs[ep] = splitzip.extract(parts, idx[name], dest)
+        if pin and wavs[ep]["sha256"] != pin:
+            raise ValueError(f"PodcastFillers {ep}.wav differs from its pin")
+        fetch.cache_put(cache("podcastfillers_test_wav"), f"{ep}.wav", pin, dest, "zenodo")
+        log(f"PodcastFillers {ep}: {wavs[ep]['bytes']} bytes, CRC32 ok")
     pf_pins["test_wavs"] = wavs
     write_json("pins/podcastfillers.json", pf_pins)
 
@@ -475,15 +489,18 @@ def stage_data():
         dest = WORK / "ami_audio" / name
         if not dest.exists():
             url = PD["ami_headset"]["url"].format(meeting=meeting, channel=channel)
-            rec = fetch.download(url, dest, (PD["ami_headset"].get("sha256") or {}).get(name))
+            pin = (PD["ami_headset"].get("sha256") or {}).get(name)
+            rec = fetch.download(url, dest, pin, cache_dir=cache("ami_headsets"))
             pins.append({"file": name, **rec})
+            if not rec["from_cache"]:
+                log(f"AMI {name}: downloaded and cached")
     write_json("pins/ami_test_headsets.json", pins)
 
     # 5. LibriSpeech test-clean
     lib = PD["librispeech_test_clean"]
     tgz = WORK / "librispeech" / "test-clean.tar.gz"
     if not (WORK / "librispeech" / "LibriSpeech").exists():
-        fetch.download(lib["url"], tgz, lib["sha256"])
+        fetch.download(lib["url"], tgz, lib["sha256"], cache_dir=cache("librispeech"))
         with tarfile.open(tgz, "r:gz") as t:
             t.extractall(WORK / "librispeech", filter="data")
         tgz.unlink()

@@ -458,3 +458,17 @@ def test_pf_test_events_keeps_test_split_and_scored_labels_only():
     ]
     eps, ev = sc.pf_test_events(rows, cols, E3["podcastfillers"]["scored_labels"])
     assert eps == {"a", "b"} and ev == {"a": [[1.0, 1.2], [3.0, 3.4]]}
+
+
+def test_e3_notebook_sets_the_drive_cache_and_the_pins_reach_the_script(tmp_path):
+    import json
+
+    nb = json.loads(ce3.build("t", tmp_path).read_text(encoding="utf-8"))
+    cells = ["".join(c["source"]) for c in nb["cells"] if c["cell_type"] == "code"]
+    drive = next(c for c in cells if "drive.mount" in c)
+    assert "os.environ['P4_CACHE'] = '/content/drive/MyDrive/presenceai_data'" in drive
+    body = (tmp_path / "e3_run.py").read_text(encoding="utf-8")
+    cfg = json.loads(body.split('CONFIG = json.loads(r"""', 1)[1].split('""")', 1)[0])
+    assert len(cfg["public_data"]["podcastfillers"]["sha256"]) == 20  # run b4 pins
+    for name in ("ami_annotations", "ami_headsets", "podcastfillers_test_wav", "librispeech"):
+        assert f'cache("{name}")' in body
