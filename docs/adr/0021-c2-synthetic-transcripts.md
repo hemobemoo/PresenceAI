@@ -219,7 +219,10 @@
    - **E4 is reported twice:** on the whole test part against the planted labels, and on the
      hand-checked subset against the owner's labels.
 6. **T2 teacher is decided in P4** (FINAL_06): Kaggle TPU Qwen3.8-27B (Apache-2.0, batch, no
-   public endpoint) is the leading option.
+   public endpoint) is the leading option. **Update (2026-11-27, ADR 0026 §6, proposed):** the
+   teacher is this ADR's `Qwen/Qwen3.5-9B` on a Colab T4; `Qwen/Qwen3.8-27B` (exists on HF,
+   card tag Apache-2.0; not the `Qwen3.5-27B` compared in item 2) on a Kaggle TPU is the
+   fallback if the 30-item pilot keeps fewer than 70 % of items.
 
 ## Consequences
 

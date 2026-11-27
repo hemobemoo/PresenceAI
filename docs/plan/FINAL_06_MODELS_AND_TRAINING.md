@@ -29,7 +29,7 @@
 | Kaggle Notebooks (fallback) | No Colab GPU available | Same notebook; enable GPU (T4×2 or P100), attach your private dataset | $0, ~30 GPU-h/week ~ |
 | **Unsloth Studio** (local) | Your machine has a supported GPU | macOS/Linux/WSL: `curl -fsSL https://unsloth.ai/install.sh \| sh` then `unsloth studio -H 0.0.0.0 -p 8888`; Windows: `irm https://unsloth.ai/install.ps1 \| iex` ✓ | $0 |
 
-Rules: every training run is a notebook in `training/` with fixed seed, logs its data manifest hash, and pushes the result to a **private** Hugging Face repo. Raw study recordings never go to Kaggle or Colab; only public data, synthetic data and your own pilot recordings (with your own consent) do.
+Rules: every training run is a notebook in `training/` with fixed seed, logs its data manifest hash, and pushes the result to a **private** Hugging Face repo. Only public data and synthetic data go to Kaggle or Colab; the owner's recordings (B1, B2, E14) and anything derived from them stay on the laptop (ADR 0016, ADR 0026). No training runs on the laptop, except T3 (§4, ADR 0026 D9).
 
 ## 3. T1 — Verbatim-Whisper (speech fine-tune, primary training result)
 
@@ -39,9 +39,9 @@ Rules: every training run is a notebook in `training/` with fixed seed, logs its
 |---|---|
 | Base models | `openai/whisper-small` (runs on any laptop CPU) and `openai/whisper-large-v3-turbo` (quality; GPU/Space) |
 | Method | LoRA with Unsloth, following the official Whisper STT notebook: `https://colab.research.google.com/github/unslothai/notebooks/blob/main/nb/Whisper.ipynb` ✓ |
-| Training data | DisfluencySpeech train split (Apache-2.0, transcripts that keep "uh"/"um"; note it is reportedly single-speaker ~), AMI headset subset with verbatim transcripts (CC BY 4.0 ~), your pilot recordings hand-corrected to verbatim (≈ 1–2 h) |
-| Held-out evaluation | DisfluencySpeech test; PodcastFillers test (research-only, evaluation never training); 20 pilot/study clips; LibriSpeech test-clean (regression check) |
-| Target metrics | Filler F1 ↑, repetition recall ↑, WER on clean speech not worse than +1 point absolute |
+| Training data | DisfluencySpeech train split (Apache-2.0, transcripts that keep "uh"/"um"; note it is reportedly single-speaker ~), AMI IHM word-level orthographic transcripts (CC BY 4.0, official Edinburgh files only) of meetings outside the ten E3 sessions, speaker-separated, a fixed number of hours, fillers and partial words mapped to the E3 lexicon (weak repetition signal: no disfluency layer for these meetings). The owner's pilot recordings are **not** training data (ADR 0026 D3) |
+| Held-out evaluation | AMI test sessions and PodcastFillers test (deciding); DisfluencySpeech test (reported, one speaker); LibriSpeech test-clean (WER regression). B1 stays laptop-only as an optional check |
+| Target metrics | Pass rule in ADR 0026 §4 (proposed): filler F1 ≥ base + 0.05 and above base + `initial_prompt` on both deciding sets; precision ≥ base − 0.02; AMI repetition recall ≥ base; LibriSpeech WER ≤ base + 1.0 point; model picked on dev only |
 | Budget | whisper-small: ~1–2 GPU-h; turbo: ~3–5 GPU-h per run ~ |
 | Export | Merge LoRA → `ct2-transformers-converter --model <merged_dir> --output_dir whisper-small-verbatim-ct2 --quantization int8 --copy_files tokenizer.json preprocessor_config.json` ~ → load with faster-whisper |
 | Publish | Private HF model repo during the project; public at the end with model card (base MIT, data Apache-2.0 / CC BY 4.0 attributions) |
@@ -55,8 +55,8 @@ Rules: every training run is a notebook in `training/` with fixed seed, logs its
 | Features | Iris-to-eye-corner ratios (both eyes), eyelid aperture, head yaw/pitch/roll, face size |
 | Data | Prompted-target recordings: the owner only (ADR 0010) looks at on-screen targets in a fixed order (labels known by protocol, no manual annotation), across the robustness conditions (lighting, glasses, camera height, distance) |
 | Model | scikit-learn: logistic regression baseline, HistGradientBoosting main; per-user offset from the 10 s calibration |
-| Evaluation | Leave-one-person-out macro-F1 over the three labels; per-condition breakdown and excluded (`unknown`) share per zone (E7) |
-| Runs on | Laptop CPU in seconds; saved with `skops` ~ |
+| Evaluation | Leave-one-session-out macro-F1 over the three labels (one person, ADR 0010); per-condition breakdown and excluded (`unknown`) share per zone (E7). v0 (P4, S5 sessions): items 1–2 thresholds set on A and B only, C and D reported as robustness, F1 labelled "development"; held-out F1 from B2 in P6 (ADR 0026 §5) |
+| Runs on | Laptop CPU in seconds, the one exception to "no training on the laptop" (owner, ADR 0026 D9: scikit-learn on feature CSVs, no real model, face-derived numbers stay off Google; owner warned first); saved with `skops` ~ |
 | Known issues from S5 (ADR 0004; T3/P6) | (1) **Lost face after a head turn**: frames where the face disappears right after a large head yaw count as `away`, not `unknown` (S5: 19–68 % of `away` frames lost). (2) **Looking down vs eyes closed**: use head pitch so looking down at notes is not excluded as eyes closed (S5: up to 18.5 % of `down_notes` frames lost). (3) **Calibration**: longer, with a settle period (or several looks); the 3 s offset in S5 was noisy. Thresholds go in `configs/` with an ADR |
 
 ## 5. T2 — Coach-SLM (small language model fine-tune)
@@ -67,11 +67,11 @@ Rules: every training run is a notebook in `training/` with fixed seed, logs its
 |---|---|
 | Task | Input: `Assessment` JSON (findings, evidence spans, numbers, target skill, language). Output: JSON with 1–3 feedback statements (each with quote/time span), exercise wording, 2 follow-up questions |
 | Base model | Smallest instruct model that passes a 30-item pilot: try Qwen3.5 0.8B and 2B first (confirm licence), Gemma 3 1B as alternative (Gemma Terms) ~ |
-| Data | ~3,000 pairs. Inputs from the pipeline run on the synthetic text set, pilot recordings and public speech data. Outputs from the T2 teacher, **kept only if** quotes verify, numbers match the input, no banned terms, valid JSON. Plus ~200 pairs you write or edit by hand as gold |
+| Data | ~3,000 pairs, built in P5 (ADR 0026 §6). Inputs from the pipeline run on synthetic text and public speech data (not the owner's recordings); 150 C2 test assessments are held out for E11 and never reach the teacher or training. Outputs from the T2 teacher, **kept only if** quotes verify, numbers match the input, no banned terms, valid JSON. Plus ~200 pairs you write or edit by hand as gold |
 | Grounding text | Exercise wording draws on CC BY 4.0 text only (*Fundamentals of Public Speaking*, Lumen) so the trained adapter carries no share-alike or non-commercial obligation; CC BY-NC-SA texts are used for retrieval, not for training ~ (licence interpretation: confirm with supervisor) |
-| Teacher | **Decided in P4** (owner, 2026-11-22, ADR 0021). Leading option: Qwen3.8-27B (Apache-2.0) run as a batch job on a Kaggle TPU v5e-8 (kaggle-tpu-lab recipe, MIT), with no public endpoint. Hosted OpenRouter models are out: S4 found no provider that allows training on outputs |
+| Teacher | **Decided in P4** (owner, 2026-11-27, ADR 0026 §6, proposed): `Qwen/Qwen3.5-9B` @`c202236` (Apache-2.0, verified in ADR 0021), 4-bit batch on a Colab T4, no public endpoint. Fallback if the 30-item pilot keeps < 70 % after at most one prompt fix: `Qwen/Qwen3.8-27B` (exists on HF, card tag Apache-2.0, checked 2026-11-27; LICENSE file and hashes to check before use) on a Kaggle TPU v5e-8 (kaggle-tpu-lab recipe, MIT). Hosted OpenRouter models are out: S4 found no provider that allows training on outputs |
 | Teacher terms | The teacher's weights must be Apache-2.0 or MIT (no restriction on training with its outputs); check the model card and LICENSE file, and verify the weight hashes against Hugging Face, before generating |
-| Method | QLoRA r=16 with Unsloth on Colab, 2–3 epochs, max length 2,048 |
+| Method | QLoRA r=16 with Unsloth on Colab, 2–3 epochs, max length 2,048; trained in P5–P6, before the P7 freeze, or T2 falls back to pilots only (ADR 0026 §6) |
 | Export | Unsloth GGUF export (q4_k_m) → `llama-cpp-python` on the laptop |
 | Arabic wording | Teacher prompts for Arabic items use the code-switching rule in `lang/ar/coach_prompt.yaml` (FINAL_04 §5, ADR 0003). Arabic pairs are **kept only if** no quote contains Latin-script text missing from the transcript (`latin_outside_transcript`); hand-written gold pairs follow the same rule |
 | Feedback points | Teacher prompts in both languages add `feedback_point_rule` from `lang/<lang>/coach_prompt.yaml` (ADR 0003): each point says what was observed (with evidence), why it matters for the user, and what they gain by practising it. Pairs are **kept only if** every item has a non-empty observation, evidence quote and suggestion; whether the benefit is stated is checked by hand on the gold set and a sample of teacher pairs (no automatic check), and rated in E11 |
@@ -86,7 +86,7 @@ openrouter (pinned free model) ──429/timeout──▶ openrouter fallback(s)
 
 Model ids come from `configs/models.yaml` (ADR 0003): pinned `nvidia/nemotron-3-ultra-550b-a55b:free`, fallback `nvidia/nemotron-3.5-super-vl:free` (both NVIDIA), then the emergency fallback `recursive/flint-v1.0:free` from a different provider (passed the S4 re-run). The chain runs only when consent switch (d) is on; otherwise templates are used (FINAL_11 §3).
 
-Every generated string passes the same guardrails regardless of provider (`FINAL_11` §2). The prompt builder adds `feedback_point_rule` (observation with evidence, why it matters, what the user gains) in both languages, and for Arabic also `language_rule` (code-switching for English terms in the wording; quotes copied exactly), both from `lang/<lang>/coach_prompt.yaml`. Arabic quotes are rejected when `latin_outside_transcript` is non-empty (P7: prompt builder and its tests do not exist yet). Cache by prompt hash; log model id, provider, latency.
+Every generated string passes the same guardrails regardless of provider (`FINAL_11` §2). The prompt builder adds `feedback_point_rule` (observation with evidence, why it matters, what the user gains) in both languages, and for Arabic also `language_rule` (code-switching for English terms in the wording; quotes copied exactly), both from `lang/<lang>/coach_prompt.yaml`. Arabic quotes are rejected when `latin_outside_transcript` is non-empty (the rules exist in `coach_prompt.yaml`; the prompt builder and its tests are built in P4 PR-7 for T2, ADR 0026). Cache by prompt hash; log model id, provider, latency.
 
 ## 7. Model cards
 
