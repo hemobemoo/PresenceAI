@@ -326,6 +326,10 @@ def ami_test_segments():
     onto, onto_files = ami_ontology(root)
     probe = ami.DisfluencyProbe()
     rows, n_reps = [], 0
+    from collections import Counter
+
+    pairing = Counter()
+    gap = int(E3["repetitions"]["max_gap_words"])
     for m in sorted(x for x in meetings if ami.session(x) in test):
         per = {}
         for spk in meetings[m]:
@@ -339,7 +343,11 @@ def ami_test_segments():
             if (m, spk.agent) in disf:
                 order = [i.id for i in per[spk.agent] if i.id]
                 dis = ami.parse_disfluency(disf[(m, spk.agent)].read_bytes(), order, probe, onto)
-                reps = [set(d.word_ids) for d in ami.repetitions(dis)]
+                text = {i.id: i.text for i in per[spk.agent] if i.id}
+                from_repairs, c = ami.repetitions_from_repairs(dis, text, order, gap)
+                pairing.update(c)
+                # ADR 0028 §10: repetitions from repairs, plus any element typed as one
+                reps = [set(d.word_ids) for d in [*from_repairs, *ami.repetitions(dis)]]
                 n_reps += len(reps)
             args = (m, spk.agent, spk.channel, per[spk.agent], others)
             strict = {
@@ -376,6 +384,8 @@ def ami_test_segments():
             "unresolved_links": probe.unresolved_links,
             "unresolved_pointers": probe.unresolved_pointers,
             "repetitions_found": n_reps,
+            "repair_pairing": dict(sorted(pairing.items())),
+            "repetition_rule": E3["repetitions"]["definition"],
         },
     )
     return rows, n_reps

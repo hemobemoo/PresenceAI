@@ -207,14 +207,28 @@ Record: `experiments/results/e3/base_20261128-b4/`. 5,646 s, status `error` in t
   - **Delete list:** `data/README.md` lists each cached set; the owner deletes a set when it is
     no longer needed, and all of them by the end of the project.
 
+### 10. Repetition definition (owner, 2026-11-28)
+
+The owner accepted the proposed definition on the condition that it is **computed automatically,
+with no manual labelling**. It is.
+
+- **A repetition is a Reparandum whose normalised words equal the start of its Reparans** ("the
+  the cat": reparandum "the", reparans "the"). Normalised means lower case with edge punctuation
+  removed; a partial word keeps its hyphen, so "th- the" is a false start, not a repetition. Key:
+  `e3.repetitions.definition: reparandum_repeated_in_reparans`.
+- **Pairing a Reparandum with its Reparans:** a Reparans in the same parent `<dsfl>`, the first
+  one after it; if they are not nested, the first Reparans that starts within **2 words**
+  (`e3.repetitions.max_gap_words`, PROVISIONAL; room for an "uh" or "I mean") after the
+  Reparandum ends. The probe counts how each pair was made (`repair_pairing`: same parent,
+  following, unpaired) and how many repetitions result, so the next run shows which structure AMI
+  uses before any number is relied on.
+- Any element whose type itself contains "repet" still counts (none exist in AMI v1.6.2).
+- ADR 0026 §4 condition 4 ("repetitions kept on AMI test ≥ base") is scored with this definition.
+- Tested on hand-written nested and flat examples: a repeat is found; a correction ("go uh went")
+  and a false start ("th- the") are not; a Reparans 7 words later is not paired.
+
 ## Consequences
 
-- **Open (owner): the repetition definition for ADR 0026 §4 condition 4.** AMI marks a repair as
-  a Reparandum (the words being corrected) and a Reparans (the correction); there is no repetition
-  type. Proposed: **a repetition is a Reparandum whose normalised words equal the start of the
-  Reparans that follows it** ("the the" → reparandum "the", reparans "the"). It is taken from the
-  annotation only, with nothing guessed. The alternative is to report repetitions descriptively and
-  drop condition 4.
 
 - PR-4 (T1-r1) and later T1 runs are scored by this exact protocol; only the model changes.
 - Open after the run: the DisfluencySpeech builder check result, the model-identity check, the

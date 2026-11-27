@@ -153,6 +153,10 @@ e3:                                  # ADR 0012; filler detection (FINAL_10 E3).
     reference: ami_disfluency_layer  # owner E7: probed first; only marked repetitions count
     measure: kept_in_transcript      # ADR 0028: a reference repetition is "kept" if every one of its
                                      # words is aligned to the same word in the hypothesis
+    definition: reparandum_repeated_in_reparans  # owner 2026-11-28 (ADR 0028 §10), automatic: a
+                                     # Reparandum whose normalised words equal the START of its
+                                     # Reparans; no manual labelling
+    max_gap_words: 2                 # PROVISIONAL: a non-nested Reparans must start within 2 words
   bootstrap:
     resamples: 1000
     seed: 20261128

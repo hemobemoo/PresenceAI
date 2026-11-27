@@ -381,6 +381,7 @@ class DisfluencyProbe:
 class Disfluency:
     type: str
     word_ids: tuple[str, ...]
+    parent: str | None = None  # nite:id of the enclosing <dsfl>, if the element is nested
 
 
 def _href(el: ET.Element) -> str:
@@ -437,32 +438,100 @@ def parse_disfluency(
     onto = ontology or {}
     pos = {w: i for i, w in enumerate(word_order)}
     out: list[Disfluency] = []
-    for el in root.iter():
+
+    def visit(el: ET.Element, parent: str | None) -> None:
         tag = _local(el.tag)
         if probe is not None:
             probe.elements[tag] += 1
             probe.attributes.update(_local(k) for k in el.attrib)
         links = [c for c in el if _local(c.tag) == "child"]
-        if not links:
-            continue
-        ids: list[str] = []
-        for c in links:
-            m = _HREF.search(_href(c))
-            if not m:
-                continue
-            a, b = m.group(1), m.group(2) or m.group(1)
-            if a not in pos or b not in pos:
-                if probe is not None:
-                    probe.unresolved_links += 1
-                continue
-            ids.extend(word_order[pos[a] : pos[b] + 1])
-        t = _type_of(el, onto, probe)
-        if probe is not None:
-            probe.type_values[t] += 1
-        if ids:
-            out.append(Disfluency(t, tuple(ids)))
+        if links:
+            ids: list[str] = []
+            for c in links:
+                m = _HREF.search(_href(c))
+                if not m:
+                    continue
+                a, b = m.group(1), m.group(2) or m.group(1)
+                if a not in pos or b not in pos:
+                    if probe is not None:
+                        probe.unresolved_links += 1
+                    continue
+                ids.extend(word_order[pos[a] : pos[b] + 1])
+            t = _type_of(el, onto, probe)
+            if probe is not None:
+                probe.type_values[t] += 1
+            if ids:
+                out.append(Disfluency(t, tuple(ids), parent))
+        here = el.get(NITE_ID) if tag == "dsfl" else None
+        for c in el:
+            if _local(c.tag) not in {"child", "pointer"}:
+                visit(c, here or parent)
+
+    visit(root, None)
     return out
 
 
 def repetitions(dis: Iterable[Disfluency]) -> list[Disfluency]:
     return [d for d in dis if REPETITION.search(d.type)]
+
+
+# ---- Repetitions from repairs (owner, 2026-11-28; ADR 0028 §10) -------------------------------
+#
+# Run b4: AMI's disfluency scheme has no repetition type; a repair is a Reparandum (the words being
+# corrected) followed by a Reparans (the correction). A repetition is a Reparandum whose normalised
+# words equal the START of its Reparans ("the the cat": reparandum "the", reparans "the"). Computed
+# from the annotation only: nothing is labelled by hand and nothing is guessed.
+#
+# Pairing: a Reparans in the same parent <dsfl> as the Reparandum, the first one after it; if the
+# two are not nested, the first Reparans starting within `max_gap_words` words after the
+# Reparandum ends (room for an "uh" or "I mean"; PROVISIONAL). Each pair records how it was made.
+
+REPARANDUM = re.compile(r"\breparandum\b", re.IGNORECASE)
+REPARANS = re.compile(r"\breparans\b", re.IGNORECASE)
+
+
+def _norm(word: str) -> str:
+    return re.sub(r"^[^\w'-]+|[^\w'-]+$", "", word.casefold())
+
+
+def repetitions_from_repairs(
+    dis: Sequence[Disfluency],
+    word_text: Mapping[str, str],
+    word_order: Sequence[str],
+    max_gap_words: int,
+) -> tuple[list[Disfluency], Counter[str]]:
+    """Repetition events (one per qualifying Reparandum) and counts of how pairs were made."""
+    pos = {w: i for i, w in enumerate(word_order)}
+    counts: Counter[str] = Counter()
+    rdums = [d for d in dis if REPARANDUM.search(d.type) and d.word_ids]
+    rans = [d for d in dis if REPARANS.search(d.type) and d.word_ids]
+    counts["reparanda"], counts["reparans"] = len(rdums), len(rans)
+
+    def start(d: Disfluency) -> int:
+        return pos[d.word_ids[0]]
+
+    def end(d: Disfluency) -> int:
+        return pos[d.word_ids[-1]]
+
+    out: list[Disfluency] = []
+    for r in rdums:
+        after = [x for x in rans if start(x) > end(r)]
+        pick, how = None, ""
+        if r.parent is not None:
+            same = [x for x in after if x.parent == r.parent]
+            if same:
+                pick, how = min(same, key=start), "same_parent"
+        if pick is None:
+            near = [x for x in after if start(x) - end(r) - 1 <= max_gap_words]
+            if near:
+                pick, how = min(near, key=start), "following"
+        if pick is None:
+            counts["unpaired"] += 1
+            continue
+        counts[f"paired_{how}"] += 1
+        a = [_norm(word_text.get(w, "")) for w in r.word_ids]
+        b = [_norm(word_text.get(w, "")) for w in pick.word_ids[: len(a)]]
+        if a and all(a) and a == b:
+            counts["repetitions"] += 1
+            out.append(Disfluency("repetition", r.word_ids, r.parent))
+    return out, counts

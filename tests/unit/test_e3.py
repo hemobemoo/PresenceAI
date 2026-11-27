@@ -472,3 +472,75 @@ def test_e3_notebook_sets_the_drive_cache_and_the_pins_reach_the_script(tmp_path
     assert len(cfg["public_data"]["podcastfillers"]["sha256"]) == 20  # run b4 pins
     for name in ("ami_annotations", "ami_headsets", "podcastfillers_test_wav", "librispeech"):
         assert f'cache("{name}")' in body
+
+
+# --- repetitions from repairs (owner 2026-11-28; ADR 0028 §10): automatic, from the annotation ---
+
+_W = (
+    '<r xmlns:nite="http://nite.sourceforge.net/">'
+    + "".join(
+        f'<w nite:id="w{i}" starttime="{i}.0" endtime="{i}.5">{t}</w>'
+        for i, t in enumerate(["we", "we", "should", "go", "uh", "went", "th-", "the", "end"])
+    )
+    + "</r>"
+).encode()
+_ONTO = (
+    b'<r xmlns:nite="http://nite.sourceforge.net/">'
+    b'<t nite:id="rd" name="reparandum Reparandum"/><t nite:id="rs" name="reparans Reparans"/></r>'
+)
+
+
+def _dsfl(kind: str, a: int, b: int, nid: str) -> str:
+    return (
+        f'<dsfl nite:id="{nid}">'
+        f'<nite:pointer role="dsfl-type" href="dsfl-types.xml#id({kind})"/>'
+        f'<nite:child href="x.words.xml#id(w{a})..id(w{b})"/></dsfl>'
+    )
+
+
+def _reps(body: str, gap: int = 2):
+    items = ami.parse_words(_W)
+    order = [i.id for i in items]
+    text = {i.id: i.text for i in items}
+    xml = f'<r xmlns:nite="http://nite.sourceforge.net/">{body}</r>'.encode()
+    dis = ami.parse_disfluency(xml, order, None, ami.load_ontology(_ONTO))
+    return ami.repetitions_from_repairs(dis, text, order, gap)
+
+
+def test_repetition_is_a_reparandum_repeated_at_the_start_of_its_reparans_nested():
+    body = (
+        '<dsfl nite:id="p1">' + _dsfl("rd", 0, 0, "a") + _dsfl("rs", 1, 2, "b") + "</dsfl>"
+        '<dsfl nite:id="p2">' + _dsfl("rd", 3, 3, "c") + _dsfl("rs", 5, 5, "d") + "</dsfl>"
+        '<dsfl nite:id="p3">' + _dsfl("rd", 6, 6, "e") + _dsfl("rs", 7, 7, "f") + "</dsfl>"
+    )
+    reps, counts = _reps(body)
+    assert [r.word_ids for r in reps] == [("w0",)]  # "we we": yes; "go uh went": no; "th- the": no
+    assert counts["paired_same_parent"] == 3 and counts["repetitions"] == 1
+    assert counts["reparanda"] == 3 and counts["reparans"] == 3
+
+
+def test_repetition_pairing_falls_back_to_the_following_reparans_within_the_gap():
+    body = _dsfl("rd", 0, 0, "a") + _dsfl("rs", 1, 1, "b")  # flat, adjacent
+    reps, counts = _reps(body)
+    assert len(reps) == 1 and counts["paired_following"] == 1
+    far = _dsfl("rd", 0, 0, "a") + _dsfl("rs", 8, 8, "b")  # 7 words apart: not paired
+    reps, counts = _reps(far)
+    assert reps == [] and counts["unpaired"] == 1
+
+
+def test_repetition_rule_is_case_and_punctuation_blind_but_needs_the_same_words():
+    items_text = {"w0": "We,", "w1": "we"}
+    dis = [
+        ami.Disfluency("dsfl-type=reparandum", ("w0",), "p"),
+        ami.Disfluency("dsfl-type=reparans", ("w1",), "p"),
+    ]
+    reps, _ = ami.repetitions_from_repairs(dis, items_text, ["w0", "w1"], 2)
+    assert len(reps) == 1
+
+
+def test_repetition_rule_is_fixed_in_config_and_used_by_the_run(tmp_path):
+    rep = E3["repetitions"]
+    assert rep["definition"] == "reparandum_repeated_in_reparans" and rep["max_gap_words"] == 2
+    body = (T1 / "colab" / "e3_run.py").read_text(encoding="utf-8")
+    assert "ami.repetitions_from_repairs(dis, text, order, gap)" in body
+    assert '"repair_pairing": dict(sorted(pairing.items()))' in body
