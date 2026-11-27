@@ -243,10 +243,17 @@ def stage_model():
         check=True,
     )
     same = True
+    text_lf = E3["model_text_files_lf_sha256"]  # ADR 0028 §7 (run b2: CRLF on the laptop)
     for f in m["files"]:
-        got = fetch_sha(dst / f["path"])
-        checks["converted"].append({"path": f["path"], "ok": got == f["sha256"], "sha256": got})
-        same &= got == f["sha256"]
+        if f["path"] in text_lf:
+            data = (dst / f["path"]).read_bytes().replace(b"\r\n", b"\n")
+            got, want, how = hashlib.sha256(data).hexdigest(), text_lf[f["path"]], "lf_text"
+        else:
+            got, want, how = fetch_sha(dst / f["path"]), f["sha256"], "bytes"
+        checks["converted"].append(
+            {"path": f["path"], "ok": got == want, "sha256": got, "compared": how}
+        )
+        same &= got == want
     checks["model_identical_to_app"] = same
     write_json("model_check.json", checks)
     shutil.rmtree(src, ignore_errors=True)

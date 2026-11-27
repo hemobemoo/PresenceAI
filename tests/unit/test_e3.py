@@ -340,3 +340,21 @@ def test_e3_ingest_keeps_hypotheses_and_items_out_of_git(tmp_path, monkeypatch):
     assert (tmp_path / "data" / "t" / "items" / "ami_test.json").is_file()
     assert (tmp_path / "res" / "base_t" / "e3_metrics.json").is_file()  # committed results
     assert (tmp_path / "res" / "base_t" / "run_info.json").is_file()
+
+
+def test_model_check_normalises_line_endings_only_for_the_converters_json_files():
+    lf = E3["model_text_files_lf_sha256"]
+    assert set(lf) == {"config.json", "vocabulary.json"}  # model.bin etc. stay byte-for-byte
+    man = __import__("json").loads((REPO / "models" / "MANIFEST.json").read_text(encoding="utf-8"))
+    small = next(m for m in man["models"] if m["name"] == "whisper_small")
+    files = {f["path"] for f in small["files"]}
+    assert set(lf) < files and {"model.bin", "tokenizer.json"} <= files - set(lf)
+
+
+def test_lf_pins_equal_the_laptop_model_files_with_normalised_line_endings():
+    d = REPO / "models" / "whisper-small-ct2-int8"
+    if not (d / "config.json").exists():
+        pytest.skip("app model not downloaded here (CI)")  # file read only; no model is run
+    for name, want in E3["model_text_files_lf_sha256"].items():
+        data = (d / name).read_bytes().replace(b"\r\n", b"\n")
+        assert hashlib.sha256(data).hexdigest() == want, name

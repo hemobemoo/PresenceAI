@@ -24,8 +24,8 @@ scored the same way. All of it runs on Colab (ADR 0026 §1).
 - Model: **whisper-small**, the app's own. On Colab, `openai/whisper-small` is fetched at the
   revision in `configs/models.yaml`, every source file is checked against `models/MANIFEST.json`,
   it is converted with the converter versions in `configs/models.yaml` (`ct2-transformers-converter`,
-  int8, the same `copy_files`), and **every converted file must match the app's SHA-256**.
-  Otherwise the run stops (`model_differs_from_app`). Turbo is report-only and is not in this run.
+  int8, the same `copy_files`), and **every converted file must match the app's SHA-256** (the
+  converter's two JSON files after line-ending normalisation, §7). Otherwise the run stops (`model_differs_from_app`). Turbo is report-only and is not in this run.
 - Decoding: **the app's settings, unchanged** (`configs/default.yaml: asr`): compute type int8,
   beam size 5, temperature 0.0, `condition_on_previous_text` false; plus language "en", word
   timestamps on, no VAD filter (as `speech/asr.py`). These are `e3.decoding`. The same settings
@@ -114,6 +114,27 @@ Record: `experiments/results/e3/base_20261128-b1/`. 42 s, status `error`.
   converter versions in `configs/models.yaml`. uv needs no `ensurepip` and fetches a CPython 3.12
   if needed. The model-identity check (every converted file = the app's SHA-256) is unchanged.
 - The next run is a new build (`20261128-b2`, new Drive folder); stage 0 runs again.
+
+### 7. Run `20261128-b2` (Colab T4, 2026-11-28): the model check, and line endings
+
+Record: `experiments/results/e3/base_20261128-b2/` (`model_check.json`). Status
+`model_differs_from_app`; the run stopped before any ASR, as designed.
+
+- Stage 0 passed again (20 of 5,000 `words_differ`, identical to b1).
+- The uv environment worked: CPython 3.12.3, ctranslate2 4.9.0, transformers 4.57.6, torch
+  2.15.0+cpu, as pinned.
+- **Every source file matched `models/MANIFEST.json`.** Of the converted files, **`model.bin`
+  (the weights), `tokenizer.json` and `preprocessor_config.json` matched byte for byte**. Two did
+  not: `config.json` and `vocabulary.json`, the JSON files the converter writes itself.
+- **Cause: line endings only.** On the laptop, the same files with `\r\n` turned into `\n`
+  (239 and 51,866 lines) have exactly the SHA-256 that Colab produced. The laptop is Windows, so the
+  converter's text-mode writes gave CRLF there and LF on Colab. The model is the same.
+- **Change to §1:** those two files are compared **after normalising `\r\n` to `\n`**, against
+  pins taken from the laptop's files (`e3.model_text_files_lf_sha256`: `config.json b55496ac…`,
+  `vocabulary.json 5ad28279…`). **Every other converted file is still compared byte for byte**
+  with `models/MANIFEST.json`. A test fails if the rule covers any other file, and (where the app
+  model is present) if the pins differ from the laptop's files normalised.
+- The next run is a new build (`20261128-b3`).
 
 ## Consequences
 

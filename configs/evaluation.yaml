@@ -119,6 +119,13 @@ e3:                                  # ADR 0012; filler detection (FINAL_10 E3).
   report: [precision, recall, f1]    # precision shows made-up fillers (e.g. from initial_prompt)
   # ---- ADR 0028 (proposed): the E3 protocol, fixed before the first E3 run (PR-3) ----
   model: whisper_small               # owner E6: T1's base; turbo report-only, never deciding
+  model_text_files_lf_sha256:        # ADR 0028 §7: the converter's own JSON files, compared after
+    # \r\n -> \n (the laptop is Windows and wrote CRLF; Colab writes LF). Taken from the laptop's
+    # models/whisper-small-ct2-int8 with line endings normalised; equal to run b2's Colab output.
+    # Every other converted file (model.bin, tokenizer.json, preprocessor_config.json) must
+    # still match models/MANIFEST.json byte for byte.
+    config.json: b55496ac7940a7ae47d2c01eab40edfd8701feec1229d9cce3b40014383fb828
+    vocabulary.json: 5ad28279db5e546349708b9a74736e2c018737ac5a600f1048f1f26c99b85b47
   decoding:                          # owner 1: the app's settings (default.yaml asr), unchanged for
     compute_type: int8               # base, base_initial_prompt and every T1 run
     beam_size: 5
