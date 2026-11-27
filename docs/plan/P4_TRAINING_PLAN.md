@@ -17,9 +17,9 @@
 4. Fixed seed, manifest hash, `run_info.json` with SHA-256 of every output, `ingest` check of the
    downloaded zip (ADR 0005).
 5. Every pass rule is fixed **before** its run.
-6. Temporary and unwanted files (downloaded zips, scratch output) go under the folder named by
-   `PRESENCEAI_HOME`, outside the repository; never the repo root. (How `ingest` may read it
-   under AGENTS.md rule 9: ADR 0026 open item 1.)
+6. Colab result zips go into **`data/colab_results/`** (git-ignored, the ingest default path),
+   never the repo root. Ingest checks SHA-256 against `run_info.json`, copies outputs to
+   `models/` or `experiments/results/<run>/`, then deletes the zip and its extracted copy.
 
 ## 1. Tracks
 
@@ -73,7 +73,10 @@ warned laptop latency check at the end.
 - **Filter:** valid JSON, quotes found, numbers match, no banned term, Arabic
   `latin_outside_transcript` empty.
 - **E11 held-out:** 150 C2 test assessments, 30 per planted group, `random.Random(20261127)`; id
-  list committed in PR-7 before any teacher call; never to the teacher, never trained on.
+  list committed in PR-7 before any teacher call; never to the teacher, never trained on. May
+  overlap the later E4 60-item draw (overlap count reported).
+- **T2 training inputs:** C2 dev plus new synthetic inputs (C4); the rest of the C2 test part stays
+  untouched.
 - **Prompt builder** from the existing `feedback_point_rule` / `language_rule` in
   `lang/{en,ar}/coach_prompt.yaml`, in PR-7.
 
@@ -81,9 +84,9 @@ warned laptop latency check at the end.
 
 | When | Step |
 |---|---|
-| Now | Review PR-1; accept ADR 0026 (or ask for changes). Answer ADR 0026 open item 1 (temporary-file folder vs rule 9) |
+| Now | Review PR-1; accept ADR 0026 (or ask for changes) |
 | Yourself, any time | Delete the P3 leftovers (export zip, `app.sqlite`, `sessions/`, `exports/`, `tmp/`) |
-| PR-2 run (AMI, LibriSpeech) | Open Colab, pick a **T4**, approve the colab-mcp connection (or run the built notebook by hand). No token needed: public data only. Download the result zip into the `PRESENCEAI_HOME` folder |
+| PR-2 run (AMI, LibriSpeech) | Open Colab, pick a **T4**, approve the colab-mcp connection (or run the built notebook by hand). No token needed: public data only. Download the result zip into `data/colab_results/` (every later run too) |
 | Before PR-3 run | Nothing new (PodcastFillers already approved for PR-3). Same Colab steps |
 | **Before PR-4 (T1-r1)** | On Hugging Face: create a **private model repo** for T1 (e.g. `<your-user>/presenceai-whisper-small-verbatim`); create a **fine-grained write token** limited to that repo; add it in Colab → Secrets as **`HF_TOKEN`** and turn on notebook access. I only ever refer to it by that name. Mount Drive for checkpoints (`MyDrive/presenceai_p4/`) |
 | PR-4 / PR-5 runs | Start the long training cells; download result zips; read the E3 table before I propose the pick |
@@ -100,8 +103,9 @@ check + one warned laptop latency check · D7 option A, 70 % / one prompt fix �
 builder/filter + prompt builder + E11 draw · D9 T3 v0 now, laptop exception, split rule §3 · D10
 plan-text fixes in PR-1 · D11 option (a): full T2 pairs and training in P5–P6, else cut item 2.
 
-**Still open:** ADR 0026 open items 1 (temporary-file folder vs rule 9), 2 (E11/E4 draw overlap),
-3 (T2 training inputs from C2 dev + new synthetic inputs, not C2 test).
+**Former open items (answered 2026-11-27):** result zips in `data/colab_results/` (ingest default,
+no rule-9 exception) · E11/E4 draw overlap allowed · T2 training inputs = C2 dev + new synthetic
+inputs, rest of the C2 test part untouched.
 
 ## 7. PR order
 

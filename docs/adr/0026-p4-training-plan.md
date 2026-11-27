@@ -33,8 +33,13 @@ the ten sessions already used by E3; (4) the plan texts disagreed with ADR 0010,
    every output; results come back as an owner-downloaded zip checked by an `ingest` step
    (ADR 0005).
 5. **Every pass rule is fixed before its run** and never tuned to pass (AGENTS.md rule 7).
-6. **Temporary files** (downloaded zips, scratch output) go under the folder named by
-   `PRESENCEAI_HOME`, outside the repository (owner, 2026-11-27); see open item 1.
+6. **Result zips** (owner, 2026-11-27, answer to open item 1): the owner downloads every Colab
+   result zip into **`data/colab_results/`** inside the repository (git-ignored by `data/*`, not
+   a rule-9 path; registered in `data/README.md`). It is the **default input path of every
+   `ingest` step**. Ingest checks every file against `run_info.json` SHA-256, copies the checked
+   outputs to `models/` (model files) or `experiments/results/<run>/` (metrics and small files),
+   then deletes the zip and its extracted copy, as in S3 (ADR 0005). `PRESENCEAI_HOME` is not
+   used for this, and AGENTS.md rule 9 gets no exception.
 
 ### 2. Scope per track
 
@@ -114,7 +119,9 @@ Pass rule (**proposed**, fixed before T1-r1):
 - **E11 held-out set (D8), fixed now:** **150 assessments from the C2 test part**, 30 per planted
   group (279 test items: 56/56/55/56/56), drawn with `random.Random(20261127)` over ids sorted
   within each group. The id list is written by a script in PR-7 and committed **before any teacher
-  call**. These 150 are **never given to the teacher and never used in training**.
+  call**. These 150 are **never given to the teacher and never used in training**. They may
+  overlap the later E4 60-item draw. T2 training inputs are C2 dev plus new synthetic inputs
+  (C4); the rest of the C2 test part is not used.
 - **Prompt builder (D8):** built in PR-7 from the existing `feedback_point_rule` and
   `language_rule` in `lang/en/coach_prompt.yaml` and `lang/ar/coach_prompt.yaml`, so T2 no longer
   waits for P7.
@@ -155,15 +162,14 @@ Pass rule (**proposed**, fixed before T1-r1):
   `initial_prompt` condition on multi-speaker data.
 - T3's P4 number is development only; the thesis reports the B2 number as held-out.
 - T2 either trains before the freeze or is reported as pilots only; no T2 work happens in P8.
-- **Open items**
-  1. **Temporary-file folder vs AGENTS.md rule 9.** Rule 9 forbids reading `~/.presenceai/`;
-     `PRESENCEAI_HOME` defaults there. If result zips go under `PRESENCEAI_HOME`, the `ingest`
-     step must read them. Needs the owner's choice: a named subfolder with an explicit rule-9
-     exception, or another folder outside the repository.
-  2. The E11 150 and the later E4 60-item central-message draw (ADR 0021 §4d) both come from the
-     C2 test part and may overlap; neither trains on them. Proposed: allowed, reported.
-  3. Proposed (Claude, not yet decided): T2 training inputs come from C2 dev and new synthetic
-     inputs (C4), not from the rest of the C2 test part, so E4 and the P7 judge keep an
-     untouched test part.
+- **Former open items, answered by the owner on 2026-11-27:**
+  1. **Result zips:** `data/colab_results/` inside the repository, the ingest default path; no
+     `PRESENCEAI_HOME` use and no rule-9 exception (§1 item 6).
+  2. **E11 / E4 overlap allowed:** the 150 E11 items and the later 60-item E4 central-message
+     draw (ADR 0021 §4d) both come from the C2 test part and **may overlap**, because neither
+     trains on them. Both reports state the overlap count.
+  3. **T2 training inputs:** C2 dev plus new synthetic inputs (C4) only. The rest of the C2 test
+     part (outside the 150 E11 items) stays untouched, so E4 and the P7 judge keep a clean test
+     part.
 - **This decision is wrong if** E3 shows T1 beating base only on DisfluencySpeech (one speaker),
   or if T3 v1 on B2 falls well below the v0 development F1.
