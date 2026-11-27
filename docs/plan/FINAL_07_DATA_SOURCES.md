@@ -56,7 +56,7 @@ TED research use follows the rules in `docs/data/DATA_SOURCES.md`: evaluation on
 | Dataset | Role | Licence | Command / access | Checked |
 |---|---|---|---|---|
 | **DisfluencySpeech** | T1 training + filler eval | Apache-2.0 | `load_dataset("amaai-lab/DisfluencySpeech")` | ✓ |
-| AMI Meeting Corpus (IHM) | T1 training (multi-speaker verbatim) | CC BY 4.0 ~ | `load_dataset("edinburghcstr/ami", "ihm")` ~ | ~ |
+| AMI Meeting Corpus (IHM) | T1 training (word-level transcripts of meetings outside the E3 sessions) and E3 | CC BY 4.0 (official page, `DATA_SOURCES.md` §4) | Official Edinburgh files only, `https://groups.inf.ed.ac.uk/ami/download/`, on Colab (not the HF or OpenSLR mirrors; ADR 0026) | ✓ 2026-11-17 |
 | **PodcastFillers** | Filler eval only | Non-commercial research (Adobe); audio CC-BY variants | `https://zenodo.org/records/7121457` | ✓ |
 | LibriSpeech test-clean | ASR regression check | CC BY 4.0 | `wget https://www.openslr.org/resources/12/test-clean.tar.gz` | ~ |
 | **Common Voice** (English with accents; Arabic) | Accent and Arabic WER slices | CC0-1.0 | Mozilla Data Collective, sign in and download per language: `https://datacollective.mozillafoundation.org` | ✓ |
@@ -67,7 +67,8 @@ TED research use follows the rules in `docs/data/DATA_SOURCES.md`: evaluation on
 | pyannote community-1 (model, optional) | Diarization | CC BY 4.0, gated | Accept terms on HF, then `Pipeline.from_pretrained("pyannote/speaker-diarization-community-1", token=...)` | ✓ |
 
 ```bash
-uv run python scripts/fetch_public_data.py --only disfluencyspeech,ami_ihm,librispeech_test_clean,edacc
+# on Colab only, never on the laptop (ADR 0026); each source only after the owner approves it
+uv run python scripts/fetch_public_data.py --only disfluencyspeech,ami_ihm,librispeech_test_clean
 # Common Voice, MASC, PodcastFillers, Speak & Improve, MIT Interview: manual download or request; the script verifies files you place in data/public/
 ```
 
@@ -101,7 +102,7 @@ Used as **links** in the teaching library only (YouTube/TED/university channels)
 
 | Set | Size | Role |
 |---|---|---|
-| B1 Pilot presentations (owner only, ADR 0010) | 20 clips: 10 EN + 10 AR, 2–3 min each (ADR 0016; was 30–40); plan and steps in `docs/data/B1_RECORDING_GUIDE.md` | Real-speech checks (E1 WER, E2 incl. Arabic E2, ADRs 0011, 0013, 0014, 0015, 0016), detector development, T1 hand-corrected verbatim data, fixtures |
+| B1 Pilot presentations (owner only, ADR 0010) | 20 clips: 10 EN + 10 AR, 2–3 min each (ADR 0016; was 30–40); plan and steps in `docs/data/B1_RECORDING_GUIDE.md` | Real-speech checks (E1 WER, E2 incl. Arabic E2, ADRs 0011, 0013, 0014, 0015, 0016), detector development, fixtures. Not T1 training data (laptop-only, ADR 0026 D3) |
 | B2 Gaze/robustness protocol | Owner only × ~16 conditions (ADR 0010) | T3 training and E7 |
 | B3 Annotations | 40 clips in Label Studio | Fillers, pauses, structure, supporting material, gaze spot checks |
 

@@ -277,5 +277,7 @@ For the MVP, the gaze labels are:
   Thresholds for items 1 and 2 (yaw angle, time window, pitch) are set in `configs/` and
   recorded in an ADR when T3 is built.
 - **Limitation:** one participant (the owner). Cross-person accuracy is tested in E7 with
-  volunteers, leave-one-person-out.
+  volunteers, leave-one-person-out. **Superseded (ADR 0010, ADR 0026):** there are no
+  volunteers; T3 is evaluated leave-one-session-out on the owner's sessions, and cross-person
+  only approximately on Columbia Gaze (E7).
 - **The decision is wrong if** E7 gives a 3-zone macro-F1 well below 0.8 across people.
