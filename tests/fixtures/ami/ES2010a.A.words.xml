@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+<!-- Hand-written for PresenceAI tests in the assumed AMI NXT word format (ADR 0027); not corpus data. -->
+<nite:root nite:id="ES2010a.A.words" xmlns:nite="http://nite.sourceforge.net/">
+   <w nite:id="ES2010a.A.words0" starttime="1.00" endtime="1.30">Um</w>
+   <w nite:id="ES2010a.A.words1" starttime="1.30" endtime="1.30" punc="true">,</w>
+   <w nite:id="ES2010a.A.words2" starttime="1.40" endtime="1.70">we</w>
+   <w nite:id="ES2010a.A.words3" starttime="1.70" endtime="1.90" trunc="true">sh</w>
+   <disfmarker nite:id="ES2010a.A.words4" starttime="1.90" endtime="1.90"/>
+   <w nite:id="ES2010a.A.words5" starttime="1.95" endtime="2.30">should</w>
+   <w nite:id="ES2010a.A.words6" starttime="2.30" endtime="2.60">start</w>
+   <w nite:id="ES2010a.A.words7" starttime="2.60" endtime="2.60" punc="true">.</w>
+   <vocalsound nite:id="ES2010a.A.words8" starttime="2.70" endtime="3.00" type="laugh"/>
+   <w nite:id="ES2010a.A.words9" starttime="10.00" endtime="10.40">Mm-hmm</w>
+   <w nite:id="ES2010a.A.words10" starttime="10.40" endtime="10.40" punc="true">.</w>
+   <w nite:id="ES2010a.A.words11" starttime="10.50" endtime="11.00">Okay</w>
+   <w nite:id="ES2010a.A.words12" starttime="11.00" endtime="11.60">then</w>
+   <w nite:id="ES2010a.A.words13" starttime="20.00" endtime="20.30">hidden</w>
+   <gap nite:id="ES2010a.A.words14" starttime="20.30" endtime="20.80"/>
+   <w nite:id="ES2010a.A.words15" starttime="20.80" endtime="21.50">part</w>
+   <w nite:id="ES2010a.A.words16" starttime="30.00" endtime="30.20">Uh</w>
+   <w nite:id="ES2010a.A.words17" starttime="30.20" endtime="31.40">overlapping</w>
+   <w nite:id="ES2010a.A.words18" starttime="31.40" endtime="32.00">words</w>
+</nite:root>

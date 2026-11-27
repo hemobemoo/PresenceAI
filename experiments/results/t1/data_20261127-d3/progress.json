@@ -1,0 +1,9 @@
+{
+  "done": [
+    "ami",
+    "headsets",
+    "disfluencyspeech",
+    "librispeech"
+  ],
+  "script_sha256": "547f5fa8c72cc9afa597c4e683ae6684f7756acf2de51f632c31d1a330ede549"
+}

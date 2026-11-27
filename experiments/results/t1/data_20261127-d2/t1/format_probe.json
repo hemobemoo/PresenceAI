@@ -1,0 +1,39 @@
+{
+  "elements": {
+    "disfmarker": 12184,
+    "gap": 2574,
+    "transformerror": 3,
+    "vocalsound": 13525,
+    "w": 548077
+  },
+  "filler_like_spellings": {
+    "ah": 238,
+    "er": 2,
+    "hm": 10,
+    "hmm": 597,
+    "m": 287,
+    "mm": 2161,
+    "mm-hm": 1,
+    "mm-hmm": 1502,
+    "mm-mm": 27,
+    "mmm-hmm": 1,
+    "u": 58,
+    "uh": 13209,
+    "uh-huh": 112,
+    "uh-uh": 6,
+    "um": 6485
+  },
+  "unknown_elements": [
+    "transformerror"
+  ],
+  "untimed_words": 1,
+  "w_attributes": {
+    "endtime": 548076,
+    "id": 548077,
+    "mispronounced": 1261,
+    "pron": 69,
+    "punc": 79585,
+    "starttime": 548076,
+    "trunc": 9103
+  }
+}

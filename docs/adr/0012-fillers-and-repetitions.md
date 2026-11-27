@@ -101,7 +101,14 @@ checked:
   confirm that **no speaker appears in both a development and a test session**. Grouping
   meetings by session keeps each session's speakers together, but it does not prove that no
   person took part in two sessions, so this is checked, not assumed.
-  - **Result:** _not yet checked; recorded here after the download._
+  - **Result (2026-11-27, P4 data run `20261127-d2`, ADR 0027 §5): passed.** From
+    `corpusResources/meetings.xml` in the official manual annotations v1.6.2 (SHA-256 pinned): the
+    3 dev sessions (ES2005, IS1001, TS3005) have 12 speakers, the 7 test sessions have 28, and
+    **no speaker is in both**. The split stands. Record:
+    `experiments/results/t1/data_20261127-d2/t1/speaker_check.json`. Its `missing_sessions` field
+    wrongly listed the dev sessions, because of a bracket bug in the report line (fixed, with a
+    test); the pass value was computed correctly. Also, no other scenario meeting shares a speaker
+    with the ten E3 sessions, so T1 training excludes only their own 40 meetings.
   - If any speaker is shared, the split is redrawn with the shared speaker's sessions on one side,
     before any tuning, and this ADR records the new split.
 

@@ -1,0 +1,65 @@
+{
+  "build": {
+    "repo_commit": "066b409df93f19f7951dad98ff9e10647f320a19",
+    "repo_dirty": false,
+    "run_id": "20261127-d2"
+  },
+  "elapsed_s": 184.5,
+  "error": "Traceback (most recent call last):\n  File \"/content/data_run.py\", line 276, in main\n    rows, problems = headsets(\n                     ~~~~~~~~^\n        pd_cfg[\"ami_headset\"][\"url\"], pd_cfg[\"ami_headset\"].get(\"sha256\") or {}\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    )\n    ^\n  File \"/content/data_run.py\", line 202, in headsets\n    fut.result()\n    ~~~~~~~~~~^^\n  File \"/usr/lib/python3.13/concurrent/futures/_base.py\", line 460, in result\n    return self.__get_result()\n           ~~~~~~~~~~~~~~~~~^^\n  File \"/usr/lib/python3.13/concurrent/futures/_base.py\", line 402, in __get_result\n    raise self._exception\n  File \"/usr/lib/python3.13/concurrent/futures/thread.py\", line 59, in run\n    result = self.fn(*self.args, **self.kwargs)\n  File \"/content/data_run.py\", line 170, in _headset\n    rec = fetch.download(url_tpl.format(meeting=meeting, channel=channel), dest, pins.get(name))\n  File \"/content/p4work/lib/fetch_public_data.py\", line 59, in download\n    with urllib.request.urlopen(req, timeout=120) as r, dest.open(\"wb\") as f:  # noqa: S310\n         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.13/urllib/request.py\", line 189, in urlopen\n    return opener.open(url, data, timeout)\n           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.13/urllib/request.py\", line 495, in open\n    response = meth(req, response)\n  File \"/usr/lib/python3.13/urllib/request.py\", line 604, in http_response\n    response = self.parent.error(\n        'http', request, response, code, msg, hdrs)\n  File \"/usr/lib/python3.13/urllib/request.py\", line 533, in error\n    return self._call_chain(*args)\n           ~~~~~~~~~~~~~~~~^^^^^^^\n  File \"/usr/lib/python3.13/urllib/request.py\", line 466, in _call_chain\n    result = func(*args)\n  File \"/usr/lib/python3.13/urllib/request.py\", line 613, in http_error_default\n    raise HTTPError(req.full_url, code, msg, hdrs, fp)\nurllib.error.HTTPError: HTTP Error 503: Service Unavailable\n",
+  "platform": "Linux-6.6.159+-x86_64-with-glibc2.39",
+  "python": "3.13.18 (main, Oct 26 2026, 15:28:15) [GCC 13.3.0]",
+  "resumed_stages": [],
+  "run_id": "20261127-d2",
+  "script_sha256": "0a62ef0d3c0eda2bfeba620550e65534bb1d2ee05ffe210cf119ccf4c03e06fe",
+  "sha256": {
+    "licence/AMI_LICENCE.txt": {
+      "bytes": 13197,
+      "sha256": "d52fd9c7c19eec9f0bec3107554c10937203e261259d73b01637a61501fec7f7"
+    },
+    "licence/licence_check.json": {
+      "bytes": 77,
+      "sha256": "99d4eb17ca5e46a676339f50ee40b8f5c92b4ec4d5e6dfe83c64fb71cec9ebde"
+    },
+    "pins/ami_annotations.json": {
+      "bytes": 216,
+      "sha256": "bb8aa4ddefb7d3728c916c262bef31d100e495d86495ce56102c08bf6c692863"
+    },
+    "pins/headsets.jsonl": {
+      "bytes": 16485,
+      "sha256": "c802c99576d59a206fe17e1b2cde4ce45d8006705e408fe44c595d5b8cc42373"
+    },
+    "progress.json": {
+      "bytes": 117,
+      "sha256": "a435fac113fecfac23497553598bdef4eac378c9d7f6014c82a19e50859b51f0"
+    },
+    "t1/format_probe.json": {
+      "bytes": 648,
+      "sha256": "4b1e25c4cdd46e4e9e8af35ebfae7ba19041cfd144334f1d853ccb20fa24642b"
+    },
+    "t1/manifest.jsonl": {
+      "bytes": 1283380,
+      "sha256": "6f1f2c9b5d9b388bd6445d53285860d02f030a7bc50aa733a5f8450c529c2ee4"
+    },
+    "t1/manifest_summary.json": {
+      "bytes": 4570,
+      "sha256": "b0f28df07a161376ddd424b45ba94b9fa28e89b2646f4ce6a9aa007b6f4252d0"
+    },
+    "t1/speaker_check.json": {
+      "bytes": 350,
+      "sha256": "28503e4f8707c990cdb920c1391d93400097232c52dde4d4b0967690cbb78d74"
+    }
+  },
+  "status": "error",
+  "steps": {
+    "format_warning": [
+      "transformerror"
+    ],
+    "licence": "passed",
+    "manifest": {
+      "manifest_sha256": "6f1f2c9b5d9b388bd6445d53285860d02f030a7bc50aa733a5f8450c529c2ee4",
+      "segments": 4445,
+      "speech_hours_kept": 10.0001
+    },
+    "speaker_check_passed": true
+  }
+}

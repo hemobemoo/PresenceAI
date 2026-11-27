@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+<!-- Hand-written for PresenceAI tests in the assumed AMI NXT word format (ADR 0027); not corpus data. -->
+<nite:root nite:id="ES2010a.B.words" xmlns:nite="http://nite.sourceforge.net/">
+   <w nite:id="ES2010a.B.words0" starttime="30.00" endtime="31.80">talking</w>
+   <w nite:id="ES2010a.B.words1" starttime="31.80" endtime="32.00">too</w>
+   <w nite:id="ES2010a.B.words2" starttime="40.00" endtime="40.50">Uh-huh</w>
+   <w nite:id="ES2010a.B.words3" starttime="40.50" endtime="41.20">right</w>
+</nite:root>
