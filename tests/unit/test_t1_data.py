@@ -70,7 +70,7 @@ def test_t1_config_matches_adr_0027_and_owner_answers():
     assert pd["ami_annotations"]["url"].startswith("https://groups.inf.ed.ac.uk/ami/")
     assert pd["ami_headset"]["url"].startswith("https://groups.inf.ed.ac.uk/ami/AMICorpusMirror/")
     assert pd["ami_annotations"]["licence_must_state"] == "CC BY 4.0"
-    assert "podcastfillers" not in pd  # approved with PR-3, not here
+    assert pd["podcastfillers"]["access"] == "range_requests"  # approved with PR-3 (owner E1)
     assert set(SPELL.values()) <= set(HES)  # every mapped filler is in the E3 lexicon
 
 

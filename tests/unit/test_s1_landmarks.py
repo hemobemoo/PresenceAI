@@ -52,8 +52,10 @@ class FakeEngine:
         self.frames: list[np.ndarray] = []
         self.timestamps: list[int] = []
         self.closed = False
+        self.started = threading.Event()  # set when the engine begins its first frame
 
     def __call__(self, rgb: np.ndarray, timestamp_ms: int) -> Any:
+        self.started.set()
         time.sleep(self.delay_s)
         self.frames.append(rgb)
         self.timestamps.append(timestamp_ms)
@@ -110,7 +112,9 @@ def test_worker_drops_frames_while_busy_and_keeps_latest():
     engine, sink = FakeEngine(delay_s=0.2), Sink()
     w = _worker(engine, sink)
     w.submit(_frame(1))
-    time.sleep(0.05)  # worker is now busy with frame 1
+    # Wait until the worker is really busy with frame 1. A fixed 0.05 s sleep here failed once
+    # under load (2026-11-27): the worker had not taken frame 1 yet, so frame 1 was replaced too.
+    assert engine.started.wait(2.0)
     for v in (2, 3, 4):
         w.submit(_frame(v))
     assert w.wait_idle(3.0)

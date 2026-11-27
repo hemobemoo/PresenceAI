@@ -50,6 +50,10 @@ class Item:
     start: float | None
     end: float | None
     trunc: bool = False
+    id: str = ""  # nite:id, used to resolve the disfluency layer's word links (E3)
+
+
+NITE_ID = "{http://nite.sourceforge.net/}id"
 
 
 @dataclass
@@ -81,10 +85,12 @@ def parse_words(xml: bytes, probe: Probe | None = None) -> list[Item]:
                     probe.untimed_words += 1
                 if _FILLERISH.match(text.casefold().strip(".,?!")):
                     probe.short_tokens[text.casefold()] += 1
+            wid = el.get(NITE_ID, "")
             if el.get("punc") == "true":
-                items.append(Item("punc", text, start, end))
+                items.append(Item("punc", text, start, end, id=wid))
             elif text:
-                items.append(Item("word", text, start, end, trunc=el.get("trunc") == "true"))
+                trunc = el.get("trunc") == "true"
+                items.append(Item("word", text, start, end, trunc=trunc, id=wid))
         elif tag in GAP_LIKE:
             items.append(Item("gap", "", start, end))
         else:
@@ -119,6 +125,9 @@ class Segment:
     text: str
     n_words: int
     crosstalk_share: float
+    # one AMI word id per text token (E3 repetition scoring); never written to the T1 manifest,
+    # so the pinned manifest hash (ADR 0027 §6) is unchanged
+    word_ids: tuple[str, ...] = field(default=(), compare=False, repr=False)
 
     @property
     def duration_s(self) -> float:
@@ -210,9 +219,11 @@ def segments(
             drops["crosstalk"] += 1
             continue
         parts: list[str] = []
+        ids: list[str] = []
         for i in g:
             if i.kind == "word":
                 parts.append(spell(i.text, i.trunc, spelling, backchannels))
+                ids.append(i.id)
             elif i.kind == "punc" and parts:
                 parts[-1] += i.text
         out.append(
@@ -225,6 +236,7 @@ def segments(
                 " ".join(parts),
                 len(words),
                 round(share, 4),
+                tuple(ids),
             )
         )
     return out
@@ -339,3 +351,75 @@ def select(
             out.append(s)
             total += s.duration_s
     return out
+
+
+# ---- E3: the AMI disfluency layer (ADR 0028) ---------------------------------------------------
+#
+# Assumed format, checked by the E3 run's probe before any repetition is scored:
+# `disfluency/<meeting>.<agent>.disfluency.xml`, elements carrying a type (attribute or element
+# name) with `nite:child href="<meeting>.<agent>.words.xml#id(A)..id(B)"` (or `#id(A)`) children.
+# Only elements whose type contains "repet" are repetitions.
+
+_HREF = re.compile(r"#id\(([^)]+)\)(?:\.\.id\(([^)]+)\))?")
+REPETITION = re.compile(r"repet", re.IGNORECASE)
+
+
+@dataclass
+class DisfluencyProbe:
+    elements: Counter[str] = field(default_factory=Counter)
+    attributes: Counter[str] = field(default_factory=Counter)
+    type_values: Counter[str] = field(default_factory=Counter)
+    unresolved_links: int = 0
+
+
+@dataclass(frozen=True)
+class Disfluency:
+    type: str
+    word_ids: tuple[str, ...]
+
+
+def _type_of(el: ET.Element) -> str:
+    for k, v in el.attrib.items():
+        if _local(k) in {"type", "dsfl-type", "disfl-type", "kind"}:
+            return v
+    return _local(el.tag)
+
+
+def parse_disfluency(
+    xml: bytes, word_order: Sequence[str], probe: DisfluencyProbe | None = None
+) -> list[Disfluency]:
+    """Every element with word links, its type and the word ids it covers (ranges expanded in the
+    words file's order)."""
+    root = ET.fromstring(xml)  # noqa: S314 (official AMI corpus file, checked by SHA-256)
+    pos = {w: i for i, w in enumerate(word_order)}
+    out: list[Disfluency] = []
+    for el in root.iter():
+        tag = _local(el.tag)
+        if probe is not None:
+            probe.elements[tag] += 1
+            probe.attributes.update(_local(k) for k in el.attrib)
+        links = [c for c in el if _local(c.tag) == "child"]
+        if not links:
+            continue
+        ids: list[str] = []
+        for c in links:
+            href = next((v for k, v in c.attrib.items() if _local(k) == "href"), "")
+            m = _HREF.search(href)
+            if not m:
+                continue
+            a, b = m.group(1), m.group(2) or m.group(1)
+            if a not in pos or b not in pos:
+                if probe is not None:
+                    probe.unresolved_links += 1
+                continue
+            ids.extend(word_order[pos[a] : pos[b] + 1])
+        t = _type_of(el)
+        if probe is not None:
+            probe.type_values[t] += 1
+        if ids:
+            out.append(Disfluency(t, tuple(ids)))
+    return out
+
+
+def repetitions(dis: Iterable[Disfluency]) -> list[Disfluency]:
+    return [d for d in dis if REPETITION.search(d.type)]

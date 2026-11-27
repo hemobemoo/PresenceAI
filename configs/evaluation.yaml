@@ -117,6 +117,40 @@ e3:                                  # ADR 0012; filler detection (FINAL_10 E3).
                                      # filler-rich text (prompt fixed in the E3 config before E3)
     - t1                             # after T1 (P4)
   report: [precision, recall, f1]    # precision shows made-up fillers (e.g. from initial_prompt)
+  # ---- ADR 0028 (proposed): the E3 protocol, fixed before the first E3 run (PR-3) ----
+  model: whisper_small               # owner E6: T1's base; turbo report-only, never deciding
+  decoding:                          # owner 1: the app's settings (default.yaml asr), unchanged for
+    compute_type: int8               # base, base_initial_prompt and every T1 run
+    beam_size: 5
+    temperature: 0.0
+    condition_on_previous_text: false
+    language: en
+    word_timestamps: true
+    vad_filter: false                # as speech/asr.py
+  initial_prompt: "Umm, let me think, uh, like, hmm... Okay, so, um, here's what I was, uh, thinking."  # owner E4
+  detector: lexicon                  # owner E5/6: T1's pass rule compares lexicon on base vs lexicon
+                                     # on T1; acoustic and fusion wait until tuned on dev (ADR 0012 §4)
+  wer_normaliser:                    # owner 2 (LibriSpeech): lower case, punctuation removed,
+    lower_case: true                 # fillers NOT removed (an invented filler on read speech is
+    remove_punctuation: true         # a real error); the same for base and T1
+    remove_fillers: false
+  ami:
+    deciding_unit: t1_segments       # owner E3: the T1 per-speaker segments, 20 % crosstalk filter
+    secondary_unit: t1_segments_crosstalk_kept   # reported, non-deciding (crosstalk_max_share 1.0)
+  podcastfillers:
+    scored_labels: [Uh, Um]          # fullvoc_label; the only fillers it labels as such
+    hypothesis_family: [uh, um, uhm, er, erm]    # owner E2: hmm, mm, ah ignored on PodcastFillers
+    match_tolerance_s: 0.2           # owner E2, PROVISIONAL: event widened by +/- 0.2 s, one-to-one
+    precision_is_lower_bound: true   # its annotation may not cover every filler (ADR 0028)
+  repetitions:
+    reference: ami_disfluency_layer  # owner E7: probed first; only marked repetitions count
+    measure: kept_in_transcript      # ADR 0028: a reference repetition is "kept" if every one of its
+                                     # words is aligned to the same word in the hypothesis
+  bootstrap:
+    resamples: 1000
+    seed: 20261128
+    unit: {disfluencyspeech: clip, ami: meeting, podcastfillers: episode, librispeech: speaker}
+  disfluencyspeech_text_check: first # ADR 0027 §6: step 0, pass = words_differ <= 50 of 5,000
 
 t1:                                  # ADR 0027 (proposed): T1 data preparation (ADR 0026 §3)
   seed: 20261127                     # meeting order; the E11 draw uses the same date seed (ADR 0026)
@@ -154,6 +188,19 @@ t1:                                  # ADR 0027 (proposed): T1 data preparation 
   partial_marker: "-"                # a partial word keeps a trailing hyphen ("th-"); "um-" counts as "um"
 
 public_data:                         # ADR 0026 §1 / DATA_SOURCES §1-4; fetched on Colab only
+  podcastfillers:                    # owner D1/E1/E8: evaluation only; research-only annotations
+    record: https://zenodo.org/records/7121457
+    files_api: https://zenodo.org/api/records/7121457/files/{key}/content
+    parts:                           # split zip: .z01 .z02 .z03 then .zip (disks 0-3); md5 = Zenodo's
+      - {key: PodcastFillers.z01, bytes: 6442450944, md5: e0941abae2a9e5bbe0e7c28f6140ccc7}
+      - {key: PodcastFillers.z02, bytes: 6442450944, md5: 25a149c5dc76fa7c91d0edb6e77aedb6}
+      - {key: PodcastFillers.z03, bytes: 6442450944, md5: 399c44abb9ec35aa56d6fbf75043164b}
+      - {key: PodcastFillers.zip, bytes: 5915177141, md5: 20e9f6b93b1b5c2e1c9d8b774ca28c33}
+    annotations_csv: {key: PodcastFillers.csv, bytes: 21698037, md5: 68d8614ad562263c621b90dc81f06abd}
+    access: range_requests           # owner E1: only the test WAVs; fallback: all four parts
+    test_wav_dir: audio/episode_wav/test/
+    licence_members: [LICENSE_ANNOTATIONS_ADOBE_RESEARCH_LICENSE.txt, LICENSE_AUDIO.csv]  # read first
+    test_wav_sha256_file: null       # per WAV, checked against its CRC32, pinned after the first run
   ami_annotations:
     url: https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip
     sha256: b56e5babb2496b8795deeeda7e71178d7fbc9963f94276cf2a3f4b56ebbc9f9d  # run d2, 22,887,865 bytes

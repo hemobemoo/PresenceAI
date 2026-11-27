@@ -78,6 +78,7 @@ def notebook(
     drive_folder: str | None = None,
     out_env: str = "P4_OUT",
     secrets: Sequence[str] = (),
+    setup: str | None = None,
 ) -> dict[str, Any]:
     """A notebook that runs `body` as /content/<script_name> and downloads <zip_stem>.zip.
 
@@ -131,6 +132,8 @@ def notebook(
                 f"assert {gpu!r} in gpu, 'Choose Runtime > Change runtime type > {gpu} GPU'\n"
             )
         )
+    if setup:
+        cells.append(_code(setup))
     cells += [
         _code(f"%%writefile /content/{script_name}\n" + body),
         _code(
