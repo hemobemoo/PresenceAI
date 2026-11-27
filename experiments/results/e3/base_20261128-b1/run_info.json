@@ -1,0 +1,28 @@
+{
+  "build": {
+    "repo_commit": "7a23d09641154101e0d82aa942ec200114b19df8",
+    "repo_dirty": false,
+    "run_id": "20261128-b1"
+  },
+  "elapsed_s": 42.3,
+  "error": "Traceback (most recent call last):\n  File \"/content/e3_run.py\", line 663, in main\n    if not (WORK / \"model\" / \"model.bin\").exists() and not stage_model():\n                                                           ~~~~~~~~~~~^^\n  File \"/content/e3_run.py\", line 218, in stage_model\n    subprocess.run([py, \"-m\", \"venv\", str(venv)], check=True)  # noqa: S603\n    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.13/subprocess.py\", line 578, in run\n    raise CalledProcessError(retcode, process.args,\n                             output=stdout, stderr=stderr)\nsubprocess.CalledProcessError: Command '['/usr/bin/python3.12', '-m', 'venv', '/content/e3work/conv']' returned non-zero exit status 1.\n",
+  "platform": "Linux-6.6.159+-x86_64-with-glibc2.39",
+  "python": "3.13.16 (main, Oct  1 2026, 15:40:24) [GCC 13.3.0]",
+  "resumed_stages": [],
+  "run_id": "20261128-b1",
+  "script_sha256": "48439db5c6fea46dd66b72943dac8679a6806f6b9523e61a5ef5b634e608d203",
+  "sha256": {
+    "ds_text_check.json": {
+      "bytes": 6909,
+      "sha256": "5477513095773417781c6aa827218e0dfab7ff545809c078e36e2679c384b727"
+    },
+    "progress.json": {
+      "bytes": 122,
+      "sha256": "922ae384fd4b964968e1aed1a7e1d1771f9fa9d6c7981edabfce9f9277bc8346"
+    }
+  },
+  "status": "error",
+  "steps": {
+    "ds_check": "passed"
+  }
+}

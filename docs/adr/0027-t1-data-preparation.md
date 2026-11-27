@@ -203,10 +203,22 @@ Results: `experiments/results/t1/data_20261127-d3/` (ingest checked all 11 files
 - T1 can count false starts (partial words), which `speech/repetitions.py` left for T1.
 - **Recorded:** licence wording, speaker check, probe findings (no spelling-map change) and the
   annotation-zip hash (d2, §5); final manifest, every headset hash, LibriSpeech hash and licence,
-  and the DisfluencySpeech text check (d3, §6). **Still open:** the fixed builder's check on all
-  5,000 DisfluencySpeech rows, run as the first step of PR-3's Colab run, **pass = at most 50 rows
-  `words_differ`** (§6; fixed before the run, never moved). Above 50: fix the builder and repeat
-  the check before PR-4.
+  and the DisfluencySpeech text check (d3, §6).
+- **Fixed builder's full check: PASSED** (E3 run `20261128-b1`, stage 0, 2026-11-28;
+  `experiments/results/e3/base_20261128-b1/ds_text_check.json`). **20 of 5,000 rows
+  `words_differ`**, against the line of 50 (fixed before the run). Per split:
+
+  | Split | Rows | same | punctuation_only | partials_only | words_differ |
+  |---|---|---|---|---|---|
+  | train | 4,500 | 4,154 | 255 | 73 | 18 |
+  | validation | 250 | 232 | 14 | 4 | 0 |
+  | test | 250 | 228 | 16 | 4 | 2 |
+
+  The 20 are all partial-word notation that the two DisfluencySpeech transcripts mark
+  differently: `transcript_a` sometimes marks a partial the annotation writes in full ("i-, i-,"
+  vs "it, it,"; "we-" vs "we"), and once the annotation has a front partial ("a -bout"). So
+  `transcript_a` does not always write partials as full words, as §1 said; it does so in most
+  rows. Label noise, left as it is; T1 trains on the builder's text.
 - **This decision is wrong if** the text check shows many DisfluencySpeech rows that differ from
   `transcript_a` outside partial words (the builder misreads the markup), or if the probe shows AMI
   marks partial words in a way the parser does not read.

@@ -101,6 +101,20 @@ scored the same way. All of it runs on Colab (ADR 0026 §1).
 - Hypotheses and item lists (corpus text and research-only annotation times) stay in the
   git-ignored `data/e3/<run>/`; metrics, probes, pins, checks and licence texts are committed.
 
+### 6. Run `20261128-b1` (Colab T4, 2026-11-28): stopped in stage 1
+
+Record: `experiments/results/e3/base_20261128-b1/`. 42 s, status `error`.
+
+- **Stage 0 passed**: DisfluencySpeech builder check, 20 of 5,000 rows `words_differ` (line 50).
+  Counts per split in ADR 0027 (Consequences).
+- **Stage 1 failed before any model file was built:** `/usr/bin/python3.12 -m venv` exited 1.
+  Colab's Python 3.12 has no `ensurepip`, so it cannot make a venv. **Fix:** the converter
+  environment is made with **uv**, pinned to the laptop's uv version (0.13.7 when built), as
+  `scripts/download_models.py` does locally: `uv venv --python 3.12`, then `uv pip install` of the
+  converter versions in `configs/models.yaml`. uv needs no `ensurepip` and fetches a CPython 3.12
+  if needed. The model-identity check (every converted file = the app's SHA-256) is unchanged.
+- The next run is a new build (`20261128-b2`, new Drive folder); stage 0 runs again.
+
 ## Consequences
 
 - PR-4 (T1-r1) and later T1 runs are scored by this exact protocol; only the model changes.

@@ -1,0 +1,114 @@
+{
+  "max_words_differ": 50,
+  "passed": true,
+  "read_with": "token",
+  "splits": {
+    "test": {
+      "partials_only": 4,
+      "punctuation_only": 16,
+      "rows": 250,
+      "same": 228,
+      "words_differ": 2,
+      "words_differ_examples": [
+        {
+          "ours": "Well, I think I would start with a -bout, with getting rid of about two-thirds of the administrators.",
+          "transcript_a": " Well, I think I would start with about, with getting rid of about two-thirds of the administrators."
+        },
+        {
+          "ours": "And that we, I, I've never been on a jury, I've never had that experience, I'm not sure I'd look forward to making that kind of decision about a man's life.",
+          "transcript_a": "And that we-, I, I've never been on a jury, I've never had that experience, I'm not sure I'd look forward to making that kind of decision about a man's life."
+        }
+      ]
+    },
+    "train": {
+      "partials_only": 73,
+      "punctuation_only": 255,
+      "rows": 4500,
+      "same": 4154,
+      "words_differ": 18,
+      "words_differ_examples": [
+        {
+          "ours": "Uh, I think Magic does a, it, it, it, it's going to be a war between, uh, between Chicago and, uh, and, uh, uh, Boston Celtics.",
+          "transcript_a": "Uh, I think Magic does a, i-, i-, it, it's going to be a war between, uh, between Chicago and, uh, and, uh, uh, Boston Celtics."
+        },
+        {
+          "ours": "I mean, it, it really is coming to that because most women now days cannot afford the time that they could take off unless the company pays them.",
+          "transcript_a": "I mean, i-, it really is coming to that because most women now days cannot afford the time that they could take off unless the company pays them."
+        },
+        {
+          "ours": "Oh yeah, well see, I, my, my oldest is nine and he already he already does that.",
+          "transcript_a": "Oh yeah, well see, I, mi-, my oldest is nine and he already he already does that."
+        },
+        {
+          "ours": "Yeah. I'd love to go to a cat show. I'm real, a real cat lover. I'd have a lot more cats if my boyfriend would let us, let me.",
+          "transcript_a": "Yeah. I'd love to go to a cat show. I'm real, a real cat lover. I'd have a lot more cats if my boyfriend would let u-, let me."
+        },
+        {
+          "ours": "But, uh, otherwise we, as I said, we have had, uh, a relatively mild winter, speaking for this area of the country.",
+          "transcript_a": "But, uh, otherwise we-, as I said, we have had, uh, a relatively mild winter, speaking for this area of the country."
+        },
+        {
+          "ours": "Yeah, but you really need to see that movie. I, I we, we bought the movie and I don-, I don't know how many times I've seen it.",
+          "transcript_a": "Yeah, but you really need to see that movie. I, I we-, we bought the movie and I don-, I don't know how many times I've seen it."
+        },
+        {
+          "ours": "Yeah, and, and, you know, uh, especially, now, I live in, in Massachusetts, you know, we, we, we're going to get capital punishment here probably after the second coming or something.",
+          "transcript_a": "Yeah, and, and, you know, uh, especially, now, I live in, in Massachusetts, you know, we-, we-, we're going to get capital punishment here probably after the second coming or something."
+        },
+        {
+          "ours": "Well he just can, well he has been trained and you've ke-, you've kept up, it up, haven't you.",
+          "transcript_a": "Well he just can, well he has been trained and you've ke-, you've kept u-, it up, haven't you."
+        },
+        {
+          "ours": "Uh-huh. we don't, we don't take the newspaper to begin with. When, neither one of us are home to, to read it.",
+          "transcript_a": "Uh-huh. we don't, we don't take the newspaper to begin with. When, neither one of us are home t-, to read it."
+        },
+        {
+          "ours": "Uh, let me see, table saw, scroll saw, band saw, lathe, routers, and -t's about it.",
+          "transcript_a": "Uh, let me see, table saw, scroll saw, band saw, lathe, routers, and that's about it."
+        },
+        {
+          "ours": "I... I... we have noticed this in particular. I, I'm just read two books, one of them is WHOSE STARS AND STRIPES NOW?",
+          "transcript_a": "I I w-we have noticed this in particular. I, I'm just read two books, one of them is WHOSE STARS AND STRIPES NOW?"
+        },
+        {
+          "ours": "Do, what about this situation with the, you know, the, uh, continual, uh, harassment by Iraq right now and, uh, apparently failing to let the, uh, arms inspectors have free access.",
+          "transcript_a": "D-, what about this situation with the, you know, the, uh, continual, uh, harassment by Iraq right now and, uh, apparently failing to let the, uh, arms inspectors have free access."
+        },
+        {
+          "ours": "So really, it it, gets to balancing, uh, personal freedom against, uh, the general welfare of society.",
+          "transcript_a": "So really, it i-, gets to balancing, uh, personal freedom against, uh, the general welfare of society."
+        },
+        {
+          "ours": "That's right. See we, he couldn't do without it, he, but, you know, since he can just do it right there at work, for nothing.",
+          "transcript_a": "That's right. See we, he couldn't do without it, ha-, but, you know, since he can just do it right there at work, for nothing."
+        },
+        {
+          "ours": "But that's another subject but, WE, Um, yeah, I guess that's not an easy solution. There's, there's no easy solution for that.",
+          "transcript_a": "But that's another subject but, WE-, Um, yeah, I guess that's not an easy solution. There's, there's no easy solution for that."
+        },
+        {
+          "ours": "Yo-, you know what I'm saying? That we, we don't have, uh, well a lot of states don't have capital punishment.",
+          "transcript_a": "Yo-, you know what I'm saying? That we-, we don't have, uh, well a lot of states don't have capital punishment."
+        },
+        {
+          "ours": "In other words you're saying that, we, you have to find out whether it's premeditated or what the circumstances were.",
+          "transcript_a": "In other words you're saying that, we-, you have to find out whether it's premeditated or what the circumstances were."
+        },
+        {
+          "ours": "Uh, I work in, in the operating room a lot and, uh, and, of course, when we,",
+          "transcript_a": "Uh, I work in, in the operating room a lot and, uh, and, of course, when we-,"
+        }
+      ]
+    },
+    "validation": {
+      "partials_only": 4,
+      "punctuation_only": 14,
+      "rows": 250,
+      "same": 232,
+      "words_differ": 0,
+      "words_differ_examples": []
+    }
+  },
+  "words_differ_total": 20
+}

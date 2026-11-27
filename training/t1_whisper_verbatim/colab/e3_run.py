@@ -213,11 +213,17 @@ def stage_model():
         checks["source"].append({"path": f["path"], "ok": got == f["sha256"]})
         if got != f["sha256"]:
             raise ValueError(f"source {f['path']} differs from the app's MANIFEST.json")
+    # Converter environment made with uv, as scripts/download_models.py does on the laptop.
+    # Run b1 (2026-11-28): Colab's /usr/bin/python3.12 has no ensurepip, so `python -m venv`
+    # failed; uv needs no ensurepip and fetches a CPython of the pinned minor version if needed.
     venv = WORK / "conv"
-    py = "/usr/bin/python3.12" if Path("/usr/bin/python3.12").exists() else sys.executable
-    subprocess.run([py, "-m", "venv", str(venv)], check=True)  # noqa: S603
+    uv_pin = f"uv=={CONFIG['uv_version']}"
+    subprocess.run([sys.executable, "-m", "pip", "install", "-q", uv_pin], check=True)  # noqa: S603
+    uv = [sys.executable, "-m", "uv"]
+    py_minor = str(m["converter"]["python"])
+    subprocess.run([*uv, "venv", "--python", py_minor, str(venv)], check=True)  # noqa: S603
     pkgs = list(m["converter"]["packages"])
-    cmd = [str(venv / "bin" / "pip"), "install", "-q", *pkgs]
+    cmd = [*uv, "pip", "install", "--python", str(venv / "bin" / "python"), *pkgs]
     if any(p.startswith("torch==") for p in pkgs):
         cmd += ["--extra-index-url", "https://download.pytorch.org/whl/cpu"]
     subprocess.run(cmd, check=True)  # noqa: S603

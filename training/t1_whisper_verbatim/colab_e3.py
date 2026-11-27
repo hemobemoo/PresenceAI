@@ -23,6 +23,8 @@ from __future__ import annotations
 import argparse
 import base64
 import json
+import re
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any
@@ -85,9 +87,19 @@ def model_config() -> dict[str, Any]:
     }
 
 
+def uv_version() -> str:
+    """The laptop's uv version; the Colab converter environment is made with the same uv."""
+    out = subprocess.run(["uv", "--version"], capture_output=True, text=True, check=True)  # noqa: S607
+    m = re.match(r"uv (\d+\.\d+\.\d+)", out.stdout.strip())
+    if not m:
+        raise ValueError(f"cannot read the uv version from {out.stdout!r}")
+    return m.group(1)
+
+
 def load_config() -> dict[str, Any]:
     cfg = colab_data.load_config()
     cfg["model"] = model_config()
+    cfg["uv_version"] = uv_version()
     return cfg
 
 

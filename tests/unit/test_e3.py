@@ -312,6 +312,10 @@ def test_e3_build_uses_the_apps_model_versions_and_settings(tmp_path):
     assert body.count('os.environ.get("HF_TOKEN"') == 1
     assert "DELETE_RUNTIME = False" in cells[-1]
     assert "MyDrive/presenceai_p4/e3base_t/e3base" in src
+    # run b1: Colab's python3.12 has no ensurepip, so the converter env is made with uv (pinned
+    # to the laptop's uv version), never with `python -m venv`
+    assert '"-m", "venv"' not in body and '"venv", "--python", py_minor' in body
+    assert cfg["uv_version"].count(".") == 2 and "uv_pin" in body
 
 
 def test_e3_ingest_keeps_hypotheses_and_items_out_of_git(tmp_path, monkeypatch):
