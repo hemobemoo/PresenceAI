@@ -5,8 +5,11 @@
 
 build writes data/t1/colab/data_run.py (config, build info and the modules it needs injected:
 t1text, ami_words, prepare_data, fetch_public_data and the app's text/normalize.py) and
-data/t1/colab/P4DATA_<id>.ipynb. The notebook needs **no GPU** (a CPU runtime is enough), mounts
-nothing and reads no secret.
+data/t1/colab/P4DATA_<id>.ipynb. The notebook needs **no GPU** (a CPU runtime is enough). It
+mounts the owner's Google Drive for **results only** (MyDrive/presenceai_p4/p4data_<id>/; never
+datasets, ADR 0026 D2), so a disconnect loses nothing and Run all resumes; and it passes the
+optional Colab Secret `HF_TOKEN` (the read token) to the script for the Hugging Face download,
+never showing it (owner, 2026-11-27).
 
 ingest reads data/colab_results/p4data_<id>.zip by default, checks every file against
 run_info.json, then copies: t1/manifest.jsonl -> data/t1/<id>/ (git-ignored), everything else ->
@@ -75,12 +78,21 @@ def build(run_id: str, out: Path = BUILD_DIR) -> Path:
     nb = ci.notebook(
         title=f"PresenceAI P4 data run `{run_id}` (ADR 0026, ADR 0027)",
         steps=(
-            "A **CPU runtime is enough** (no GPU). Runtime > Run all. The run downloads only the "
-            "approved public sources (AMI official files, DisfluencySpeech at its pinned revision, "
-            "LibriSpeech test-clean), reads the AMI licence first, and deletes the audio after "
-            f"hashing it. Save `p4data_{run_id}.zip` into `data/colab_results/` when the browser "
-            "asks, then run the last cell to delete the runtime. Nothing is mounted and no secret "
-            "is used."
+            "1. **Once:** key icon (Secrets) on the left > Add new secret > name `HF_TOKEN`, value "
+            "= your Hugging Face **read** token; turn on *Notebook access*. Optional: without it "
+            "the public dataset is read anonymously.\n"
+            "2. A **CPU runtime is enough** (no GPU). Runtime > Run all; allow Google Drive when "
+            "asked.\n"
+            "3. Results (not datasets) are written to "
+            f"`MyDrive/presenceai_p4/p4data_{run_id}/` as each stage finishes. **If Colab "
+            "disconnects, reconnect and Run all again: finished stages are skipped.**\n"
+            f"4. Save `p4data_{run_id}.zip` into `data/colab_results/` when the browser asks. If "
+            "the download fails, take the same zip from that Drive folder.\n"
+            "5. Only after the zip is on the laptop: set `DELETE_RUNTIME = True` in the last cell "
+            "and run it by hand.\n\n"
+            "Downloads only the approved public sources (AMI official files, DisfluencySpeech at "
+            "its pinned revision, LibriSpeech test-clean), reads the AMI licence first, and "
+            "deletes the audio after hashing it."
         ),
         script_name="data_run.py",
         body=body,
@@ -88,6 +100,9 @@ def build(run_id: str, out: Path = BUILD_DIR) -> Path:
         zip_stem=f"p4data_{run_id}",
         timeout_s=TIMEOUT_S,
         gpu=None,
+        drive_folder=f"presenceai_p4/p4data_{run_id}",
+        out_env="P4_OUT",
+        secrets=("HF_TOKEN",),
     )
     return ci.write_build(out, "data_run.py", body, f"P4DATA_{run_id}.ipynb", nb)
 

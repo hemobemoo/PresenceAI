@@ -82,6 +82,23 @@ with the same `t1text.build_ds_text`, so T1's partial words are not scored again
 5. loads DisfluencySpeech at revision `b7da294` and runs the text check of §1;
 6. downloads LibriSpeech test-clean, records its SHA-256 and file counts, deletes it.
 
+**Resumable, after the first attempt was lost (owner, 2026-11-27).** Run `20261127-d1` took about
+27 minutes, then Colab disconnected at the zip download and everything was lost. Also, the old last
+cell (delete the runtime) ran straight after the download pop-up under Run all, which can cut the
+download off. Changes:
+- the results folder is on the owner's Google Drive (`MyDrive/presenceai_p4/p4data_<id>/p4data`,
+  results only; datasets stay on the Colab disk, ADR 0026 D2); every stage writes there when it
+  finishes, and a rerun of the same build skips finished stages and headsets (a folder from
+  another build is refused);
+- the zip is also copied to that Drive folder, so a failed browser download can be taken from Drive;
+- the delete-runtime cell does nothing under Run all (`DELETE_RUNTIME = False`; run by hand);
+- faster: headsets 3 at a time (the AMI site asks for limited bandwidth), and DisfluencySpeech reads
+  only its two text columns from the pinned parquet files instead of 1.4 GB with audio;
+- **`HF_TOKEN`** (the owner's Hugging Face *read* token) may be added as a Colab Secret. The notebook
+  passes it to the script as an environment variable; it is used only to read DisfluencySpeech from
+  Hugging Face, never printed or written; without it, or if it is refused, the public dataset is
+  read anonymously. It does not speed up the AMI or LibriSpeech downloads (other servers).
+
 Results come back as `p4data_<id>.zip` in `data/colab_results/`; `ingest` checks every SHA-256,
 puts the manifest in the git-ignored `data/t1/<id>/` and the rest in
 `experiments/results/t1/data_<id>/`, then deletes the zip (ADR 0026 §1). The hashes are then

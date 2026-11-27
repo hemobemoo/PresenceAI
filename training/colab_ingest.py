@@ -75,10 +75,52 @@ def notebook(
     zip_stem: str,
     timeout_s: int,
     gpu: str | None,
+    drive_folder: str | None = None,
+    out_env: str = "P4_OUT",
+    secrets: Sequence[str] = (),
 ) -> dict[str, Any]:
-    """A notebook that runs `body` as /content/<script_name> and downloads <zip_stem>.zip."""
+    """A notebook that runs `body` as /content/<script_name> and downloads <zip_stem>.zip.
+
+    drive_folder: results (never datasets, ADR 0026 D2) are written to
+    /content/drive/MyDrive/<drive_folder>/<out_dir>, passed to the script as `out_env`, so a
+    disconnect loses nothing and a rerun resumes; the zip is also saved there.
+    secrets: Colab Secrets names passed to the script as environment variables; their values are
+    never printed or written.
+    The last cell (delete the runtime) never runs under Run all: it would cut the download off.
+    """
     intro = f"# {title}\n\n{steps}\n"
     cells = [{"cell_type": "markdown", "metadata": {}, "source": intro.splitlines(keepends=True)}]
+    if drive_folder:
+        base = f"/content/drive/MyDrive/{drive_folder}"
+        res = f"{base}/{out_dir}"
+        cells.append(
+            _code(
+                "# Results (not datasets) go to your Google Drive, so a disconnect loses nothing.\n"
+                "import os\n"
+                "from google.colab import drive\n"
+                "drive.mount('/content/drive')\n"
+                f"os.makedirs({res!r}, exist_ok=True)\n"
+                f"os.environ[{out_env!r}] = {res!r}\n"
+                f"print('results folder:', {res!r})\n"
+            )
+        )
+    else:
+        res = f"/content/{out_dir}"
+        base = "/content"
+    for name in secrets:
+        cells.append(
+            _code(
+                f"# {name} from Colab Secrets (key icon on the left). The value is never shown.\n"
+                "import os\n"
+                "try:\n"
+                "    from google.colab import userdata\n"
+                f"    os.environ[{name!r}] = userdata.get({name!r})\n"
+                f"    print({name!r}, 'found in Colab Secrets (value not shown)')\n"
+                "except Exception as e:\n"
+                f"    os.environ.pop({name!r}, None)\n"
+                f"    print({name!r}, 'not available:', type(e).__name__, '- going on without')\n"
+            )
+        )
     if gpu:
         cells.append(
             _code(
@@ -102,16 +144,25 @@ def notebook(
         _code(
             "import os, shutil\n"
             "from google.colab import files\n"
-            f"assert os.path.exists('/content/{out_dir}/run_info.json'), 'no run_info.json'\n"
+            f"assert os.path.exists('{res}/run_info.json'), 'no run_info.json'\n"
             f"zip_path = shutil.make_archive('/content/{zip_stem}', 'zip',\n"
-            f"                               '/content', {out_dir!r})\n"
+            f"                               {str(PurePosixPath(res).parent)!r}, {out_dir!r})\n"
             "print(zip_path, os.path.getsize(zip_path), 'bytes')\n"
-            "files.download(zip_path)  # save it into data/colab_results/ in the repository\n"
+            + (
+                f"shutil.copy(zip_path, {base!r})\n"
+                f"print('copy on Google Drive:', {base + '/' + zip_stem + '.zip'!r})\n"
+                if drive_folder
+                else ""
+            )
+            + "files.download(zip_path)  # save it into data/colab_results/ in the repository\n"
         ),
         _code(
-            "# Run only after the zip is saved on the laptop: ends and deletes this runtime.\n"
-            "from google.colab import runtime\n"
-            "runtime.unassign()\n"
+            "# Run this cell BY HAND, only after the zip is saved on the laptop: it ends and\n"
+            "# deletes this runtime. Under Run all it does nothing (it would cut the download).\n"
+            "DELETE_RUNTIME = False  # set to True, then run this cell\n"
+            "if DELETE_RUNTIME:\n"
+            "    from google.colab import runtime\n"
+            "    runtime.unassign()\n"
         ),
     ]
     meta: dict[str, Any] = {"kernelspec": {"name": "python3", "display_name": "Python 3"}}

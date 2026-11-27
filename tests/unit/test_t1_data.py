@@ -328,10 +328,29 @@ def test_build_injects_modules_and_matches_hash(tmp_path):
         "normalize.py",
     }
     assert b"def filler_key" in base64.b64decode(mods["normalize.py"])
-    for forbidden in ("drive.mount", "HF_TOKEN", "userdata"):
-        assert forbidden not in src
     assert "nvidia-smi" not in src  # CPU runtime is enough
     assert "data/colab_results/" in src
+
+
+def test_notebook_resumes_on_drive_reads_token_safely_and_never_cuts_the_download(tmp_path):
+    nb = json.loads(cdata.build("t", tmp_path).read_text(encoding="utf-8"))
+    cells = ["".join(c["source"]) for c in nb["cells"] if c["cell_type"] == "code"]
+    body = (tmp_path / "data_run.py").read_text(encoding="utf-8")
+    drive = next(c for c in cells if "drive.mount" in c)
+    assert "MyDrive/presenceai_p4/p4data_t/p4data" in drive and "P4_OUT" in drive
+    assert 'WORK = Path("/content/p4work")' in body  # datasets stay on local disk, not Drive
+    secret = next(c for c in cells if "userdata.get" in c)
+    assert "userdata.get('HF_TOKEN')" in secret and "value not shown" in secret
+    for c in [*cells, body]:  # the token value is never printed or written anywhere
+        assert "print(os.environ" not in c and "print(tok" not in c
+    assert body.count('os.environ.get("HF_TOKEN"') == 1  # read in one place only ...
+    assert body.count("hf_token()") == 2  # its definition and one call ...
+    assert "HfFileSystem(token=token)" in body  # ... which only builds the HF file system
+    last = cells[-1]
+    assert "DELETE_RUNTIME = False" in last and "if DELETE_RUNTIME:" in last
+    zip_cell = next(c for c in cells if "make_archive" in c)
+    assert cells.index(zip_cell) < len(cells) - 1 and "files.download" in zip_cell
+    assert "MyDrive/presenceai_p4/p4data_t" in zip_cell  # copy kept on Drive
 
 
 def _run_zip(tmp: Path, files: dict[str, bytes], tamper: bool = False) -> Path:
