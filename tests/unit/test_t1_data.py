@@ -63,6 +63,7 @@ def test_t1_config_matches_adr_0027_and_owner_answers():
     assert t1["ami"]["train_speech_hours"] == 10.0  # owner P1: speech kept, after crosstalk
     assert SEG["crosstalk_max_share"] == 0.20  # owner P4 (provisional)
     assert t1["disfluencyspeech"]["text_from"] == "transcript_annotated"  # owner P3
+    assert t1["disfluencyspeech"]["text_check_max_words_differ"] == 50  # owner, ADR 0027 §6
     assert t1["disfluencyspeech"]["revision"] == "b7da294fe3a70dd96df6640893f2a5dfc2c87638"
     assert {"mm-hmm", "uh-huh"} <= set(BACK)  # owner P2
     pd = EV["public_data"]

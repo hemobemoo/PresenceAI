@@ -125,6 +125,7 @@ t1:                                  # ADR 0027 (proposed): T1 data preparation 
     revision: b7da294fe3a70dd96df6640893f2a5dfc2c87638
     text_from: transcript_annotated  # owner P3: fillers AND partial words ("th-") kept; NOT
                                      # transcript_a (S3 / ADR 0005 used transcript_a)
+    text_check_max_words_differ: 50  # owner 2026-11-27 (ADR 0027 §6): of 5,000 rows, at most 1 %; never moved
   ami:
     train_speech_hours: 10.0         # owner P1: speech KEPT in the manifest, after the crosstalk filter
     manifest_sha256: fd51f6614bbf8e13c40894ead6f754ac4cbb3fa851c6d9b9e76aeaa7e8a693a8  # run d3; T1-r2 checks it

@@ -1,7 +1,8 @@
 # 0027 — T1 data preparation: verbatim text style, AMI segments, licence-first data run
 
-- Status: **proposed** (owner's answers P1–P4 of 2026-11-27 written in; waits for the owner's
-  acceptance). Values marked PROVISIONAL may change only with a new decision recorded here.
+- Status: **accepted** (owner, 2026-11-27; answers P1–P4, runs d2 and d3, and the builder pass
+  line in §6 written in). Values marked PROVISIONAL may change only with a new decision recorded
+  here.
 - Date: 2026-11-27
 - Decider: project owner
 - Plan reference: ADR 0026 §3 (T1 data), §1 (ground rules); FINAL_06 §3; FINAL_10 E3;
@@ -189,6 +190,11 @@ Results: `experiments/results/t1/data_20261127-d3/` (ingest checked all 11 files
     `words_differ`. **The fixed builder has not yet been checked on all 5,000 rows.** That check runs
     as the first step of PR-3's Colab run, which loads DisfluencySpeech anyway, so no extra data
     run is needed. T1 training (PR-4) uses only the checked builder.
+  - **Pass line, fixed before PR-3 runs it (owner, 2026-11-27):** at most **1 % of the 5,000
+    rows (50)** may be `words_differ`; `same`, `punctuation_only` and `partials_only` all pass.
+    If `words_differ` is above 50, the builder is fixed and the check repeated before PR-4; **the
+    line is not moved.** The PR-3 run reports the four counts per split (train, validation, test).
+    Key: `configs/evaluation.yaml: t1.disfluencyspeech.text_check_max_words_differ: 50`.
 
 ## Consequences
 
@@ -198,7 +204,9 @@ Results: `experiments/results/t1/data_20261127-d3/` (ingest checked all 11 files
 - **Recorded:** licence wording, speaker check, probe findings (no spelling-map change) and the
   annotation-zip hash (d2, §5); final manifest, every headset hash, LibriSpeech hash and licence,
   and the DisfluencySpeech text check (d3, §6). **Still open:** the fixed builder's check on all
-  5,000 DisfluencySpeech rows, run as the first step of PR-3's Colab run.
+  5,000 DisfluencySpeech rows, run as the first step of PR-3's Colab run, **pass = at most 50 rows
+  `words_differ`** (§6; fixed before the run, never moved). Above 50: fix the builder and repeat
+  the check before PR-4.
 - **This decision is wrong if** the text check shows many DisfluencySpeech rows that differ from
   `transcript_a` outside partial words (the builder misreads the markup), or if the probe shows AMI
   marks partial words in a way the parser does not read.
