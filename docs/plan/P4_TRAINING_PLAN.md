@@ -1,7 +1,7 @@
 # P4 — Training plan
 
 - Status: **approved with changes** (owner, 2026-11-27). Decisions D1–D11 are recorded in
-  **ADR 0026 (proposed until the owner accepts it)**; numbers there are the binding version.
+  **ADR 0026 (accepted 2026-11-27)**; numbers there are the binding version.
 - Main at `37225b8` when written (P3 exit met; ADR 0024 item 1 closed).
 - Sources: FINAL_12 §2–3, FINAL_06 §2–6, FINAL_10 E3/E7/E11, FINAL_07, `docs/data/DATA_SOURCES.md`,
   ADRs 0004, 0005, 0010, 0012, 0016, 0021, 0026.
@@ -52,8 +52,8 @@ ADR states AMI gives only a weak repetition signal.
 
 **Runs:** r1 small / DisfluencySpeech; r2 small / + AMI; r3 optional turbo.
 
-**Pass rule (ADR 0026 §4, proposed):** deciding sets AMI test + PodcastFillers test; filler F1 ≥
-base + 0.05 on both **and** above base + `initial_prompt`; precision ≥ base − 0.02; AMI repetition
+**Pass rule (ADR 0026 §4, accepted):** deciding sets AMI test + PodcastFillers test; filler F1 ≥
+base + 0.05 on both **and** above base + `initial_prompt`; precision ≥ base − 0.02 on both; AMI repetition
 recall ≥ base; LibriSpeech WER ≤ base + 1.0 point. Pick on DisfluencySpeech val + AMI dev (ties →
 lower WER), never on test. Bootstrap 95 % CIs resampled by meeting. Load check on Colab CPU; one
 warned laptop latency check at the end.
@@ -98,7 +98,7 @@ warned laptop latency check at the end.
 ## 6. Decisions (answered 2026-11-27)
 
 D1 downloads as in §2 · D2 re-download per session, Drive for checkpoints/results · D3 drop pilot
-recordings · D4 pass rule as in §2 (proposed) · D5 small first, turbo only as r3 · D6 Colab CPU load
+recordings · D4 pass rule as in §2 · D5 small first, turbo only as r3 · D6 Colab CPU load
 check + one warned laptop latency check · D7 option A, 70 % / one prompt fix → B · D8 P4 = pilots +
 builder/filter + prompt builder + E11 draw · D9 T3 v0 now, laptop exception, split rule §3 · D10
 plan-text fixes in PR-1 · D11 option (a): full T2 pairs and training in P5–P6, else cut item 2.
@@ -109,7 +109,7 @@ inputs, rest of the C2 test part untouched.
 
 ## 7. PR order
 
-1. **PR-1** docs: this plan, ADR 0026 (proposed), plan-text fixes (FINAL_06, FINAL_07, FINAL_12,
+1. **PR-1** docs: this plan, ADR 0026, plan-text fixes (FINAL_06, FINAL_07, FINAL_12,
    ADR 0004, ADR 0021).
 2. **PR-2** data: `scripts/fetch_public_data.py`, `data/README.md` rows, AMI LICENCE + speaker
    check, AMI filler/partial-word mapping with fixture tests, T1 manifest with fixed AMI hours.

@@ -1,7 +1,6 @@
 # 0026 — P4 training plan: scope, data, pre-registered rules, T2 schedule
 
-- Status: **proposed** (owner's answers D1–D11 of 2026-11-27 written in; waits for the owner's
-  acceptance)
+- Status: **accepted** (owner, 2026-11-27; answers D1–D11 and the open items written in)
 - Date: 2026-11-27
 - Decider: project owner
 - Plan reference: FINAL_12 §2–3 (P4–P7 rows, cut order), FINAL_06 §2–6, FINAL_10 E3/E7/E11,
@@ -82,7 +81,7 @@ Pass rule (**proposed**, fixed before T1-r1):
 - **Pass** only if all hold:
   1. filler F1 ≥ base + **0.05** absolute on **both** deciding sets;
   2. filler F1 above the **base + `initial_prompt`** condition (FINAL_10 E3) on both deciding sets;
-  3. filler precision no more than **0.02** below base;
+  3. filler precision no more than **0.02** below base on both deciding sets;
   4. repetition recall on AMI test ≥ base;
   5. LibriSpeech test-clean WER ≤ base + **1.0** point absolute.
 - **Model pick:** filler F1 on DisfluencySpeech validation + AMI dev sessions (ES2005, IS1001,
