@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+<!-- Hand-written ontology for PresenceAI tests (assumed shape; ADR 0028). Not corpus data. -->
+<nite:root nite:id="dsfl-types" xmlns:nite="http://nite.sourceforge.net/">
+   <dsfl-type nite:id="dsfl_root" name="disfluency">
+      <dsfl-type nite:id="dsfl_rep" name="Repetition" gloss="the same words said again"/>
+      <dsfl-type nite:id="dsfl_del" name="Deletion"/>
+   </dsfl-type>
+</nite:root>

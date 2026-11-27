@@ -196,3 +196,52 @@ def f1_of(c: object) -> float | None:
 def wer_of(t: object) -> float | None:
     errors, words = t  # type: ignore[misc]
     return 100.0 * errors / words if words else None
+
+
+# ---- PodcastFillers.csv columns (run b3: the website's "fullvoc_label" was not a key as read) ----
+
+PF_COLUMNS = {
+    "label": [
+        "fullvoc_label",
+        "full_vocab_label",
+        "label_full_vocab",
+        "full_vocabulary_label",
+        "fullvoc",
+        "label",
+    ],
+    "subset": ["episode_split_subset", "episode_split", "episode_subset", "split"],
+    "episode": ["podcast_filename", "episode_filename", "podcast_name", "filename"],
+    "start": ["event_start_inepisode", "event_start_in_episode", "start_inepisode", "event_start"],
+    "end": ["event_end_inepisode", "event_end_in_episode", "end_inepisode", "event_end"],
+}
+
+
+def norm_col(name: str) -> str:
+    """BOM and spaces stripped, lower case, runs of non-alphanumerics -> '_'."""
+    return re.sub(r"[^0-9a-z]+", "_", name.replace("﻿", "").strip().lower()).strip("_")
+
+
+def pf_columns(header: Sequence[str]) -> dict[str, str | None]:
+    """role -> the header's own column name, or None if no alias matches."""
+    norm = {norm_col(c): c for c in header}
+    return {k: next((norm[a] for a in al if a in norm), None) for k, al in PF_COLUMNS.items()}
+
+
+def pf_test_events(
+    rows: Iterable[Mapping[str, str]], cols: Mapping[str, str | None], scored: Iterable[str]
+) -> tuple[set[str], dict[str, list[list[float]]]]:
+    """Test episodes and their scored events (labels compared case-insensitively)."""
+    if not all(cols.values()):
+        raise ValueError(f"missing PodcastFillers columns: {[k for k, v in cols.items() if not v]}")
+    c = {k: str(v) for k, v in cols.items()}
+    want = {s.lower() for s in scored}
+    eps: set[str] = set()
+    events: dict[str, list[list[float]]] = {}
+    for r in rows:
+        if r[c["subset"]].strip().lower() != "test":
+            continue
+        ep = r[c["episode"]]
+        eps.add(ep)
+        if r[c["label"]].strip().lower() in want:
+            events.setdefault(ep, []).append([float(r[c["start"]]), float(r[c["end"]])])
+    return eps, events

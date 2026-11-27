@@ -80,14 +80,17 @@ def test_pins_from_data_runs_load_into_the_build_config():
     sha = re.compile(r"[0-9a-f]{64}")
     assert sha.fullmatch(pd["ami_annotations"]["sha256"])  # run d2
     assert sha.fullmatch(pd["librispeech_test_clean"]["sha256"])  # run d3
-    heads = pd["ami_headset"]["sha256"]  # run d3, from configs/pins/ami_headsets.json
-    assert len(heads) == 140 and all(sha.fullmatch(v) for v in heads.values())
+    heads = pd["ami_headset"]["sha256"]  # training (d3) + E3 test headsets (b3)
+    assert len(heads) == 140 + 112 and all(sha.fullmatch(v) for v in heads.values())
     assert all(k.endswith(".wav") and ".Headset-" in k for k in heads)
-    assert "sha256_file" not in pd["ami_headset"]
+    assert "sha256_file" not in pd["ami_headset"] and "sha256_files" not in pd["ami_headset"]
     assert sha.fullmatch(cfg["t1"]["ami"]["manifest_sha256"])  # run d3; T1-r2 checks it
-    # every pinned headset belongs to a meeting outside the ten E3 sessions
+    # the TRAINING pins hold no meeting from the ten E3 sessions; the test pins only E3 test ones
     e3 = set(EV["e3"]["ami_split"]["pool"])
-    assert not {k.split(".")[0][:-1] for k in heads} & e3
+    train = json.loads((REPO / "configs/pins/ami_headsets.json").read_text())["sha256"]
+    test = json.loads((REPO / "configs/pins/ami_test_headsets.json").read_text())["sha256"]
+    assert len(train) == 140 and not {k.split(".")[0][:-1] for k in train} & e3
+    assert {k.split(".")[0][:-1] for k in test} == set(EV["e3"]["scoring"]["ami_test_sessions"])
 
 
 # --- text rules (owner P2, P3) ----------------------------------------------------------------

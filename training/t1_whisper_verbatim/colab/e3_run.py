@@ -294,6 +294,19 @@ def ami_root():
     return root
 
 
+def ami_ontology(root):
+    """Every AMI ontology node, id -> label (ADR 0028 §8: disfluency types are pointer targets)."""
+    onto, files = {}, []
+    for p in sorted(root.rglob("*.xml")):
+        if "ontolog" in p.as_posix().lower() or "type" in p.name.lower():
+            try:
+                onto.update(ami.load_ontology(p.read_bytes()))
+                files.append(p.relative_to(root).as_posix())
+            except Exception as e:  # a file that is not an ontology is listed and skipped
+                files.append(f"{p.relative_to(root).as_posix()} (skipped: {type(e).__name__})")
+    return onto, files
+
+
 def ami_test_segments():
     """Deciding (crosstalk filter on) and secondary (crosstalk kept) segments, with word ids and
     the repetition events inside each segment."""
@@ -304,8 +317,9 @@ def ami_test_segments():
     loose = {**seg_cfg, "crosstalk_max_share": 1.0}
     words = {(p.name.split(".")[0], p.name.split(".")[1]): p for p in root.rglob("*.words.xml")}
     disf = {(p.name.split(".")[0], p.name.split(".")[1]): p for p in root.rglob("*.disfluency.xml")}
+    onto, onto_files = ami_ontology(root)
     probe = ami.DisfluencyProbe()
-    rows = []
+    rows, n_reps = [], 0
     for m in sorted(x for x in meetings if ami.session(x) in test):
         per = {}
         for spk in meetings[m]:
@@ -318,31 +332,15 @@ def ami_test_segments():
             reps = []
             if (m, spk.agent) in disf:
                 order = [i.id for i in per[spk.agent] if i.id]
-                dis = ami.parse_disfluency(disf[(m, spk.agent)].read_bytes(), order, probe)
+                dis = ami.parse_disfluency(disf[(m, spk.agent)].read_bytes(), order, probe, onto)
                 reps = [set(d.word_ids) for d in ami.repetitions(dis)]
+                n_reps += len(reps)
+            args = (m, spk.agent, spk.channel, per[spk.agent], others)
             strict = {
                 (s.start_s, s.end_s)
-                for s in ami.segments(
-                    m,
-                    spk.agent,
-                    spk.channel,
-                    per[spk.agent],
-                    others,
-                    seg_cfg,
-                    T1["ami"]["spelling"],
-                    BACK,
-                )
+                for s in ami.segments(*args, seg_cfg, T1["ami"]["spelling"], BACK)
             }
-            for s in ami.segments(
-                m,
-                spk.agent,
-                spk.channel,
-                per[spk.agent],
-                others,
-                loose,
-                T1["ami"]["spelling"],
-                BACK,
-            ):
+            for s in ami.segments(*args, loose, T1["ami"]["spelling"], BACK):
                 idx = {w: i for i, w in enumerate(s.word_ids)}
                 events = [sorted(idx[w] for w in r) for r in reps if r and r <= set(idx)]
                 rows.append(
@@ -362,31 +360,52 @@ def ami_test_segments():
         "probes/ami_disfluency_probe.json",
         {
             "files": len(disf),
+            "ontology_files": onto_files,
+            "ontology_nodes": len(onto),
             "elements": dict(probe.elements.most_common()),
             "attributes": dict(probe.attributes.most_common()),
-            "type_values": dict(probe.type_values.most_common(50)),
+            "pointer_roles": dict(probe.pointer_roles.most_common()),
+            "pointer_targets": dict(probe.pointer_targets.most_common(20)),
+            "type_values": dict(probe.type_values.most_common(60)),
             "unresolved_links": probe.unresolved_links,
+            "unresolved_pointers": probe.unresolved_pointers,
+            "repetitions_found": n_reps,
         },
     )
-    return rows
+    return rows, n_reps
+
+
+def pf_events(csv_path):
+    """(test episodes, scored events per episode) or None if a column cannot be found; writes a
+    probe with the header and value counts only (no annotation rows). Rules: e3score.pf_columns."""
+    from collections import Counter
+
+    with csv_path.open(encoding="utf-8-sig", newline="") as f:
+        reader = csv.DictReader(f)
+        header = list(reader.fieldnames or [])
+        cols = sc.pf_columns(header)
+        rows = list(reader) if all(cols.values()) else []
+    labels = Counter(r[cols["label"]] for r in rows) if rows else Counter()
+    subsets = Counter(r[cols["subset"]] for r in rows) if rows else Counter()
+    write_json(
+        "probes/podcastfillers_csv_probe.json",
+        {
+            "columns": header,
+            "mapped": cols,
+            "label_values": dict(labels.most_common()),
+            "subset_values": dict(subsets.most_common()),
+            "rows": len(rows),
+        },
+    )
+    if not all(cols.values()):
+        return None
+    return sc.pf_test_events(rows, cols, E3["podcastfillers"]["scored_labels"])
 
 
 def stage_data():
-    # AMI test: segments + headsets
-    segs = ami_test_segments()
-    (OUT / "items").mkdir(parents=True, exist_ok=True)
-    write_json("items/ami_test.json", segs)
-    pins = []
-    for meeting, channel in sorted({(s["meeting"], s["channel"]) for s in segs}):
-        name = f"{meeting}.Headset-{channel}.wav"
-        dest = WORK / "ami_audio" / name
-        if not dest.exists():
-            url = PD["ami_headset"]["url"].format(meeting=meeting, channel=channel)
-            rec = fetch.download(url, dest, (PD["ami_headset"].get("sha256") or {}).get(name))
-            pins.append({"file": name, **rec})
-    write_json("pins/ami_test_headsets.json", pins)
-
-    # PodcastFillers: licence first, then test WAVs
+    """Cheap checks first (PodcastFillers columns, AMI disfluency types), then the downloads.
+    Returns "ok", or the reason to stop."""
+    # 1. PodcastFillers annotation CSV (21 MB): its columns are checked before anything large
     pf = PD["podcastfillers"]
     csv_path = WORK / "pf" / "PodcastFillers.csv"
     a = pf["annotations_csv"]
@@ -394,6 +413,25 @@ def stage_data():
     if hashlib.md5(csv_path.read_bytes()).hexdigest() != a["md5"]:  # noqa: S324 (Zenodo's md5)
         raise ValueError("PodcastFillers.csv differs from Zenodo's md5")
     pf_pins = {"annotations_csv": rec}
+    got = pf_events(csv_path)
+    if got is None:
+        return "podcastfillers_columns_unknown"
+    test_eps, events = got
+    write_json(
+        "items/podcastfillers_test_events.json",
+        {ep: sorted(events.get(ep, [])) for ep in sorted(test_eps)},
+    )
+    log(
+        f"PodcastFillers: {len(test_eps)} test episodes, "
+        f"{sum(len(v) for v in events.values())} scored events"
+    )
+
+    # 2. AMI test segments and disfluency types (annotations only)
+    segs, n_reps = ami_test_segments()
+    write_json("items/ami_test.json", segs)
+    log(f"AMI: {len(segs)} test segments, {n_reps} repetitions found in the disfluency layer")
+
+    # 3. PodcastFillers: licence files first, then only the test WAVs
     sizes = [p["bytes"] for p in pf["parts"]]
     urls = [pf["files_api"].format(key=p["key"]) for p in pf["parts"]]
     try:
@@ -418,21 +456,6 @@ def stage_data():
             raise ValueError(f"PodcastFillers licence member {lic} not found")
         r = splitzip.extract(parts, idx[name], OUT / "licence" / "podcastfillers" / lic)
         pf_pins.setdefault("licence_members", {})[lic] = r
-    test_eps = set()
-    events = {}
-    with csv_path.open(encoding="utf-8") as f:
-        for row in csv.DictReader(f):
-            if row["episode_split_subset"] != "test":
-                continue
-            test_eps.add(row["podcast_filename"])
-            if row["fullvoc_label"] in E3["podcastfillers"]["scored_labels"]:
-                events.setdefault(row["podcast_filename"], []).append(
-                    [float(row["event_start_inepisode"]), float(row["event_end_inepisode"])]
-                )
-    write_json(
-        "items/podcastfillers_test_events.json",
-        {ep: sorted(events.get(ep, [])) for ep in sorted(test_eps)},
-    )
     wavs = {}
     for ep in sorted(test_eps):
         name = next((n for n in idx if n.endswith(f"{pf['test_wav_dir']}{ep}.wav")), None)
@@ -445,14 +468,26 @@ def stage_data():
     pf_pins["test_wavs"] = wavs
     write_json("pins/podcastfillers.json", pf_pins)
 
-    # LibriSpeech test-clean
+    # 4. AMI test headsets (hashed; the AMI server is slow and answers 503 at times)
+    pins = []
+    for meeting, channel in sorted({(s["meeting"], s["channel"]) for s in segs}):
+        name = f"{meeting}.Headset-{channel}.wav"
+        dest = WORK / "ami_audio" / name
+        if not dest.exists():
+            url = PD["ami_headset"]["url"].format(meeting=meeting, channel=channel)
+            rec = fetch.download(url, dest, (PD["ami_headset"].get("sha256") or {}).get(name))
+            pins.append({"file": name, **rec})
+    write_json("pins/ami_test_headsets.json", pins)
+
+    # 5. LibriSpeech test-clean
     lib = PD["librispeech_test_clean"]
     tgz = WORK / "librispeech" / "test-clean.tar.gz"
-    fetch.download(lib["url"], tgz, lib["sha256"])
-    with tarfile.open(tgz, "r:gz") as t:
-        t.extractall(WORK / "librispeech", filter="data")
-    tgz.unlink()
-    return True
+    if not (WORK / "librispeech" / "LibriSpeech").exists():
+        fetch.download(lib["url"], tgz, lib["sha256"])
+        with tarfile.open(tgz, "r:gz") as t:
+            t.extractall(WORK / "librispeech", filter="data")
+        tgz.unlink()
+    return "ok"
 
 
 # ---------------------------------------------------------------- stage 3: ASR
@@ -592,11 +627,15 @@ def score(all_items):
                 k, t = sc.repetitions_kept(s["text"].split(), h["text"].split(), s["repetitions"])
                 kept, total = kept + k, total + t
             res[label] = summarise(by_meeting, b, "meeting", deciding=bool(keep))
-            res[label]["repetitions_kept"] = {
-                "kept": kept,
-                "total": total,
-                "recall": kept / total if total else None,
-            }
+            # no repetition resolved from the disfluency layer -> "not scored", never a 0 or 1
+            res[label]["repetitions_kept"] = (
+                {"kept": kept, "total": total, "recall": kept / total}
+                if total
+                else {
+                    "status": "not_scored",
+                    "reason": "no repetition resolved; see probes/ami_disfluency_probe.json",
+                }
+            )
         dec = [s for s in ami_items.values() if s["deciding"]]
         all_s = sum(s["end_s"] - s["start_s"] for s in ami_items.values())
         res["ami_test"]["excluded_share_by_crosstalk_filter"] = (
@@ -678,7 +717,10 @@ def main():
             return info
         mark(p, "model")
         if not (WORK / "librispeech").exists() or "data" not in p["done"]:
-            stage_data()
+            why = stage_data()
+            if why != "ok":
+                info["status"] = why  # e.g. podcastfillers_columns_unknown: see probes/
+                return info
         mark(p, "data")
         import ctranslate2
         import faster_whisper

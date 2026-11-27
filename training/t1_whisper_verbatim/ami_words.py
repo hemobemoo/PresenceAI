@@ -355,10 +355,12 @@ def select(
 
 # ---- E3: the AMI disfluency layer (ADR 0028) ---------------------------------------------------
 #
-# Assumed format, checked by the E3 run's probe before any repetition is scored:
-# `disfluency/<meeting>.<agent>.disfluency.xml`, elements carrying a type (attribute or element
-# name) with `nite:child href="<meeting>.<agent>.words.xml#id(A)..id(B)"` (or `#id(A)`) children.
-# Only elements whose type contains "repet" are repetitions.
+# Run b3's probe (2026-11-28): `<dsfl>` elements (33,032) carry no type attribute; they hold
+# `<nite:child href=...words.xml#id(A)..id(B)>` word links and `<nite:pointer role=... href=...>`
+# links (69,773). The type is found by following the pointers into the AMI ontology files
+# (`ontologies/*.xml`): a node's label is its own attribute values (except ids) plus those of its
+# ancestors. A disfluency is a repetition if any label it points to contains "repet". Every role,
+# link target and resolved label is counted in the probe, so the rule can be checked.
 
 _HREF = re.compile(r"#id\(([^)]+)\)(?:\.\.id\(([^)]+)\))?")
 REPETITION = re.compile(r"repet", re.IGNORECASE)
@@ -369,7 +371,10 @@ class DisfluencyProbe:
     elements: Counter[str] = field(default_factory=Counter)
     attributes: Counter[str] = field(default_factory=Counter)
     type_values: Counter[str] = field(default_factory=Counter)
+    pointer_roles: Counter[str] = field(default_factory=Counter)
+    pointer_targets: Counter[str] = field(default_factory=Counter)  # file part of the href
     unresolved_links: int = 0
+    unresolved_pointers: int = 0
 
 
 @dataclass(frozen=True)
@@ -378,19 +383,58 @@ class Disfluency:
     word_ids: tuple[str, ...]
 
 
-def _type_of(el: ET.Element) -> str:
+def _href(el: ET.Element) -> str:
+    return next((v for k, v in el.attrib.items() if _local(k) == "href"), "")
+
+
+def load_ontology(xml: bytes) -> dict[str, str]:
+    """id -> label for every node of one ontology file (ancestors' labels joined by '/')."""
+    root = ET.fromstring(xml)  # noqa: S314 (official AMI corpus file, checked by SHA-256)
+    out: dict[str, str] = {}
+
+    def walk(el: ET.Element, trail: tuple[str, ...]) -> None:
+        own = " ".join(v for k, v in el.attrib.items() if _local(k) not in {"id", "href"})
+        label = (*trail, own) if own else trail
+        nid = el.get(NITE_ID)
+        if nid:
+            out[nid] = "/".join(label) or _local(el.tag)
+        for c in el:
+            walk(c, label)
+
+    walk(root, ())
+    return out
+
+
+def _type_of(el: ET.Element, ontology: Mapping[str, str], probe: DisfluencyProbe | None) -> str:
     for k, v in el.attrib.items():
         if _local(k) in {"type", "dsfl-type", "disfl-type", "kind"}:
             return v
-    return _local(el.tag)
+    labels = []
+    for c in el:
+        if _local(c.tag) != "pointer":
+            continue
+        role, href = c.get("role", ""), _href(c)
+        if probe is not None:
+            probe.pointer_roles[role] += 1
+            probe.pointer_targets[href.split("#", 1)[0]] += 1
+        m = _HREF.search(href)
+        if m and m.group(1) in ontology:
+            labels.append(f"{role}={ontology[m.group(1)]}")
+        elif probe is not None:
+            probe.unresolved_pointers += 1
+    return "; ".join(labels) if labels else _local(el.tag)
 
 
 def parse_disfluency(
-    xml: bytes, word_order: Sequence[str], probe: DisfluencyProbe | None = None
+    xml: bytes,
+    word_order: Sequence[str],
+    probe: DisfluencyProbe | None = None,
+    ontology: Mapping[str, str] | None = None,
 ) -> list[Disfluency]:
-    """Every element with word links, its type and the word ids it covers (ranges expanded in the
-    words file's order)."""
+    """Every element with word links, its type (an attribute, or the ontology labels its pointers
+    lead to) and the word ids it covers (ranges expanded in the words file's order)."""
     root = ET.fromstring(xml)  # noqa: S314 (official AMI corpus file, checked by SHA-256)
+    onto = ontology or {}
     pos = {w: i for i, w in enumerate(word_order)}
     out: list[Disfluency] = []
     for el in root.iter():
@@ -403,8 +447,7 @@ def parse_disfluency(
             continue
         ids: list[str] = []
         for c in links:
-            href = next((v for k, v in c.attrib.items() if _local(k) == "href"), "")
-            m = _HREF.search(href)
+            m = _HREF.search(_href(c))
             if not m:
                 continue
             a, b = m.group(1), m.group(2) or m.group(1)
@@ -413,7 +456,7 @@ def parse_disfluency(
                     probe.unresolved_links += 1
                 continue
             ids.extend(word_order[pos[a] : pos[b] + 1])
-        t = _type_of(el)
+        t = _type_of(el, onto, probe)
         if probe is not None:
             probe.type_values[t] += 1
         if ids:

@@ -293,7 +293,7 @@ def test_e3_build_uses_the_apps_model_versions_and_settings(tmp_path):
     assert cfg["model"]["files"] == small["files"]  # converted model must equal the app's
     assert cfg["model"]["source"]["revision"] == small["source"]["revision"]
     assert cfg["e3"]["decoding"] == E3["decoding"] and cfg["e3"]["initial_prompt"]
-    assert len(cfg["public_data"]["ami_headset"]["sha256"]) == 140  # PR-2 pins travel along
+    assert len(cfg["public_data"]["ami_headset"]["sha256"]) == 140 + 112  # training + test pins
     mods = json.loads(body.split('MODULES = json.loads(r"""', 1)[1].split('""")', 1)[0])
     assert {"e3score.py", "splitzip.py", "ami_words.py", "t1text.py", "normalize.py"} <= set(mods)
     # stage order: the builder check first, then the model, then data, ASR and scoring
@@ -358,3 +358,103 @@ def test_lf_pins_equal_the_laptop_model_files_with_normalised_line_endings():
     for name, want in E3["model_text_files_lf_sha256"].items():
         data = (d / name).read_bytes().replace(b"\r\n", b"\n")
         assert hashlib.sha256(data).hexdigest() == want, name
+
+
+def test_disfluency_types_come_from_pointers_into_the_ontology():
+    onto = ami.load_ontology((FIX / "dsfl-types.xml").read_bytes())
+    assert onto["dsfl_rep"].startswith("disfluency/Repetition")  # ancestor label kept
+    items = ami.parse_words((FIX / "ES2010a.B.words.xml").read_bytes())
+    order = [i.id for i in items if i.id]
+    probe = ami.DisfluencyProbe()
+    dis = ami.parse_disfluency((FIX / "ES2010a.B.disfluency.xml").read_bytes(), order, probe, onto)
+    reps = ami.repetitions(dis)
+    assert len(dis) == 3 and len(reps) == 1
+    assert reps[0].word_ids == ("ES2010a.B.words0", "ES2010a.B.words1")
+    assert probe.pointer_roles == {"dsfl-type": 3}
+    assert probe.pointer_targets == {"dsfl-types.xml": 3}
+    assert probe.unresolved_pointers == 1  # dsfl_unknown is not in the ontology
+    # without the ontology nothing is called a repetition (never a guess)
+    assert (
+        ami.repetitions(
+            ami.parse_disfluency((FIX / "ES2010a.B.disfluency.xml").read_bytes(), order, None, {})
+        )
+        == []
+    )
+
+
+@pytest.mark.parametrize(
+    "header",
+    [
+        [
+            "clip_name",
+            "fullvoc_label",
+            "episode_split_subset",
+            "podcast_filename",
+            "event_start_inepisode",
+            "event_end_inepisode",
+        ],
+        [
+            "﻿clip_name",
+            " FullVoc_Label ",
+            "Episode Split Subset",
+            "podcast_filename",
+            "event_start_inepisode",
+            "event_end_inepisode",
+        ],  # BOM, spaces, case
+        ["clip", "label_full_vocab", "split", "episode_filename", "event_start", "event_end"],
+    ],
+)
+def test_pf_columns_found_by_normalised_alias(header):
+    cols = sc.pf_columns(header)
+    assert all(cols.values()) and set(cols.values()) <= set(header)
+
+
+def test_pf_columns_missing_is_reported_not_guessed():
+    cols = sc.pf_columns(["clip_name", "something_else"])
+    assert cols["label"] is None
+    with pytest.raises(ValueError, match="missing PodcastFillers columns"):
+        sc.pf_test_events([], cols, ["Uh"])
+
+
+def test_pf_test_events_keeps_test_split_and_scored_labels_only():
+    cols = sc.pf_columns(
+        [
+            "fullvoc_label",
+            "episode_split_subset",
+            "podcast_filename",
+            "event_start_inepisode",
+            "event_end_inepisode",
+        ]
+    )
+    rows = [
+        {
+            "fullvoc_label": "Uh",
+            "episode_split_subset": "test",
+            "podcast_filename": "a",
+            "event_start_inepisode": "1.0",
+            "event_end_inepisode": "1.2",
+        },
+        {
+            "fullvoc_label": "um",
+            "episode_split_subset": "Test",
+            "podcast_filename": "a",
+            "event_start_inepisode": "3.0",
+            "event_end_inepisode": "3.4",
+        },
+        {
+            "fullvoc_label": "Breath",
+            "episode_split_subset": "test",
+            "podcast_filename": "b",
+            "event_start_inepisode": "5.0",
+            "event_end_inepisode": "5.2",
+        },
+        {
+            "fullvoc_label": "Uh",
+            "episode_split_subset": "train",
+            "podcast_filename": "c",
+            "event_start_inepisode": "1.0",
+            "event_end_inepisode": "1.2",
+        },
+    ]
+    eps, ev = sc.pf_test_events(rows, cols, E3["podcastfillers"]["scored_labels"])
+    assert eps == {"a", "b"} and ev == {"a": [[1.0, 1.2], [3.0, 3.4]]}

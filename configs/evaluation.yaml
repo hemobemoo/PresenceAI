@@ -214,7 +214,9 @@ public_data:                         # ADR 0026 §1 / DATA_SOURCES §1-4; fetche
     licence_must_state: CC BY 4.0    # read FIRST; stop before any other AMI file otherwise
   ami_headset:
     url: https://groups.inf.ed.ac.uk/ami/AMICorpusMirror/amicorpus/{meeting}/audio/{meeting}.Headset-{channel}.wav
-    sha256_file: configs/pins/ami_headsets.json   # 140 files, run d3 (ADR 0027 §6); loaded into sha256
+    sha256_files:                    # loaded into sha256 (pins must agree across files)
+      - configs/pins/ami_headsets.json        # 140 T1 training headsets, run d3 (ADR 0027 §6)
+      - configs/pins/ami_test_headsets.json   # 112 E3 test headsets, run b3 (ADR 0028 §8)
   librispeech_test_clean:
     url: https://www.openslr.org/resources/12/test-clean.tar.gz
     sha256: 39fde525e59672dc6d1551919b1478f724438a95aa55f874b576be21967e6c23  # run d3, 346,663,984 bytes

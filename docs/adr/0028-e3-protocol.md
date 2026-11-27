@@ -136,6 +136,44 @@ Record: `experiments/results/e3/base_20261128-b2/` (`model_check.json`). Status
   model is present) if the pins differ from the laptop's files normalised.
 - The next run is a new build (`20261128-b3`).
 
+### 8. Run `20261128-b3` (Colab T4, 2026-11-28): model, AMI and licences done; two formats
+
+Record: `experiments/results/e3/base_20261128-b3/`. 1,443 s, status `error` in the data stage.
+
+- **Model identical to the app** (the §7 rule): `model.bin`, `tokenizer.json`,
+  `preprocessor_config.json` byte for byte; `config.json`, `vocabulary.json` after line-ending
+  normalisation.
+- **AMI test headsets:** all 112 downloaded and hashed (7.27 GB). The server answered 503 17 times,
+  and the retries handled every one. Pinned in `configs/pins/ami_test_headsets.json`;
+  `public_data.ami_headset.sha256_files` now lists the training and test pin files (they must
+  agree where they overlap; they do not overlap).
+- **PodcastFillers range requests work:** the split zip's index and both licence files were read
+  without downloading the 25 GB archive.
+  - `LICENSE_ANNOTATIONS_ADOBE_RESEARCH_LICENSE.txt`: the Adobe Research License grants use
+    "for noncommercial research purposes only" (§1.1). That fits evaluation-only use (never
+    training, never tuning). Full text in `licence/podcastfillers/`.
+  - `LICENSE_AUDIO.csv`, 199 episodes: CC BY 3.0 100, CC BY-SA 3.0 79, CC BY-ND 3.0 20. **No
+    non-commercial audio.** Transcribing for evaluation, without redistributing or releasing
+    derived audio, fits all three.
+- **Stop 1, PodcastFillers CSV:** `KeyError: 'fullvoc_label'`. The column name from the website
+  was not a key as the file was read. Fix: columns are found by normalised name from a short alias
+  list (BOM, spaces and case ignored; `e3score.pf_columns`, tested). A probe records the header and
+  the label and split value counts (no annotation rows). If a column is still missing, the run stops
+  with `podcastfillers_columns_unknown` **before** any large download.
+- **Stop 2 (found in the probe), AMI disfluency layer:** 160 files with 33,032 `<dsfl>` elements
+  and **no type attribute**; each has `nite:child` word links (26,485) and `nite:pointer` links
+  (69,773, attribute `role`). The type is behind the pointers. Fix: the parser follows each
+  pointer into the AMI ontology files (`ontologies/…`); a node's label is its attribute values
+  plus its ancestors'. A disfluency is a **repetition** if a label it points to contains "repet".
+  The probe now records pointer roles, link targets, ontology files and resolved labels. If no
+  repetition resolves, repetitions are reported as **not scored** (with the reason) and the
+  filler scoring still runs. Repetitions are never guessed.
+- **Order:** the cheap checks (PodcastFillers columns, AMI types) now run first, then the PodcastFillers
+  WAVs, the AMI headsets and LibriSpeech.
+- **Tip for the next run:** if the b3 Colab runtime is still connected, running the new notebook in
+  the same runtime reuses the model and the AMI headsets already on its disk (only results are
+  checked against the build).
+
 ## Consequences
 
 - PR-4 (T1-r1) and later T1 runs are scored by this exact protocol; only the model changes.

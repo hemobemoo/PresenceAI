@@ -1,0 +1,81 @@
+{
+  "converted": [
+    {
+      "compared": "lf_text",
+      "ok": true,
+      "path": "config.json",
+      "sha256": "b55496ac7940a7ae47d2c01eab40edfd8701feec1229d9cce3b40014383fb828"
+    },
+    {
+      "compared": "bytes",
+      "ok": true,
+      "path": "model.bin",
+      "sha256": "ca732cb1379efc49417d028465f543d83a39de2c61f3027678de103dc404ce73"
+    },
+    {
+      "compared": "bytes",
+      "ok": true,
+      "path": "preprocessor_config.json",
+      "sha256": "9b5cd03a36fbb8a627c64d98a5b5b126ead95a77720723944487311f0110b666"
+    },
+    {
+      "compared": "bytes",
+      "ok": true,
+      "path": "tokenizer.json",
+      "sha256": "27fc476bfe7f17299480be2273fc0608e4d5a99aba2ab5dec5374b4482d1a566"
+    },
+    {
+      "compared": "lf_text",
+      "ok": true,
+      "path": "vocabulary.json",
+      "sha256": "5ad28279db5e546349708b9a74736e2c018737ac5a600f1048f1f26c99b85b47"
+    }
+  ],
+  "model_identical_to_app": true,
+  "source": [
+    {
+      "ok": true,
+      "path": "config.json"
+    },
+    {
+      "ok": true,
+      "path": "generation_config.json"
+    },
+    {
+      "ok": true,
+      "path": "model.safetensors"
+    },
+    {
+      "ok": true,
+      "path": "added_tokens.json"
+    },
+    {
+      "ok": true,
+      "path": "merges.txt"
+    },
+    {
+      "ok": true,
+      "path": "normalizer.json"
+    },
+    {
+      "ok": true,
+      "path": "preprocessor_config.json"
+    },
+    {
+      "ok": true,
+      "path": "special_tokens_map.json"
+    },
+    {
+      "ok": true,
+      "path": "tokenizer.json"
+    },
+    {
+      "ok": true,
+      "path": "tokenizer_config.json"
+    },
+    {
+      "ok": true,
+      "path": "vocab.json"
+    }
+  ]
+}
