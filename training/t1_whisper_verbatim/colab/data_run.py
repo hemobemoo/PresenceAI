@@ -4,8 +4,8 @@ Order (DATA_SOURCES §4):
 1. download the AMI manual annotations zip, record its SHA-256;
 2. read ONLY its licence file; if it does not state CC BY 4.0, stop before any other AMI file;
 3. extract; format probe; speaker check (ADR 0012); T1 manifest (prepare_data.build);
-4. download each selected headset (3 at a time), record SHA-256 and duration, check every segment
-   fits, delete the audio;
+4. download each selected headset (2 at a time, retried when the server is busy), record SHA-256
+   and duration, check every segment fits, delete the audio;
 5. DisfluencySpeech (pinned revision): read only its two text columns, build the T1 text from
    transcript_annotated for every row and compare it with transcript_a (they must differ only at
    partial words);
@@ -44,7 +44,7 @@ MODULES = json.loads(r"""__MODULES_JSON__""")
 OUT = Path(os.environ.get("P4_OUT", "/content/p4data"))
 WORK = Path("/content/p4work")  # datasets: local disk only, deleted at the end
 LIB = WORK / "lib"
-HEADSET_WORKERS = 3  # the AMI site asks downloaders to limit their bandwidth
+HEADSET_WORKERS = 2  # the AMI site asks for limited bandwidth; run d2 got 503 with 3
 
 LIB.mkdir(parents=True, exist_ok=True)
 for name, b64 in MODULES.items():

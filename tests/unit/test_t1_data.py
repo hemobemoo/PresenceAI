@@ -112,6 +112,16 @@ def test_partial_filler_counts_as_the_filler_and_not_as_a_partial():
     assert t1text.is_partial("th-,") and not t1text.is_partial("-") and not t1text.is_partial("--")
 
 
+def test_one_letter_cut_off_word_is_not_a_filler():
+    # run d2: "you m- mute", "well, m- it might" -- letter-run collapsing gives "m-" and "mm" the
+    # same key, but a one-letter cut-off word is a partial, not the filler "mm".
+    assert t1text.count_fillers("you m- mute and", HES, BACK) == 0
+    assert t1text.count_partials("you m- mute and", HES) == 1
+    assert t1text.count_fillers("mm- right, mm.", HES, BACK) == 2  # two-letter stems still count
+    assert t1text.count_fillers("uh- um- er-", HES, BACK) == 3
+    assert t1text.count_partials("uh- um- u- m-", HES) == 2  # "u-" and "m-"
+
+
 # --- AMI ----------------------------------------------------------------------------------------
 
 
@@ -184,6 +194,25 @@ def test_speaker_check_passes_and_reports_shared_ids_only():
     assert not bad["passed"] and bad["shared_speakers"] == ["XXX001"]
     missing = ami.speaker_check(MEETINGS, ["IS1001"], ["ES2002"])
     assert not missing["passed"] and missing["missing_sessions"] == ["IS1001"]
+    # run d2 listed every dev session as missing (operator precedence); a present dev session
+    # and a missing test session must be reported the other way round
+    other = ami.speaker_check(MEETINGS, ["ES2005"], ["TS3006"])
+    assert other["missing_sessions"] == ["TS3006"] and not other["passed"]
+
+
+def test_transformerror_is_treated_like_a_gap():
+    xml = (
+        b'<r xmlns:nite="http://nite.sourceforge.net/">'
+        b'<w starttime="1.0" endtime="1.5">one</w><transformerror starttime="1.5" endtime="1.6"/>'
+        b'<w starttime="1.6" endtime="2.5">two</w></r>'
+    )
+    probe = ami.Probe()
+    items = ami.parse_words(xml, probe)
+    assert [i.kind for i in items] == ["word", "gap", "word"]
+    assert "transformerror" in ami.KNOWN and not set(probe.elements) - ami.KNOWN
+    drops: Counter[str] = Counter()
+    assert ami.segments("ES2010a", "A", "0", items, [], SEG, SPELL, BACK, drops) == []
+    assert drops == {"gap_element": 1}
 
 
 def test_training_pool_excludes_e3_sessions_shared_speakers_and_non_scenario():
@@ -259,6 +288,36 @@ def test_fetch_main_runs_the_guard_before_anything(monkeypatch):
     monkeypatch.delenv("COLAB_RELEASE_TAG", raising=False)
     with pytest.raises(fetch.NotOnColabError):
         fetch.main(["--only", "librispeech_test_clean", "--dest", "x"])
+
+
+def test_download_retries_a_busy_server_then_succeeds(tmp_path, monkeypatch):
+    import urllib.error
+
+    calls, waits = [], []
+
+    def flaky(url, dest):
+        calls.append(url)
+        if len(calls) < 3:
+            raise urllib.error.HTTPError(url, 503, "Service Unavailable", None, None)  # type: ignore[arg-type]
+        dest.write_bytes(b"ok")
+        return hashlib.sha256(b"ok").hexdigest(), 2
+
+    monkeypatch.setattr(fetch, "_fetch_once", flaky)
+    rec = fetch.download("https://example.org/a.wav", tmp_path / "a.wav", sleep=waits.append)
+    assert rec["retries"] == 2 and waits == [15.0, 30.0] and len(calls) == 3
+
+
+def test_download_does_not_retry_a_missing_file(tmp_path, monkeypatch):
+    import urllib.error
+
+    def gone(url, dest):
+        raise urllib.error.HTTPError(url, 404, "Not Found", None, None)  # type: ignore[arg-type]
+
+    monkeypatch.setattr(fetch, "_fetch_once", gone)
+    waits: list[float] = []
+    with pytest.raises(urllib.error.HTTPError):
+        fetch.download("https://example.org/a.wav", tmp_path / "a.wav", sleep=waits.append)
+    assert waits == []
 
 
 def test_download_checks_pinned_hash(tmp_path):

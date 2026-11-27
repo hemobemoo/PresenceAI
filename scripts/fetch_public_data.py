@@ -20,9 +20,11 @@ import json
 import os
 import re
 import sys
+import time
+import urllib.error
 import urllib.request
 import zipfile
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from pathlib import Path, PurePosixPath
 from typing import Any
 
@@ -48,12 +50,18 @@ def require_colab(env: Mapping[str, str] | None = None) -> None:
         )
 
 
-def download(url: str, dest: Path, expected_sha256: str | None = None) -> dict[str, Any]:
-    """Stream url to dest; return {url, bytes, sha256}. A pinned hash must match, else dest is
-    deleted and ValueError is raised."""
-    if not url.startswith(("https://", "file://")):
-        raise ValueError(f"refusing non-https url: {url}")
-    dest.parent.mkdir(parents=True, exist_ok=True)
+RETRY_STATUS = {429, 500, 502, 503, 504}
+RETRY_WAITS_S = (15, 30, 60, 120, 240, 480)  # run d2: the AMI server answered 503 after 50 files
+
+
+def _wait_s(err: Exception, attempt: int) -> float:
+    after = getattr(err, "headers", None) and err.headers.get("Retry-After")  # type: ignore[union-attr]
+    if after and str(after).isdigit():
+        return min(float(after), 900.0)
+    return float(RETRY_WAITS_S[attempt])
+
+
+def _fetch_once(url: str, dest: Path) -> tuple[str, int]:
     req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})  # noqa: S310 (scheme checked)
     h, n = hashlib.sha256(), 0
     with urllib.request.urlopen(req, timeout=120) as r, dest.open("wb") as f:  # noqa: S310
@@ -61,11 +69,52 @@ def download(url: str, dest: Path, expected_sha256: str | None = None) -> dict[s
             f.write(chunk)
             h.update(chunk)
             n += len(chunk)
-    digest = h.hexdigest()
+    return h.hexdigest(), n
+
+
+def download(
+    url: str,
+    dest: Path,
+    expected_sha256: str | None = None,
+    sleep: Callable[[float], None] = time.sleep,
+) -> dict[str, Any]:
+    """Stream url to dest; return {url, bytes, sha256, retries}. A busy server (429/5xx), a reset
+    or a timeout is retried after 15 s, 30 s, ... 480 s (or the server's Retry-After); any other
+    HTTP error stops at once. A pinned hash must match, else dest is deleted and ValueError is
+    raised."""
+    if not url.startswith(("https://", "file://")):
+        raise ValueError(f"refusing non-https url: {url}")
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    for attempt in range(len(RETRY_WAITS_S) + 1):
+        try:
+            digest, n = _fetch_once(url, dest)
+            break
+        except urllib.error.HTTPError as e:
+            if e.code not in RETRY_STATUS or attempt == len(RETRY_WAITS_S):
+                raise
+            err: Exception = e
+        except (urllib.error.URLError, TimeoutError, ConnectionError) as e:
+            if attempt == len(RETRY_WAITS_S):
+                raise
+            err = e
+        wait = _wait_s(err, attempt)
+        print(
+            f"retry {attempt + 1} for {PurePosixPath(url).name} in {wait:.0f} s: {err}", flush=True
+        )
+        sleep(wait)
+    else:  # pragma: no cover (the loop always breaks or raises)
+        raise RuntimeError("unreachable")
+    retries = attempt
     if expected_sha256 and digest != expected_sha256:
         dest.unlink(missing_ok=True)
         raise ValueError(f"SHA-256 mismatch for {url}: got {digest}, pinned {expected_sha256}")
-    return {"url": url, "bytes": n, "sha256": digest, "pinned": bool(expected_sha256)}
+    return {
+        "url": url,
+        "bytes": n,
+        "sha256": digest,
+        "pinned": bool(expected_sha256),
+        "retries": retries,
+    }
 
 
 _LICENCE_NAME = re.compile(r"^licen[cs]e(\.txt|\.md)?$", re.IGNORECASE)

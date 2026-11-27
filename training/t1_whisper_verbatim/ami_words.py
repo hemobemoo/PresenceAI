@@ -6,7 +6,8 @@ and returns data, and never downloads anything (the Colab data run does that).
 Format assumptions (NXT, AMI manual annotations v1.6.2), confirmed by the data run's format probe
 before any result is used:
 - `words/<meeting>.<agent>.words.xml`: `<w starttime endtime [punc="true"] [trunc="true"]>`,
-  plus `<vocalsound>`, `<nonvocalsound>`, `<gap>`, `<disfmarker>`, `<pause>`, `<comment>`;
+  plus `<vocalsound>`, `<nonvocalsound>`, `<gap>`, `<disfmarker>`, `<pause>`, `<comment>`
+  (run d2's probe confirmed `trunc`, `punc` and these elements, plus `<transformerror>`);
 - `corpusResources/meetings.xml`: `<meeting observation=...>` with `<speaker nxt_agent
   global_name channel>` children (channel = the `Headset-<n>` number).
 Unknown elements are counted, never silently used.
@@ -23,7 +24,10 @@ from dataclasses import dataclass, field
 
 PARTIAL = "-"
 SCENARIO = re.compile(r"^(ES2|IS1|TS3)\d{3}[a-d]$")
-KNOWN = {"w", "vocalsound", "nonvocalsound", "gap", "disfmarker", "pause", "comment"}
+# `transformerror`: found 3 times by run d2's probe; treated like `<gap>` (the transcript is not
+# reliable there), so a segment holding one is dropped (ADR 0027, PROVISIONAL).
+GAP_LIKE = {"gap", "transformerror"}
+KNOWN = {"w", "vocalsound", "nonvocalsound", "disfmarker", "pause", "comment", *GAP_LIKE}
 
 
 def _local(tag: str) -> str:
@@ -81,7 +85,7 @@ def parse_words(xml: bytes, probe: Probe | None = None) -> list[Item]:
                 items.append(Item("punc", text, start, end))
             elif text:
                 items.append(Item("word", text, start, end, trunc=el.get("trunc") == "true"))
-        elif tag == "gap":
+        elif tag in GAP_LIKE:
             items.append(Item("gap", "", start, end))
         else:
             items.append(Item("other", "", start, end))
@@ -272,14 +276,15 @@ def speaker_check(
     d, t = speakers_of(meetings, dev), speakers_of(meetings, test)
     shared = sorted(d & t)
     found = {session(m) for m in meetings}
+    missing = sorted((set(dev) | set(test)) - found)  # run d2 lacked these brackets (ADR 0027)
     return {
         "dev_sessions": list(dev),
         "test_sessions": list(test),
-        "missing_sessions": sorted(set(dev) | set(test) - found),
+        "missing_sessions": missing,
         "dev_speakers": len(d),
         "test_speakers": len(t),
         "shared_speakers": shared,
-        "passed": not shared and not (set(dev) | set(test)) - found,
+        "passed": not shared and not missing,
     }
 
 

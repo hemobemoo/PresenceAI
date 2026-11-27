@@ -113,13 +113,54 @@ hand-written fixtures in that format. **The data run's probe is the check**: if 
 elements, no `trunc` attribute, or zero segments, the parser is fixed and the run repeated before
 anything is used.
 
+### 5. Run `20261127-d2` (Colab CPU, 2026-11-27): stopped at headset 51
+
+Results: `experiments/results/t1/data_20261127-d2/` (ingest checked all 9 files). 184.5 s, status
+`error`.
+
+- **Licence: passed.** The zip holds one licence file, `LICENCE.txt`. It opens: "The AMI corpus
+  and its annotations are released under the Creative Commons Attribution 4.0 International Public
+  License agreement (CC BY 4.0)", followed by the CC BY 4.0 legal code. Full text in
+  `licence/AMI_LICENCE.txt`. The zip (22,887,865 bytes) is now pinned:
+  `public_data.ami_annotations.sha256 = b56e5bab…bc9f9d`.
+- **Format probe: the assumptions hold**, with one addition. Elements: `w` 548,077,
+  `vocalsound` 13,525, `disfmarker` 12,184, `gap` 2,574, and **`transformerror` 3** (unexpected).
+  `<w>` attributes: `starttime`/`endtime` (1 word untimed), `punc` 79,585, **`trunc` 9,103**
+  (partial words, as assumed), `mispronounced` 1,261 and `pron` 69 (the word is kept as written;
+  these attributes are not used).
+  - **`transformerror` is treated like `<gap>`**: a segment holding one is dropped (PROVISIONAL;
+    3 occurrences).
+- **Filler spellings found:** `uh` 13,209, `um` 6,485, `mm` 2,161, `hmm` 597, `ah` 238, `hm` 10,
+  `er` 2. Backchannels: `mm-hmm` 1,502, `uh-huh` 112, `mm-mm` 27, `uh-uh` 6, `mm-hm` 1, `mmm-hmm` 1.
+  The last two reduce to the same key as `mm-hmm`, so they also count zero. **No spelling-map change
+  is needed.**
+- **Bug found and fixed: one-letter cut-off words counted as fillers.** In the kept segments, `m-`
+  (61 times, e.g. "you m- mute") was counted as the filler "mm", because letter-run collapsing gives
+  `m-` and `mm` the same key. A partial now counts as a filler only if its stem has two or more
+  letters. `um-` is still "um" (owner P3); `m-` and `u-` are partial words.
+- **Speaker check (ADR 0012): passed.** 12 speakers in the 3 dev sessions, 28 in the 7 test
+  sessions, none shared. The report listed the dev sessions as "missing". That was a bracket bug in
+  the report line; the pass/fail value was computed correctly. Fixed, with a test.
+- **Pool:** 98 scenario meetings. Excluded: 40 (the ten E3 sessions × 4 meetings), 33 non-scenario,
+  **0** for a shared speaker.
+- **Manifest (d2 code):** 10.0001 h kept, 4,445 segments from 35 meetings (140 headsets), 99,604
+  words. Of 41,623 candidate segments, dropped: too short (< 1 s) 14,139; crosstalk 12,812; gap
+  2,379. Run d3 recomputes it with the fixes above, so its hash and counts differ slightly.
+- **Headsets:** 50 of 140 downloaded (mean 59.1 MB, 16 kHz mono, every segment inside its file).
+  Then the AMI server answered **HTTP 503**. Fix: a busy server (429/5xx), a reset or a timeout is
+  retried after 15, 30, 60, 120, 240 and 480 s (or the server's `Retry-After`), and headsets are
+  fetched **2 at a time** instead of 3. A missing file (404) is not retried.
+- DisfluencySpeech and LibriSpeech were not reached. The code changed, so the next run is a new
+  build (`20261127-d3`, a new Drive folder; a resumed folder must come from the same build).
+
 ## Consequences
 
 - E3 (PR-3) scores DisfluencySpeech against the same text style T1 learns, so partial words are not
   counted as errors against `transcript_a`.
 - T1 can count false starts (partial words), which `speech/repetitions.py` left for T1.
-- **Open, recorded after the data run:** licence wording, speaker-check result (ADR 0012), probe
-  findings and any spelling-map change, hours and segments kept, pinned hashes.
+- **Recorded from run d2 (§5):** licence wording, speaker check, probe findings (no spelling-map
+  change), annotation-zip hash. **Still open, from run d3:** final hours, segments and manifest
+  hash, headset and LibriSpeech hashes, and the DisfluencySpeech text check.
 - **This decision is wrong if** the text check shows many DisfluencySpeech rows that differ from
   `transcript_a` outside partial words (the builder misreads the markup), or if the probe shows AMI
   marks partial words in a way the parser does not read.

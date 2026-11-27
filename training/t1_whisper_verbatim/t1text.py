@@ -60,18 +60,26 @@ def is_partial(token: str) -> bool:
     return len(core) > 1 and core.endswith(PARTIAL) and not core.endswith(PARTIAL * 2)
 
 
+def _is_filler(token: str, hes: frozenset[str], back: frozenset[str]) -> bool:
+    """A hesitation. A partial counts only if its stem has two or more letters: "um-" is "um", but
+    the cut-off word "m-" ("you m- mute") is not "mm", although letter-run collapsing gives both
+    the key "m" (P4 data run d2, ADR 0027)."""
+    k = _key(token)
+    if not k or k in back or k not in hes:
+        return False
+    if is_partial(token):
+        stem = token.rstrip(",.?!;:\"'").rstrip(PARTIAL)
+        return sum(ch.isalpha() for ch in stem) >= 2
+    return True
+
+
 def count_fillers(text: str, hesitations: Iterable[str], backchannels: Iterable[str]) -> int:
     """Hesitations in a whitespace-tokenised text. Backchannels count zero; "um-" counts as "um"."""
     hes, back = _keys(hesitations), _keys(backchannels)
-    n = 0
-    for tok in text.split():
-        k = _key(tok)
-        if k and k not in back and k in hes:
-            n += 1
-    return n
+    return sum(1 for tok in text.split() if _is_filler(tok, hes, back))
 
 
 def count_partials(text: str, hesitations: Iterable[str] = ()) -> int:
     """Partial words, not counting partial fillers ("um-" is a filler, not a cut-off word)."""
     hes = _keys(hesitations)
-    return sum(1 for t in text.split() if is_partial(t) and _key(t) not in hes)
+    return sum(1 for t in text.split() if is_partial(t) and not _is_filler(t, hes, frozenset()))
