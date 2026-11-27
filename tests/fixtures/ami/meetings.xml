@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+<!-- Hand-written for PresenceAI tests in the assumed AMI corpusResources format (ADR 0027).
+     Speaker ids are invented (XXX...), not corpus participants. -->
+<nite:root nite:id="meetings" xmlns:nite="http://nite.sourceforge.net/">
+   <meeting observation="ES2002a" type="scenario">
+      <speaker nxt_agent="A" global_name="XXX001" channel="1"/>
+      <speaker nxt_agent="B" global_name="XXX002" channel="0"/>
+   </meeting>
+   <meeting observation="ES2005a" type="scenario">
+      <speaker nxt_agent="A" global_name="XXX003" channel="0"/>
+   </meeting>
+   <meeting observation="ES2010a" type="scenario">
+      <speaker nxt_agent="A" global_name="XXX010" channel="2"/>
+      <speaker nxt_agent="B" global_name="XXX011" channel="3"/>
+   </meeting>
+   <meeting observation="ES2011a" type="scenario">
+      <speaker nxt_agent="A" global_name="XXX001" channel="0"/>
+   </meeting>
+   <meeting observation="IS1004a" type="scenario">
+      <speaker nxt_agent="A" global_name="XXX020" channel="0"/>
+   </meeting>
+   <meeting observation="EN2001a" type="nonscenario">
+      <speaker nxt_agent="A" global_name="XXX030" channel="0"/>
+   </meeting>
+</nite:root>

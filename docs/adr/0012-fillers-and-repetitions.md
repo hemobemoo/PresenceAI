@@ -101,7 +101,9 @@ checked:
   confirm that **no speaker appears in both a development and a test session**. Grouping
   meetings by session keeps each session's speakers together, but it does not prove that no
   person took part in two sessions, so this is checked, not assumed.
-  - **Result:** _not yet checked; recorded here after the download._
+  - **Result:** _not yet checked; recorded here after the download._ The check is part of the P4
+    data run (ADR 0027 §3, `experiments/results/t1/data_<id>/t1/speaker_check.json`), which also
+    keeps every meeting with a speaker from the ten E3 sessions out of T1 training.
   - If any speaker is shared, the split is redrawn with the shared speaker's sessions on one side,
     before any tuning, and this ADR records the new split.
 

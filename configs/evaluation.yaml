@@ -117,3 +117,48 @@ e3:                                  # ADR 0012; filler detection (FINAL_10 E3).
                                      # filler-rich text (prompt fixed in the E3 config before E3)
     - t1                             # after T1 (P4)
   report: [precision, recall, f1]    # precision shows made-up fillers (e.g. from initial_prompt)
+
+t1:                                  # ADR 0027 (proposed): T1 data preparation (ADR 0026 §3)
+  seed: 20261127                     # meeting order; the E11 draw uses the same date seed (ADR 0026)
+  disfluencyspeech:
+    repo: amaai-lab/DisfluencySpeech
+    revision: b7da294fe3a70dd96df6640893f2a5dfc2c87638
+    text_from: transcript_annotated  # owner P3: fillers AND partial words ("th-") kept; NOT
+                                     # transcript_a (S3 / ADR 0005 used transcript_a)
+  ami:
+    train_speech_hours: 10.0         # owner P1: speech KEPT in the manifest, after the crosstalk filter
+    meeting_kind: scenario           # ES / IS / TS sessions only, so the three sites alternate
+    sites: [ES, IS, TS]              # round-robin over sites, seeded shuffle within each site
+    exclude_sessions_from: e3.ami_split.pool   # the ten disfluency-layer sessions never train
+    exclude_shared_speakers: true    # nor any meeting with a speaker from those ten sessions
+    segment:                         # per speaker headset, cut at that speaker's own pauses
+      split_gap_s: 0.5               # PROVISIONAL: a new segment starts after a gap >= this
+      max_s: 30.0                    # Whisper's window
+      min_s: 1.0                     # PROVISIONAL: shorter segments are dropped
+      pad_s: 0.1                     # PROVISIONAL: audio kept before the first / after the last word
+      crosstalk_max_share: 0.20      # owner P4, PROVISIONAL: other speakers' words over > 20 % -> drop
+      drop_if_gap_element: true      # PROVISIONAL: a transcriber <gap> inside -> drop the segment
+    spelling:                        # AMI spelling -> E3 lexicon spelling (lang/en/fillers.yaml);
+      um: um                         # lower-cased keys; the data run's format probe lists what AMI uses
+      uh: uh
+      uhm: um
+      er: er
+      erm: erm
+      hmm: hmm
+      mm: mm
+      ah: ah
+    backchannels: [mm-hmm, uh-huh, mm-mm, uh-uh]   # owner P2: kept as written, ZERO fillers, never
+                                                   # split at the hyphen
+  partial_marker: "-"                # a partial word keeps a trailing hyphen ("th-"); "um-" counts as "um"
+
+public_data:                         # ADR 0026 §1 / DATA_SOURCES §1-4; fetched on Colab only
+  ami_annotations:
+    url: https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip
+    sha256: null                     # recorded by the first data run, then pinned here
+    licence_must_state: CC BY 4.0    # read FIRST; stop before any other AMI file otherwise
+  ami_headset:
+    url: https://groups.inf.ed.ac.uk/ami/AMICorpusMirror/amicorpus/{meeting}/audio/{meeting}.Headset-{channel}.wav
+    sha256: {}                       # per file, recorded by the first data run, then pinned
+  librispeech_test_clean:
+    url: https://www.openslr.org/resources/12/test-clean.tar.gz
+    sha256: null                     # recorded by the first data run, then pinned

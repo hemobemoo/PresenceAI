@@ -75,11 +75,12 @@ ignore = ["RUF001", "RUF002", "RUF003"]
 [tool.pyright]
 pythonVersion = "3.12"
 typeCheckingMode = "standard"
-include = ["src", "tests", "scripts", "experiments"]
+include = ["src", "tests", "scripts", "experiments", "training"]
 exclude = [
     "experiments/s3_unsloth_whisper/colab",  # runs only on Colab (unsloth, torch)
     "experiments/s2_zerogpu/space",  # runs only on the ZeroGPU Space (spaces, torch)
     "experiments/c1_kokoro/colab",  # runs only on Colab (kokoro, torch; ADR 0014)
+    "training/t1_whisper_verbatim/colab",  # runs only on Colab (datasets; ADR 0027)
 ]
 extraPaths = ["tests/fixtures"]
 venvPath = "."

@@ -86,7 +86,7 @@ warned laptop latency check at the end.
 |---|---|
 | Now | Review PR-1; accept ADR 0026 (or ask for changes) |
 | Yourself, any time | Delete the P3 leftovers (export zip, `app.sqlite`, `sessions/`, `exports/`, `tmp/`) |
-| PR-2 run (AMI, LibriSpeech) | Open Colab, pick a **T4**, approve the colab-mcp connection (or run the built notebook by hand). No token needed: public data only. Download the result zip into `data/colab_results/` (every later run too) |
+| PR-2 run (AMI, LibriSpeech, DisfluencySpeech text check) | Open Colab with a **CPU runtime** (no GPU needed for the data run; saves T4 quota), approve the colab-mcp connection or upload the built notebook `data/t1/colab/P4DATA_<id>.ipynb` by hand, Run all (ADR 0027 §3). No token needed: public data only. Download the result zip into `data/colab_results/` (every later run too) |
 | Before PR-3 run | Nothing new (PodcastFillers already approved for PR-3). Same Colab steps |
 | **Before PR-4 (T1-r1)** | On Hugging Face: create a **private model repo** for T1 (e.g. `<your-user>/presenceai-whisper-small-verbatim`); create a **fine-grained write token** limited to that repo; add it in Colab → Secrets as **`HF_TOKEN`** and turn on notebook access. I only ever refer to it by that name. Mount Drive for checkpoints (`MyDrive/presenceai_p4/`) |
 | PR-4 / PR-5 runs | Start the long training cells; download result zips; read the E3 table before I propose the pick |
