@@ -479,6 +479,8 @@ def stage_data():
             raise ValueError(f"no test WAV for {ep}; first members: {sorted(idx)[:5]}")
         dest = WORK / "pf_wav" / f"{ep}.wav"
         pin = (pf.get("sha256") or {}).get(f"{ep}.wav")
+        if pf.get("sha256") and not pin:  # ADR 0028 §11: once pinned, every episode must be
+            raise ValueError(f"PodcastFillers {ep}.wav has no pin; check the pin file's names")
         if dest.exists():
             continue
         if fetch.cache_get(cache("podcastfillers_test_wav"), f"{ep}.wav", pin, dest):
@@ -500,6 +502,8 @@ def stage_data():
         if not dest.exists():
             url = PD["ami_headset"]["url"].format(meeting=meeting, channel=channel)
             pin = (PD["ami_headset"].get("sha256") or {}).get(name)
+            if not pin:  # ADR 0028 §11: every test headset is pinned since run b3
+                raise ValueError(f"AMI {name} has no pin")
             rec = fetch.download(url, dest, pin, cache_dir=cache("ami_headsets"))
             pins.append({"file": name, **rec})
             if not rec["from_cache"]:

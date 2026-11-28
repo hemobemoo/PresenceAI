@@ -1,0 +1,11 @@
+{
+  "done": [
+    "ds_check",
+    "model",
+    "data",
+    "asr_base",
+    "asr_base_initial_prompt",
+    "score"
+  ],
+  "script_sha256": "86dd43de7565d14e4c24d6a5b8ec3115ab5efe0ca7046c5f7f078c05b18f19f9"
+}

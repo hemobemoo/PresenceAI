@@ -227,13 +227,62 @@ with no manual labelling**. It is.
 - Tested on hand-written nested and flat examples: a repeat is found; a correction ("go uh went")
   and a false start ("th- the") are not; a Reparans 7 words later is not paired.
 
+### 11. Run `20261128-b5` (Colab T4, 2026-11-28): complete, the base numbers
+
+Record: `experiments/results/e3/base_20261128-b5/` (`e3_metrics.json`). 12,209 s (3.4 h), status
+`ok`, every stage done, no resume needed. Built from `cb1cdca`.
+
+- **Checks:** stage 0 passed (20 of 5,000 `words_differ`, as b1–b4); the model was identical to the
+  app (§7 rule); 11,408 items transcribed per condition (AMI 8,518 segments, DisfluencySpeech 250,
+  PodcastFillers 20 episodes, LibriSpeech 2,620).
+- **Data:** all 112 AMI test headsets matched their pins (51 from the Drive cache, 61 downloaded,
+  8 retries in total); 19 PodcastFillers WAVs came from the cache, all 20 matched their pins.
+- **Repetitions (§10), from the test meetings' disfluency layer:** 5,883 Reparanda; 4,774 paired
+  with a Reparans in the same parent, 59 with a following one, 1,050 unpaired; **2,957
+  repetitions**. 1,465 lie inside the deciding AMI segments, 2,746 with crosstalk kept.
+- **Base numbers** (lexicon detector; F1 with 95 % bootstrap intervals):
+
+| Set | base | base + `initial_prompt` |
+|---|---|---|
+| **AMI test** (deciding) | F1 0.079 [0.059, 0.102], P 0.84, R 0.04 | **F1 0.815 [0.790, 0.841]**, P 0.91, R 0.74 |
+| AMI repetitions kept | 250 of 1,465 (0.171) | 685 of 1,465 (0.468) |
+| **PodcastFillers test** (deciding) | F1 0.031 [0.013, 0.058], P ≥ 0.78, R 0.016 | **F1 0.038 [0.017, 0.066]**, P ≥ 0.81, R 0.019 |
+| AMI test, crosstalk kept | F1 0.103 [0.078, 0.130] | F1 0.761 [0.736, 0.786] |
+| DisfluencySpeech test | F1 0.059 [0.015, 0.113] | F1 0.942 [0.910, 0.967] |
+| LibriSpeech test-clean WER % | 3.89 [3.42, 4.36] | 4.06 [3.58, 4.56] |
+
+  The crosstalk filter excluded **38.6 %** of AMI test speech (about 20 % in training, ADR 0027).
+- **Finding: the prompt reaches only the first 30 s of long audio.** With
+  `condition_on_previous_text` false, faster-whisper 1.2.1 resets the prompt after the first
+  window (`transcribe.py`, `prompt_reset_since`). AMI segments and DisfluencySpeech clips are
+  short, so the prompt covers them; a PodcastFillers item is a whole episode, so the prompt covers
+  its first 30 s only. That is why the prompt lifts AMI from 0.08 to 0.81 but PodcastFillers only
+  from 0.031 to 0.038. The app decodes a whole answer the same way, so for answers longer than
+  30 s the app also gets the prompt only at the start. This is the app's real behaviour, not a
+  scoring error. **Open, owner's decision** (Consequences).
+- **Pin-name fix:** in `configs/pins/podcastfillers_test_wav.json` one name ("Free Podcast
+  Day_Home Grown Girls – Apr 7 2018") had its "–" stored mis-decoded (cp1252), so b5 found no
+  pin for it: it was CRC32-checked but not compared with its pin and not cached. Its SHA-256
+  equals the pinned value (`97b878ea…`), so the data is unchanged. Fixed: the name is clean UTF-8;
+  the run now **stops on any PodcastFillers WAV or AMI test headset without a pin**; a test fails
+  if a pin file holds mis-decoded text.
+
 ## Consequences
 
+- **Owner's decision before PR-4, the PodcastFillers baseline with the prompt:**
+  - (a) *recommended:* keep the protocol as it is. It measures what the app's settings really do;
+    on PodcastFillers, "T1 vs base + prompt" is then close to "T1 vs base", and the AMI test
+    carries the prompt comparison.
+  - (b) add a reported-only condition that repeats the prompt in every 30-s window (decoding
+    split windows), to show what a prompt could do on long audio. It needs one more Colab run over
+    the 20 episodes; it is not an app setting, so it would not enter the pass rule.
+- **Open: whether the app should repeat the prompt** for answers longer than 30 s is a separate
+  app question (FINAL_10 E6 / ADR 0012), not part of E3.
 
 - PR-4 (T1-r1) and later T1 runs are scored by this exact protocol; only the model changes.
-- Open after the run: the DisfluencySpeech builder check result, the model-identity check, the
-  disfluency-layer probe, PodcastFillers licence texts and access path, the AMI test-headset and
-  PodcastFillers WAV pins, and the base and base + `initial_prompt` numbers.
+- Closed by runs b1–b5: the DisfluencySpeech builder check, the model-identity check, the
+  disfluency-layer probe, the PodcastFillers licence texts and access path, the AMI test-headset
+  and PodcastFillers WAV pins, and the base and base + `initial_prompt` numbers (§11).
 - **This decision is wrong if** the probe shows the disfluency layer marks repetitions in a way
   the parser does not read, or if the converted model differs from the app's (then E3 would
   measure another model).

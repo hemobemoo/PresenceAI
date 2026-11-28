@@ -544,3 +544,16 @@ def test_repetition_rule_is_fixed_in_config_and_used_by_the_run(tmp_path):
     body = (T1 / "colab" / "e3_run.py").read_text(encoding="utf-8")
     assert "ami.repetitions_from_repairs(dis, text, order, gap)" in body
     assert '"repair_pairing": dict(sorted(pairing.items()))' in body
+
+
+def test_pin_file_names_are_clean_utf8_and_the_run_refuses_unpinned_files():
+    # ADR 0028 §11: one PodcastFillers name was stored with "–" mis-decoded as cp1252 ("â€“"),
+    # so run b5 found no pin for that episode. Names must be clean UTF-8, and the run stops
+    # on a file without a pin instead of using it unchecked.
+    for p in sorted((REPO / "configs" / "pins").glob("*.json")):
+        text = p.read_bytes().decode("utf-8")
+        for bad in ("â€", "Ã", "�"):
+            assert bad not in text, (p.name, bad)
+    body = (T1 / "colab" / "e3_run.py").read_text(encoding="utf-8")
+    assert 'raise ValueError(f"PodcastFillers {ep}.wav has no pin' in body
+    assert 'raise ValueError(f"AMI {name} has no pin")' in body

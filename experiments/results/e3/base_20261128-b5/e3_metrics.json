@@ -1,0 +1,168 @@
+{
+  "base": {
+    "ami_test": {
+      "bootstrap_unit": "meeting",
+      "deciding": true,
+      "excluded_share_by_crosstalk_filter": 0.3863541984112472,
+      "f1": 0.07865414026655014,
+      "f1_ci95": [
+        0.05900430239704978,
+        0.10232067510548523
+      ],
+      "fn": 4183,
+      "fp": 34,
+      "precision": 0.8411214953271028,
+      "recall": 0.0412560165024066,
+      "repetitions_kept": {
+        "kept": 250,
+        "recall": 0.17064846416382254,
+        "total": 1465
+      },
+      "tp": 180,
+      "units": 28
+    },
+    "ami_test_crosstalk_kept": {
+      "bootstrap_unit": "meeting",
+      "deciding": false,
+      "f1": 0.10308343409915356,
+      "f1_ci95": [
+        0.07769607843137255,
+        0.13018714401952805
+      ],
+      "fn": 5728,
+      "fp": 206,
+      "precision": 0.623400365630713,
+      "recall": 0.0561871807546548,
+      "repetitions_kept": {
+        "kept": 545,
+        "recall": 0.19847050254916243,
+        "total": 2746
+      },
+      "tp": 341,
+      "units": 28
+    },
+    "disfluencyspeech_test": {
+      "bootstrap_unit": "clip",
+      "deciding": false,
+      "f1": 0.05882352941176471,
+      "f1_ci95": [
+        0.014814814814814815,
+        0.11347517730496455
+      ],
+      "fn": 126,
+      "fp": 2,
+      "precision": 0.6666666666666666,
+      "recall": 0.03076923076923077,
+      "tp": 4,
+      "units": 250
+    },
+    "librispeech_test_clean": {
+      "ci95": [
+        3.4159672067148157,
+        4.355629317997607
+      ],
+      "speakers": 40,
+      "wer": 3.8934114424832624,
+      "words": 52576
+    },
+    "podcastfillers_test": {
+      "bootstrap_unit": "episode",
+      "deciding": true,
+      "f1": 0.031468531468531465,
+      "f1_ci95": [
+        0.012500000000000002,
+        0.058213891951488426
+      ],
+      "fn": 4963,
+      "fp": 23,
+      "precision": 0.7788461538461539,
+      "precision_is_lower_bound": true,
+      "recall": 0.01605868358445678,
+      "tp": 81,
+      "units": 20
+    }
+  },
+  "base_initial_prompt": {
+    "ami_test": {
+      "bootstrap_unit": "meeting",
+      "deciding": true,
+      "excluded_share_by_crosstalk_filter": 0.3863541984112472,
+      "f1": 0.814692843571881,
+      "f1_ci95": [
+        0.790185592953759,
+        0.8409418548774629
+      ],
+      "fn": 1147,
+      "fp": 316,
+      "precision": 0.9105322763306908,
+      "recall": 0.737107494842998,
+      "repetitions_kept": {
+        "kept": 685,
+        "recall": 0.46757679180887374,
+        "total": 1465
+      },
+      "tp": 3216,
+      "units": 28
+    },
+    "ami_test_crosstalk_kept": {
+      "bootstrap_unit": "meeting",
+      "deciding": false,
+      "f1": 0.7612060481345622,
+      "f1_ci95": [
+        0.7364603481624757,
+        0.7863960856661586
+      ],
+      "fn": 1815,
+      "fp": 854,
+      "precision": 0.8328112764291308,
+      "recall": 0.7009391992090954,
+      "repetitions_kept": {
+        "kept": 1288,
+        "recall": 0.4690458849235251,
+        "total": 2746
+      },
+      "tp": 4254,
+      "units": 28
+    },
+    "disfluencyspeech_test": {
+      "bootstrap_unit": "clip",
+      "deciding": false,
+      "f1": 0.942084942084942,
+      "f1_ci95": [
+        0.9104477611940298,
+        0.9667896678966789
+      ],
+      "fn": 8,
+      "fp": 7,
+      "precision": 0.9457364341085271,
+      "recall": 0.9384615384615385,
+      "tp": 122,
+      "units": 250
+    },
+    "librispeech_test_clean": {
+      "ci95": [
+        3.5813603908305147,
+        4.564393228482414
+      ],
+      "speakers": 40,
+      "wer": 4.064592209373098,
+      "words": 52576
+    },
+    "podcastfillers_test": {
+      "bootstrap_unit": "episode",
+      "deciding": true,
+      "f1": 0.03756777691711851,
+      "f1_ci95": [
+        0.01661861963710361,
+        0.06613946800862687
+      ],
+      "fn": 4947,
+      "fp": 23,
+      "precision": 0.8083333333333333,
+      "precision_is_lower_bound": true,
+      "recall": 0.019230769230769232,
+      "tp": 97,
+      "units": 20
+    }
+  }
+}
