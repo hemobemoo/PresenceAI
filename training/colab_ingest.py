@@ -185,6 +185,127 @@ def notebook(
     return {"nbformat": 4, "nbformat_minor": 5, "metadata": meta, "cells": cells}
 
 
+KAGGLE_WORKING = "/kaggle/working"
+
+
+def kaggle_notebook(
+    *,
+    title: str,
+    steps: str,
+    script_name: str,
+    body: str,
+    out_dir: str,
+    zip_stem: str,
+    timeout_s: int,
+    secrets: Sequence[str] = (),
+    setup: str | None = None,
+    cache_folder: str = "presenceai_data",
+) -> dict[str, Any]:
+    """The Kaggle version of `notebook` (ADR 0029 §11), for a committed run (Save & Run All).
+
+    Everything a later run needs stays in /kaggle/working, which Kaggle keeps as the notebook's
+    output: results (`out_dir`, zipped), the work folder (checkpoints, candidates; not zipped)
+    and the cache of PINNED public files (`cache_folder`). A later run that adds that output as
+    an input restores the cache (each file is still checked against its pin on use) and, if the
+    results come from this same build (script SHA-256), resumes them. One GPU only
+    (CUDA_VISIBLE_DEVICES=0): the scripts are written for one, and T4 x2 gives two.
+    """
+    w = KAGGLE_WORKING
+    res, workd, cache = f"{w}/{out_dir}", f"{w}/work", f"{w}/{cache_folder}"
+    sha = sha256_bytes(body.encode("utf-8"))
+    intro = f"# {title}\n\n{steps}\n"
+    cells = [
+        {"cell_type": "markdown", "metadata": {}, "source": intro.splitlines(keepends=True)},
+        _code(
+            "# Paths in /kaggle/working (kept as this notebook's output); one GPU only.\n"
+            "import os\n"
+            "os.environ['CUDA_VISIBLE_DEVICES'] = '0'\n"
+            f"os.environ['P4_OUT'] = {res!r}\n"
+            f"os.environ['P4_WORKD'] = {workd!r}  # checkpoints and candidates, not in the zip\n"
+            f"os.environ['P4_CACHE'] = {cache!r}  # pinned public files only\n"
+            "os.environ['P4_WORK'] = '/kaggle/temp/e3work'  # scratch, not in the output\n"
+            f"for d in ({res!r}, {workd!r}, {cache!r}):\n"
+            "    os.makedirs(d, exist_ok=True)\n"
+            f"print('results:', {res!r})\n"
+        ),
+        _code(
+            "# Restore from an earlier run's output, if you added it as an input (Add input >\n"
+            "# Your Work > this notebook). The cache is always restored; results only if they\n"
+            "# come from this same build.\n"
+            "import glob, json, shutil\n"
+            "def copy_missing(src, dst):\n"
+            "    for root, _, files in os.walk(src):\n"
+            "        rel = os.path.relpath(root, src)\n"
+            "        os.makedirs(os.path.join(dst, rel), exist_ok=True)\n"
+            "        for f in files:\n"
+            "            d = os.path.join(dst, rel, f)\n"
+            "            if not os.path.exists(d):\n"
+            "                shutil.copy2(os.path.join(root, f), d)\n"
+            f"for c in sorted(glob.glob('/kaggle/input/**/{cache_folder}', recursive=True)):\n"
+            "    print('restoring the dataset cache from', c)\n"
+            f"    copy_missing(c, {cache!r})\n"
+            f"pat = '/kaggle/input/**/{out_dir}/progress.json'\n"
+            "for p in sorted(glob.glob(pat, recursive=True)):\n"
+            "    prev = os.path.dirname(p)\n"
+            f"    if json.load(open(p))['script_sha256'] == {sha!r}:\n"
+            "        print('resuming results and work from', prev)\n"
+            f"        copy_missing(prev, {res!r})\n"
+            "        w = os.path.join(os.path.dirname(prev), 'work')\n"
+            "        if os.path.isdir(w):\n"
+            f"            copy_missing(w, {workd!r})\n"
+            "    else:\n"
+            "        print('results of another build, not resumed:', prev)\n"
+        ),
+    ]
+    for name in secrets:
+        cells.append(
+            _code(
+                f"# {name} from Kaggle Secrets (Add-ons > Secrets). The value is never shown.\n"
+                "try:\n"
+                "    from kaggle_secrets import UserSecretsClient\n"
+                f"    os.environ[{name!r}] = UserSecretsClient().get_secret({name!r})\n"
+                f"    print({name!r}, 'found in Kaggle Secrets (value not shown)')\n"
+                "except Exception as e:\n"
+                f"    os.environ.pop({name!r}, None)\n"
+                f"    print({name!r}, 'not available:', type(e).__name__, '- going on without')\n"
+            )
+        )
+    cells.append(
+        _code(
+            "import subprocess\n"
+            "q = ['nvidia-smi', '--query-gpu=name', '--format=csv,noheader']\n"
+            "gpu = subprocess.run(q, capture_output=True, text=True).stdout.strip()\n"
+            "print('GPU:', gpu or 'none')\n"
+            "assert 'T4' in gpu, 'Settings > Accelerator > GPU T4 x2'\n"
+        )
+    )
+    if setup:
+        cells.append(_code(setup))
+    cells += [
+        _code(f"%%writefile /kaggle/working/{script_name}\n" + body),
+        _code(
+            "# The script must be byte-identical to the build (SHA-256, LF endings).\n"
+            "import hashlib\n"
+            f"h = hashlib.sha256(open('/kaggle/working/{script_name}', 'rb').read()).hexdigest()\n"
+            "print(h)\n"
+            f"assert h == {sha!r}, 'script differs from the build'\n"
+        ),
+        _code(f"!timeout {int(timeout_s)} python /kaggle/working/{script_name}\n"),
+        _code(
+            "# The zip appears in this notebook's Output; save it into data/colab_results/.\n"
+            "import os, shutil\n"
+            f"if os.path.exists('{res}/run_info.json'):\n"
+            f"    z = shutil.make_archive('{w}/{zip_stem}', 'zip', {w!r}, {out_dir!r})\n"
+            "    print(z, os.path.getsize(z), 'bytes')\n"
+            "else:\n"
+            "    print('no run_info.json: the run did not finish; add this output as an input '\n"
+            "          'and run again to resume')\n"
+        ),
+    ]
+    meta: dict[str, Any] = {"kernelspec": {"name": "python3", "display_name": "Python 3"}}
+    return {"nbformat": 4, "nbformat_minor": 5, "metadata": meta, "cells": cells}
+
+
 def write_build(out: Path, script_name: str, body: str, nb_name: str, nb: dict[str, Any]) -> Path:
     out.mkdir(parents=True, exist_ok=True)
     # LF on every platform, so the SHA-256 checked in Colab matches this file.

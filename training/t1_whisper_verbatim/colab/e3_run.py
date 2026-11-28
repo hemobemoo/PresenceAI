@@ -40,7 +40,7 @@ BUILD = json.loads(r"""__BUILD_JSON__""")
 MODULES = json.loads(r"""__MODULES_JSON__""")
 
 OUT = Path(os.environ.get("P4_OUT", "/content/e3base"))
-WORK = Path("/content/e3work")  # datasets and the model: local disk only
+WORK = Path(os.environ.get("P4_WORK", "/content/e3work"))  # datasets, model: local disk only
 # Owner's private Drive cache of PINNED public datasets (ADR 0028 §9); None if not mounted.
 CACHE = Path(os.environ["P4_CACHE"]) if os.environ.get("P4_CACHE") else None
 LIB = WORK / "lib"
@@ -190,7 +190,8 @@ def stage_ds_check():
 # ---------------------------------------------------------------- stage 1: the app's model
 
 
-def stage_model():
+def stage_model(keep_source=False):
+    """Base model check; keep_source=True leaves the pinned HF files in WORK/model_src (T1)."""
     from huggingface_hub import hf_hub_download
 
     m = CONFIG["model"]
@@ -219,35 +220,8 @@ def stage_model():
         checks["source"].append({"path": f["path"], "ok": got == f["sha256"]})
         if got != f["sha256"]:
             raise ValueError(f"source {f['path']} differs from the app's MANIFEST.json")
-    # Converter environment made with uv, as scripts/download_models.py does on the laptop.
-    # Run b1 (2026-11-28): Colab's /usr/bin/python3.12 has no ensurepip, so `python -m venv`
-    # failed; uv needs no ensurepip and fetches a CPython of the pinned minor version if needed.
-    venv = WORK / "conv"
-    uv_pin = f"uv=={CONFIG['uv_version']}"
-    subprocess.run([sys.executable, "-m", "pip", "install", "-q", uv_pin], check=True)  # noqa: S603
-    uv = [sys.executable, "-m", "uv"]
-    py_minor = str(m["converter"]["python"])
-    subprocess.run([*uv, "venv", "--python", py_minor, str(venv)], check=True)  # noqa: S603
-    pkgs = list(m["converter"]["packages"])
-    cmd = [*uv, "pip", "install", "--python", str(venv / "bin" / "python"), *pkgs]
-    if any(p.startswith("torch==") for p in pkgs):
-        cmd += ["--extra-index-url", "https://download.pytorch.org/whl/cpu"]
-    subprocess.run(cmd, check=True)  # noqa: S603
     dst = WORK / "model"
-    subprocess.run(  # noqa: S603 (fixed converter command)
-        [
-            str(venv / "bin" / "ct2-transformers-converter"),
-            "--model",
-            str(src),
-            "--output_dir",
-            str(dst),
-            "--quantization",
-            m["quantization"],
-            "--copy_files",
-            *m["copy_files"],
-        ],
-        check=True,
-    )
+    convert(src, dst)
     same = True
     text_lf = E3["model_text_files_lf_sha256"]  # ADR 0028 §7 (run b2: CRLF on the laptop)
     for f in m["files"]:
@@ -262,8 +236,50 @@ def stage_model():
         same &= got == want
     checks["model_identical_to_app"] = same
     write_json("model_check.json", checks)
-    shutil.rmtree(src, ignore_errors=True)
+    if not keep_source:
+        shutil.rmtree(src, ignore_errors=True)
     return same
+
+
+def converter():
+    """The app's converter in a uv environment (made once per runtime); returns its command.
+    Run b1 (2026-11-28): Colab's /usr/bin/python3.12 has no ensurepip, so `python -m venv`
+    failed; uv needs no ensurepip and fetches a CPython of the pinned minor version if needed."""
+    m = CONFIG["model"]
+    venv = WORK / "conv"
+    exe = venv / "bin" / "ct2-transformers-converter"
+    if exe.exists():
+        return exe
+    uv_pin = f"uv=={CONFIG['uv_version']}"
+    subprocess.run([sys.executable, "-m", "pip", "install", "-q", uv_pin], check=True)  # noqa: S603
+    uv = [sys.executable, "-m", "uv"]
+    py_minor = str(m["converter"]["python"])
+    subprocess.run([*uv, "venv", "--python", py_minor, str(venv)], check=True)  # noqa: S603
+    pkgs = list(m["converter"]["packages"])
+    cmd = [*uv, "pip", "install", "--python", str(venv / "bin" / "python"), *pkgs]
+    if any(p.startswith("torch==") for p in pkgs):
+        cmd += ["--extra-index-url", "https://download.pytorch.org/whl/cpu"]
+    subprocess.run(cmd, check=True)  # noqa: S603
+    return exe
+
+
+def convert(src, dst):
+    """Convert a Hugging Face Whisper folder exactly as the app's model was converted."""
+    m = CONFIG["model"]
+    subprocess.run(  # noqa: S603 (fixed converter command)
+        [
+            str(converter()),
+            "--model",
+            str(src),
+            "--output_dir",
+            str(dst),
+            "--quantization",
+            m["quantization"],
+            "--copy_files",
+            *m["copy_files"],
+        ],
+        check=True,
+    )
 
 
 def fetch_sha(p):
@@ -313,12 +329,13 @@ def ami_ontology(root):
     return onto, files
 
 
-def ami_test_segments():
+def ami_test_segments(sessions=None, probe_rel="probes/ami_disfluency_probe.json"):
     """Deciding (crosstalk filter on) and secondary (crosstalk kept) segments, with word ids and
-    the repetition events inside each segment."""
+    the repetition events inside each segment. sessions: default the E3 test sessions (T1 also
+    asks for the dev sessions, ADR 0029 §5); probe_rel None writes no probe."""
     root = ami_root()
     meetings = ami.parse_meetings(next(root.rglob("meetings.xml")).read_bytes())
-    test = set(CONFIG["e3"]["scoring"]["ami_test_sessions"])
+    test = set(sessions or CONFIG["e3"]["scoring"]["ami_test_sessions"])
     seg_cfg = dict(T1["ami"]["segment"])
     loose = {**seg_cfg, "crosstalk_max_share": 1.0}
     words = {(p.name.split(".")[0], p.name.split(".")[1]): p for p in root.rglob("*.words.xml")}
@@ -370,8 +387,10 @@ def ami_test_segments():
                         "crosstalk_share": s.crosstalk_share,
                     }
                 )
+    if probe_rel is None:
+        return rows, n_reps
     write_json(
-        "probes/ami_disfluency_probe.json",
+        probe_rel,
         {
             "files": len(disf),
             "ontology_files": onto_files,
@@ -636,7 +655,7 @@ def score(all_items):
     out = {}
     for cond in CONDITIONS:
         hyps = {(r["dataset"], r["id"]): r for r in read_jsonl(f"hyps/{cond}.jsonl")}
-        res = {}
+        res, per_unit = {}, {}
         # DisfluencySpeech (reported, not deciding)
         units = {
             iid: sc.filler_counts(refs[(ds, iid)], h["text"], HES, BACK)
@@ -644,6 +663,7 @@ def score(all_items):
             if ds == "disfluencyspeech"
         }
         res["disfluencyspeech_test"] = summarise(units, b, "clip", deciding=False)
+        per_unit["disfluencyspeech_test"] = counts_table(units)
         # AMI: deciding (crosstalk filter) and secondary (crosstalk kept); by meeting
         for label, keep in (("ami_test", True), ("ami_test_crosstalk_kept", None)):
             by_meeting, kept, total = {}, 0, 0
@@ -658,6 +678,7 @@ def score(all_items):
                 k, t = sc.repetitions_kept(s["text"].split(), h["text"].split(), s["repetitions"])
                 kept, total = kept + k, total + t
             res[label] = summarise(by_meeting, b, "meeting", deciding=bool(keep))
+            per_unit[label] = counts_table(by_meeting)
             # no repetition resolved from the disfluency layer -> "not scored", never a 0 or 1
             res[label]["repetitions_kept"] = (
                 {"kept": kept, "total": total, "recall": kept / total}
@@ -681,6 +702,7 @@ def score(all_items):
                 refev = [sc.Event(s, e) for s, e in pf_events[iid]]
                 units[iid] = sc.time_match(hypev, refev, pf["match_tolerance_s"])
         res["podcastfillers_test"] = summarise(units, b, "episode", deciding=True)
+        per_unit["podcastfillers_test"] = counts_table(units)
         res["podcastfillers_test"]["precision_is_lower_bound"] = True
         # LibriSpeech WER by speaker
         spk = {}
@@ -690,6 +712,7 @@ def score(all_items):
                 e = sc.word_errors(r, sc.normalise_wer(h["text"], E3["wer_normaliser"]))
                 s = iid.split("-")[0]
                 spk[s] = (spk.get(s, (0, 0))[0] + e, spk.get(s, (0, 0))[1] + len(r))
+        per_unit["librispeech_test_clean"] = {k: list(v) for k, v in sorted(spk.items())}
         err, wds = sum(v[0] for v in spk.values()), sum(v[1] for v in spk.values())
         lo, hi = sc.bootstrap(spk, sc.wer_of, b["resamples"], b["seed"])
         res["librispeech_test_clean"] = {
@@ -699,7 +722,12 @@ def score(all_items):
             "speakers": len(spk),
         }
         out[cond] = res
+        write_json(f"units/{cond}.json", per_unit)  # counts only, no text (ADR 0029 §7)
     write_json("e3_metrics.json", out)
+
+
+def counts_table(units):
+    return {k: [c.tp, c.fp, c.fn] for k, c in sorted(units.items())}
 
 
 def summarise(units, b, unit, deciding):
@@ -722,7 +750,7 @@ def summarise(units, b, unit, deciding):
 
 def main():
     t0 = time.time()
-    fetch.require_colab()
+    fetch.require_cloud()
     OUT.mkdir(parents=True, exist_ok=True)
     p = progress()
     info = {

@@ -43,6 +43,21 @@ def on_colab(env: Mapping[str, str] | None = None) -> bool:
     return bool(env.get("COLAB_RELEASE_TAG")) and Path("/content").is_dir()
 
 
+def on_kaggle(env: Mapping[str, str] | None = None) -> bool:
+    """Kaggle Notebooks, the fallback platform (ADR 0026 §1; used for T1-r1, ADR 0029 §11)."""
+    env = os.environ if env is None else env
+    return bool(env.get("KAGGLE_KERNEL_RUN_TYPE")) and Path("/kaggle/working").is_dir()
+
+
+def require_cloud(env: Mapping[str, str] | None = None) -> None:
+    """Colab or Kaggle; never the laptop (ADR 0026 §1)."""
+    if not (on_colab(env) or on_kaggle(env)):
+        raise NotOnColabError(
+            "this runs on Google Colab or Kaggle only; datasets are never downloaded to the "
+            "laptop (ADR 0026 §1)"
+        )
+
+
 def require_colab(env: Mapping[str, str] | None = None) -> None:
     if not on_colab(env):
         raise NotOnColabError(

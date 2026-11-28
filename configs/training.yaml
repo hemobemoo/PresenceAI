@@ -1,0 +1,40 @@
+# Training runs (P4). Colab only, never on the laptop (ADR 0026 §1). Values change only as a NEW
+# named run (r1b, r2, r3, ...), never by re-running a run after its test numbers are seen;
+# every run is reported, and the model pick stays on dev only (owner, 2026-11-28, ADR 0029).
+
+t1:
+  r1:                                # ADR 0029 (proposed): T1-r1, whisper-small, DisfluencySpeech only
+    base_model: whisper_small        # configs/models.yaml asr.whisper_small, the app's revision
+    data: [disfluencyspeech_train]   # T1 text builder (ADR 0027 §1); validation is for the pick only
+    seed: 20261128
+    lora:                            # owner Q1, PROVISIONAL (the official Unsloth Whisper notebook)
+      r: 64
+      alpha: 64
+      dropout: 0.0
+      target_modules: [q_proj, v_proj]
+      bias: none
+    optimiser:
+      learning_rate: 1.0e-4
+      lr_scheduler: linear
+      warmup_steps: 50
+      weight_decay: 0.001
+      optim: adamw_8bit
+    batch:
+      per_device: 8
+      gradient_accumulation: 2       # 16 clips per step
+    precision: fp16                  # T4 has no bf16
+    epochs: 3
+    max_label_tokens: 448            # Whisper's decoder limit; longer rows are dropped and counted
+    checkpoint_every: epoch          # one candidate per epoch, kept on Drive (not in the zip)
+  pick:                              # owner Q2 (ADR 0029): dev only, never test
+    sets: [disfluencyspeech_validation, ami_dev]
+    score: mean_filler_f1            # mean of the two sets' lexicon filler F1
+    tie_within: 0.005                # candidates within 0.005 of the best score tie ...
+    tie_break: lower_mean_wer        # ... broken by the lower mean WER over the same two sets
+    final_tie_break: earlier_epoch   # identical WER as well: the earlier epoch
+  publish:                           # owner Q3: private repo, made by the owner
+    repo: Heemo-Beemo/presenceai-whisper-small-verbatim
+    token_env: HF_TOKEN              # fine-grained write token for this repo only, in Colab Secrets
+    folders: {ct2: ct2-int8, lora: lora}
+  training_env:                      # Colab main environment, training subprocess only
+    packages: [unsloth==2026.11.12, unsloth_zoo==2026.11.12]
