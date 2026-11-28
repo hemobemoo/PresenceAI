@@ -297,8 +297,9 @@ def test_e3_build_uses_the_apps_model_versions_and_settings(tmp_path):
     mods = json.loads(body.split('MODULES = json.loads(r"""', 1)[1].split('""")', 1)[0])
     assert {"e3score.py", "splitzip.py", "ami_words.py", "t1text.py", "normalize.py"} <= set(mods)
     # stage order: the builder check first, then the model, then data, ASR and scoring
+    run = body.split("def main():", 1)[1]  # the calls, in the order main makes them
     order = [
-        body.index(s)
+        run.index(s)
         for s in (
             "stage_ds_check()",
             "stage_model()",

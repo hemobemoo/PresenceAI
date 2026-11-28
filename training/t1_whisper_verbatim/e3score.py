@@ -188,9 +188,42 @@ def bootstrap(
     return lo, hi
 
 
+def paired_bootstrap(
+    a: Mapping[str, Counts],
+    b: Mapping[str, Counts],
+    metric: Callable[[object], float | None],
+    resamples: int,
+    seed: int,
+) -> tuple[float | None, float | None]:
+    """Percentile 95 % interval of metric(a) - metric(b), resampling the SAME units for both
+    (ADR 0029 §10). a and b must cover the same units."""
+    if set(a) != set(b):
+        raise ValueError("paired bootstrap needs the same units on both sides")
+    keys = sorted(a)
+    if not keys:
+        return None, None
+    rng = random.Random(seed)  # noqa: S311 (reproducible resampling, not security)
+    vals: list[float] = []
+    for _ in range(resamples):
+        idx = [keys[rng.randrange(len(keys))] for _ in keys]
+        va = metric(sum((a[k] for k in idx), start=Counts()))
+        vb = metric(sum((b[k] for k in idx), start=Counts()))
+        if va is not None and vb is not None:
+            vals.append(va - vb)
+    if not vals:
+        return None, None
+    vals.sort()
+    return vals[int(0.025 * (len(vals) - 1))], vals[round(0.975 * (len(vals) - 1))]
+
+
 def f1_of(c: object) -> float | None:
     assert isinstance(c, Counts)  # noqa: S101 (internal contract)
     return prf(c)["f1"]
+
+
+def precision_of(c: object) -> float | None:
+    assert isinstance(c, Counts)  # noqa: S101 (internal contract)
+    return prf(c)["precision"]
 
 
 def wer_of(t: object) -> float | None:

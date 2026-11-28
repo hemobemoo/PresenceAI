@@ -117,7 +117,7 @@ e3:                                  # ADR 0012; filler detection (FINAL_10 E3).
                                      # filler-rich text (prompt fixed in the E3 config before E3)
     - t1                             # after T1 (P4)
   report: [precision, recall, f1]    # precision shows made-up fillers (e.g. from initial_prompt)
-  # ---- ADR 0028 (proposed): the E3 protocol, fixed before the first E3 run (PR-3) ----
+  # ---- ADR 0028 (accepted 2026-11-28): the E3 protocol, fixed before the first E3 run (PR-3) ----
   model: whisper_small               # owner E6: T1's base; turbo report-only, never deciding
   model_text_files_lf_sha256:        # ADR 0028 §7: the converter's own JSON files, compared after
     # \r\n -> \n (the laptop is Windows and wrote CRLF; Colab writes LF). Taken from the laptop's
@@ -171,7 +171,7 @@ e3:                                  # ADR 0012; filler detection (FINAL_10 E3).
     unit: {disfluencyspeech: clip, ami: meeting, podcastfillers: episode, librispeech: speaker}
   disfluencyspeech_text_check: first # ADR 0027 §6: step 0, pass = words_differ <= 50 of 5,000
 
-t1:                                  # ADR 0027 (proposed): T1 data preparation (ADR 0026 §3)
+t1:                                  # ADR 0027 (accepted): T1 data preparation (ADR 0026 §3)
   seed: 20261127                     # meeting order; the E11 draw uses the same date seed (ADR 0026)
   disfluencyspeech:
     repo: amaai-lab/DisfluencySpeech
