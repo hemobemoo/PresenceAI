@@ -40,7 +40,7 @@ BUILD = json.loads(r"""__BUILD_JSON__""")
 MODULES = json.loads(r"""__MODULES_JSON__""")
 
 OUT = Path(os.environ.get("P4_OUT", "/content/e3base"))
-WORK = Path("/content/e3work")  # datasets and the model: local disk only
+WORK = Path(os.environ.get("P4_WORK", "/content/e3work"))  # datasets, model: local disk only
 # Owner's private Drive cache of PINNED public datasets (ADR 0028 §9); None if not mounted.
 CACHE = Path(os.environ["P4_CACHE"]) if os.environ.get("P4_CACHE") else None
 LIB = WORK / "lib"
@@ -750,7 +750,7 @@ def summarise(units, b, unit, deciding):
 
 def main():
     t0 = time.time()
-    fetch.require_colab()
+    fetch.require_cloud()
     OUT.mkdir(parents=True, exist_ok=True)
     p = progress()
     info = {

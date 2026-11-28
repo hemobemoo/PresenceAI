@@ -85,11 +85,19 @@ def script(cfg: dict[str, Any], build_info: dict[str, Any]) -> str:
     )
 
 
-def build(run_id: str, out: Path = BUILD_DIR) -> Path:
+def build(run_id: str, out: Path = BUILD_DIR, platform: str = "colab") -> Path:
+    """The same script for both platforms (same SHA-256); only the notebook around it differs."""
     cfg = load_config()
     body = script(cfg, {"run_id": run_id, **ci.repo_commit()})
     tr = cfg["run"]["training"]["t1"]
     repo = tr["publish"]["repo"]
+    setup = SETUP.replace("__TRAINING_PACKAGES__", " ".join(tr["training_env"]["packages"]))
+    if platform == "kaggle":
+        return ci.write_build(
+            out, "t1_run.py", body, f"T1R1K_{run_id}.ipynb", kaggle(run_id, repo, body, setup)
+        )
+    if platform != "colab":
+        raise ValueError(f"unknown platform {platform!r}")
     nb = ci.notebook(
         title=f"PresenceAI T1-r1 run `{run_id}` (ADR 0029)",
         steps=(
@@ -118,10 +126,41 @@ def build(run_id: str, out: Path = BUILD_DIR) -> Path:
         drive_folder=f"presenceai_p4/t1r1_{run_id}",
         out_env="P4_OUT",
         secrets=("HF_TOKEN",),
-        setup=SETUP.replace("__TRAINING_PACKAGES__", " ".join(tr["training_env"]["packages"])),
+        setup=setup,
         cache_folder="presenceai_data",
     )
     return ci.write_build(out, "t1_run.py", body, f"T1R1_{run_id}.ipynb", nb)
+
+
+def kaggle(run_id: str, repo: str, body: str, setup: str) -> dict[str, Any]:
+    """Kaggle Notebooks, the fallback (ADR 0026 §1), used for T1-r1 (owner 2026-11-28, ADR 0029
+    §11): a committed run, everything kept in /kaggle/working (the notebook's output)."""
+    return ci.kaggle_notebook(
+        title=f"PresenceAI T1-r1 run `{run_id}` on Kaggle (ADR 0029 §11)",
+        steps=(
+            "1. Kaggle > Create > Notebook > File > **Import Notebook**: this file.\n"
+            "2. Settings (right panel): Accelerator **GPU T4 x2** (one is used); **Internet on**.\n"
+            f"3. Add-ons > Secrets: `HF_TOKEN` = your fine-grained **write** token for `{repo}` "
+            "only; tick it for this notebook.\n"
+            "4. **Save Version > Save & Run All (Commit)**. It runs in the background (Kaggle's "
+            "limit is 12 h; the script stops itself at 11 h); you can close the browser.\n"
+            f"5. When it is done: open the version > **Output** > download `t1r1_{run_id}.zip` "
+            "into `data/colab_results/`.\n"
+            "6. **If it stopped before the end:** Add input > Your Work > this notebook (its "
+            "output), then Save & Run All again. The dataset cache and the finished stages, "
+            "epochs and items are reused.\n\n"
+            "The output keeps the results, the checkpoints (`work/`) and a private cache of the "
+            "pinned public files (`presenceai_data/`); delete old versions' output when T1 is "
+            "done (data/README.md, delete list)."
+        ),
+        script_name="t1_run.py",
+        body=body,
+        out_dir="t1r1",
+        zip_stem=f"t1r1_{run_id}",
+        timeout_s=TIMEOUT_S,
+        secrets=("HF_TOKEN",),
+        setup=setup,
+    )
 
 
 def ingest(run_id: str, zip_path: Path | None = None) -> dict[str, Any]:
@@ -220,9 +259,10 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("action", choices=["build", "ingest", "compare"])
     ap.add_argument("--run-id", required=True)
     ap.add_argument("--zip", type=Path, help="default: data/colab_results/t1r1_<id>.zip")
+    ap.add_argument("--platform", choices=["colab", "kaggle"], default="colab", help="build only")
     args = ap.parse_args(argv)
     if args.action == "build":
-        print(f"built {build(args.run_id)}")
+        print(f"built {build(args.run_id, platform=args.platform)}")
     elif args.action == "ingest":
         print(json.dumps(ingest(args.run_id, args.zip), indent=2))
     else:

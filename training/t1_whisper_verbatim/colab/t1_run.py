@@ -33,7 +33,7 @@ CONFIG = json.loads(r"""__CONFIG_JSON__""")
 BUILD = json.loads(r"""__BUILD_JSON__""")
 MODULES = json.loads(r"""__MODULES_JSON__""")
 
-LIB = Path("/content/e3work/lib")
+LIB = Path(os.environ.get("P4_WORK", "/content/e3work")) / "lib"  # as e3_run.WORK
 LIB.mkdir(parents=True, exist_ok=True)
 for name, b64 in MODULES.items():
     (LIB / name).write_bytes(base64.b64decode(b64))
@@ -46,7 +46,9 @@ import t1pick  # noqa: E402
 
 sc, fetch, t1text, ami = e3.sc, e3.fetch, e3.t1text, e3.ami
 OUT, WORK = e3.OUT, e3.WORK
-WORKD = OUT.parent / "work" if str(OUT).startswith("/content/drive/") else WORK / "t1work"
+# Checkpoints and converted candidates: next to the results folder (Drive on Colab,
+# /kaggle/working on Kaggle), never inside it, so never in the zip (ADR 0029 §2, §11).
+WORKD = Path(os.environ["P4_WORKD"]) if os.environ.get("P4_WORKD") else OUT.parent / "work"
 SCRIPT_SHA = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
 TR, E3 = CONFIG["training"], CONFIG["e3"]
 RUN = TR["t1"]["r1"]
@@ -445,7 +447,7 @@ def stage_per_window(t1_model):
 
 def main():
     t0 = time.time()
-    fetch.require_colab()
+    fetch.require_cloud()
     OUT.mkdir(parents=True, exist_ok=True)
     WORKD.mkdir(parents=True, exist_ok=True)
     p = progress()

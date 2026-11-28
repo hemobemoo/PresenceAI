@@ -387,3 +387,45 @@ def test_merge_refuses_anything_but_the_runs_plain_lora():
         t1merge.merge(base, ad, 1.0, ["q_proj", "v_proj"])
     with pytest.raises(ValueError, match="no LoRA weights"):
         t1merge.merge(base, {}, 1.0, ["q_proj"])
+
+
+# --- Kaggle (owner 2026-11-28, ADR 0029 §11) ------------------------------------------------
+
+
+def test_kaggle_build_runs_the_same_script_and_keeps_everything_in_the_output(tmp_path):
+    import hashlib
+
+    ci = sys.modules["colab_ingest"]
+    nb = json.loads(ct1.build("t", tmp_path / "k", platform="kaggle").read_text(encoding="utf-8"))
+    ct1.build("t", tmp_path / "c")
+    kbody = (tmp_path / "k" / "t1_run.py").read_bytes()
+    assert kbody == (tmp_path / "c" / "t1_run.py").read_bytes()  # same script, same SHA-256
+    sha = hashlib.sha256(kbody).hexdigest()
+    cells = ["".join(c["source"]) for c in nb["cells"] if c["cell_type"] == "code"]
+    src = "".join(cells)
+    assert "google.colab" not in src and "drive.mount" not in src
+    assert "UserSecretsClient().get_secret('HF_TOKEN')" in src
+    assert cells[0].index("CUDA_VISIBLE_DEVICES'] = '0'") >= 0  # one GPU, set first
+    assert "P4_OUT'] = '/kaggle/working/t1r1'" in cells[0]
+    assert "P4_WORKD'] = '/kaggle/working/work'" in cells[0]  # outside the zipped folder
+    assert "P4_CACHE'] = '/kaggle/working/presenceai_data'" in cells[0]
+    assert f"== {sha!r}" in cells[1]  # resume only results of this same build
+    assert "'/kaggle/input/**/presenceai_data'" in cells[1]
+    assert f"!timeout {ct1.TIMEOUT_S} python /kaggle/working/t1_run.py" in src
+    assert "make_archive('/kaggle/working/t1r1_t', 'zip', '/kaggle/working', 't1r1')" in cells[-1]
+    assert ci.KAGGLE_WORKING == "/kaggle/working"
+    with pytest.raises(ValueError):
+        ct1.build("t", tmp_path / "x", platform="laptop")
+
+
+def test_cloud_guard_accepts_colab_or_kaggle_only(monkeypatch):
+    fetch = _load("fetch_public_data", REPO / "scripts" / "fetch_public_data.py")
+    with pytest.raises(fetch.NotOnColabError):
+        fetch.require_cloud({})
+    with pytest.raises(fetch.NotOnColabError):  # the variable alone is not enough
+        fetch.require_cloud({"KAGGLE_KERNEL_RUN_TYPE": "Batch"}) if not Path(
+            "/kaggle/working"
+        ).is_dir() else fetch.require_cloud({})
+    monkeypatch.setattr(fetch.Path, "is_dir", lambda self: True)
+    fetch.require_cloud({"KAGGLE_KERNEL_RUN_TYPE": "Batch"})
+    fetch.require_cloud({"COLAB_RELEASE_TAG": "x"})
