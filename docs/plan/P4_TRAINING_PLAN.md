@@ -114,7 +114,10 @@ inputs, rest of the C2 test part untouched.
 2. **PR-2** data: `scripts/fetch_public_data.py`, `data/README.md` rows, AMI LICENCE + speaker
    check, AMI filler/partial-word mapping with fixture tests, T1 manifest with fixed AMI hours.
 3. **PR-3** E3 harness + base and base + `initial_prompt` numbers (with PodcastFillers).
-4. **PR-4** T1-r1.
+4. **PR-4** T1-r1. On AMI test, T1 must beat base + `initial_prompt` (F1 0.815, 95 % CI
+   0.790–0.841, ADR 0028 §11). If it does not, that is reported as a finding and the line is not
+   moved. The same Colab run adds the report-only per-window PodcastFillers stage (ADR 0028 §12):
+   base + `initial_prompt` in every window and T1 in every window, in the same table as T1.
 5. **PR-5** T1-r2 (+ r3), pick on dev, private HF repo, `configs/models.yaml: t1_verbatim`,
    `download_models.py`, model card draft.
 6. **PR-6** T3 v0 (independent; any time after PR-1).

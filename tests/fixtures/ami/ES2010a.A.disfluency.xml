@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+<!-- Hand-written for PresenceAI tests in the ASSUMED AMI disfluency-layer format (ADR 0028);
+     not corpus data. The E3 run's probe checks the real format before any repetition is scored. -->
+<nite:root nite:id="ES2010a.A.disfluency" xmlns:nite="http://nite.sourceforge.net/">
+   <dsfl nite:id="ES2010a.A.dsfl.1" type="Repetition">
+      <nite:child href="ES2010a.A.words.xml#id(ES2010a.A.words2)..id(ES2010a.A.words3)"/>
+   </dsfl>
+   <dsfl nite:id="ES2010a.A.dsfl.2" type="Hesitation">
+      <nite:child href="ES2010a.A.words.xml#id(ES2010a.A.words0)"/>
+   </dsfl>
+   <dsfl nite:id="ES2010a.A.dsfl.3" type="Repetition">
+      <nite:child href="ES2010a.A.words.xml#id(ES2010a.A.words99)"/>
+   </dsfl>
+</nite:root>

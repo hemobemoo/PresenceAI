@@ -1,0 +1,79 @@
+{
+  "build": {
+    "repo_commit": "cb1cdca2436316c265a0da703717c94063b0ac08",
+    "repo_dirty": false,
+    "run_id": "20261128-b5"
+  },
+  "elapsed_s": 12209.0,
+  "platform": "Linux-6.6.159+-x86_64-with-glibc2.39",
+  "python": "3.13.16 (main, Oct  1 2026, 15:40:24) [GCC 13.3.0]",
+  "resumed_stages": [],
+  "run_id": "20261128-b5",
+  "script_sha256": "86dd43de7565d14e4c24d6a5b8ec3115ab5efe0ca7046c5f7f078c05b18f19f9",
+  "sha256": {
+    "ds_text_check.json": {
+      "bytes": 6909,
+      "sha256": "5477513095773417781c6aa827218e0dfab7ff545809c078e36e2679c384b727"
+    },
+    "e3_metrics.json": {
+      "bytes": 3956,
+      "sha256": "0269473a2ec5ca5e8049bebc9c70fa2933eb64f0f501fe8226d86d898749162e"
+    },
+    "hyps/base.jsonl": {
+      "bytes": 10926523,
+      "sha256": "192bd0a9c898515648abed7eff106e5d34eb0508dc5f19b0c597b0a6cfdad575"
+    },
+    "hyps/base_initial_prompt.jsonl": {
+      "bytes": 11212171,
+      "sha256": "a2df28ea41a9a3aa0b2de342ed55a58c1c381191acf252c313114fbb25a9ac62"
+    },
+    "items/ami_test.json": {
+      "bytes": 2668721,
+      "sha256": "115a17c7a106bb947af07e5581a2e4c30591c100b7ffb55572e8cf746644074d"
+    },
+    "items/podcastfillers_test_events.json": {
+      "bytes": 302359,
+      "sha256": "6b74b3966ef32537c74efab6bd34904df91b7f1ab3b01ec7e0b18245660b69e2"
+    },
+    "licence/podcastfillers/LICENSE_ANNOTATIONS_ADOBE_RESEARCH_LICENSE.txt": {
+      "bytes": 3282,
+      "sha256": "8540d54c7b5b80d0cfc4dd8a09039cfde64f706a31f379dd6232fd7d9e1b4242"
+    },
+    "licence/podcastfillers/LICENSE_AUDIO.csv": {
+      "bytes": 15533,
+      "sha256": "19d5384432c077fb000d122001eb140ce4fab0938555d7b190526d729f60e356"
+    },
+    "model_check.json": {
+      "bytes": 1660,
+      "sha256": "2931cd92dbd810da2555116b42ecd87ee11bf4d15e6afa59185dbc820eef30ba"
+    },
+    "pins/ami_test_headsets.json": {
+      "bytes": 35908,
+      "sha256": "3cc52a4df04d85b3a4571a65bc25517908cee4b908c05a568e7ce406631e56c9"
+    },
+    "pins/podcastfillers.json": {
+      "bytes": 4817,
+      "sha256": "7ec1f8c8dce7cb12e337adc73fb2f1fa5d33cddd110fdd1f168d3ea8267847a0"
+    },
+    "probes/ami_disfluency_probe.json": {
+      "bytes": 2450,
+      "sha256": "b9aa002140d983f97e8b70bd2eee66450c42b26b14ded80a8c477838a846c766"
+    },
+    "probes/podcastfillers_csv_probe.json": {
+      "bytes": 996,
+      "sha256": "e1cbf98796ff1fbfbbc1996c202667677474ff7564cab35425fb7dbe5c6873f4"
+    },
+    "progress.json": {
+      "bytes": 207,
+      "sha256": "1e4aedbe599c0a55f371a41d37711539a823a4ee05ebfece87c398bb79d62e47"
+    }
+  },
+  "status": "ok",
+  "steps": {
+    "ds_check": "passed"
+  },
+  "versions": {
+    "ctranslate2": "4.9.0",
+    "faster_whisper": "1.2.1"
+  }
+}

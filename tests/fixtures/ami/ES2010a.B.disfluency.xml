@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+<!-- Hand-written for PresenceAI tests in the pointer form run b3's probe found (dsfl elements with
+     nite:child word links and nite:pointer links, no type attribute; ADR 0028). Not corpus data. -->
+<nite:root nite:id="ES2010a.B.disfluency" xmlns:nite="http://nite.sourceforge.net/">
+   <dsfl nite:id="ES2010a.B.dsfl.1">
+      <nite:pointer role="dsfl-type" href="dsfl-types.xml#id(dsfl_rep)"/>
+      <nite:child href="ES2010a.B.words.xml#id(ES2010a.B.words0)..id(ES2010a.B.words1)"/>
+   </dsfl>
+   <dsfl nite:id="ES2010a.B.dsfl.2">
+      <nite:pointer role="dsfl-type" href="dsfl-types.xml#id(dsfl_del)"/>
+      <nite:child href="ES2010a.B.words.xml#id(ES2010a.B.words2)"/>
+   </dsfl>
+   <dsfl nite:id="ES2010a.B.dsfl.3">
+      <nite:pointer role="dsfl-type" href="dsfl-types.xml#id(dsfl_unknown)"/>
+      <nite:child href="ES2010a.B.words.xml#id(ES2010a.B.words3)"/>
+   </dsfl>
+</nite:root>

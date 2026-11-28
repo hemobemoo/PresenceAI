@@ -19,6 +19,7 @@ import hashlib
 import json
 import os
 import re
+import shutil
 import sys
 import time
 import urllib.error
@@ -72,19 +73,80 @@ def _fetch_once(url: str, dest: Path) -> tuple[str, int]:
     return h.hexdigest(), n
 
 
+def sha256_of(path: Path) -> str:
+    h = hashlib.sha256()
+    with path.open("rb") as f:
+        while chunk := f.read(CHUNK):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+# ---- Drive cache (owner, 2026-11-28; ADR 0028 §9, amends ADR 0026 D2) ----------------------------
+# Only PINNED public files are cached, in the owner's private folder on Google Drive. A cached copy
+# is used only if its SHA-256 matches the pin; a copy that does not match is deleted and the file is
+# downloaded again. The owner's own recordings never come here (they never leave the laptop).
+
+
+def cache_get(cache_dir: Path | None, name: str, expected_sha256: str | None, dest: Path) -> bool:
+    """Copy a verified cached file to dest; False if there is none (or it did not verify)."""
+    if cache_dir is None or not expected_sha256:
+        return False
+    cached = cache_dir / name
+    if not cached.is_file():
+        return False
+    if sha256_of(cached) != expected_sha256:
+        print(f"cache: {name} does not match its pin; deleted, downloading again", flush=True)
+        cached.unlink()
+        return False
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(cached, dest)
+    if sha256_of(dest) != expected_sha256:  # the copy itself must verify too
+        dest.unlink(missing_ok=True)
+        return False
+    return True
+
+
+def cache_put(
+    cache_dir: Path | None, name: str, expected_sha256: str | None, src: Path, source: str
+) -> bool:
+    """Store a verified file in the cache and its manifest; only pinned files are stored."""
+    if cache_dir is None or not expected_sha256 or sha256_of(src) != expected_sha256:
+        return False
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    tmp = cache_dir / (name + ".part")
+    shutil.copyfile(src, tmp)
+    tmp.replace(cache_dir / name)
+    mpath = cache_dir / "cache_manifest.json"
+    manifest = json.loads(mpath.read_text(encoding="utf-8")) if mpath.exists() else {}
+    manifest[name] = {"sha256": expected_sha256, "bytes": src.stat().st_size, "source": source}
+    mpath.write_text(json.dumps(manifest, indent=1, sort_keys=True), encoding="utf-8")
+    return True
+
+
 def download(
     url: str,
     dest: Path,
     expected_sha256: str | None = None,
     sleep: Callable[[float], None] = time.sleep,
+    cache_dir: Path | None = None,
 ) -> dict[str, Any]:
-    """Stream url to dest; return {url, bytes, sha256, retries}. A busy server (429/5xx), a reset
-    or a timeout is retried after 15 s, 30 s, ... 480 s (or the server's Retry-After); any other
-    HTTP error stops at once. A pinned hash must match, else dest is deleted and ValueError is
-    raised."""
+    """Stream url to dest; return {url, bytes, sha256, retries, from_cache}. A pinned file in
+    `cache_dir` that verifies is used without any request; a downloaded pinned file is added to
+    the cache. A busy server (429/5xx), a reset or a timeout is retried after 15 s, 30 s, ... 480 s
+    (or the server's Retry-After); any other HTTP error stops at once. A pinned hash must match,
+    else dest is deleted and ValueError is raised."""
     if not url.startswith(("https://", "file://")):
         raise ValueError(f"refusing non-https url: {url}")
     dest.parent.mkdir(parents=True, exist_ok=True)
+    if cache_get(cache_dir, dest.name, expected_sha256, dest):
+        return {
+            "url": url,
+            "bytes": dest.stat().st_size,
+            "sha256": expected_sha256,
+            "pinned": True,
+            "retries": 0,
+            "from_cache": True,
+        }
     for attempt in range(len(RETRY_WAITS_S) + 1):
         try:
             digest, n = _fetch_once(url, dest)
@@ -108,12 +170,14 @@ def download(
     if expected_sha256 and digest != expected_sha256:
         dest.unlink(missing_ok=True)
         raise ValueError(f"SHA-256 mismatch for {url}: got {digest}, pinned {expected_sha256}")
+    cache_put(cache_dir, dest.name, expected_sha256, dest, url)  # saved as soon as it verifies
     return {
         "url": url,
         "bytes": n,
         "sha256": digest,
         "pinned": bool(expected_sha256),
         "retries": retries,
+        "from_cache": False,
     }
 
 

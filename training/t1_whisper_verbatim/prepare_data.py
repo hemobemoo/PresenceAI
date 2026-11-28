@@ -99,6 +99,7 @@ def build(root: Path, cfg: dict[str, Any], out: Path) -> dict[str, Any]:
     lines = []
     for s in chosen:
         row = asdict(s)
+        row.pop("word_ids")  # E3 only; keeps the pinned manifest hash (ADR 0027 §6)
         row["n_fillers"] = t1text.count_fillers(s.text, hes, a["backchannels"])
         row["n_partials"] = t1text.count_partials(s.text, hes)
         lines.append(json.dumps(row, ensure_ascii=False, sort_keys=True))

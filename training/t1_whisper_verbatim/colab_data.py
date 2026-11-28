@@ -53,9 +53,18 @@ def load_config() -> dict[str, Any]:
     ev = yaml.safe_load(EVAL_CONFIG.read_text(encoding="utf-8"))
     fil = yaml.safe_load(FILLERS.read_text(encoding="utf-8"))
     for src in ev["public_data"].values():  # per-file pins live in configs/pins/ (ADR 0027 §6)
-        if "sha256_file" in src:
-            pins = json.loads((REPO / src.pop("sha256_file")).read_text(encoding="utf-8"))
-            src["sha256"] = dict(pins["sha256"])
+        files = src.pop("sha256_files", None) or (
+            [src.pop("sha256_file")] if "sha256_file" in src else []
+        )
+        merged: dict[str, str] = {}
+        for rel in files:
+            pins = json.loads((REPO / rel).read_text(encoding="utf-8"))["sha256"]
+            clash = {k for k in pins if k in merged and merged[k] != pins[k]}
+            if clash:
+                raise ValueError(f"{rel}: pins disagree with an earlier file for {sorted(clash)}")
+            merged |= pins
+        if files:
+            src["sha256"] = merged
     return {
         "t1": ev["t1"],
         "e3": ev["e3"],

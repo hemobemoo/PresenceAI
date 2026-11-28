@@ -100,6 +100,11 @@ def _is_filler(token: str, hes: frozenset[str], back: frozenset[str]) -> bool:
     return True
 
 
+def is_filler(token: str, hesitations: Iterable[str], backchannels: Iterable[str]) -> bool:
+    """One token: a hesitation by the T1/E3 rule (backchannels and one-letter partials are not)."""
+    return _is_filler(token, _keys(hesitations), _keys(backchannels))
+
+
 def count_fillers(text: str, hesitations: Iterable[str], backchannels: Iterable[str]) -> int:
     """Hesitations in a whitespace-tokenised text. Backchannels count zero; "um-" counts as "um"."""
     hes, back = _keys(hesitations), _keys(backchannels)

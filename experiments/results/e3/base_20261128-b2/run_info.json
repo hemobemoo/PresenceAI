@@ -1,0 +1,31 @@
+{
+  "build": {
+    "repo_commit": "0c084cef2013375c0d41e637bcb837c6d0da0e61",
+    "repo_dirty": false,
+    "run_id": "20261128-b2"
+  },
+  "elapsed_s": 77.1,
+  "platform": "Linux-6.6.159+-x86_64-with-glibc2.39",
+  "python": "3.13.16 (main, Oct  1 2026, 15:40:24) [GCC 13.3.0]",
+  "resumed_stages": [],
+  "run_id": "20261128-b2",
+  "script_sha256": "9160942d6f88d4a94772d3014a9ac72663f291fd1fbf7818f04507194822b0d1",
+  "sha256": {
+    "ds_text_check.json": {
+      "bytes": 6909,
+      "sha256": "5477513095773417781c6aa827218e0dfab7ff545809c078e36e2679c384b727"
+    },
+    "model_check.json": {
+      "bytes": 1524,
+      "sha256": "714e22415d014b572aad5fa3be68e65a18aa81a316372ef31604fac092ba2e0a"
+    },
+    "progress.json": {
+      "bytes": 122,
+      "sha256": "f949a35bf2efbc95a726cff3f75e2a8a34f11cadbd2c9e4cdf508e7bf6277b2d"
+    }
+  },
+  "status": "model_differs_from_app",
+  "steps": {
+    "ds_check": "passed"
+  }
+}

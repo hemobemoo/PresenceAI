@@ -50,6 +50,10 @@ class Item:
     start: float | None
     end: float | None
     trunc: bool = False
+    id: str = ""  # nite:id, used to resolve the disfluency layer's word links (E3)
+
+
+NITE_ID = "{http://nite.sourceforge.net/}id"
 
 
 @dataclass
@@ -81,10 +85,12 @@ def parse_words(xml: bytes, probe: Probe | None = None) -> list[Item]:
                     probe.untimed_words += 1
                 if _FILLERISH.match(text.casefold().strip(".,?!")):
                     probe.short_tokens[text.casefold()] += 1
+            wid = el.get(NITE_ID, "")
             if el.get("punc") == "true":
-                items.append(Item("punc", text, start, end))
+                items.append(Item("punc", text, start, end, id=wid))
             elif text:
-                items.append(Item("word", text, start, end, trunc=el.get("trunc") == "true"))
+                trunc = el.get("trunc") == "true"
+                items.append(Item("word", text, start, end, trunc=trunc, id=wid))
         elif tag in GAP_LIKE:
             items.append(Item("gap", "", start, end))
         else:
@@ -119,6 +125,9 @@ class Segment:
     text: str
     n_words: int
     crosstalk_share: float
+    # one AMI word id per text token (E3 repetition scoring); never written to the T1 manifest,
+    # so the pinned manifest hash (ADR 0027 §6) is unchanged
+    word_ids: tuple[str, ...] = field(default=(), compare=False, repr=False)
 
     @property
     def duration_s(self) -> float:
@@ -210,9 +219,11 @@ def segments(
             drops["crosstalk"] += 1
             continue
         parts: list[str] = []
+        ids: list[str] = []
         for i in g:
             if i.kind == "word":
                 parts.append(spell(i.text, i.trunc, spelling, backchannels))
+                ids.append(i.id)
             elif i.kind == "punc" and parts:
                 parts[-1] += i.text
         out.append(
@@ -225,6 +236,7 @@ def segments(
                 " ".join(parts),
                 len(words),
                 round(share, 4),
+                tuple(ids),
             )
         )
     return out
@@ -339,3 +351,187 @@ def select(
             out.append(s)
             total += s.duration_s
     return out
+
+
+# ---- E3: the AMI disfluency layer (ADR 0028) ---------------------------------------------------
+#
+# Run b3's probe (2026-11-28): `<dsfl>` elements (33,032) carry no type attribute; they hold
+# `<nite:child href=...words.xml#id(A)..id(B)>` word links and `<nite:pointer role=... href=...>`
+# links (69,773). The type is found by following the pointers into the AMI ontology files
+# (`ontologies/*.xml`): a node's label is its own attribute values (except ids) plus those of its
+# ancestors. A disfluency is a repetition if any label it points to contains "repet". Every role,
+# link target and resolved label is counted in the probe, so the rule can be checked.
+
+_HREF = re.compile(r"#id\(([^)]+)\)(?:\.\.id\(([^)]+)\))?")
+REPETITION = re.compile(r"repet", re.IGNORECASE)
+
+
+@dataclass
+class DisfluencyProbe:
+    elements: Counter[str] = field(default_factory=Counter)
+    attributes: Counter[str] = field(default_factory=Counter)
+    type_values: Counter[str] = field(default_factory=Counter)
+    pointer_roles: Counter[str] = field(default_factory=Counter)
+    pointer_targets: Counter[str] = field(default_factory=Counter)  # file part of the href
+    unresolved_links: int = 0
+    unresolved_pointers: int = 0
+
+
+@dataclass(frozen=True)
+class Disfluency:
+    type: str
+    word_ids: tuple[str, ...]
+    parent: str | None = None  # nite:id of the enclosing <dsfl>, if the element is nested
+
+
+def _href(el: ET.Element) -> str:
+    return next((v for k, v in el.attrib.items() if _local(k) == "href"), "")
+
+
+def load_ontology(xml: bytes) -> dict[str, str]:
+    """id -> label for every node of one ontology file (ancestors' labels joined by '/')."""
+    root = ET.fromstring(xml)  # noqa: S314 (official AMI corpus file, checked by SHA-256)
+    out: dict[str, str] = {}
+
+    def walk(el: ET.Element, trail: tuple[str, ...]) -> None:
+        own = " ".join(v for k, v in el.attrib.items() if _local(k) not in {"id", "href"})
+        label = (*trail, own) if own else trail
+        nid = el.get(NITE_ID)
+        if nid:
+            out[nid] = "/".join(label) or _local(el.tag)
+        for c in el:
+            walk(c, label)
+
+    walk(root, ())
+    return out
+
+
+def _type_of(el: ET.Element, ontology: Mapping[str, str], probe: DisfluencyProbe | None) -> str:
+    for k, v in el.attrib.items():
+        if _local(k) in {"type", "dsfl-type", "disfl-type", "kind"}:
+            return v
+    labels = []
+    for c in el:
+        if _local(c.tag) != "pointer":
+            continue
+        role, href = c.get("role", ""), _href(c)
+        if probe is not None:
+            probe.pointer_roles[role] += 1
+            probe.pointer_targets[href.split("#", 1)[0]] += 1
+        m = _HREF.search(href)
+        if m and m.group(1) in ontology:
+            labels.append(f"{role}={ontology[m.group(1)]}")
+        elif probe is not None:
+            probe.unresolved_pointers += 1
+    return "; ".join(labels) if labels else _local(el.tag)
+
+
+def parse_disfluency(
+    xml: bytes,
+    word_order: Sequence[str],
+    probe: DisfluencyProbe | None = None,
+    ontology: Mapping[str, str] | None = None,
+) -> list[Disfluency]:
+    """Every element with word links, its type (an attribute, or the ontology labels its pointers
+    lead to) and the word ids it covers (ranges expanded in the words file's order)."""
+    root = ET.fromstring(xml)  # noqa: S314 (official AMI corpus file, checked by SHA-256)
+    onto = ontology or {}
+    pos = {w: i for i, w in enumerate(word_order)}
+    out: list[Disfluency] = []
+
+    def visit(el: ET.Element, parent: str | None) -> None:
+        tag = _local(el.tag)
+        if probe is not None:
+            probe.elements[tag] += 1
+            probe.attributes.update(_local(k) for k in el.attrib)
+        links = [c for c in el if _local(c.tag) == "child"]
+        if links:
+            ids: list[str] = []
+            for c in links:
+                m = _HREF.search(_href(c))
+                if not m:
+                    continue
+                a, b = m.group(1), m.group(2) or m.group(1)
+                if a not in pos or b not in pos:
+                    if probe is not None:
+                        probe.unresolved_links += 1
+                    continue
+                ids.extend(word_order[pos[a] : pos[b] + 1])
+            t = _type_of(el, onto, probe)
+            if probe is not None:
+                probe.type_values[t] += 1
+            if ids:
+                out.append(Disfluency(t, tuple(ids), parent))
+        here = el.get(NITE_ID) if tag == "dsfl" else None
+        for c in el:
+            if _local(c.tag) not in {"child", "pointer"}:
+                visit(c, here or parent)
+
+    visit(root, None)
+    return out
+
+
+def repetitions(dis: Iterable[Disfluency]) -> list[Disfluency]:
+    return [d for d in dis if REPETITION.search(d.type)]
+
+
+# ---- Repetitions from repairs (owner, 2026-11-28; ADR 0028 §10) -------------------------------
+#
+# Run b4: AMI's disfluency scheme has no repetition type; a repair is a Reparandum (the words being
+# corrected) followed by a Reparans (the correction). A repetition is a Reparandum whose normalised
+# words equal the START of its Reparans ("the the cat": reparandum "the", reparans "the"). Computed
+# from the annotation only: nothing is labelled by hand and nothing is guessed.
+#
+# Pairing: a Reparans in the same parent <dsfl> as the Reparandum, the first one after it; if the
+# two are not nested, the first Reparans starting within `max_gap_words` words after the
+# Reparandum ends (room for an "uh" or "I mean"; PROVISIONAL). Each pair records how it was made.
+
+REPARANDUM = re.compile(r"\breparandum\b", re.IGNORECASE)
+REPARANS = re.compile(r"\breparans\b", re.IGNORECASE)
+
+
+def _norm(word: str) -> str:
+    return re.sub(r"^[^\w'-]+|[^\w'-]+$", "", word.casefold())
+
+
+def repetitions_from_repairs(
+    dis: Sequence[Disfluency],
+    word_text: Mapping[str, str],
+    word_order: Sequence[str],
+    max_gap_words: int,
+) -> tuple[list[Disfluency], Counter[str]]:
+    """Repetition events (one per qualifying Reparandum) and counts of how pairs were made."""
+    pos = {w: i for i, w in enumerate(word_order)}
+    counts: Counter[str] = Counter()
+    rdums = [d for d in dis if REPARANDUM.search(d.type) and d.word_ids]
+    rans = [d for d in dis if REPARANS.search(d.type) and d.word_ids]
+    counts["reparanda"], counts["reparans"] = len(rdums), len(rans)
+
+    def start(d: Disfluency) -> int:
+        return pos[d.word_ids[0]]
+
+    def end(d: Disfluency) -> int:
+        return pos[d.word_ids[-1]]
+
+    out: list[Disfluency] = []
+    for r in rdums:
+        after = [x for x in rans if start(x) > end(r)]
+        pick, how = None, ""
+        if r.parent is not None:
+            same = [x for x in after if x.parent == r.parent]
+            if same:
+                pick, how = min(same, key=start), "same_parent"
+        if pick is None:
+            near = [x for x in after if start(x) - end(r) - 1 <= max_gap_words]
+            if near:
+                pick, how = min(near, key=start), "following"
+        if pick is None:
+            counts["unpaired"] += 1
+            continue
+        counts[f"paired_{how}"] += 1
+        a = [_norm(word_text.get(w, "")) for w in r.word_ids]
+        b = [_norm(word_text.get(w, "")) for w in pick.word_ids[: len(a)]]
+        if a and all(a) and a == b:
+            counts["repetitions"] += 1
+            out.append(Disfluency("repetition", r.word_ids, r.parent))
+    return out, counts

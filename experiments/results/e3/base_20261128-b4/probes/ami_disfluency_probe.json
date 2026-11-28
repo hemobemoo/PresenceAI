@@ -1,0 +1,77 @@
+{
+  "attributes": {
+    "href": 96258,
+    "id": 33144,
+    "position": 1159,
+    "role": 69773
+  },
+  "elements": {
+    "child": 26485,
+    "dsfl": 33032,
+    "pointer": 69773,
+    "root": 112
+  },
+  "files": 160,
+  "ontology_files": [
+    "ontologies/ae-types.xml",
+    "ontologies/ap-types.xml",
+    "ontologies/ar-types.xml",
+    "ontologies/chunk-types.xml",
+    "ontologies/chunks.xml",
+    "ontologies/da-types.xml",
+    "ontologies/default-topics.xml",
+    "ontologies/dis-types.xml",
+    "ontologies/dsfl-types.xml",
+    "ontologies/floor-types.xml",
+    "ontologies/foa-targets.xml",
+    "ontologies/leg-targets.xml",
+    "ontologies/ne-types.xml",
+    "ontologies/rse-types.xml",
+    "ontologies/rsr-types.xml",
+    "ontologies/subj-types.xml",
+    "ontologies/you-types.xml"
+  ],
+  "ontology_nodes": 241,
+  "pointer_roles": {
+    "da-ref": 26045,
+    "dsfl-type": 26045,
+    "extension": 1252
+  },
+  "pointer_targets": {
+    "ES2002b.B.dialog-act.xml": 431,
+    "ES2002b.D.dialog-act.xml": 451,
+    "ES2002c.D.dialog-act.xml": 401,
+    "ES2002d.B.dialog-act.xml": 404,
+    "ES2002d.C.dialog-act.xml": 534,
+    "IS1003d.B.dialog-act.xml": 522,
+    "IS1003d.C.dialog-act.xml": 460,
+    "IS1009c.C.dialog-act.xml": 434,
+    "TS3006b.D.dialog-act.xml": 700,
+    "TS3006c.B.dialog-act.xml": 488,
+    "TS3006c.C.dialog-act.xml": 544,
+    "TS3006c.D.dialog-act.xml": 443,
+    "TS3006d.D.dialog-act.xml": 530,
+    "TS3007a.A.dialog-act.xml": 402,
+    "TS3007b.C.dialog-act.xml": 516,
+    "TS3007c.A.dialog-act.xml": 484,
+    "TS3007c.B.dialog-act.xml": 419,
+    "TS3007c.C.dialog-act.xml": 747,
+    "TS3007d.A.dialog-act.xml": 565,
+    "dsfl-types.xml": 26045
+  },
+  "repetitions_found": 0,
+  "type_values": {
+    "dsfl-type=dsfl-type/disrupt Disruption": 2267,
+    "dsfl-type=dsfl-type/dm Discouse Marker": 2989,
+    "dsfl-type=dsfl-type/eet Explicit Editing Term": 211,
+    "dsfl-type=dsfl-type/hesit Hesitation": 6318,
+    "dsfl-type=dsfl-type/omiss Omission": 1159,
+    "dsfl-type=dsfl-type/other Other": 125,
+    "dsfl-type=dsfl-type/reparandum Reparandum": 5883,
+    "dsfl-type=dsfl-type/reparans Reparans": 4779,
+    "dsfl-type=dsfl-type/sot Slip of the tongue": 1455,
+    "dsfl-type=dsfl-type/stutter Stuttering": 859
+  },
+  "unresolved_links": 0,
+  "unresolved_pointers": 27297
+}

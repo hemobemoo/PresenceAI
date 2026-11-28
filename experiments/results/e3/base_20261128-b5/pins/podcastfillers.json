@@ -1,0 +1,125 @@
+{
+  "access": "range_requests",
+  "annotations_csv": {
+    "bytes": 21698037,
+    "from_cache": false,
+    "pinned": false,
+    "retries": 0,
+    "sha256": "39d7c6d2e04cd6d11d7f7b611a6a166e553432192558097ff55b162e2fec5f7e",
+    "url": "https://zenodo.org/api/records/7121457/files/PodcastFillers.csv/content"
+  },
+  "licence_members": {
+    "LICENSE_ANNOTATIONS_ADOBE_RESEARCH_LICENSE.txt": {
+      "bytes": 3282,
+      "crc32": "e0ff6836",
+      "sha256": "8540d54c7b5b80d0cfc4dd8a09039cfde64f706a31f379dd6232fd7d9e1b4242"
+    },
+    "LICENSE_AUDIO.csv": {
+      "bytes": 15533,
+      "crc32": "8edc48d4",
+      "sha256": "19d5384432c077fb000d122001eb140ce4fab0938555d7b190526d729f60e356"
+    }
+  },
+  "test_wavs": {
+    "Beer Tour Guy Podcast_Episode 12 - Mark Larson - Falling Down Beer Company": {
+      "bytes": 115309942,
+      "from_cache": true,
+      "sha256": "7013adebfeed70bf718638e0f2fdd5dd43537af739056d06e0b2b7ec7047e095"
+    },
+    "Between You & Me Podcast_Ep 54_MORIAH SMALLBONE Becoming a Lead Lady": {
+      "bytes": 119347898,
+      "from_cache": true,
+      "sha256": "7a561ebe68d28ae0f8d7286571ffe4a55306b39c87df0fb129fbb64d869e1706"
+    },
+    "Break The Cycle_Episode 7 Patriarchy": {
+      "bytes": 101076348,
+      "from_cache": true,
+      "sha256": "a6b7d0dbd80e046e30a7551a08f51165aa4e17981284c0fa344fcba8607a9219"
+    },
+    "CEO Interview 2017_Pat Finn": {
+      "bytes": 64145992,
+      "from_cache": true,
+      "sha256": "2cd2fe5a3fb18bffa371855f9362d89724e2284c1ea056538c93548147e1bbfd"
+    },
+    "Claire Zorn_'Turns Out I Had More Things To Write Down!'": {
+      "bytes": 74951936,
+      "from_cache": true,
+      "sha256": "9b9a1deca6794ce84def60957b9a1bc5a506efa630f096cbea524b442b15dcd2"
+    },
+    "Design Story_025 Moira Cullen Design is Soft Power": {
+      "bytes": 90596962,
+      "from_cache": true,
+      "sha256": "5850fa2793381195721c2e8421d7dbf4d190dd3fcef0c494b2279927764b57f5"
+    },
+    "Food as medicine_Integrative Medicine": {
+      "bytes": 85942206,
+      "from_cache": true,
+      "sha256": "48a97cde4e4932c316aa0e7ed56dadc580ee52c88b055b839702370d9253ee8d"
+    },
+    "Footy for Two_Transfers and Fantasy League": {
+      "bytes": 83983184,
+      "from_cache": true,
+      "sha256": "77ebbf78670d6e66435e4322ea2f5b6e4988926264a5cd04b53b5c99cec0bf1c"
+    },
+    "Free Podcast Day_Home Grown Girls – Apr 7 2018": {
+      "bytes": 87004008,
+      "crc32": "9d8f8e9d",
+      "sha256": "97b878ea1c9eac57732ac6b4a625ae23205d4c5fa2d14f722230ad547b0269c4"
+    },
+    "Public Access America_Obama Foundation Town Hall Europe": {
+      "bytes": 203141642,
+      "from_cache": true,
+      "sha256": "8fd197f942d5e58b7debb8527219384623d72d7c844334fc2ef2e26ed236e89a"
+    },
+    "Spaces Podcast_Evolution of Architecture I": {
+      "bytes": 149570824,
+      "from_cache": true,
+      "sha256": "ca72e78e51b1c8b1a4a7bbb2d5b339a25e0a206c955bdc7c7fa91d4d526d78ee"
+    },
+    "Suzanne Toro_Fall Food Recipes & Wisdom {Food Alchemy}": {
+      "bytes": 59113790,
+      "from_cache": true,
+      "sha256": "1de70f9a277009451bf8c2681ab92d3e619e0f95844059d9fe28b1ff948ccff5"
+    },
+    "The Booktopia Books Podcast_John Birmingham on How to Be a Writer": {
+      "bytes": 71744200,
+      "from_cache": true,
+      "sha256": "50a4782ab9cb722ff635921a3f311d291a83d859a28b6beeff74962e564c4c30"
+    },
+    "The Genealogy Happy Hour_Episode 20_Privacy": {
+      "bytes": 58270312,
+      "from_cache": true,
+      "sha256": "7c57afe4b727272a6f17ffbe2fd403cbed09a5608462f61272e89a0fcb9fec81"
+    },
+    "The Housing Hour_History of Coal Creek Miners": {
+      "bytes": 87044322,
+      "from_cache": true,
+      "sha256": "69b7da373c9d9c4153f09e9af9a4697fe26a54478f4a69461c9d15b1ae8bb84b"
+    },
+    "The RegenNarration_79. Gondwana Link The most exciting restoration at scale in Australia, with Keith Bradby OAM": {
+      "bytes": 116285532,
+      "from_cache": true,
+      "sha256": "82786e433c2a7f14517bc183ced1fe5f59740bc2715ae24d4311c7fec8372481"
+    },
+    "Tin Pan Alley_On the Road Charlotte Eriksson": {
+      "bytes": 81978348,
+      "from_cache": true,
+      "sha256": "11ad4ac1e46c6b0a41a077490ed2944ebfc2232997807c0f661f51bcf9dfa3e0"
+    },
+    "Wine and Popcorn_Ep 023 Olivia Pope Stuntin Like Her Daddy Scandal Ep 8 Season 5": {
+      "bytes": 75408368,
+      "from_cache": true,
+      "sha256": "b5b0992a51974d85416a42eb1de701b733597870241efcc4aab8fd5c445cd013"
+    },
+    "artwarez_Buen Vivir. Interview with Penny Travlou": {
+      "bytes": 107970940,
+      "from_cache": true,
+      "sha256": "fa83d872a38b9dca4ab113ca0d96910c7a7f15934127fe67e5b6d4f839a91aa9"
+    },
+    "g1 pdcst_Foodie Call #11 The 2016 Digest": {
+      "bytes": 94422134,
+      "from_cache": true,
+      "sha256": "0e777d59cfc4dcfa4fa8e6e1f294295500674526666e23446f3f9a21bb039b14"
+    }
+  }
+}

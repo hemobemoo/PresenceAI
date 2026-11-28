@@ -70,7 +70,7 @@ def test_t1_config_matches_adr_0027_and_owner_answers():
     assert pd["ami_annotations"]["url"].startswith("https://groups.inf.ed.ac.uk/ami/")
     assert pd["ami_headset"]["url"].startswith("https://groups.inf.ed.ac.uk/ami/AMICorpusMirror/")
     assert pd["ami_annotations"]["licence_must_state"] == "CC BY 4.0"
-    assert "podcastfillers" not in pd  # approved with PR-3, not here
+    assert pd["podcastfillers"]["access"] == "range_requests"  # approved with PR-3 (owner E1)
     assert set(SPELL.values()) <= set(HES)  # every mapped filler is in the E3 lexicon
 
 
@@ -80,14 +80,17 @@ def test_pins_from_data_runs_load_into_the_build_config():
     sha = re.compile(r"[0-9a-f]{64}")
     assert sha.fullmatch(pd["ami_annotations"]["sha256"])  # run d2
     assert sha.fullmatch(pd["librispeech_test_clean"]["sha256"])  # run d3
-    heads = pd["ami_headset"]["sha256"]  # run d3, from configs/pins/ami_headsets.json
-    assert len(heads) == 140 and all(sha.fullmatch(v) for v in heads.values())
+    heads = pd["ami_headset"]["sha256"]  # training (d3) + E3 test headsets (b3)
+    assert len(heads) == 140 + 112 and all(sha.fullmatch(v) for v in heads.values())
     assert all(k.endswith(".wav") and ".Headset-" in k for k in heads)
-    assert "sha256_file" not in pd["ami_headset"]
+    assert "sha256_file" not in pd["ami_headset"] and "sha256_files" not in pd["ami_headset"]
     assert sha.fullmatch(cfg["t1"]["ami"]["manifest_sha256"])  # run d3; T1-r2 checks it
-    # every pinned headset belongs to a meeting outside the ten E3 sessions
+    # the TRAINING pins hold no meeting from the ten E3 sessions; the test pins only E3 test ones
     e3 = set(EV["e3"]["ami_split"]["pool"])
-    assert not {k.split(".")[0][:-1] for k in heads} & e3
+    train = json.loads((REPO / "configs/pins/ami_headsets.json").read_text())["sha256"]
+    test = json.loads((REPO / "configs/pins/ami_test_headsets.json").read_text())["sha256"]
+    assert len(train) == 140 and not {k.split(".")[0][:-1] for k in train} & e3
+    assert {k.split(".")[0][:-1] for k in test} == set(EV["e3"]["scoring"]["ami_test_sessions"])
 
 
 # --- text rules (owner P2, P3) ----------------------------------------------------------------
@@ -496,3 +499,65 @@ def test_ingest_default_inbox_is_data_colab_results():
     assert ci.INBOX == REPO / "data" / "colab_results"
     with pytest.raises(FileNotFoundError, match="colab_results"):
         cdata.ingest("does-not-exist")
+
+
+# --- Drive cache of pinned public files (owner, 2026-11-28; ADR 0028 §9) --------------------------
+
+
+def test_cache_hit_needs_no_request_and_verifies(tmp_path, monkeypatch):
+    data = b"pinned audio"
+    pin = hashlib.sha256(data).hexdigest()
+    cache = tmp_path / "cache"
+    cache.mkdir()
+    (cache / "a.wav").write_bytes(data)
+
+    def no_network(url, dest):
+        raise AssertionError("a verified cached file must not be downloaded")
+
+    monkeypatch.setattr(fetch, "_fetch_once", no_network)
+    rec = fetch.download(
+        "https://example.org/a.wav", tmp_path / "w" / "a.wav", pin, cache_dir=cache
+    )
+    assert rec["from_cache"] and (tmp_path / "w" / "a.wav").read_bytes() == data
+
+
+def test_bad_cached_copy_is_deleted_and_downloaded_again(tmp_path, monkeypatch):
+    good = b"pinned audio"
+    pin = hashlib.sha256(good).hexdigest()
+    cache = tmp_path / "cache"
+    cache.mkdir()
+    (cache / "a.wav").write_bytes(b"corrupted")
+    calls = []
+
+    def fetch_once(url, dest):
+        calls.append(url)
+        dest.write_bytes(good)
+        return pin, len(good)
+
+    monkeypatch.setattr(fetch, "_fetch_once", fetch_once)
+    rec = fetch.download(
+        "https://example.org/a.wav", tmp_path / "w" / "a.wav", pin, cache_dir=cache
+    )
+    assert not rec["from_cache"] and len(calls) == 1
+    assert (cache / "a.wav").read_bytes() == good  # replaced by the verified download
+    manifest = json.loads((cache / "cache_manifest.json").read_text())
+    assert manifest["a.wav"]["sha256"] == pin
+
+
+def test_unpinned_files_are_never_cached(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        fetch,
+        "_fetch_once",
+        lambda url, dest: (dest.write_bytes(b"x"), (hashlib.sha256(b"x").hexdigest(), 1))[1],
+    )
+    cache = tmp_path / "cache"
+    fetch.download("https://example.org/b.wav", tmp_path / "w" / "b.wav", None, cache_dir=cache)
+    assert not cache.exists()
+    assert fetch.cache_put(cache, "c.wav", "0" * 64, tmp_path / "w" / "b.wav", "x") is False
+
+
+def test_cache_put_refuses_a_file_that_does_not_match_its_pin(tmp_path):
+    src = tmp_path / "a.wav"
+    src.write_bytes(b"abc")
+    assert not fetch.cache_put(tmp_path / "cache", "a.wav", "0" * 64, src, "test")
+    assert not (tmp_path / "cache" / "a.wav").exists()
