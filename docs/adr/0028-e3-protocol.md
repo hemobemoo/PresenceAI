@@ -1,14 +1,15 @@
 # 0028 — E3 protocol: filler and repetition scoring, decoding, data access (PR-3)
 
-- Status: **proposed** (owner's answers E1–E8 and additions 1–6 of 2026-11-27 written in; waits
-  for the owner's acceptance). Values marked PROVISIONAL may change only with a new decision
+- Status: **accepted** (owner, 2026-11-28; answers E1–E8 and additions 1–6 of 2026-11-27, the
+  run decisions in §6–§12). Values marked PROVISIONAL may change only with a new decision
   recorded here.
 - Date: 2026-11-27
 - Decider: project owner
 - Plan reference: FINAL_10 E3; ADR 0012 (fillers, AMI split, `initial_prompt`); ADR 0026 §4 (T1
   pass rule); ADR 0027 (T1 text style, segments, pins, builder pass line)
 - Config keys affected: `configs/evaluation.yaml: e3` (model, decoding, initial_prompt, detector,
-  wer_normaliser, ami, podcastfillers, repetitions, bootstrap, disfluencyspeech_text_check) and
+  wer_normaliser, ami, podcastfillers, repetitions, per_window, bootstrap,
+  disfluencyspeech_text_check) and
   `public_data.podcastfillers` (new)
 
 ## Context
@@ -267,15 +268,39 @@ Record: `experiments/results/e3/base_20261128-b5/` (`e3_metrics.json`). 12,209 s
   the run now **stops on any PodcastFillers WAV or AMI test headset without a pin**; a test fails
   if a pin file holds mis-decoded text.
 
+### 12. Per-window conditions on PodcastFillers (owner, 2026-11-28, option b)
+
+Fixed **before any number exists**. Both conditions are **reported only**: they do not enter T1's
+pass rule, and **ADR 0026 §4 is unchanged**. Per-window decoding is **not an app setting**.
+
+- **Conditions** (PodcastFillers test, 20 episodes, the same scoring as §4):
+  - **base + `initial_prompt` in every window**: base model, each chunk decoded with the §2
+    prompt;
+  - **T1 in every window**: the T1 model, the same chunks, no prompt, so T1 and the prompt are
+    compared like for like.
+- **Chunking method** (`e3.per_window`):
+  - Silero VAD with the **app's settings** (`default.yaml: speech.vad`) finds the speech regions of
+    the whole episode.
+  - Chunks are built in order: the next speech region joins the current chunk while the chunk,
+    from its first region's start to the new region's end, stays **at most 30 s**; otherwise a new
+    chunk starts. A cut lies **at the middle of the pause** between two regions, so the chunks
+    cover the whole episode and no audio is dropped (a filler the VAD misses is still decoded).
+  - A single speech region longer than 30 s is cut every 30 s.
+  - Each chunk is decoded with the **§1 decoding settings**; word times are shifted by the chunk's
+    start before time matching.
+- **Where it runs:** no separate Colab run. It is an extra stage of the **PR-4 (T1-r1) Colab
+  run**: both conditions are run there (base model for the first, T1 for the second), and reported
+  next to T1 in the same table.
+
 ## Consequences
 
-- **Owner's decision before PR-4, the PodcastFillers baseline with the prompt:**
-  - (a) *recommended:* keep the protocol as it is. It measures what the app's settings really do;
-    on PodcastFillers, "T1 vs base + prompt" is then close to "T1 vs base", and the AMI test
-    carries the prompt comparison.
-  - (b) add a reported-only condition that repeats the prompt in every 30-s window (decoding
-    split windows), to show what a prompt could do on long audio. It needs one more Colab run over
-    the 20 episodes; it is not an app setting, so it would not enter the pass rule.
+- **PodcastFillers prompt baseline (owner, 2026-11-28): option (b)**, §12. The §1 conditions stay
+  the deciding comparison; on PodcastFillers "T1 vs base + prompt" (whole episode) is close to
+  "T1 vs base", and the per-window pair (§12) is reported beside it to show what a prompt in every
+  window does, against T1 chunked the same way. The pass rule is unchanged.
+- PR-4 implements §12 and runs it in the T1-r1 Colab run. On AMI test, T1 must beat base +
+  `initial_prompt` (F1 0.815, 95 % CI 0.790–0.841, §11; ADR 0026 §4). If it does not, that is
+  reported as a finding and the line is not moved.
 - **Open: whether the app should repeat the prompt** for answers longer than 30 s is a separate
   app question (FINAL_10 E6 / ADR 0012), not part of E3.
 

@@ -157,6 +157,14 @@ e3:                                  # ADR 0012; filler detection (FINAL_10 E3).
                                      # Reparandum whose normalised words equal the START of its
                                      # Reparans; no manual labelling
     max_gap_words: 2                 # PROVISIONAL: a non-nested Reparans must start within 2 words
+  per_window:                        # owner 2026-11-28 (ADR 0028 §12): PodcastFillers only, REPORT-ONLY,
+    sets: [podcastfillers_test]      # not an app setting, never in the T1 pass rule; runs in PR-4
+    conditions: [base_initial_prompt_per_window, t1_per_window]
+    vad: default.yaml speech.vad     # the app's Silero settings, unchanged
+    max_chunk_s: 30.0                # a chunk spans at most 30 s (first region start to last end)
+    cut: pause_midpoint              # cut in the middle of the pause; chunks cover the episode
+    long_region: cut_every_max_chunk # a region over 30 s is cut every 30 s
+    decoding: e3.decoding            # the §1 settings; word times shifted by the chunk start
   bootstrap:
     resamples: 1000
     seed: 20261128

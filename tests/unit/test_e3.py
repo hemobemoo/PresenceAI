@@ -557,3 +557,14 @@ def test_pin_file_names_are_clean_utf8_and_the_run_refuses_unpinned_files():
     body = (T1 / "colab" / "e3_run.py").read_text(encoding="utf-8")
     assert 'raise ValueError(f"PodcastFillers {ep}.wav has no pin' in body
     assert 'raise ValueError(f"AMI {name} has no pin")' in body
+
+
+def test_per_window_conditions_are_fixed_report_only_and_use_the_apps_vad():
+    # ADR 0028 §12 (owner 2026-11-28): fixed before any number; never in the T1 pass rule
+    pw = E3["per_window"]
+    assert pw["sets"] == ["podcastfillers_test"]
+    assert pw["conditions"] == ["base_initial_prompt_per_window", "t1_per_window"]
+    assert pw["vad"] == "default.yaml speech.vad" and "vad" in DEFAULT["speech"]
+    assert pw["max_chunk_s"] == 30.0 and pw["cut"] == "pause_midpoint"
+    assert pw["decoding"] == "e3.decoding"
+    assert not any("per_window" in str(v) for v in EV["t1"].values())
